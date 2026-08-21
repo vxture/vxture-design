@@ -122,12 +122,28 @@ jobs:
             [ -z "$dir" ] && continue
             version="$(node -p "require('./${dir}/package.json').version")"
 
+            view_log="$(mktemp)"
             if npm view "${name}@${version}" version \
-                 --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+                 --registry=https://npm.pkg.github.com >/dev/null 2>"${view_log}"; then
               echo "· ${name}@${version} 已存在，跳过"
               summary="${summary}- ${name}@${version} — 已存在，跳过"$'\n'
+              rm -f "${view_log}"
               continue
             fi
+
+            # npm view 失败分两种：E404（版本真不存在，正常路径，继续发布）与
+            # 其它任何错误码——尤以 E401/E403 鉴权失败为典型：本仓的 GITHUB_TOKEN
+            # 对尚未转移归属的包没有读权限（见 issue #1）。这两种失败必须分开处理，
+            # 不能都当「不存在」：fail-open 会让 dry run 全绿地报「待发布」，真发布时
+            # 才被 registry 以「版本已存在」拒绝——已发布版本号不可复用，推错了没有
+            # 回头路，所以查不清就直接失败退出，不往下走发布。
+            if ! grep -q "code E404" "${view_log}"; then
+              echo "::error::查询 ${name}@${version} 失败，且不是「版本不存在」（E404）——拒绝当作待发布处理"
+              cat "${view_log}"
+              rm -f "${view_log}"
+              exit 1
+            fi
+            rm -f "${view_log}"
 
             # dist-tag 从版本号自己推出来。publish 不带 --tag 一律打 latest，
             # **预发布版也不例外**——那会让 `pnpm add @vxture/design-system` 装到
