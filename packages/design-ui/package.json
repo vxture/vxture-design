@@ -1,6 +1,6 @@
 {
   "name": "@vxture/design-ui",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Vxture 设计系统的组件层：基础组件、平台图案、图标与 hook。",
   "license": "UNLICENSED",
   "private": false,
@@ -35,7 +35,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vxture/vxture-platform.git",
+    "url": "git+https://github.com/vxture/vxture-design.git",
     "directory": "packages/design-ui"
   },
   "scripts": {

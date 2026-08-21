@@ -5,6 +5,15 @@
 
 ---
 
+## 6.4.2 - 2026-08-21
+
+补 `package.json` 的 `repository` 字段（patch，050 §4）。
+
+- GitHub Packages 的「Repository source」是直接读 `package.json` 的 `repository`
+  字段渲染的，不是按实际发布来源自动判定——本包此前一直没有这个字段（拆仓时漏加），
+  即使 6.4.1 已从 `vxture/vxture-design` 发出去，包设置页仍显示 `vxture-platform`。
+  补上 `repository`，指向 `vxture/vxture-design`。
+
 ## 6.4.1 - 2026-08-21
 
 发布源仓迁至 `vxture/vxture-design`，产物内容与上一版一致（patch，050 §4 / issue #1）。

@@ -5,6 +5,15 @@
 
 ---
 
+## 3.1.3 — 2026-08-21
+
+修 `package.json` 的 `repository` 字段（patch，050 §4）。
+
+- GitHub Packages 的「Repository source」是直接读 `package.json` 的 `repository`
+  字段渲染的，不是按实际发布来源自动判定——3.1.2 仍把它写成
+  `vxture/vxture-platform`，即使那一版就是从 `vxture/vxture-design` 发出去的，
+  包设置页因此继续显示旧仓归属。改指 `vxture/vxture-design`。
+
 ## 3.1.2 — 2026-08-21
 
 发布源仓迁至 `vxture/vxture-design`，产物内容与上一版一致（patch，050 §4 / issue #1）。
