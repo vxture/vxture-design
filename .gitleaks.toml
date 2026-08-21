@@ -1,0 +1,30 @@
+# gitleaks 配置 — vxture 私有平台仓库
+# 用途：CI 门禁（.github/workflows/secret-scan.yml）与本地 pre-commit 钩子共用同一套规则。
+# 本仓库当前 public、开发完成后转 private；无论公私，凭证一律不得进仓库（真实值走
+# GitHub Environments secrets / 部署宿主 env 注入）。新问题 → 加规则或 allowlist，勿放宽。
+
+title = "vxture gitleaks"
+
+[extend]
+# 继承 gitleaks 内置全部规则（AWS/GCP/Anthropic/OpenAI/private-key/generic-api-key 等）。
+useDefault = true
+
+[allowlist]
+description = "占位值与已知测试夹具 —— 非真实凭证"
+# 说明：不整体豁免 .env.example（历史上真实钉钉凭证正是漏在该文件里，必须继续扫描）。
+# 只豁免明确的占位形态与一个具名测试夹具。
+regexTarget = "match"
+regexes = [
+  # 占位符：your-xxx / <xxx> / changeme / placeholder / example / dummy / 全 x
+  '''(?i)(your[-_][a-z0-9-]+|<[a-z0-9._-]+>|change[-_]?me|placeholder|dummy|example[-_.]|xxxx+)''',
+  # 具名测试夹具（bff/auth-bff/.../operator-mfa.service.spec.ts 的 TOTP 加密测试键）
+  '''test-operator-totp-encryption-key-0123456789''',
+]
+paths = [
+  '''pnpm-lock\.yaml''',           # 第三方依赖元数据（integrity 哈希，非凭证）
+  '''.*\.(png|jpg|jpeg|gif|webp|ico|woff2?|ttf|eot|pdf)$''',  # 二进制资产
+]
+# SonarCloud 项目键是公开标识符，不是密钥（历史误报）。
+stopwords = [
+  "sonar.projectkey",
+]

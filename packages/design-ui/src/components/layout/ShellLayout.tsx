@@ -88,10 +88,7 @@ export function ShellHeader({
 }
 
 export type ShellContentWidth =
-  | "narrow-lg"
-  | "base-xl"
-  | "wide-2xl"
-  | "ultra-3xl";
+  "narrow-lg" | "base-xl" | "wide-2xl" | "ultra-3xl";
 
 const CONTENT_WIDTH_CLASS: Record<ShellContentWidth, string> = {
   "narrow-lg": "max-w-content-narrow-lg",

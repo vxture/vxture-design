@@ -7,6 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "prepare": "husky || true",
     "build": "pnpm --filter @vxture/design-tokens build && pnpm --filter @vxture/design-ui build && pnpm --filter @vxture/design-system build",
     "build:preview": "pnpm --filter @vxture/design-preview build",
     "type-check": "pnpm --recursive type-check",
@@ -31,11 +32,22 @@
     "eslint": "^9.39.3",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.4"
   },
   "pnpm": {
     "overrides": {
       "tailwindcss": "4.2.1"
     }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "prettier --write",
+      "eslint --flag unstable_config_lookup_from_file --fix"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }

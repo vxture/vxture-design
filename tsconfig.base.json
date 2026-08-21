@@ -27,18 +27,14 @@
 
     // ─── 路径别名（monorepo 内部包统一入口） ────────────────────────────────
     "paths": {
-      "@vxture/design-system": [
-        "./packages/design-system/src/client.ts"
-      ],
+      "@vxture/design-system": ["./packages/design-system/src/client.ts"],
       "@vxture/design-system/tokens": [
         "./packages/design-system/src/tokens-entry.ts"
       ],
       "@vxture/design-system/types": [
         "./packages/design-system/src/types-entry.ts"
       ],
-      "@vxture/design-system/server": [
-        "./packages/design-system/src/server.ts"
-      ]
+      "@vxture/design-system/server": ["./packages/design-system/src/server.ts"]
     }
   },
   "include": [],

@@ -26,12 +26,7 @@ import type { IconName as _IconName } from "./iconDictionary";
  * - duotone   双色，云服务/智能体状态展示
  */
 export type IconWeight =
-  | "thin"
-  | "light"
-  | "regular"
-  | "bold"
-  | "fill"
-  | "duotone";
+  "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
 
 // ============================================================================
 // 尺寸类型

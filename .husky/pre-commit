@@ -1,0 +1,14 @@
+pnpm lint-staged --no-stash
+
+# 敏感信息本地拦截（三层机制最早一层）。gitleaks 已装 → 扫暂存内容，命中即阻断提交；
+# 未装 → 告警放行（CI 门禁 secret-scan + GitHub push protection 兜底）。
+# 安装：choco install gitleaks ／ brew install gitleaks ／ scoop install gitleaks
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks protect --staged --redact --config .gitleaks.toml --no-banner; then
+    echo "✖ gitleaks 在暂存内容中发现疑似凭证，提交已阻断。" >&2
+    echo "  确为误报 → 在 .gitleaks.toml 增 allowlist；确为真值 → 移出仓库改走 env 注入。" >&2
+    exit 1
+  fi
+else
+  echo "⚠ 未检测到 gitleaks，跳过本地密钥扫描（CI secret-scan 仍会拦截）。安装：choco install gitleaks" >&2
+fi
