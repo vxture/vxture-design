@@ -79,7 +79,7 @@ design-tokens  →  design-ui  →  design-system
 ## 5. 关联文档
 
 - `docs/10-standards/050-design-system-release.md` —— 三包发布与 SemVer
-- `packages/design/design-system/docs/` —— 对外使用规范（随包发布）
+- `packages/design-system/docs/` —— 对外使用规范（随包发布）
 - `docs/10-standards/060-design-system.md` —— DS 内部工程规范
 - `docs/10-standards/065-design-token-pipeline.md` —— token 构建与 T1/T2/T3 边界
 - `workplans/design-system-t1-t4-refactor.md` —— 推进记录

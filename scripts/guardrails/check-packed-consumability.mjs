@@ -49,9 +49,9 @@ const ROOT = process.cwd();
 
 /** 设计三包。顺序即解包顺序,伞包最后(它的 CSS 引另外两包)。 */
 const PACKAGES = [
-  { name: "design-tokens", dir: "packages/design/design-tokens" },
-  { name: "design-ui", dir: "packages/design/design-ui" },
-  { name: "design-system", dir: "packages/design/design-system" },
+  { name: "design-tokens", dir: "packages/design-tokens" },
+  { name: "design-ui", dir: "packages/design-ui" },
+  { name: "design-system", dir: "packages/design-system" },
 ];
 
 /**

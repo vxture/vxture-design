@@ -23,11 +23,11 @@ import process from "node:process";
 const ROOT = process.cwd();
 const REGISTRY = path.join(
   ROOT,
-  "packages/design/design-preview/src/preview/registry.tsx",
+  "packages/design-preview/src/preview/registry.tsx",
 );
 const ROOTS = [
-  "packages/design/design-ui/src/components",
-  "packages/design/design-system/src/components",
+  "packages/design-ui/src/components",
+  "packages/design-system/src/components",
 ];
 
 /**
@@ -38,7 +38,7 @@ const ROOTS = [
  */
 const EXCLUDED = new Map([
   [
-    "packages/design/design-ui/src/components/layout/fullscreen/Provider.tsx",
+    "packages/design-ui/src/components/layout/fullscreen/Provider.tsx",
     "context provider，无可渲染外观",
   ],
   // Portal.tsx / Container.tsx 两条排除项已随组件退役删除（2026-08-18 owner
@@ -111,7 +111,7 @@ if (staleExclusions.size > 0) {
 if (problems.length > 0) {
   console.error(problems.join("\n\n"));
   console.error(
-    "\n补条目：packages/design/design-preview/src/preview/registry.tsx。" +
+    "\n补条目：packages/design-preview/src/preview/registry.tsx。" +
       "\n确实不该出现的，登记到本脚本的 EXCLUDED 并写明理由。",
   );
   process.exit(1);

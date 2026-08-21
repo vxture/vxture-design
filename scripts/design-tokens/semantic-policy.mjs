@@ -61,7 +61,7 @@ export const Z_LADDER = [
  *
  * 本阶梯自身必须严格递增，由 assertElevationOrdered 断言。
  *
- * 暗色不另设一套：packages/design/design-system/docs/01-usage.md §2 取值约束已定"暗色层级由 surface 明度递增与描边承担，
+ * 暗色不另设一套：packages/design-system/docs/01-usage.md §2 取值约束已定"暗色层级由 surface 明度递增与描边承担，
  * 不靠阴影递增"。深色底上加重阴影只会糊成一团。
  */
 export const ELEVATION = [

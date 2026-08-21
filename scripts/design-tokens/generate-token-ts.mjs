@@ -10,7 +10,7 @@
  *
  * 故 TS 面一律由 semantic-policy.mjs 这唯一权威派生。
  *
- * 出：packages/design/design-tokens/src/generated/*.ts
+ * 出：packages/design-tokens/src/generated/*.ts
  *
  * 用法：
  *   node scripts/design-tokens/generate-token-ts.mjs
@@ -25,7 +25,7 @@ import { Z_LADDER } from "./semantic-policy.mjs";
 
 const ROOT = process.cwd();
 const CHECK = process.argv.includes("--check");
-const OUT_DIR = path.join(ROOT, "packages/design/design-tokens/src/generated");
+const OUT_DIR = path.join(ROOT, "packages/design-tokens/src/generated");
 
 /**
  * 模式轴：CSS 侧的选择器与 TS 侧的取值必须一致。类名写错在运行时表现为
@@ -102,7 +102,7 @@ const outputs = [
 ];
 
 /** 断言 CSS 侧确实声明了这些模式块，否则 TS 给出的类名切了也没反应。 */
-const SEMANTIC = path.join(ROOT, "packages/design/design-tokens/src/styles/semantic");
+const SEMANTIC = path.join(ROOT, "packages/design-tokens/src/styles/semantic");
 const errors = [];
 for (const [file, selectors] of [
   ["spacing-semantic.css", DENSITY.map((d) => `.density-${d}`)],

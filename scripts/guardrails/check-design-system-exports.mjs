@@ -27,7 +27,7 @@ const ROOT = process.cwd();
 const UPDATE = process.argv.includes("--update");
 const STRICT = process.argv.includes("--strict");
 
-const PKG_DIR = path.join(ROOT, "packages/design/design-system");
+const PKG_DIR = path.join(ROOT, "packages/design-system");
 const PKG_PATH = path.join(PKG_DIR, "package.json");
 const SNAPSHOT_PATH = path.join(
   ROOT,

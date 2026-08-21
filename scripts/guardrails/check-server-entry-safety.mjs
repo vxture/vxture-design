@@ -33,12 +33,12 @@ const ROOT = process.cwd();
 const TARGETS = [
   {
     pkg: "@vxture/design-ui",
-    dir: "packages/design/design-ui",
+    dir: "packages/design-ui",
     entry: "dist/server.mjs",
   },
   {
     pkg: "@vxture/design-system",
-    dir: "packages/design/design-system",
+    dir: "packages/design-system",
     entry: "dist/server.mjs",
   },
 ];

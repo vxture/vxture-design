@@ -4,7 +4,7 @@
 日期：2026-08-02
 范围：本仓 DS 三包的维护者与守卫脚本
 
-> **对外使用规范已随包发布**，见 `packages/design/design-system/docs/`（01 使用契约 / 02 视觉规格 / 03 模式选用 / 04 token 契约 / 05 内容规范 / 06 无障碍达标线），随 `@vxture/design-system` 的 `files` 一同发包。本文只保留内部工程内容：token 管线决策、守卫机制、偏离登记与历史判据。消费方规则一律以包内 docs 为准，本文不得复述。
+> **对外使用规范已随包发布**，见 `packages/design-system/docs/`（01 使用契约 / 02 视觉规格 / 03 模式选用 / 04 token 契约 / 05 内容规范 / 06 无障碍达标线），随 `@vxture/design-system` 的 `files` 一同发包。本文只保留内部工程内容：token 管线决策、守卫机制、偏离登记与历史判据。消费方规则一律以包内 docs 为准，本文不得复述。
 
 ## 1. 分层与 token 管线（内部）
 
@@ -141,8 +141,8 @@ pnpm --filter @vxture/design-system build
 
 ## 12. 关联文档
 
-- `packages/design/design-system/docs/` —— 对外使用规范（随包发布）
-- `packages/design/design-system/README.md`
+- `packages/design-system/docs/` —— 对外使用规范（随包发布）
+- `packages/design-system/README.md`
 - `docs/40-implementation/packages/design/10-design-system.md`
 - `docs/10-standards/065-design-token-pipeline.md`
 - `docs/10-standards/050-design-system-release.md`

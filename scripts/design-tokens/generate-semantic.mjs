@@ -6,7 +6,7 @@
  * 输入是 color-policy.mjs。六个意图族由"色相 × 阶型"派生，故族间不一致在结构上
  * 不可能发生；阶型本身携带对比度依据。
  *
- * 出：packages/design/design-tokens/src/styles/semantic/color-semantic.css
+ * 出：packages/design-tokens/src/styles/semantic/color-semantic.css
  *
  * 用法：
  *   node scripts/design-tokens/generate-semantic.mjs
@@ -32,7 +32,7 @@ import {
 const ROOT = process.cwd();
 const CHECK = process.argv.includes("--check");
 
-const PKG = path.join(ROOT, "packages/design/design-tokens");
+const PKG = path.join(ROOT, "packages/design-tokens");
 const OUT_DIR = path.join(PKG, "src/styles/semantic");
 const T1_COLOR_FILES = [
   path.join(PKG, "src/styles/primitive/color-primitive.css"),
@@ -177,7 +177,7 @@ const css = `/**
  *   生成：node scripts/design-tokens/generate-semantic.mjs
  *   输入：scripts/design-tokens/color-policy.mjs
  *
- * T2 契约见 packages/design/design-system/docs/04-tokens-contract.md。
+ * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
  * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
  *
  * 命名沿用 shadcn 约定（--background / --foreground / --primary / --border …），

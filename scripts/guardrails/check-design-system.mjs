@@ -61,7 +61,7 @@ const DS_STYLE_HARDCODED_SCALE_BUDGET = 0;
  * DS 叠放阶梯的取值。**首选仍是 `var(--z-index-*)` 语义名**；本表只是兜底，
  * 容许内联 style 等确实拿不到类名的场合直写档位值，档外取值一律拦。
  * 阶梯语义与推导依据见 scripts/design-tokens/semantic-policy.mjs 与
- * packages/design/design-system/docs/04-tokens-contract.md §8。
+ * packages/design-system/docs/04-tokens-contract.md §8。
  */
 const Z_LADDER = new Set([100, 200, 300, 400, 500, 600, 700, 800, 900, 9999]);
 const BASELINED_RULE_IDS = new Set([
@@ -91,21 +91,21 @@ const IGNORED_PARTS = new Set([
   "design-system-gallery",
 ]);
 
-const DS_ROOT = normalize("packages/design/design-system");
+const DS_ROOT = normalize("packages/design-system");
 /**
  * 设计三包。凡"这是 DS 自己的代码，不受应用层规则约束"的判断都要认全三个，
  * 否则拆包之后 design-ui / design-tokens 会被当成业务代码误报。
  */
 const DS_PACKAGE_ROOTS = [
   DS_ROOT,
-  normalize("packages/design/design-ui"),
-  normalize("packages/design/design-tokens"),
+  normalize("packages/design-ui"),
+  normalize("packages/design-tokens"),
 ];
 const isDsPackage = (file) =>
   DS_PACKAGE_ROOTS.some((root) => normalize(file).startsWith(`${root}/`));
 const DS_TOKEN_PATHS = [
-  normalize("packages/design/design-system/src/tokens"),
-  normalize("packages/design/design-tokens/src/styles/tokens.css"),
+  normalize("packages/design-system/src/tokens"),
+  normalize("packages/design-tokens/src/styles/tokens.css"),
 ];
 // 顶层 tokens*.css 是历史平铺形态；primitive/ semantic/ components/ 是
 // docs/10-standards/040-design-system-package-convergence.md §3 的目标结构，
@@ -117,7 +117,7 @@ const DS_TOKEN_PATHS = [
 // 与容器查询，那里 var() 不参与求值，只能落字面量——它是有依据的刻度真值源，
 // 不是"叶子里随手写死的数"。components/ 已随 T3 层退役。
 const DS_RUNTIME_TOKEN_STYLE_PATTERN =
-  /^packages\/design\/design-tokens\/src\/styles\/(?:tokens\.css|tailwind\.css|theme\.css|(?:primitive|semantic)\/(?:[\w-]+\/)*[\w-]+\.css)$/;
+  /^packages\/design-tokens\/src\/styles\/(?:tokens\.css|tailwind\.css|theme\.css|(?:primitive|semantic)\/(?:[\w-]+\/)*[\w-]+\.css)$/;
 const DS_RUNTIME_SCALE_BRIDGE_VAR_PATTERN =
   /var\(--vx-(?:scale|platform-scale|auth-scale|console-scale|component-scale)-/;
 const DS_RUNTIME_COMPONENT_METRIC_VAR_PATTERN = /var\(--vx-component-metric-/;
@@ -163,7 +163,7 @@ const DS_SEMANTIC_STYLE_PATHS = new Set([]);
  * 仅 fullscreen.css 存活。清单不留已删路径：陈旧条目会让规则永远报 stale。
  */
 const DS_EFFECT_LOCKED_STYLE_PATHS = new Set([
-  normalize("packages/design/design-system/src/styles/fullscreen.css"),
+  normalize("packages/design-system/src/styles/fullscreen.css"),
 ]);
 const DS_SHADOW_LOCKED_STYLE_PATHS = new Set([
   /* 全部条目随遗留样式层退役，无存活项。 */
@@ -172,12 +172,12 @@ const IMPORT_ONLY_STYLE_ENTRIES = new Map([
   // varda 样式入口已随 vxture-varda 独立仓迁出(2026-08-18)。
   // auth.css 已删（2026-08-18）：认证样式归业务层，DS 不收业务含义的入口。
   [
-    normalize("packages/design/design-system/src/styles/globals.css"),
+    normalize("packages/design-system/src/styles/globals.css"),
     "DS globals.css",
   ],
   /* platform.css 聚合入口已删（2026-08-18）：八条子模块退役后它只剩空壳。 */
   [
-    normalize("packages/design/design-tokens/src/styles/tokens.css"),
+    normalize("packages/design-tokens/src/styles/tokens.css"),
     "DS tokens.css",
   ],
   [normalize("portals/admin/src/app/globals.css"), "admin globals.css"],
@@ -255,14 +255,14 @@ const DIRECT_UI_ENGINE_DEPENDENCIES = [
   "react-icons",
   /^@radix-ui\//,
 ];
-const DS_PACKAGE_JSON = normalize("packages/design/design-system/package.json");
+const DS_PACKAGE_JSON = normalize("packages/design-system/package.json");
 const DS_PACKAGE_MANIFEST = readJsonFile(DS_PACKAGE_JSON);
 const DS_PACKAGE_VERSION = DS_PACKAGE_MANIFEST.version;
 const ALLOWED_DS_IMPORTS = readAllowedDesignSystemImports(DS_PACKAGE_MANIFEST);
 const DS_EXPORTED_STYLE_PATHS =
   readDesignSystemExportedStylePaths(DS_PACKAGE_MANIFEST);
-const DS_README_DOC = normalize("packages/design/design-system/README.md");
-const DS_PACKAGE_DOC = normalize("docs/packages/design/design-system.md");
+const DS_README_DOC = normalize("packages/design-system/README.md");
+const DS_PACKAGE_DOC = normalize("docs/packages/design-system.md");
 const DS_STANDARD_DOC = normalize("docs/standards/design-system.md");
 const DS_PUBLIC_ENTRY_DOC_PATHS = new Set([DS_README_DOC, DS_PACKAGE_DOC]);
 const DS_VERSION_DOC_PATHS = new Set([
@@ -444,7 +444,7 @@ const rules = [
       return violation(
         file,
         lineNumber,
-        `z-index 须取 DS 叠放阶梯（${[...Z_LADDER].join(" / ")}），阶梯语义见 packages/design/design-system/docs/04-tokens-contract.md §8。`,
+        `z-index 须取 DS 叠放阶梯（${[...Z_LADDER].join(" / ")}），阶梯语义见 packages/design-system/docs/04-tokens-contract.md §8。`,
         line,
       );
     },
@@ -968,7 +968,7 @@ const rules = [
       if (path.extname(file) !== ".css" || isGeneratedOrAsset(file)) return [];
       const normalized = normalize(file);
       const isDesignSystemStyle =
-        /^packages\/design\/design-system\/src\/styles\/[^/]+-content\.css$/.test(
+        /^packages\/design-system\/src\/styles\/[^/]+-content\.css$/.test(
           normalized,
         );
       const isAppStyle =
@@ -1049,7 +1049,7 @@ const rules = [
     checkFile(file) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/styles\/platform-[^/]+\.css$/.test(
+        !/^packages\/design-system\/src\/styles\/platform-[^/]+\.css$/.test(
           normalized,
         )
       )
@@ -1072,7 +1072,7 @@ const rules = [
     checkFile(file) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/styles\/console-[^/]+\.css$/.test(
+        !/^packages\/design-system\/src\/styles\/console-[^/]+\.css$/.test(
           normalized,
         )
       )
@@ -1095,7 +1095,7 @@ const rules = [
     checkFile(file) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/styles\/components-[^/]+\.css$/.test(
+        !/^packages\/design-system\/src\/styles\/components-[^/]+\.css$/.test(
           normalized,
         )
       )
@@ -1118,7 +1118,7 @@ const rules = [
     checkFile(file) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/styles\/auth-[^/]+\.css$/.test(
+        !/^packages\/design-system\/src\/styles\/auth-[^/]+\.css$/.test(
           normalized,
         )
       )
@@ -1142,7 +1142,7 @@ const rules = [
     checkFile(file) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/styles\/tokens-[^/]+\.css$/.test(
+        !/^packages\/design-system\/src\/styles\/tokens-[^/]+\.css$/.test(
           normalized,
         )
       )
@@ -1164,7 +1164,7 @@ const rules = [
     checkFile(file) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/styles\/[\w-]+-tokens\.css$/.test(
+        !/^packages\/design-system\/src\/styles\/[\w-]+-tokens\.css$/.test(
           normalized,
         )
       )
@@ -1235,7 +1235,7 @@ const rules = [
           violation(
             file,
             1,
-            "token 文件只能维护在 packages/design/design-system/src/tokens。",
+            "token 文件只能维护在 packages/design-system/src/tokens。",
           ),
         ];
       }
@@ -1249,7 +1249,7 @@ const rules = [
     checkLine(file, line, lineNumber) {
       const normalized = normalize(file);
       if (
-        !/^packages\/design\/design-system\/src\/tokens\/(colors|spacing|radius|shadow|typography)\.ts$/.test(
+        !/^packages\/design-system\/src\/tokens\/(colors|spacing|radius|shadow|typography)\.ts$/.test(
           normalized,
         )
       ) {
@@ -1562,7 +1562,7 @@ const dsStyleHardcodedScaleCount = collectDsStyleHardcodedScaleCount(files);
 if (dsStyleHardcodedScaleCount > DS_STYLE_HARDCODED_SCALE_BUDGET) {
   violations.push({
     rule: dsStyleHardcodedScaleBudgetRule,
-    file: "packages/design/design-system/src/styles",
+    file: "packages/design-system/src/styles",
     line: 1,
     message: `DS 非 token owner 硬编码尺度数量 ${dsStyleHardcodedScaleCount} 超过预算 ${DS_STYLE_HARDCODED_SCALE_BUDGET}；新增尺度必须迁入语义 token，或先降低存量预算。`,
     source: `scale-count:${dsStyleHardcodedScaleCount}`,
@@ -2358,7 +2358,7 @@ function collectDsStylePlatformScaleBridgeViolations(sourceFiles) {
     const normalized = normalize(path.relative(ROOT, file));
     if (!isDsStyleScaleDebtFile(normalized)) continue;
     if (
-      !/^packages\/design\/design-system\/src\/styles\/platform[\w-]*\.css$/.test(
+      !/^packages\/design-system\/src\/styles\/platform[\w-]*\.css$/.test(
         normalized,
       )
     )
@@ -2562,10 +2562,10 @@ function isDirectUiEngineDependency(dependency) {
 function isDsSemanticStyleFile(normalized) {
   return (
     DS_SEMANTIC_STYLE_PATHS.has(normalized) ||
-    /^packages\/design\/design-system\/src\/styles\/components-[\w-]+\.css$/.test(
+    /^packages\/design-system\/src\/styles\/components-[\w-]+\.css$/.test(
       normalized,
     ) ||
-    /^packages\/design\/design-system\/src\/styles\/platform-[\w-]+\.css$/.test(
+    /^packages\/design-system\/src\/styles\/platform-[\w-]+\.css$/.test(
       normalized,
     )
   );
@@ -2905,7 +2905,7 @@ function collectVersionDocViolations(file) {
     violation(
       file,
       findLineNumber(content, "版本"),
-      `DS 文档版本必须与 packages/design/design-system/package.json 保持一致，期望：${expected}`,
+      `DS 文档版本必须与 packages/design-system/package.json 保持一致，期望：${expected}`,
     ),
   ];
 }
@@ -2924,7 +2924,7 @@ function collectPackageStyleExportViolations(file) {
         ),
       ];
     }
-    const target = path.join(ROOT, "packages/design/design-system", value);
+    const target = path.join(ROOT, "packages/design-system", value);
     if (exists(target)) return [];
     return [
       violation(
@@ -3033,7 +3033,7 @@ function collectComponentDocCountViolations(file) {
 function countDsComponentFiles(group) {
   const directory = path.join(
     ROOT,
-    "packages/design/design-system/src/components",
+    "packages/design-system/src/components",
     group,
   );
   return readdirSync(directory).filter((name) => name.endsWith(".tsx")).length;

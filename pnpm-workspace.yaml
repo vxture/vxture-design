@@ -1,5 +1,5 @@
 packages:
-  - "packages/design/design-tokens"
-  - "packages/design/design-ui"
-  - "packages/design/design-system"
-  - "packages/design/design-preview"
+  - "packages/design-tokens"
+  - "packages/design-ui"
+  - "packages/design-system"
+  - "packages/design-preview"

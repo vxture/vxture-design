@@ -32,7 +32,7 @@ import {
 
 const ROOT = process.cwd();
 const CHECK = process.argv.includes("--check");
-const OUT_DIR = path.join(ROOT, "packages/design/design-tokens/src/styles/primitive");
+const OUT_DIR = path.join(ROOT, "packages/design-tokens/src/styles/primitive");
 
 const notes = [];
 

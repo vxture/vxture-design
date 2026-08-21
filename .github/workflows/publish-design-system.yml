@@ -48,9 +48,9 @@ jobs:
       # 发布顺序即依赖方向，不得调换。格式：<目录>|<包名>
       # 发布顺序即依赖方向，不得调换。格式：<目录>|<包名>
       RELEASE_ORDER: |
-        packages/design/design-tokens|@vxture/design-tokens
-        packages/design/design-ui|@vxture/design-ui
-        packages/design/design-system|@vxture/design-system
+        packages/design-tokens|@vxture/design-tokens
+        packages/design-ui|@vxture/design-ui
+        packages/design-system|@vxture/design-system
 
     steps:
       - name: Checkout

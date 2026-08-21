@@ -29,7 +29,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const SEMANTIC = path.join(
   ROOT,
-  "packages/design/design-tokens/src/styles/semantic",
+  "packages/design-tokens/src/styles/semantic",
 );
 
 /** 每族一条：文件 + 判定"这个顶层块属于本族"的规则。 */

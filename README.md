@@ -55,7 +55,7 @@ pnpm guardrails     # 七道守卫
 迁移当天不把 Tailwind 升级混进来——先证明搬运是纯粹的移动，升级另做，
 那样出问题时才分得清是谁引起的。**解钉是一项独立工作**。
 
-**`packages/design/design-*` 的嵌套保留了。** 独立仓里这层 `design/` 是冗余的，
+**`packages/design-*` 的嵌套保留了。** 独立仓里这层 `design/` 是冗余的，
 但 53 处路径写死在 14 个守卫与管线文件里。迁移当天再改，出问题时分不清是
 "搬坏了"还是"改路径改坏了"。拉平布局同样是一项独立工作。
 
@@ -75,6 +75,6 @@ pnpm guardrails     # 七道守卫
 
 ## 对外文档
 
-随包发布的消费契约在 `packages/design/design-system/docs/`，其中
-[`07-consumption-pitfalls.md`](./packages/design/design-system/docs/07-consumption-pitfalls.md)
+随包发布的消费契约在 `packages/design-system/docs/`，其中
+[`07-consumption-pitfalls.md`](./packages/design-system/docs/07-consumption-pitfalls.md)
 只收「接上去不报错、构建全绿、但结果是错的」这一类，接入方装完就能读到。

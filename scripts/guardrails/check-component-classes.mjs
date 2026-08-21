@@ -41,14 +41,14 @@ const { compile } = await import(
   new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`).href
 );
 
-const PKG = path.join(ROOT, "packages/design/design-system");
+const PKG = path.join(ROOT, "packages/design-system");
 const STYLES = path.join(PKG, "src/styles");
 /** 组件分居两包：无状态的在 design-ui，需要运行时接线的两个留在伞包。 */
 const COMPONENT_ROOTS = [
-  path.join(ROOT, "packages/design/design-ui/src/components"),
+  path.join(ROOT, "packages/design-ui/src/components"),
   path.join(PKG, "src/components"),
 ];
-const TOKENS_STYLES = path.join(ROOT, "packages/design/design-tokens/src/styles");
+const TOKENS_STYLES = path.join(ROOT, "packages/design-tokens/src/styles");
 
 /**
  * 从 DS 的 `globals.css` 起编，而不是只编 `tokens.css`。
@@ -180,7 +180,7 @@ for (const root of COMPONENT_ROOTS) discovered.push(...(await walk(root)));
  * 因为一处错会静默扩散到所有引用方。
  */
 discovered.push(
-  path.join(ROOT, "packages/design/design-ui/src/styles/recipes.ts"),
+  path.join(ROOT, "packages/design-ui/src/styles/recipes.ts"),
 );
 const files = discovered.filter((f) => !PENDING.has(path.basename(f)));
 
@@ -243,7 +243,7 @@ if (dead.length > 0) {
   console.error("组件用到未生成的类名——这些元素会静默无样式：\n");
   for (const d of dead) console.error(`  ✗ ${d.file}:${d.line}  ${d.cls}`);
   console.error(
-    "\n改用 T2 语义名产出的工具类；族清单见 packages/design/design-system/docs/04-tokens-contract.md。",
+    "\n改用 T2 语义名产出的工具类；族清单见 packages/design-system/docs/04-tokens-contract.md。",
   );
   process.exit(1);
 }
@@ -293,7 +293,7 @@ if (recipeViolations.length > 0 || staleLedger.length > 0) {
     for (const v of recipeViolations) {
       console.error(`  ✗ ${v.file}  写了 ${v.pattern}，应引用配方 \`${v.recipe}\``);
     }
-    console.error("\n配方在 packages/design/design-ui/src/styles/recipes.ts。");
+    console.error("\n配方在 packages/design-ui/src/styles/recipes.ts。");
   }
   if (staleLedger.length > 0) {
     console.error("\n以下组件已不再手写这些片段，请从 pending-recipes.mjs 删掉：\n");

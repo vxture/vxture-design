@@ -30,7 +30,7 @@ const TW = path.join(PNPM, twDir, "node_modules/tailwindcss");
 const { compile } = await import(
   new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`).href
 );
-const STYLES = path.join(ROOT, "packages/design/design-tokens/src/styles");
+const STYLES = path.join(ROOT, "packages/design-tokens/src/styles");
 
 /**
  * 样例覆盖三类：DS 注册的语义、DS 登记的偏离、以及**上游内置**。

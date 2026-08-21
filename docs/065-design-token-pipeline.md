@@ -4,7 +4,7 @@
 日期：2026-07-31
 范围：`@vxture/design-system` 的 T1–T3 token、Figma DTCG 导出、`scripts/design-tokens/*` 生成器
 
-本文定义 token 从设计到代码的**唯一构建路径**与权威边界。层级定义见包内 `packages/design/design-system/docs/01-usage.md` §2（T1 镜像机制见 `060-design-system.md` §1.1），发布影响见 `050-design-system-release.md`。
+本文定义 token 从设计到代码的**唯一构建路径**与权威边界。层级定义见包内 `packages/design-system/docs/01-usage.md` §2（T1 镜像机制见 `060-design-system.md` §1.1），发布影响见 `050-design-system-release.md`。
 
 ## 1. 权威边界
 
@@ -38,7 +38,7 @@
 **目标态**：
 
 ```
-packages/design/design-system/src/styles/primitive|semantic|components/*.css   ← 真值源
+packages/design-system/src/styles/primitive|semantic|components/*.css   ← 真值源
   ↓ tokens.css 聚合            ↓ 导出 DTCG
 消费方（产品仓库 / T4）        Figma（导入后用于设计）
 ```
@@ -283,7 +283,7 @@ Figma MCP 的页面枚举会漏列页面，且 `search_design_system` 只返回�
 
 ## 7. 关联文档
 
-- `packages/design/design-system/docs/01-usage.md` §2 —— T1–T4 层级对外定义
+- `packages/design-system/docs/01-usage.md` §2 —— T1–T4 层级对外定义
 - `docs/10-standards/060-design-system.md` §1.1 —— T1 镜像与偏离登记
 - `docs/10-standards/050-design-system-release.md` —— 发布与 SemVer
 - `docs/10-standards/040-design-system-package-convergence.md` —— 目录结构目标

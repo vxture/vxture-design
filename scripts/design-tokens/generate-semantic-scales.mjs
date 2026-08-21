@@ -68,7 +68,7 @@ import {
 const ROOT = process.cwd();
 const CHECK = process.argv.includes("--check");
 
-const PKG = path.join(ROOT, "packages/design/design-tokens");
+const PKG = path.join(ROOT, "packages/design-tokens");
 const OUT_DIR = path.join(PKG, "src/styles/semantic");
 const PRIMITIVE = path.join(PKG, "src/styles/primitive");
 
@@ -464,7 +464,7 @@ function header(file, label, source, extra = "") {
  *   生成：node scripts/design-tokens/generate-semantic-scales.mjs
  *   输入：${source}
  *
- * T2 契约见 packages/design/design-system/docs/04-tokens-contract.md。
+ * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
  * 构建规范见 docs/10-standards/065-design-token-pipeline.md。${extra}
  */
 `;

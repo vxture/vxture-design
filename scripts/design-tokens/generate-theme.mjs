@@ -32,7 +32,7 @@ import { EXTENSIONS, OVERRIDES } from "./primitive-policy.mjs";
 const ROOT = process.cwd();
 const CHECK = process.argv.includes("--check");
 
-const PKG = path.join(ROOT, "packages/design/design-tokens");
+const PKG = path.join(ROOT, "packages/design-tokens");
 const SEMANTIC = path.join(PKG, "src/styles/semantic");
 const FOUNDATION = path.join(PKG, "src/styles/primitive");
 const TARGET = path.join(PKG, "src/styles/theme.css");
