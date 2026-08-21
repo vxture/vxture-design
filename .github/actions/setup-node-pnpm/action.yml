@@ -1,0 +1,19 @@
+# 复合动作：安装 pnpm、配置 Node（带 pnpm 缓存）、按 frozen lockfile 安装依赖。
+# 统一 ci.yml 各 job 与 publish-design-system.yml 重复的安装块，并使 Node 版本单点维护。
+# 注意：本地复合动作需在调用前先 actions/checkout，调用方各自保留 checkout 步骤。
+name: Setup Node + pnpm
+description: Install pnpm, set up Node 24 with pnpm cache, and install dependencies (frozen lockfile).
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+
+    - uses: actions/setup-node@v6
+      with:
+        node-version: "24"
+        cache: "pnpm"
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

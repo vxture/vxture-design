@@ -1,0 +1,59 @@
+# ci.yml — vxture-design 的 PR 与 main 门禁。
+#
+# 顺序是硬约束：伞包的类型引用的是 design-ui / design-tokens 的**产物**（.d.ts），
+# 不是它们的源码，而 type-check 自己不产出声明。不先按依赖方向构建就必然 TS2307，
+# 且这个失败只在干净检出上出现——本地留着上一次的 dist，看起来一直是绿的。
+
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('push-{0}', github.ref_name) }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    name: quality-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node-pnpm
+
+      - name: Build design packages (tokens → ui → system)
+        run: pnpm build
+
+      - name: Type check
+        run: pnpm type-check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      # 七道守卫。lint:design 现在会跳过本仓不存在的扫描根（portals/business）——
+      # 拆仓后它是双管辖的，另一半（消费方怎么用 DS）留在平台仓。
+      - name: Design guardrails
+        run: pnpm guardrails
+
+  preview-build:
+    name: preview-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node-pnpm
+
+      # 预览面是 DS 唯一的真实渲染消费方：组件改坏了，这里先炸。
+      - name: Build design packages
+        run: pnpm build
+
+      - name: Build preview surface
+        run: pnpm build:preview

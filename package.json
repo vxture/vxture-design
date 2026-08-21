@@ -1,0 +1,41 @@
+{
+  "name": "vxture-design",
+  "private": true,
+  "description": "Vxture Design System — design tokens, UI components, umbrella package and preview surface.",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "pnpm --filter @vxture/design-tokens build && pnpm --filter @vxture/design-ui build && pnpm --filter @vxture/design-system build",
+    "build:preview": "pnpm --filter @vxture/design-preview build",
+    "type-check": "pnpm --recursive type-check",
+    "lint": "pnpm --recursive lint",
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,tsx,json,md}\"",
+    "lint:design": "node scripts/guardrails/check-design-system.mjs",
+    "lint:design-classes": "node scripts/guardrails/check-component-classes.mjs",
+    "lint:design-preview": "node scripts/guardrails/check-preview-coverage.mjs",
+    "lint:design-exports": "node scripts/guardrails/check-design-system-exports.mjs",
+    "lint:design-tokens": "node scripts/design-tokens/generate-primitive.mjs --check && node scripts/design-tokens/generate-semantic.mjs --check && node scripts/design-tokens/generate-semantic-scales.mjs --check && node scripts/design-tokens/generate-theme.mjs --check && node scripts/design-tokens/generate-token-ts.mjs --check && node scripts/design-tokens/check-utilities.mjs && node scripts/guardrails/check-mode-blocks.mjs",
+    "lint:server-entry": "node scripts/guardrails/check-server-entry-safety.mjs",
+    "lint:packed-consumability": "node scripts/guardrails/check-packed-consumability.mjs",
+    "guardrails": "pnpm lint:design-tokens && pnpm lint:design && pnpm lint:design-classes && pnpm lint:design-exports && pnpm lint:design-preview && pnpm lint:server-entry && pnpm lint:packed-consumability"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint": "^9.39.3",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "tailwindcss": "4.2.1"
+    }
+  }
+}

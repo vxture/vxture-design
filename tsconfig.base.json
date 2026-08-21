@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    // ─── 编译目标 ───────────────────────────────────────────────────────────
+    "target": "ES2023",
+    "lib": ["ES2023"], // 默认不含 DOM；前端包在本地覆盖为 ["DOM", "DOM.Iterable", "ES2023"]
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    // ─── 严格模式（禁止任何包单独关闭） ────────────────────────────────────
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+
+    // ─── 互操作 ─────────────────────────────────────────────────────────────
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+
+    // ─── 工具链 ─────────────────────────────────────────────────────────────
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // ─── 路径别名（monorepo 内部包统一入口） ────────────────────────────────
+    "paths": {
+      "@vxture/design-system": [
+        "./packages/design/design-system/src/client.ts"
+      ],
+      "@vxture/design-system/tokens": [
+        "./packages/design/design-system/src/tokens-entry.ts"
+      ],
+      "@vxture/design-system/types": [
+        "./packages/design/design-system/src/types-entry.ts"
+      ],
+      "@vxture/design-system/server": [
+        "./packages/design/design-system/src/server.ts"
+      ]
+    }
+  },
+  "include": [],
+  "exclude": ["node_modules", "dist", "build"]
+}

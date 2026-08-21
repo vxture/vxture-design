@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+.next/
+**/.next/
+storybook-static/
+
+# Generated files
+**/src/generated/
+coverage/
+**/coverage/
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Turbo
+.turbo/
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Figma DTCG 导出：上游设计源，格式化会破坏与后续重新导出的可比性
+packages/design/design-system/Figma-Token/
