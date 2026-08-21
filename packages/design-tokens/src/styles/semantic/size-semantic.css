@@ -11,7 +11,7 @@
  *   输入：scripts/design-tokens/semantic-policy.mjs
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
+ * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 落在 spacing 命名空间下，产出 size-icon-md / size-media-lg。不随密度轴变化——
  * 图标缩小会先失去可辨识度，密度收紧应体现在留白而非图形本身。

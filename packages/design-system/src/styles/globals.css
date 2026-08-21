@@ -8,7 +8,7 @@
  *
  * 路径相对本文件。两个包都要声明：组件在 design-ui，shell 在本包。
  *
- * **必须指向 dist，不能指向 src**（vxture-platform#268，2026-08-21）：两个包的
+ * **必须指向 dist，不能指向 src**（2026-08-21）：两个包的
  * `files` 都只发 dist（design-system 另发 src/styles，但不含 src/components），
  * 所以早先那版 `../../../design-ui/src` + `../components` 从 registry 装完之后
  * 两个目标都不存在——而 `@source` 解析为空**不报错**，症状与"根本没写 @source"

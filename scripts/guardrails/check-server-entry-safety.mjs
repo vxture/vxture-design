@@ -9,13 +9,13 @@
  * 单测全都跑在普通 node 条件下——产物导出了一条把 `createContext` 拖进模块作用域
  * 的链路，三道关卡一道都不会响。
  *
- * 实际代价见 #347：`iconRegistry.ts` 静态引 Phosphor 的 CSR 构建（模块作用域调用
+ * 实际代价：`iconRegistry.ts` 静态引 Phosphor 的 CSR 构建（模块作用域调用
  * `createContext`），于是 StatusBadge / EmptyState / Banner / Section / MetricCard /
  * MetricGrid 六个导出全都把它带进了 `/server`。生产环境被 webpack 的 DCE 兜住了，
  * 所以没人发现；而 `next dev` 无 DCE、全量求值，消费方本地开发直接 500。这种
  * 「线上好、本地炸」的缺陷最难归因，正因如此必须机器化。
  *
- * 做法：用 `--conditions react-server` 真的 import 一次产物。这与 #347 的复现命令
+ * 做法：用 `--conditions react-server` 真的 import 一次产物。这与实际复现命令
  * 逐字同源——复现命令即验收命令，不另造一套近似物。
  *
  * 用法：node scripts/guardrails/check-server-entry-safety.mjs

@@ -17,7 +17,7 @@
 //
 // 值 = 生成的具名清单，类型 = export type *（编译期擦除）。不能对 external 包
 // 写运行时 `export *`：index 产物带 "use client"，Next 15 flight loader 在
-// server/client 边界硬拒该组合（vxture-platform#320；生成器
+// server/client 边界硬拒该组合（生成器
 // scripts/generate-reexports.mjs 的头注释有完整论证）。
 // ============================================================================
 export type * from "@vxture/design-ui";

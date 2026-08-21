@@ -13,7 +13,7 @@
  * 与上游同值的挡位由 Tailwind 自己的 `@theme` 产出工具类，此处不重复。
  *
  * 注册后每个 token 产出真工具类，组件**禁止使用任意值语法**
- * （`h-(--control-height-lg)`）。约定见 docs/10-standards/040-*.md §4.1。
+ * （`h-(--control-height-lg)`）。约定见 docs/040-design-system-package-convergence.md §4.1。
  */
 
 /* 有模式轴（明暗 / 字号三档）。`inline` 保留 var() 引用而非取快照，故模式切换自动跟随。 */

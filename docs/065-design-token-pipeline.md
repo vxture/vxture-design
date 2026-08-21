@@ -284,10 +284,9 @@ Figma MCP 的页面枚举会漏列页面，且 `search_design_system` 只返回�
 ## 7. 关联文档
 
 - `packages/design-system/docs/01-usage.md` §2 —— T1–T4 层级对外定义
-- `docs/10-standards/060-design-system.md` §1.1 —— T1 镜像与偏离登记
-- `docs/10-standards/050-design-system-release.md` —— 发布与 SemVer
-- `docs/10-standards/040-design-system-package-convergence.md` —— 目录结构目标
-- `workplans/design-system-t1-t4-refactor.md` —— 本次重构的推进记录
+- `docs/060-design-system.md` §1.1 —— T1 镜像与偏离登记
+- `docs/050-design-system-release.md` —— 发布与 SemVer
+- `docs/040-design-system-package-convergence.md` —— 目录结构目标
 
 ## 8. 迁移进度
 

@@ -14,7 +14,7 @@
  *   peer，是为了单独安装本包时也能拿到那份 CSS。
  *
  * 依赖方向是单向的：tokens ← ui ← system。ui **禁止** import system，
- * 由 lint:boundaries 硬门守。反过来才对：shell 与 auth 消费 ui。
+ * 由仓库守卫组硬门守。反过来才对：shell 消费 ui。
  */
 
 export * from "./components/base";

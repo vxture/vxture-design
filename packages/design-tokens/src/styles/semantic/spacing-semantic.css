@@ -11,7 +11,7 @@
  *   输入：scripts/design-tokens/semantic-policy.mjs
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
+ * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 密度三档是**用户偏好轴**，与组件自身的尺寸变体（cva size）正交：前者由祖先
  * 类重定向变量、任意深度生效，后者由类名逐处指定。组件不需要知道密度存在。

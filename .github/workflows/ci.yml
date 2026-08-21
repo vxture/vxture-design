@@ -39,8 +39,8 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      # 七道守卫。lint:design 现在会跳过本仓不存在的扫描根（portals/business）——
-      # 拆仓后它是双管辖的，另一半（消费方怎么用 DS）留在平台仓。
+      # 七道守卫。lint:design 会跳过本仓不存在的扫描根（portals/business）——
+      # 那部分管辖消费方怎么用 DS，不在本仓职责内。
       - name: Design guardrails
         run: pnpm guardrails
 

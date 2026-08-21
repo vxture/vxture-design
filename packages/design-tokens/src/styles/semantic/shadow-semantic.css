@@ -11,7 +11,7 @@
  *   输入：scripts/design-tokens/semantic-policy.mjs
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
+ * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 按组件角色命名而非序数档位。允许多角色共用一档——可辨识的视觉高度本就比叠放
  * 层级少；与 z-index 的单调一致由生成器断言。暗色不另设一套，层次由 surface

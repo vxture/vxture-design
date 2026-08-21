@@ -3,9 +3,9 @@
 /**
  * check-design-system-exports.mjs — @vxture/design-system 公开入口快照守卫。
  *
- * 依据 docs/10-standards/040-design-system-package-convergence.md 阶段 A：
+ * 依据 docs/040-design-system-package-convergence.md 阶段 A：
  * 公开 JS/CSS 子路径的任何变化都必须经过显式评审。变化一旦确认，按
- * docs/10-standards/050-design-system-release.md 判定 SemVer 影响：
+ * docs/050-design-system-release.md 判定 SemVer 影响：
  *   新增公开入口 = minor；删除或改名公开入口 = major。
  *
  * 守卫两层契约：
@@ -189,7 +189,7 @@ async function main() {
   if (UPDATE) {
     const payload = {
       $comment:
-        "@vxture/design-system 公开入口快照。变更必须按 docs/10-standards/050-design-system-release.md 判定 SemVer 影响后，用 --update 显式更新。",
+        "@vxture/design-system 公开入口快照。变更必须按 docs/050-design-system-release.md 判定 SemVer 影响后，用 --update 显式更新。",
       ...actual,
     };
     writeFileSync(SNAPSHOT_PATH, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
@@ -216,7 +216,7 @@ async function main() {
     console.error("design-system 公开入口守卫未通过：\n");
     for (const problem of problems) console.error(`  ✗ ${problem}`);
     console.error(
-      "\n若变化是预期的：先按 docs/10-standards/050-design-system-release.md 判定版本号，" +
+      "\n若变化是预期的：先按 docs/050-design-system-release.md 判定版本号，" +
         "再运行 node scripts/guardrails/check-design-system-exports.mjs --update 更新快照。",
     );
     process.exit(1);

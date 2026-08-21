@@ -1,21 +1,20 @@
 # Design System 版本发布规范
 
-版本：2.1.0
-日期：2026-08-02
-范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`@vxture/shared`、`publish-design-system.yml`
+版本：3.0.0
+日期：2026-08-22
+范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`publish-design-system.yml`
 
 本文定义设计包的版本判断、发布准备、dry run、真实发布与发布后验证。发布必须走 PR、CI、merge、workflow，禁止从本地直接 `pnpm publish` 到 GitHub Packages。实现文件为 `.github/workflows/publish-design-system.yml`。
 
 ## 1. 包职责与版本边界
 
-设计系统拆为三包，依赖方向单向：**tokens ← ui ← system**。由 `lint:boundaries` 的两条规则硬门守（`no-design-ui-to-system`、`no-design-tokens-to-upper`）。
+设计系统拆为三包，依赖方向单向：**tokens ← ui ← system**，由仓库守卫组（`pnpm guardrails`）保证。
 
-| 包                      | 职责                                                                           | 依赖                    | 上层应用感知方式       |
-| ----------------------- | ------------------------------------------------------------------------------ | ----------------------- | ---------------------- |
-| `@vxture/design-tokens` | T1 原子（Tailwind v4 theme 镜像）+ T2 语义，两层 CSS；叠放次序与模式轴的 TS 面 | 无（零运行时依赖）      | 一般不直接依赖         |
-| `@vxture/design-ui`     | 无状态组件层：基础组件、平台图案、图标、hook、工具                             | tokens                  | 一般不直接依赖         |
-| `@vxture/design-system` | 伞包 + 运行时接线：主题 / 密度 / 字号 provider、shell、auth、品牌样式入口      | tokens + ui（精确版本） | **应用侧主依赖**       |
-| `@vxture/shared`        | 跨层类型、常量、纯工具                                                         | 无                      | 默认传递依赖，按需显式 |
+| 包                      | 职责                                                                           | 依赖                    | 上层应用感知方式 |
+| ----------------------- | ------------------------------------------------------------------------------ | ----------------------- | ---------------- |
+| `@vxture/design-tokens` | T1 原子（Tailwind v4 theme 镜像）+ T2 语义，两层 CSS；叠放次序与模式轴的 TS 面 | 无（零运行时依赖）      | 一般不直接依赖   |
+| `@vxture/design-ui`     | 无状态组件层：基础组件、图案、图标、hook、工具                                 | tokens                  | 一般不直接依赖   |
+| `@vxture/design-system` | 伞包 + 运行时接线：主题 / 密度 / 字号 provider、shell、品牌样式入口            | tokens + ui（精确版本） | **应用侧主依赖** |
 
 消费应用只依赖 `@vxture/design-system`。伞包把下面两层原样转发，拆包对上层不可见——**不要**因为"只用组件"就去直接依赖 `design-ui`，那会绕开伞包的运行时接线。
 
@@ -25,20 +24,19 @@
 
 ## 2. 版本号规则
 
-四个包独立维护 SemVer，是否同时发版由实际变更决定，不做全仓库统一版本。
+三个包独立维护 SemVer，是否同时发版由实际变更决定，不做全仓库统一版本。
 
-| 变更类型                     | tokens    | ui        | system        | shared        |
-| ---------------------------- | --------- | --------- | ------------- | ------------- |
-| 修 token 取值（不增删名字）  | Patch     | 不变      | Patch         | 不变          |
-| 增 token 语义名 / 扩展档     | Minor     | 不变      | Minor         | 不变          |
-| 删除或改名 token / 收窄色板  | **Major** | 视情况    | **Major**     | 不变          |
-| 修组件样式或行为 bug         | 不变      | Patch     | Patch         | 不变          |
-| 新增组件、新增 cva 变体      | 不变      | Minor     | Minor         | 不变          |
-| 删除或改名组件、改组件 props | 不变      | **Major** | **Major**     | 不变          |
-| 改 provider / shell / auth   | 不变      | 不变      | Patch / Minor | 不变          |
-| 删除或改名任一包的公开入口   | —         | —         | **Major**     | 视情况        |
-| 改 shared 类型、常量、工具   | 不变      | 不变      | 不变或 Patch  | Patch / Minor |
-| 仅文档、CI、发布流程         | 不发版    | 不发版    | 不发版        | 不发版        |
+| 变更类型                     | tokens    | ui        | system        |
+| ---------------------------- | --------- | --------- | ------------- |
+| 修 token 取值（不增删名字）  | Patch     | 不变      | Patch         |
+| 增 token 语义名 / 扩展档     | Minor     | 不变      | Minor         |
+| 删除或改名 token / 收窄色板  | **Major** | 视情况    | **Major**     |
+| 修组件样式或行为 bug         | 不变      | Patch     | Patch         |
+| 新增组件、新增 cva 变体      | 不变      | Minor     | Minor         |
+| 删除或改名组件、改组件 props | 不变      | **Major** | **Major**     |
+| 改 provider / shell          | 不变      | 不变      | Patch / Minor |
+| 删除或改名任一包的公开入口   | —         | —         | **Major**     |
+| 仅文档、CI、发布流程         | 不发版    | 不发版    | 不发版        |
 
 **下层的 major 会向上传导**：tokens 删一个 token 名，ui 的组件可能哑火，伞包的公开行为随之改变——所以下层 major 时上层同样按 major 处理，除非能证明变更未穿透。伞包用精确版本，这一点无法靠版本范围回避。
 
@@ -57,7 +55,7 @@ token 层的破坏性判据与 CSS 不同于代码：**删掉一个 CSS 变量�
 **顺序是硬约束**，不是习惯：
 
 ```
-@vxture/shared → @vxture/design-tokens → @vxture/design-ui → @vxture/design-system
+@vxture/design-tokens → @vxture/design-ui → @vxture/design-system
 ```
 
 pnpm 打包时把 `workspace:` 协议替换成真实版本号，所以 `design-ui` 发出去会声明 `"@vxture/design-tokens": "^x.y.z"`。若那一版还没进 registry，**消费方 install 直接失败，而流水线自己是绿的**——`pnpm publish` 不校验依赖可解析。
@@ -79,11 +77,9 @@ pnpm 打包时把 `workspace:` 协议替换成真实版本号，所以 `design-u
 pnpm lint:design-tokens
 pnpm lint:design
 pnpm lint:design-classes
-pnpm lint:boundaries
 
 # 按依赖方向逐包构建。design-system 的类型依赖 design-ui 的产物，
 # 用 --parallel 会随机失败。
-pnpm --filter @vxture/shared build
 for p in design-tokens design-ui design-system; do
   pnpm --filter "@vxture/$p" type-check
   pnpm --filter "@vxture/$p" lint
@@ -91,7 +87,7 @@ for p in design-tokens design-ui design-system; do
 done
 ```
 
-6. 创建 PR，等待 `Type Check · Lint · Boundaries` 等 required checks 通过。
+6. 创建 PR，等待 CI 的 required checks 通过。
 7. 通过 squash merge 合并到 `main`。
 
 提交信息建议：
@@ -99,7 +95,6 @@ done
 ```text
 chore(ds): release design-tokens 1.1.0
 chore(ds): release design-tokens 1.1.0, design-ui 1.1.0 and design-system 3.1.0
-chore(shared): release shared 1.2.3
 ```
 
 同时发多个包时按依赖顺序列出，读的人一眼能看出传导关系。
@@ -116,11 +111,10 @@ chore(shared): release shared 1.2.3
 
 dry run 会执行：
 
-- 安装依赖，build `@vxture/shared`
 - 三包按依赖方向逐个 type-check / lint / build
-- 仓库级守卫：`lint:design-tokens`、`lint:design`、`lint:design-classes`、`lint:boundaries`
+- 仓库级守卫：`lint:design-tokens`、`lint:design`、`lint:design-classes`
 - 公开入口快照校验（`check-design-system-exports.mjs --strict`）
-- 四个包各自 `pnpm pack --dry-run`
+- 三包各自 `pnpm pack --dry-run`
 - 查询 GitHub Packages 中每个包的当前版本是否已存在，并在 job summary 里列出
   "待发布 / 已存在，跳过"
 
@@ -151,11 +145,10 @@ workflow 按第 3 节的顺序逐包处理：查询该版本是否已存在 → 
 发布完成后必须验证 GitHub Packages 可读：
 
 ```bash
-npm view @vxture/shared@<version> version --registry=https://npm.pkg.github.com
 npm view @vxture/design-system@<version> version --registry=https://npm.pkg.github.com
 ```
 
-如只发布 DS 且 shared 未变，可只验证 DS。随后选择一个消费仓库执行：
+随后选择一个消费仓库执行：
 
 ```bash
 pnpm install --frozen-lockfile
@@ -195,7 +188,7 @@ GitHub Packages 版本发布后不可覆盖。出现问题时按补丁版本处�
 ## 10. 关联文档
 
 - `packages/design-system/docs/` —— 对外使用规范（随包发布）
-- `docs/10-standards/060-design-system.md` —— DS 内部工程规范
-- `docs/10-standards/065-design-token-pipeline.md` —— token 生成与守卫
-- `docs/10-standards/040-design-system-package-convergence.md` —— 包结构
+- `docs/060-design-system.md` —— DS 内部工程规范
+- `docs/065-design-token-pipeline.md` —— token 生成与守卫
+- `docs/040-design-system-package-convergence.md` —— 包结构
 - `.github/workflows/publish-design-system.yml` —— 实现

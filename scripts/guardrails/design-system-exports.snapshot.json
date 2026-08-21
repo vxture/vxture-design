@@ -1,5 +1,5 @@
 {
-  "$comment": "@vxture/design-system 公开入口快照。变更必须按 docs/10-standards/050-design-system-release.md 判定 SemVer 影响后，用 --update 显式更新。",
+  "$comment": "@vxture/design-system 公开入口快照。变更必须按 docs/050-design-system-release.md 判定 SemVer 影响后，用 --update 显式更新。",
   "static": {
     "exports": {
       ".": {

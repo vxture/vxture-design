@@ -32,7 +32,7 @@
 design-tokens  →  design-ui  →  design-system
 ```
 
-**`design-ui` 永不 import `design-system`。** 这是保持线性的唯一规则，由 `lint:boundaries`（depcruise）硬门强制。
+**`design-ui` 永不 import `design-system`。** 这是保持线性的唯一规则，由仓库守卫组（`pnpm guardrails`）硬门强制。
 
 实测依据：组件对运行时机制的依赖仅一处（`ShellChrome.tsx` 引 `Density` 类型），无组件使用 `useTheme`，`theme/density/layers` 不反向依赖组件。`Density`/`FontSize` 类型下沉 tokens 后该处解开。
 
@@ -78,8 +78,7 @@ design-tokens  →  design-ui  →  design-system
 
 ## 5. 关联文档
 
-- `docs/10-standards/050-design-system-release.md` —— 三包发布与 SemVer
+- `docs/050-design-system-release.md` —— 三包发布与 SemVer
 - `packages/design-system/docs/` —— 对外使用规范（随包发布）
-- `docs/10-standards/060-design-system.md` —— DS 内部工程规范
-- `docs/10-standards/065-design-token-pipeline.md` —— token 构建与 T1/T2/T3 边界
-- `workplans/design-system-t1-t4-refactor.md` —— 推进记录
+- `docs/060-design-system.md` —— DS 内部工程规范
+- `docs/065-design-token-pipeline.md` —— token 构建与 T1/T2/T3 边界

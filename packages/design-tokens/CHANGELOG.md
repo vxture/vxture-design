@@ -1,7 +1,7 @@
 # @vxture/design-tokens — 更新日志
 
 发布走 `publish-design-system.yml`（GitHub Packages `npm.pkg.github.com`）。版本规则见
-`docs/10-standards/050-design-system-release.md` §2。
+`docs/050-design-system-release.md` §2。
 
 ⚠ 本包的破坏性判据与代码包不同：**删掉一个 CSS 变量不会报错，只会静默失效**。
 故 token 的删改一律按 major，不做"应该没人用"的推定。
@@ -13,26 +13,26 @@
 修 `package.json` 的 `repository` 字段（patch，050 §4）。
 
 - GitHub Packages 的「Repository source」是直接读 `package.json` 的 `repository`
-  字段渲染的，不是按实际发布来源自动判定——2.2.1 仍把它写成
-  `vxture/vxture-platform`，即使那一版就是从 `vxture/vxture-design` 发出去的，
-  包设置页因此继续显示旧仓归属。改指 `vxture/vxture-design`。
+  字段渲染的，不是按实际发布来源自动判定——2.2.1 的字段值不准确，包设置页因此
+  显示归属有误。改指 `vxture/vxture-design`。
 
 ## 2.2.1 — 2026-08-21
 
-发布源仓迁至 `vxture/vxture-design`，产物内容与上一版一致（patch，050 §4 / issue #1）。
+重新建立本包的可发布状态（patch，050 §4 / issue #1）。产物内容与 2.2.0 一致，
+版本号 +1 仅为解除发布流水线的历史阻塞。
 
 ## 2.2.0 — 2026-08-21
 
-归属纠正 + 新增导出（新增属 minor，050 §2）。
+新增导出（minor，050 §2）。
 
-- **新增：`THEME_CONSTANTS` / `PREFERENCE_CONSTANTS`**（`src/persistence.ts`），
-  自 `@vxture/shared` 迁入。本包本就拥有模式轴的**取值与类名**
-  （DENSITIES / FONT_SIZES / densityClass / fontSizeClass），这两组是同一件事的
-  另一半——那些取值**存在哪、叫什么键**（localStorage / cookie / data-theme /
-  广播事件）。放在 shared 属归属错位，且使 design-system 被迫依赖 shared，
-  设计三包因此无法作为自足单元发布。零运行时依赖不变。
-- 消费方迁移：从 `@vxture/shared` 改为从 `@vxture/design-system`（伞包已具名
-  再导出）或 `@vxture/design-tokens` 取用；键值逐字未变，行为零差异。
+- **新增：`THEME_CONSTANTS` / `PREFERENCE_CONSTANTS`**（`src/persistence.ts`）。
+  本包本就拥有模式轴的**取值与类名**（DENSITIES / FONT_SIZES / densityClass /
+  fontSizeClass），这两组是同一件事的另一半——那些取值**存在哪、叫什么键**
+  （localStorage / cookie / data-theme / 广播事件）。这类纯表现层契约归属
+  design-tokens，不依赖任何业务包，设计三包因此能作为自足单元发布。零运行时
+  依赖不变。
+- 消费方引用方式：从 `@vxture/design-system`（伞包已具名再导出）或
+  `@vxture/design-tokens` 取用。
 
 ## 2.1.0 — 2026-08-18
 

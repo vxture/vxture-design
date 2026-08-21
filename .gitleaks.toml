@@ -1,4 +1,4 @@
-# gitleaks 配置 — vxture 私有平台仓库
+# gitleaks 配置 — vxture-design
 # 用途：CI 门禁（.github/workflows/secret-scan.yml）与本地 pre-commit 钩子共用同一套规则。
 # 本仓库当前 public、开发完成后转 private；无论公私，凭证一律不得进仓库（真实值走
 # GitHub Environments secrets / 部署宿主 env 注入）。新问题 → 加规则或 allowlist，勿放宽。

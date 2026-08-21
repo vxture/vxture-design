@@ -1,7 +1,7 @@
 # @vxture/design-system — 更新日志
 
 发布走 `publish-design-system.yml`（GitHub Packages `npm.pkg.github.com`）。版本规则见
-`docs/10-standards/050-design-system-release.md` §2。
+`docs/050-design-system-release.md` §2。
 
 ---
 
@@ -10,19 +10,19 @@
 补 `package.json` 的 `repository` 字段（patch，050 §4）。
 
 - GitHub Packages 的「Repository source」是直接读 `package.json` 的 `repository`
-  字段渲染的，不是按实际发布来源自动判定——本包此前一直没有这个字段（拆仓时漏加），
-  即使 6.4.1 已从 `vxture/vxture-design` 发出去，包设置页仍显示 `vxture-platform`。
-  补上 `repository`，指向 `vxture/vxture-design`。
+  字段渲染的，不是按实际发布来源自动判定——本包此前一直没有这个字段，包设置页
+  因此显示归属有误。补上 `repository`，指向 `vxture/vxture-design`。
 
 ## 6.4.1 - 2026-08-21
 
-发布源仓迁至 `vxture/vxture-design`，产物内容与上一版一致（patch，050 §4 / issue #1）。
+重新建立本包的可发布状态（patch，050 §4 / issue #1）。产物内容与 6.4.0 一致，
+版本号 +1 仅为解除发布流水线的历史阻塞。
 
 ## 6.4.0 - 2026-08-21
 
 ### Fixed
 
-- **发布包的 `@source` 指向了不发布的目录**(vxture-platform#268 第一条)。
+- **发布包的 `@source` 指向了不发布的目录**。
   `src/styles/globals.css` 里两条 `@source` 指向 `../../../design-ui/src` 与
   `../components`,而两个包的 `files` 只发 `dist`(design-system 另发 `src/styles`,
   不含 `src/components`)——从 registry 装完之后两个目标都不存在。改指 `dist/`,
@@ -36,7 +36,7 @@
 
 ### Changed (类型面收窄,消费方可能需要改 import)
 
-- **`/server` 的类型面收窄到等于运行时面**(vxture-platform#268 第三条)。
+- **`/server` 的类型面收窄到等于运行时面**。
   `src/server.ts` 里的 `export type * from "@vxture/design-ui"` 看着是安全的,
   但 tsup 的 dts rollup 会擦掉 `type` 修饰符,产出 `export * from '@vxture/design-ui'`
   ——282 个客户端组件名同时落进 `.d.ts` 的**值空间**,而 `server.mjs` 运行时只有 27 个。
@@ -55,8 +55,7 @@
 - `docs/07-consumption-pitfalls.md`:接入陷阱清单,只收「接上去不报错、构建全绿、
   但结果是错的」这一类——T2 语义层无前缀导致的 token 撞名(608 个无前缀名,18 个单段短名)、
   暗色走 `.dark` 而非 `prefers-color-scheme`、`/server` 子集边界、`@source` 现状。
-  随包发布(`files` 含 `docs`),接入方装完就能读到。#268 的报告人三轮里提了三次
-  「这几条该进升级说明」,这份文档是那个请求的落地。
+  随包发布(`files` 含 `docs`),接入方装完就能读到。
 
 - 守卫 `check-packed-consumability.mjs`:按 **registry 安装形态** 验三包可消费。
   向 `npm pack --dry-run --json` 要真实发布集(不自己解释 `files` 字段)、按
@@ -65,12 +64,12 @@
   不宽于运行时面。已接入 CI 与发布流水线,并经反向验证——把上面两条缺陷分别退回去,
   守卫确实报错(`@source` 两个目标失联;`/server` 多出 225 个幽灵值导出)。
 
-  #268 的六条全部是同一个形状:**monorepo 里永远测不出来,只有消费方会撞上**。
+  这类缺陷的共同形状是:**monorepo 里永远测不出来,只有消费方会撞上**。
   这条守卫补的就是这个盲区。
 
 ## 6.3.1 — 2026-08-21
 
-跟随 design-ui 3.1.1（#347 修 bug，属 patch）。
+跟随 design-ui 3.1.1（修 bug，属 patch）。
 
 - 伞包的 `@vxture/design-system/server` 转发同样受益：此前它转发的是一条在
   react-server 下不可求值的链路，现已通过 `--conditions react-server` 实测
@@ -83,10 +82,9 @@
 
 - **新增具名导出：`THEME_CONSTANTS` / `PREFERENCE_CONSTANTS`**（转发自
   design-tokens 2.2.0）。公开入口快照已同步。
-- **移除依赖：`@vxture/shared`。** 主题/偏好契约键迁入 design-tokens 后，设计
-  三包不再依赖平台通用包——**设计系统自此是自足单元**，可独立于平台仓发布，
-  外部消费者安装时也不再拖入 shared。这是本次拆仓（设计三包留 `@vxture` 作用域、
-  平台仓迁往新组织）的技术前提。
+- **移除对外部通用包的依赖。** 主题/偏好契约键迁入 design-tokens 后，设计
+  三包不再依赖任何业务包——**设计系统自此是自足单元**，可独立发布，
+  外部消费者安装时也不再拖入无关依赖。
 - 无 API 行为变化：ThemeProvider / themeBootstrapScript / fontSizePreference 的
   取值与键逐字不变，仅导入来源由 shared 改为 design-tokens。
 - **API 收窄（shell 语言切换）**：`LocaleSelectOption.locale` 与
@@ -110,7 +108,7 @@
 
 ## 6.1.0 — 2026-08-20
 
-发布产物修复 + 一个 server-safe 追加（#320，外部消费者 karda/yucer 双双命中）：
+发布产物修复 + 一个 server-safe 追加（外部消费方均命中）：
 
 - **修复：发布产物在 Next 15 外部消费仓无法编译。** tsup 默认把 dependencies
   当 external，index 产物里保留 `export * from "@vxture/design-ui|design-tokens"`，
@@ -131,8 +129,8 @@
 
 ## 6.0.0 — 2026-08-18
 
-DS 治理批次收口：2026-08-18 全面审查（报告存档）+ shell-template 退役战役（#288–#295
-八个 PR 当日走完）。判据「DS 只收通用、无业务含义的件」全面落地；下层 design-ui 3.0.0
+DS 治理批次收口：2026-08-18 全面审查（报告存档）+ shell-template 退役战役（八个 PR
+当日走完）。判据「DS 只收通用、无业务含义的件」全面落地；下层 design-ui 3.0.0
 major 向上传导，伞包按 major 处理。
 
 **外部消费方迁移总表**（从 `5.0.0` 升级）：
@@ -149,8 +147,7 @@ major 向上传导，伞包按 major 处理。
 
 ### 💥 Breaking
 
-- 上表七类公开入口/导出删除（各删除的判据与过程详见 2026-08-18 审查报告与
-  #279/#284/#285/#291/#292/#295）。
+- 上表七类公开入口/导出删除（各删除的判据与过程详见 2026-08-18 审查报告）。
 
 ### ✨ 新增
 

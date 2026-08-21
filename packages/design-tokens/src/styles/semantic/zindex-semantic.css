@@ -11,7 +11,7 @@
  *   输入：semantic-policy.mjs
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
+ * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 无 T1 可指：叠放次序不是量纲，500 不是某个测量值的第 500 档，只是一个序。
  */

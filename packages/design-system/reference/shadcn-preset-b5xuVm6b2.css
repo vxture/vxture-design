@@ -11,7 +11,7 @@
  *   preset 的 --primary 是 violet，Vxture 品牌主色是蓝（见
  *   tokens-brand-vxture.css 的 --vx-color-brand-600）；且 preset 取值出自
  *   Tailwind v4 P3 调色板，与设计稿的饱和色不等值。权威取值一律来自
- *   Figma Vxture-Design-System，详见 workplans/design-system-t1-t4-refactor.md。
+ *   Figma Vxture-Design-System。
  *
  * ⚠ 不参与构建、不随包发布（package.json files 白名单未含 reference/）。
  */

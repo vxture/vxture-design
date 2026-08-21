@@ -11,7 +11,7 @@
  *   输入：scripts/design-tokens/typography-policy.mjs
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
+ * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 每个角色一次落齐字号 / 行高 / 字距 / 字重，由 theme.css 注册为 v4 的
  * `--text-<role>` 及其修饰子键；字体族不在修饰子键之列，仍由独立的

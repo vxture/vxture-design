@@ -178,7 +178,7 @@ const css = `/**
  *   输入：scripts/design-tokens/color-policy.mjs
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。
+ * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 命名沿用 shadcn 约定（--background / --foreground / --primary / --border …），
  * shadcn 无对应概念的用 DS 自有名（--surface-* / --content-* / --link …）。

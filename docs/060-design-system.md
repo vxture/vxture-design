@@ -44,7 +44,7 @@ L0–L5 组件归属与 T1–T4 token 分层的对外定义见包内 `docs/01-us
 - 危险动作淡底取自 vega，但不照抄它的 `bg-destructive/10`——alpha 不自适应暗色，vega 必须补写 `dark:` 变体，而我们有十档 destructive 阶，实色结果确定。**采纳的是上游的判断，不是它缺 muted 阶时的将就手段。**
 - `destructive-strong` 上游没有，是因为它不发确认对话框图案，从未遇到这个问题。
 - 密度不改控件高度：实测 shadcn 的 maia（generous）与 vega 控件高度完全相同（24/32/36/40）。故 `SPACING_SCALE` 的 `control` 族默认档取中间列，`inset` 与 `row` 取最宽列。
-- 透明模式的视觉权威 = admin 内容区语法，来源 `workplans/ds-transparent-mode-uplift.md` §1。
+- 透明模式的视觉权威 = admin 内容区语法。
 
 ### 1.2.2 配方层
 
@@ -143,9 +143,6 @@ pnpm --filter @vxture/design-system build
 
 - `packages/design-system/docs/` —— 对外使用规范（随包发布）
 - `packages/design-system/README.md`
-- `docs/40-implementation/packages/design/10-design-system.md`
-- `docs/10-standards/065-design-token-pipeline.md`
-- `docs/10-standards/050-design-system-release.md`
-- `docs/10-standards/030-design-system-consumer-trial.md`
-- `docs/10-standards/040-design-system-package-convergence.md`
-- `docs/60-operations/audit/checklist-ds.md`
+- `docs/065-design-token-pipeline.md`
+- `docs/050-design-system-release.md`
+- `docs/040-design-system-package-convergence.md`

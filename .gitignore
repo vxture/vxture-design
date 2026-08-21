@@ -217,8 +217,6 @@ docs/architecture/package-architecture.html
 #   scripts/guardrails/check-public-repo-hygiene.mjs — this is the convenience
 #   layer, that is the guarantee.
 /vpn-proxy-claude-cli-baseline.md
-packages/design/design-system-gallery/
-/workplans/mgmt-plane-contract-capability-console.md
 
 # Local dev data layer (deploy/dev/compose.dev.yml bind-mounts these)
 deploy/dev/data/

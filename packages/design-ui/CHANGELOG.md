@@ -1,7 +1,7 @@
 # @vxture/design-ui — 更新日志
 
 发布走 `publish-design-system.yml`（GitHub Packages `npm.pkg.github.com`）。版本规则见
-`docs/10-standards/050-design-system-release.md` §2。
+`docs/050-design-system-release.md` §2。
 
 ---
 
@@ -10,26 +10,26 @@
 修 `package.json` 的 `repository` 字段（patch，050 §4）。
 
 - GitHub Packages 的「Repository source」是直接读 `package.json` 的 `repository`
-  字段渲染的，不是按实际发布来源自动判定——3.1.2 仍把它写成
-  `vxture/vxture-platform`，即使那一版就是从 `vxture/vxture-design` 发出去的，
-  包设置页因此继续显示旧仓归属。改指 `vxture/vxture-design`。
+  字段渲染的，不是按实际发布来源自动判定——3.1.2 的字段值不准确，包设置页因此
+  显示归属有误。改指 `vxture/vxture-design`。
 
 ## 3.1.2 — 2026-08-21
 
-发布源仓迁至 `vxture/vxture-design`，产物内容与上一版一致（patch，050 §4 / issue #1）。
+重新建立本包的可发布状态（patch，050 §4 / issue #1）。产物内容与 3.1.1 一致，
+版本号 +1 仅为解除发布流水线的历史阻塞。
 
 ## 3.1.1 — 2026-08-21
 
-修 bug（#347），属 patch（050 §2）。
+修 bug，属 patch（050 §2）。
 
-- **修复：`/server` 入口在 react-server 运行时求值即崩。** 复现（#347 原命令）：
+- **修复：`/server` 入口在 react-server 运行时求值即崩。** 复现命令：
   `node --conditions react-server -e "import('@vxture/design-ui/server')"` →
   `The requested module 'react' does not provide an export named 'createContext'`。
 - **根因**：`icons/iconRegistry.ts` 引的是 Phosphor 的**裸入口（CSR 构建）**，它在
   模块作用域调用 `createContext`，而 react-server 运行时的 react 不导出该符号。
   `server.ts` 的注释早就写死「不得导出任何 import ../../icons 的组件」，但导出列表
   里有 **6 个**违反此规则：StatusBadge / EmptyState / Banner / Section / MetricCard /
-  MetricGrid（#347 只点了前两个，实测是六个）。
+  MetricGrid（原始报告只点了前两个，实测是六个）。
 - **修法**：改引 `@phosphor-icons/react/ssr`——同一套图标的无 context 版本。
   没有采用 issue 备选的「移出 `/server` 导出列表」：那会砍掉六个最常用的
   server-safe 组件，是把契约缩到实现能满足的范围，而不是修实现。也没有采用

@@ -465,7 +465,7 @@ function header(file, label, source, extra = "") {
  *   输入：${source}
  *
  * T2 契约见 packages/design-system/docs/04-tokens-contract.md。
- * 构建规范见 docs/10-standards/065-design-token-pipeline.md。${extra}
+ * 构建规范见 docs/065-design-token-pipeline.md。${extra}
  */
 `;
 }

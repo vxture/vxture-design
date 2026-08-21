@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * generate-reexports.mjs - 生成 index 对 design-ui / design-tokens 的具名再导出
- * （vxture-platform#320）。
+ * generate-reexports.mjs - 生成 index 对 design-ui / design-tokens 的具名再导出。
  *
  * 为什么存在：index 产物被注入 "use client"，而对 external 包的 `export *` 会
  * 原样留在产物里——Next 15 的 next-flight-loader 在 server/client 边界上硬拒
@@ -43,7 +42,7 @@ const tokens = (await runtimeExports("@vxture/design-tokens")).filter((k) => !ui
 const list = (names) => names.map((n) => `  ${n},`).join("\n");
 
 const out = `// 本文件由 scripts/generate-reexports.mjs 生成——不得手工编辑（改动会在下一次
-// pnpm build 时被覆盖）。背景与规则见生成脚本头注释（vxture-platform#320）。
+// pnpm build 时被覆盖）。背景与规则见生成脚本头注释。
 
 // ---- @vxture/design-ui 的全部运行时导出（${ui.length} 个） ----
 export {

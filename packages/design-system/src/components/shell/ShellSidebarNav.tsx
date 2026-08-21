@@ -17,7 +17,7 @@
  *
  * 放在 design-system（不是 design-ui）：要复用同目录 `ShellChrome.tsx` 里的
  * `ShellIconButton`，依赖方向是单向 design-system → design-ui，design-ui 不能
- * 反过来引 design-system 的导出（lint:boundaries 硬门）——跟 `ShellLauncher`
+ * 反过来引 design-system 的导出（仓库守卫组硬门）——跟 `ShellLauncher`
  * 落在这个包的理由一致。
  *
  * 路由无关：导航项的链接元素由 `linkComponent` 注入，默认原生 `<a>`。本包不依赖
