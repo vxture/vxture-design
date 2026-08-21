@@ -4,9 +4,9 @@
 
 | 包                       | 版本  | 职责                                                              | 依赖              |
 | ------------------------ | ----- | ----------------------------------------------------------------- | ----------------- |
-| `@vxture/design-tokens`  | 2.2.1 | T1 原始层（Tailwind theme 的完整镜像）+ T2 语义层                 | 无 `@vxture` 依赖 |
-| `@vxture/design-ui`      | 3.1.2 | 组件实现                                                          | design-tokens     |
-| `@vxture/design-system`  | 6.4.1 | 伞包 + 运行时接线（主题 / 密度 / 字号 provider、shell、品牌样式） | tokens + ui       |
+| `@vxture/design-tokens`  | 2.2.2 | T1 原始层（Tailwind theme 的完整镜像）+ T2 语义层                 | 无 `@vxture` 依赖 |
+| `@vxture/design-ui`      | 3.1.3 | 组件实现                                                          | design-tokens     |
+| `@vxture/design-system`  | 6.4.2 | 伞包 + 运行时接线（主题 / 密度 / 字号 provider、shell、品牌样式） | tokens + ui       |
 | `@vxture/design-preview` | —     | 预览面（**私有，不发布**）——DS 唯一的真实渲染消费方               | design-system     |
 
 依赖是单向的，没有循环，也**不依赖任何平台包**——这是 2026-08-21 拆仓的前提，
@@ -16,7 +16,7 @@
 
 **GitHub Packages 要求 npm scope 等于发包组织。** 本仓在 `vxture` 组织下，
 所以三包继续叫 `@vxture/*`——包身份连续，消费方不必改名，版本线接着走
-（`@vxture/design-system` 已到 6.4.1，从 0.1.0 重开会让 `latest` 倒退）。
+（`@vxture/design-system` 已到 6.4.2，从 0.1.0 重开会让 `latest` 倒退）。
 
 平台侧的 `@vxture-platform/shared` 是另一条线，不在本仓。
 
