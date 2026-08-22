@@ -5,6 +5,14 @@
 
 ---
 
+## 6.4.3 - 2026-08-22
+
+修 `repository.url` 的 scheme 前缀（patch，050 §4）。
+
+- GitHub Packages 的「Repository source」校验只认裸的 `https://github.com/OWNER/REPO.git`，
+  `git+https://...` 会被当成非 GitHub 来源，判定为无法校验。去掉 `git+` 前缀，
+  `type`/`directory` 不变。
+
 ## 6.4.2 - 2026-08-21
 
 补 `package.json` 的 `repository` 字段（patch，050 §4）。
