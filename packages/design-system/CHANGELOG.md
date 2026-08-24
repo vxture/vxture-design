@@ -5,6 +5,16 @@
 
 ---
 
+## 6.5.0 - 2026-08-24
+
+跟随 design-ui 3.2.0（minor 传导，050 §2），tokens 不变。
+
+- `ActionMenu` 锁死修复：菜单开出的 Dialog 关闭后整页 `pointer-events: none`
+  残留（Radix 模态菜单与模态对话框的 body 锁竞争），菜单改非模态后消除。
+- `DialogForm` 新增 `xl` 尺寸档（`max-w-panel-xl`，双栏表单）；页脚上方加
+  分割线——对话框骨架定稿为「标题 / 内容区 / 分割线 / 操作区下对齐」。
+- 详见 design-ui 3.2.0 更新日志。
+
 ## 6.4.3 - 2026-08-22
 
 修 `repository.url` 的 scheme 前缀（patch，050 §4）。
