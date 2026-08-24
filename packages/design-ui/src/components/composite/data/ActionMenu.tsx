@@ -70,7 +70,16 @@ function ActionMenu({
   const lastInputRef = React.useRef<"pointer" | "keyboard">("pointer");
 
   return (
-    <DropdownMenu>
+    /**
+     * `modal={false}`：菜单项打开 Dialog 是本件最常见的用法（编辑 / 删除 /
+     * 抽屉），而 Radix 的模态菜单和模态 Dialog 各自往 `<body>` 上挂
+     * `pointer-events: none`，菜单的解锁与对话框的加锁在同一拍里竞争——
+     * 对话框关闭后锁会**残留**，整页从此点不动，只能刷新（2026-08-24 在
+     * opera 模型服务页用真实鼠标事件复现：菜单→编辑→取消 后 body 一直是
+     * `pointer-events: none`）。非模态菜单不上锁，就没有竞争；外点关闭、
+     * 键盘导航、焦点找回都不受影响。行菜单本来也不需要"锁住全页"的强度。
+     */
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"

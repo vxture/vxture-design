@@ -4,7 +4,7 @@
  * @layer Presentation
  * @category Components - Pattern
  *
- * 固定四段结构：标题 / 说明 / 字段区 / 页脚。字段区由调用方给 markup——表单字段是
+ * 固定结构：标题 / 说明 / 字段区 / 分割线 / 页脚。字段区由调用方给 markup——表单字段是
  * 业务形状；页脚不是，所以按钮由 props 描述，取消在左、提交在右、提交中禁用两侧，
  * 各处不会长得不一样。
  *
@@ -15,6 +15,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
+import { Separator } from "../../base/display/Separator";
 import { Button } from "../../base/form/Button";
 import {
   Dialog,
@@ -25,14 +26,17 @@ import {
   DialogTitle,
 } from "../../base/overlay/Dialog";
 
-export type DialogFormSize = "sm" | "md" | "lg";
+export type DialogFormSize = "sm" | "md" | "lg" | "xl";
 
-/* 浮层面板宽走 panel 族（448 / 512 / 672）——裸 `max-w-md/lg` 会命中
-   同名 spacing 档（见 Dialog 的塌宽事故注释）。 */
+/* 浮层面板宽走 panel 族（448 / 512 / 672 / 928）——裸 `max-w-md/lg` 会命中
+   同名 spacing 档（见 Dialog 的塌宽事故注释）。xl 是 panel 梯的超宽档，
+   为的就是双栏表单：字段多的注册表单铺两列，内容不超过滚动阈值，
+   滚动条就不会出现。 */
 const BY_SIZE: Record<DialogFormSize, string> = {
   sm: "max-w-panel-sm",
   md: "max-w-panel-md",
   lg: "max-w-panel-lg",
+  xl: "max-w-panel-xl",
 };
 
 export interface DialogFormProps extends Omit<
@@ -89,6 +93,10 @@ function DialogForm({
               {children}
             </div>
           ) : null}
+          {/* 操作区与内容区之间一条分割线（owner 2026-08-24 定的对话框骨架：
+              标题在上 / 内容区 / 分割线 / 操作区下对齐）。长表单滚动时它同时是
+              "页脚钉住"的视觉边界——没有这条线，滚动内容会看起来直接顶着按钮。 */}
+          <Separator />
           <DialogFooter>
             <Button
               type="button"
