@@ -88,8 +88,12 @@ function DialogForm({
                `max-h-[60vh] overflow-y-auto pr-2xs`、其余一处没有——于是同样长的
                表单在不同页上一个能滚一个把对话框顶穿。滚动只发生在这一段：标题与
                页脚钉住，长表单滚到底时提交按钮仍在原位。
-               `pr-2xs` 是给滚动条让位，不是装饰：不留这一格，聚焦环会被裁掉半圈。 */
-            <div className="flex max-h-[60vh] flex-col gap-md overflow-y-auto pr-2xs">
+               `pr-2xs` 是给滚动条让位，不是装饰：不留这一格，聚焦环会被裁掉半圈。
+               上限 70vh：xl 档进来后对话框的常态是双栏长表单，60vh 在 1080p 只给
+               648px，紧凑密度排完（实测 617px）几乎贴顶，笔记本高度必滚。70vh 让
+               「整表可见、滚动只是兜底」在常见视口成立；整体高度（内容 + 标题页脚
+               ≈ +180px）在 800px 视口内仍放得下。 */
+            <div className="flex max-h-[70vh] flex-col gap-md overflow-y-auto pr-2xs">
               {children}
             </div>
           ) : null}
