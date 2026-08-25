@@ -5,6 +5,19 @@
 
 ---
 
+## 7.0.0 - 2026-08-25
+
+跟随 design-ui 4.0.0（major 传导，050 §2「下层的 major 会向上传导」），tokens 不变。
+
+- **`danger` 从视觉开关变成带拦截的契约。** `ActionMenuItem` /
+  `BulkActionBarItem` 收为判别联合：`danger: true` 必须给 `confirm`
+  （`DestructiveConfirm` 契约，由 DS 弹确认框）或写明 `confirmExempt` 理由。
+  所有现存的 `danger: true` 调用点会编译失败——这是本版的目的。
+- **新增公开入口 `ConfirmDestructive`**（含 `DestructiveConfirm` /
+  `DestructivePrecondition` 类型）：破坏性确认件，把 03 §3 与 05 §46 两条散文
+  判据变成必填参数；`preconditions` 带 `met`，未满足即禁用确认钮。
+- 迁移写法与豁免规则详见 design-ui 4.0.0 更新日志。
+
 ## 6.5.1 - 2026-08-24
 
 跟随 design-ui 3.2.1（patch 传导，050 §2），tokens 不变。

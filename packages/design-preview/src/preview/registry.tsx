@@ -41,6 +41,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Combobox,
+  ConfirmDestructive,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -1089,6 +1090,15 @@ export const ENTRIES: readonly Entry[] = [
     ),
   },
   {
+    name: "ConfirmDestructive",
+    layer: "pattern",
+    group: "浮层",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "把 03 §3「真正的拦截交给二次确认」与 05 §46 的确认文案三件套变成必填参数：verb / target / consequence / preconditions。标题「{verb}{target}？」与确认钮文案由 verb 生成，写不出「确定」这种没有动词的按钮；前置条件带 met 而不只是文案，未满足即禁用确认钮并标出是哪条没过",
+    render: () => <ConfirmDestructiveDemo />,
+  },
+  {
     name: "HoverCard",
     layer: "pattern",
     group: "浮层",
@@ -1514,20 +1524,40 @@ export const ENTRIES: readonly Entry[] = [
     group: "图案",
     tags: ["vxture", "patterns"],
     deviation:
-      "数据驱动，只收 items。icon 收为 IconName 而非 ReactNode——传 node 等于把图标尺寸与颜色的决定权交回调用方",
+      "数据驱动，只收 items。icon 收为 IconName 而非 ReactNode——传 node 等于把图标尺寸与颜色的决定权交回调用方。danger 项是判别联合：必须给 confirm（本件自弹 ConfirmDestructive）或写明 confirmExempt 理由，「染红」与「拦一下」是同一个决定",
     render: () => (
-      <Row label="触发器形态、危险项配色、分隔位置都由本件固定">
+      <Row label="危险项必须二选一：删除带 confirm（前置条件有一条没过，确认钮灰着），归档写了 confirmExempt 理由">
         <ActionMenu
           items={[
             { id: "edit", label: "编辑", icon: "edit" },
             { id: "copy", label: "复制", icon: "copy" },
             { id: "lock", label: "已锁定", icon: "key", disabled: true },
             {
+              id: "archive",
+              label: "归档",
+              icon: "archive",
+              danger: true,
+              separatorBefore: true,
+              // 豁免要写理由，且理由是可 grep 的字符串。归档可撤销，所以不拦。
+              confirmExempt: "归档可在回收站原样还原，不构成不可逆操作",
+              onSelect: () => {},
+            },
+            {
               id: "delete",
               label: "删除",
               icon: "trash",
               danger: true,
-              separatorBefore: true,
+              confirm: {
+                verb: "删除",
+                target: "模型服务 gpt-4o-mini",
+                consequence:
+                  "删除后不可恢复，已签发给该服务的密钥同时失效，正在进行的请求会立刻中断。",
+                preconditions: [
+                  { label: "服务已下线", met: true },
+                  { label: "没有入口或授权还在引用它", met: false },
+                ],
+                onConfirm: () => {},
+              },
             },
           ]}
         />
@@ -1638,7 +1668,18 @@ export const ENTRIES: readonly Entry[] = [
             onClear={() => undefined}
             actions={[
               { id: "export", label: "导出", icon: "arrow-down" },
-              { id: "delete", label: "删除", icon: "trash", danger: true },
+              {
+                id: "delete",
+                label: "删除",
+                icon: "trash",
+                danger: true,
+                confirm: {
+                  verb: "删除",
+                  target: "选中的 2 条记录",
+                  consequence: "删除后不可恢复。",
+                  onConfirm: () => undefined,
+                },
+              },
             ]}
           />
         }
@@ -2622,7 +2663,18 @@ function DataTableDemo() {
         onClear={() => setSelected([])}
         actions={[
           { id: "export", label: "导出", icon: "arrow-down" },
-          { id: "delete", label: "删除", icon: "trash", danger: true },
+          {
+            id: "delete",
+            label: "删除",
+            icon: "trash",
+            danger: true,
+            confirm: {
+              verb: "删除",
+              target: `选中的 ${selected.length} 条通道`,
+              consequence: "删除后不可恢复，通道上的调用记录一并清除。",
+              onConfirm: () => setSelected([]),
+            },
+          },
         ]}
       />
       <DataTable<DemoRow>
@@ -2641,7 +2693,7 @@ function DataTableDemo() {
         selectedKeys={selected}
         onSelectionChange={setSelected}
         indexStart={1}
-        rowActions={() => (
+        rowActions={(row) => (
           <ActionMenu
             items={[
               { id: "edit", label: "编辑", icon: "edit" },
@@ -2651,6 +2703,16 @@ function DataTableDemo() {
                 icon: "trash",
                 danger: true,
                 separatorBefore: true,
+                confirm: {
+                  verb: "删除",
+                  target: `通道 ${row.name}`,
+                  consequence: "删除后不可恢复，该通道的调用记录一并清除。",
+                  // 前置条件是判据不是提示语：运行中的通道点删除，确认钮就是灰的。
+                  preconditions: [
+                    { label: "通道已停用", met: row.status === "已暂停" },
+                  ],
+                  onConfirm: () => undefined,
+                },
               },
             ]}
           />
@@ -2834,6 +2896,49 @@ function SectionNavDemo() {
   );
 }
 
+function ConfirmDestructiveDemo() {
+  const [open, setOpen] = React.useState<"blocked" | "ready" | null>(null);
+  return (
+    <div className="flex w-full flex-col gap-sm">
+      <Row label="前置条件未满足：确认钮灰着，并标出是哪一条没过">
+        <Button variant="destructive" onClick={() => setOpen("blocked")}>
+          删除模型服务
+        </Button>
+      </Row>
+      <Row label="条件全满足：确认钮亮起，文案是动词本身而不是「确定」">
+        <Button variant="destructive" onClick={() => setOpen("ready")}>
+          吊销密钥
+        </Button>
+      </Row>
+      <ConfirmDestructive
+        open={open === "blocked"}
+        onOpenChange={(next) => {
+          if (!next) setOpen(null);
+        }}
+        verb="删除"
+        target="模型服务 gpt-4o-mini"
+        consequence="删除后不可恢复，已签发给该服务的密钥同时失效，正在进行的请求会立刻中断。"
+        preconditions={[
+          { label: "服务已下线", met: true },
+          { label: "没有入口或授权还在引用它", met: false },
+        ]}
+        onConfirm={() => setOpen(null)}
+      />
+      <ConfirmDestructive
+        open={open === "ready"}
+        onOpenChange={(next) => {
+          if (!next) setOpen(null);
+        }}
+        verb="吊销"
+        target="密钥 sk-live-…f21a"
+        consequence="吊销后立即失效，用它接入的服务会开始返回 401，且无法再启用同一把密钥。"
+        preconditions={[{ label: "近 7 天无调用记录", met: true }]}
+        onConfirm={() => setOpen(null)}
+      />
+    </div>
+  );
+}
+
 function BulkActionBarDemo() {
   const [count, setCount] = React.useState(3);
   return (
@@ -2852,7 +2957,19 @@ function BulkActionBarDemo() {
         actions={[
           { id: "export", label: "导出", icon: "arrow-down" },
           { id: "disable", label: "停用", icon: "stop" },
-          { id: "delete", label: "删除", icon: "trash", danger: true },
+          {
+            id: "delete",
+            label: "删除",
+            icon: "trash",
+            danger: true,
+            confirm: {
+              verb: "删除",
+              // 批量确认的 target 由调用方拼：只有它知道选中的是什么、有几个。
+              target: `选中的 ${count} 个模型服务`,
+              consequence: "删除后不可恢复，这一批的密钥与调用记录一并清除。",
+              onConfirm: () => setCount(0),
+            },
+          },
         ]}
       />
     </div>

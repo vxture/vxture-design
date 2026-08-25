@@ -104,6 +104,7 @@
       "CommandList",
       "CommandSeparator",
       "CommandShortcut",
+      "ConfirmDestructive",
       "Container",
       "ContextMenu",
       "ContextMenuCheckboxItem",
