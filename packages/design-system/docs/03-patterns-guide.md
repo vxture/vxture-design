@@ -43,20 +43,39 @@
 不写确认曾是零成本，现在是编译错误；豁免要写理由，且理由是可 `grep` 的字符串
 而不是注释。
 
-**契约的边界，以及正确的清点口径。** 这条判别联合只管 `ActionMenu` 与
-`BulkActionBar` 两件，**够不到裸的 `<Button variant="destructive">`**——4.0 的
-文档写了 `grep -rn confirmExempt` 给出「本产品有多少个不设防的红色动作」的完整
-清单，那句话是错的，一份自称完整的清单比没有清单更坏。清点要两条一起看：
+**契约覆盖三个载体**（design-ui 6.0 起）：
+
+| 载体                      | 危险档                  | 要求                                                  |
+| ------------------------- | ----------------------- | ----------------------------------------------------- |
+| `ActionMenuItem`          | `danger: true`          | `confirm` 或 `confirmExempt`                          |
+| `BulkActionBarItem`       | `danger: true`          | 同上                                                  |
+| `Button` / `ActionButton` | `variant="destructive"` | `confirmExempt`（要拦就换 `DestructiveButton`，见下） |
+
+`variant="destructive-strong"` **不要求**：按上表它是落锤档——确认对话框里的那个
+提交按钮。要求落锤自己再确认一次是循环。
+
+于是清点口径回到一条：
 
 ```bash
-grep -rn "confirmExempt" portals/          # 已声明豁免的（有理由，可评审）
-grep -rn 'variant="destructive"' portals/  # 契约够不到的（没人替你查）
+grep -rn "confirmExempt" portals/   # 已声明豁免的红色动作，逐条带理由
 ```
 
-第二条为什么不收进类型：`variant="destructive"` 的红按钮完全可能是「打开一个
-多步流程」「打开 DialogForm」的入口，确认在下一屏。强制它带 `confirm` 等于 DS
-判定「红＝此处立即落锤」，而那是产品的 UX 判断，不同产品可以不同。这类按钮的
-拦截自己组合 `ConfirmDestructive`（它本就能独立使用，见 §3.1）。
+6.0 之前这条清单是不完整的：判别联合只管两个数据驱动的件，够不到裸的
+`<Button variant="destructive">`（accounts 的删 passkey 按钮就落在这个洞里，而
+`grep` 会把 accounts 报成干净）。当时的处置是把文档改诚实、给出两条 grep 的口径
+——**那让文档对一个洞诚实，并没有把洞补上**，且第二条 grep 是纯人工纪律、没有
+任何强制力，正是这套契约一开始要消灭的东西。6.0 把它补上了。
+
+**为什么红按钮分成两件。** base 的 `Button` 只承担类型义务（写明为什么不设防），
+拦截由 composite 的 `DestructiveButton` 承担——不是设计洁癖，是 `Button` 在
+server-safe 子集里（`MetricCard` 引它），让它引 `ConfirmDestructive` 会把 Radix
+AlertDialog 的 `createContext` 拖进 `/server` 入口、在 react-server 下直接崩
+（2026-08-25 由 `check-server-entry-safety` 实测抓到）。**能弹模态的 base 原语
+就不是 base 原语。**
+
+`DestructiveButton` 不开 `variant`（按定义就是入口档）也不开 `asChild`（渲染
+「按钮 + 对话框」两个节点，塞不进 `Slot` 的单子元素约束）。`AlertDialogTrigger
+asChild` 这类场合用 `Button` + `confirmExempt`。
 
 ## 3.1 破坏性确认：ConfirmDestructive
 

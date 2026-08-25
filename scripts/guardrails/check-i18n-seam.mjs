@@ -44,6 +44,17 @@ const ROOTS = ["packages/design-ui/src", "packages/design-system/src"];
  */
 const WIDE = /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/;
 
+/**
+ * `confirmExempt` 的值同样豁免：它**从不进 DOM**——`Button` 把它解构丢掉后才
+ * 展开 props（落到元素上会变成 React 不认识的属性并报警告），`ActionMenu` /
+ * `BulkActionBar` 从头到尾不读它。它的全部作用在类型层与 `grep`：强迫写下
+ * 「这个红按钮为什么不设防」，并让这句话可清点。
+ *
+ * 也就是说它和注释是同一类东西——**写给维护者的散文**，而本仓的维护语言是中文。
+ * 判据仍是二值的：整行含 `confirmExempt` 即跳过，不做任何语义推断。
+ */
+const MAINTAINER_PROSE = /confirmExempt/;
+
 /** 去注释。注释里的中文是给维护者读的，不是文案。 */
 function stripComments(src) {
   let out = "";
@@ -99,6 +110,7 @@ for (const root of ROOTS) {
 
     for (let i = 0; i < code.length; i += 1) {
       if (!WIDE.test(code[i])) continue;
+      if (MAINTAINER_PROSE.test(code[i])) continue;
       problems.push(`${rel}:${i + 1}\n      ${raw[i].trim().slice(0, 100)}`);
     }
   }

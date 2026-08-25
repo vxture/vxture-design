@@ -30,21 +30,33 @@ import type { IconName } from "../../../../icons";
 import { Button } from "./Button";
 import type { ButtonProps } from "./Button";
 
-export interface ActionButtonProps extends Omit<ButtonProps, "children"> {
+/**
+ * 在联合上做 `Omit` 必须**分配到每个分支**，否则 TS 会先把三个分支并成一个
+ * 「什么都可选」的对象再删键，`variant: "destructive"` 与 `confirm` 的绑定关系
+ * 当场丢失——ActionButton 就成了绕开确认契约的后门。
+ */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type ActionButtonProps = DistributiveOmit<ButtonProps, "children"> & {
   /** 按钮文字。图标不带文字的场景用 Button 的 `icon-*` 档，不用本件。 */
   readonly children: React.ReactNode;
   readonly icon: IconName;
   /** 图标名在注册表里查不到时的替身，默认 `placeholder`（不留空洞）。 */
   readonly iconFallback?: IconName;
-}
+};
 
 const ActionButton = React.forwardRef<HTMLButtonElement, ActionButtonProps>(
   function ActionButton(
     { children, icon, iconFallback = "placeholder", ...props },
     ref,
   ) {
+    /* 分支已由 DistributiveOmit 保住，但 TS 无法从「联合 ∩ 对象」反推回具体
+       分支，故此处回收一次类型。契约不受影响：调用 ActionButton 时仍要满足
+       「destructive 必须带 confirm 或 confirmExempt」，那一步在调用点就查过了。 */
     return (
-      <Button ref={ref} {...props}>
+      <Button ref={ref} {...(props as ButtonProps)}>
         <Icon
           name={icon}
           fallback={iconFallback}

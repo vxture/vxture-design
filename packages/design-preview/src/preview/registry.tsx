@@ -42,6 +42,7 @@ import {
   CollapsibleTrigger,
   Combobox,
   ConfirmDestructive,
+  DestructiveButton,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -85,6 +86,8 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   BUTTON_SIZES,
+  type ButtonProps,
+  type ButtonVariant,
   BUTTON_VARIANTS,
   Container,
   FullscreenProvider,
@@ -329,7 +332,7 @@ export const ENTRIES: readonly Entry[] = [
               size.startsWith("icon") ? (
                 <Button
                   key={size}
-                  variant={v}
+                  {...galleryVariant(v)}
                   size={size}
                   aria-label={size}
                   title={size}
@@ -337,12 +340,17 @@ export const ENTRIES: readonly Entry[] = [
                   <Icon name="plus" />
                 </Button>
               ) : (
-                <Button key={size} variant={v} size={size} title={size}>
+                <Button
+                  key={size}
+                  {...galleryVariant(v)}
+                  size={size}
+                  title={size}
+                >
                   {size}
                 </Button>
               ),
             )}
-            <Button variant={v} disabled title="disabled">
+            <Button {...galleryVariant(v)} disabled title="disabled">
               禁用
             </Button>
           </Row>
@@ -978,7 +986,9 @@ export const ENTRIES: readonly Entry[] = [
             </DialogHeader>
             <DialogFooter>
               <Button variant="outline">取消</Button>
-              <Button variant="destructive">确认</Button>
+              {/* 落锤档：确认对话框的提交用 destructive-strong（03 §3），
+                  原写 destructive 是挡位用错——入口档才是淡底那一档。 */}
+              <Button variant="destructive-strong">确认</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1065,7 +1075,12 @@ export const ENTRIES: readonly Entry[] = [
       <Row>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">删除工作空间</Button>
+            <Button
+              variant="destructive"
+              confirmExempt="本条演示的就是手工组合 AlertDialog，确认由它承担；且 asChild 与 confirm 互斥"
+            >
+              删除工作空间
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -1096,6 +1111,16 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["vxture", "patterns"],
     deviation:
       "把 03 §3「真正的拦截交给二次确认」与 05 §46 的确认文案三件套变成必填参数：verb / target / consequence / preconditions。标题「{verb}{target}？」与确认钮文案由 verb 生成，写不出「确定」这种没有动词的按钮；前置条件带 met 而不只是文案，未满足即禁用确认钮并标出是哪条没过",
+    render: () => <ConfirmDestructiveDemo />,
+  },
+  {
+    name: "DestructiveButton",
+    layer: "pattern",
+    group: "浮层",
+    tags: ["vxture", "patterns"],
+    covers: ["ConfirmDestructive"],
+    deviation:
+      "「Button + ConfirmDestructive」的固定组合。为什么不把弹框放进 base 的 Button：Button 在 server-safe 子集里（MetricCard 引它），引 ConfirmDestructive 会把 Radix AlertDialog 的 createContext 拖进 /server 入口、在 react-server 下直接崩（由 check-server-entry-safety 实测抓到）——能弹模态的 base 原语就不是 base 原语。故分工：Button 只承担类型义务（destructive 必须写 confirmExempt），本件承担拦截。不开 variant（按定义就是 destructive 入口档），不开 asChild（渲染两个节点，塞不进 Slot）",
     render: () => <ConfirmDestructiveDemo />,
   },
   {
@@ -1449,7 +1474,14 @@ export const ENTRIES: readonly Entry[] = [
           level={3}
           title="Section · raised（h3 · title-sm）"
           description="描边 + 卡片底色，用于需要与周围明确切开的块。"
-          action={<Button variant="destructive">危险操作</Button>}
+          action={
+            <Button
+              variant="destructive"
+              confirmExempt="预览面示例，不接真实动作"
+            >
+              危险操作
+            </Button>
+          }
         >
           <p className="text-body-sm text-muted-foreground">
             raised 对应视觉高度阶梯那一档，不叫
@@ -2907,38 +2939,36 @@ function SectionNavDemo() {
 }
 
 /**
- * 确认之后还有一道 step-up 的形态(admin 删角色:runWithStepUp(() => deleteRole())).
+ * 确认之后还有一道 step-up 的形态（admin 删角色：runWithStepUp(() => deleteRole())）。
  *
- * DS 不知道 step-up 是什么——TOTP 是 admin 的认证策略,建模它就是把业务焊进来。
- * 接缝是现成的:onConfirm 返回 Promise,谁来 resolve 它是调用方的事。这里摆出来
- * 是为了验**形状**问题:两层 radix 模态叠加时,确认框停在「处理中」、step-up 压在
- * 上面,焦点陷阱会不会打架。这一条是 DS 的活。
+ * DS 不知道 step-up 是什么——TOTP 是 admin 的认证策略，建模它就是把业务焊进来。
+ * 接缝是现成的：`confirm.onConfirm` 返回 Promise，谁来 resolve 它是调用方的事。
+ * 这里摆出来是为了验**形状**问题：两层 radix 模态叠加时，确认框停在「处理中」、
+ * step-up 压在上面，焦点陷阱会不会打架。这一条是 DS 的活。
  */
 function ConfirmStepUpDemo() {
-  const [open, setOpen] = React.useState(false);
   const [stepUp, setStepUp] = React.useState<(() => void) | null>(null);
 
   return (
     <div className="flex w-full flex-col gap-sm">
       <Row label="确认 → 处理中 → step-up 压在上面。两层模态各自的焦点陷阱不该打架">
-        <Button variant="destructive" onClick={() => setOpen(true)}>
+        <DestructiveButton
+          confirm={{
+            verb: "删除",
+            target: "角色 平台运营",
+            consequence:
+              "删除后不可恢复，绑定该角色的操作员会立即失去对应权限。",
+            onConfirm: () =>
+              /* 调用方把 resolve 攥在手里，step-up 过了才兑现——确认框在此期间
+                 停在「处理中」，失败则不关。DS 只认这个 Promise。 */
+              new Promise<void>((resolve) => {
+                setStepUp(() => resolve);
+              }),
+          }}
+        >
           删除角色
-        </Button>
+        </DestructiveButton>
       </Row>
-      <ConfirmDestructive
-        open={open}
-        onOpenChange={setOpen}
-        verb="删除"
-        target="角色 平台运营"
-        consequence="删除后不可恢复，绑定该角色的操作员会立即失去对应权限。"
-        onConfirm={() =>
-          /* 调用方把 resolve 攥在手里,step-up 过了才兑现——确认框在此期间
-             停在「处理中」,失败则不关。DS 只认这个 Promise。 */
-          new Promise<void>((resolve) => {
-            setStepUp(() => resolve);
-          })
-        }
-      />
       <DialogForm
         open={stepUp !== null}
         onOpenChange={(next) => {
@@ -2965,74 +2995,90 @@ function ConfirmStepUpDemo() {
 }
 
 function ConfirmDestructiveDemo() {
-  const [open, setOpen] = React.useState<"blocked" | "ready" | "en" | null>(
-    null,
-  );
+  const [revoking, setRevoking] = React.useState(false);
   return (
     <div className="flex w-full flex-col gap-sm">
       <Row label="三态：对勾=满足、红叉=确认没满足、灰问号=查不到（门闩仍由调用方的 met 决定）">
-        <Button variant="destructive" onClick={() => setOpen("blocked")}>
+        <DestructiveButton
+          confirm={{
+            verb: "删除",
+            target: "模型服务 gpt-4o-mini",
+            consequence:
+              "删除后不可恢复，已签发给该服务的密钥同时失效，正在进行的请求会立刻中断。",
+            preconditions: [
+              { label: "服务已下线", met: true },
+              {
+                /* 查不到：门闩由调用方判（这里判「挡住」），件只负责别把它画成红叉
+                   ——红叉是「确认了没满足」，而这一条我们根本没查到。 */
+                label: "没有入口或授权还在引用它",
+                met: false,
+                unknown: true,
+                note: "汇总接口读不到，按未满足处理",
+              },
+            ],
+            onConfirm: () => undefined,
+          }}
+        >
           删除模型服务
-        </Button>
+        </DestructiveButton>
       </Row>
-      <Row label="titleTemplate 交还语序：英文传 {verb} {target}?，件不再替调用方拼中文">
-        <Button variant="destructive" onClick={() => setOpen("en")}>
-          Delete model service
-        </Button>
-      </Row>
-      <Row label="条件全满足：确认钮亮起，文案是动词本身而不是「确定」">
-        <Button variant="destructive" onClick={() => setOpen("ready")}>
+      <Row label="独立受控用法：触发器不是 Button 时（表格行、快捷键、程序化）仍可直接用本件">
+        <Button
+          variant="destructive"
+          confirmExempt="本行演示独立受控用法，确认由下方的 ConfirmDestructive 承担"
+          onClick={() => setRevoking(true)}
+        >
           吊销密钥
         </Button>
+        <ConfirmDestructive
+          open={revoking}
+          onOpenChange={setRevoking}
+          verb="吊销"
+          target="密钥 sk-live-…f21a"
+          consequence="吊销后立即失效，用它接入的服务会开始返回 401，且无法再启用同一把密钥。"
+          preconditions={[{ label: "近 7 天无调用记录", met: true }]}
+          onConfirm={() => setRevoking(false)}
+        />
       </Row>
-      <ConfirmDestructive
-        open={open === "blocked"}
-        onOpenChange={(next) => {
-          if (!next) setOpen(null);
-        }}
-        verb="删除"
-        target="模型服务 gpt-4o-mini"
-        consequence="删除后不可恢复，已签发给该服务的密钥同时失效，正在进行的请求会立刻中断。"
-        preconditions={[
-          { label: "服务已下线", met: true },
-          {
-            /* 查不到:门闩由调用方判(这里判「挡住」),件只负责别把它画成红叉——
-               红叉是「确认了没满足」,而这一条我们根本没查到。 */
-            label: "没有入口或授权还在引用它",
-            met: false,
-            unknown: true,
-            note: "汇总接口读不到，按未满足处理",
-          },
-        ]}
-        onConfirm={() => setOpen(null)}
-      />
-      <ConfirmDestructive
-        open={open === "en"}
-        onOpenChange={(next) => {
-          if (!next) setOpen(null);
-        }}
-        titleTemplate="{verb} {target}?"
-        verb="Delete"
-        target="model service gpt-4o-mini"
-        consequence="This cannot be undone. Keys issued to this service stop working immediately."
-        cancelLabel="Cancel"
-        pendingLabel="Working…"
-        preconditions={[{ label: "Service is offline", met: true }]}
-        onConfirm={() => setOpen(null)}
-      />
-      <ConfirmDestructive
-        open={open === "ready"}
-        onOpenChange={(next) => {
-          if (!next) setOpen(null);
-        }}
-        verb="吊销"
-        target="密钥 sk-live-…f21a"
-        consequence="吊销后立即失效，用它接入的服务会开始返回 401，且无法再启用同一把密钥。"
-        preconditions={[{ label: "近 7 天无调用记录", met: true }]}
-        onConfirm={() => setOpen(null)}
-      />
+      <Row label="titleTemplate 交还语序：英文托底，中文传 {verb}{target}？">
+        <DestructiveButton
+          confirm={{
+            verb: "Delete",
+            target: "model service gpt-4o-mini",
+            consequence:
+              "This cannot be undone. Keys issued to this service stop working immediately.",
+            preconditions: [{ label: "Service is offline", met: true }],
+            onConfirm: () => undefined,
+          }}
+        >
+          Delete model service
+        </DestructiveButton>
+      </Row>
+      <Row label="显式豁免：拦截在别处时写明理由，理由可 grep">
+        <Button
+          variant="destructive"
+          confirmExempt="归档可在回收站原样还原，不构成不可逆操作"
+          onClick={() => undefined}
+        >
+          归档工作空间
+        </Button>
+      </Row>
     </div>
   );
+}
+
+/**
+ * 变体画廊按 `BUTTON_VARIANTS` 遍历全部挡位，`variant` 因此是**运行时值**——
+ * Button 的判别联合选不出分支（`destructive` 那一支要求 confirm 或 confirmExempt）。
+ *
+ * 画廊摆的是样式不是动作，统一按豁免处理。这里必须回收一次类型：类型系统无法
+ * 从一个运行时字符串推出「这一档要不要带确认」，而画廊的价值恰恰在于遍历全部
+ * 挡位、不漏一档。
+ */
+function galleryVariant(v: ButtonVariant): ButtonProps {
+  return v === "destructive"
+    ? { variant: v, confirmExempt: "变体画廊，摆的是样式不是动作" }
+    : { variant: v };
 }
 
 function BulkActionBarDemo() {
@@ -3321,7 +3367,12 @@ function ActionButtonDemo() {
         <ActionButton icon="download" variant="outline" size="sm">
           导出
         </ActionButton>
-        <ActionButton icon="trash" variant="destructive" size="sm">
+        <ActionButton
+          icon="trash"
+          variant="destructive"
+          size="sm"
+          confirmExempt="预览面示例，不接真实动作"
+        >
           删除
         </ActionButton>
       </Row>
