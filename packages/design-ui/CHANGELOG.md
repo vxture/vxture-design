@@ -5,6 +5,34 @@
 
 ---
 
+## 6.0.2 — 2026-08-26
+
+修一处键盘无障碍缺陷（patch，050 §2）。
+
+- **修复：`MetricListCard` 上键盘按不到行操作，反而进了详情。**
+
+  整卡可点时卡上挂了 `onKeyDown`，它对**任何冒泡上来的** Enter / Space 都响应：
+  `preventDefault()` 掐掉内层按钮的原生激活，再把整卡的 `onClick` 触发一遍。
+  于是焦点在「更多」上按 Enter，菜单不开、详情打开了。
+
+  鼠标那条路一直是对的——操作区包了一层 `stopPropagation`，所以这个洞只在
+  键盘上存在，**看不出来**。
+
+  修法：`if (event.target !== event.currentTarget) return`——焦点在卡内的控件上
+  时，那个控件 own 这次按键。同时补了正向用例（卡本身聚焦时 Enter 与 Space 仍要
+  响应），免得把「该触发」也一起修没了。
+
+  SonarCloud 早就报过这个位置（`jsx-a11y` 那条 MINOR），2026-08-25 被我判成误报
+  并写进了 `docs/audit/known-false-positives.md`——**判错了**。当时的理由是
+  「键盘 Enter 会产生一个冒泡的 click，同样被 stopPropagation 拦住」，漏了一步：
+  **keydown 先于 click 发生**，preventDefault 之后那个 click 根本不会产生。
+  登记已更正并保留原文。
+
+- **文档更正：`AlertDialog` 的 Esc 是关得掉的。** 头注原写「Esc 与点遮罩也不关」
+  ——错了一半。实测：Esc 触发 `onOpenChange`，外点不触发。而 Esc 能关是**对的**：
+  没有键盘出路的模态是键盘陷阱。「要求表态」靠的是拿掉随手可点的出口（无 X 钮、
+  外点不关），不是堵死所有出口。03 §1 同步更正。
+
 ## 6.0.1 — 2026-08-26
 
 修一处静默失效（patch，050 §2）。
