@@ -490,7 +490,7 @@ const rules = [
       // 解释它为什么退役，不该被判违规。
       const isUsage =
         (line.includes("vx-page-stack") && line.includes("className")) ||
-        /^\s*\.vx-page-stack/.test(line);
+        /^\s*\.vx-page-stack\b/.test(line);
       if (!isUsage) return null;
       return violation(
         file,
@@ -642,7 +642,12 @@ const rules = [
       const normalized = normalize(file);
       if (!DS_EFFECT_LOCKED_STYLE_PATHS.has(normalized)) return null;
       const text = stripLineComment(line);
-      if (/\d+(?:\.\d+)?(?:ms|s)/.test(text) || hasLiteralEasing(text)) {
+      /* 先排除整行注释：stripLineComment 只认行注释，而 DS 的样式叶子是 CSS，
+         注释是块注释。把本规则的正则从退格符修回词边界之后第一次跑，撞上的两条
+         全是解释性文字（「250ms 才淡入」「延迟取 slow(300ms)」）——规则会惩罚
+         写清楚原因的人，与本文件 isCommentLine 那段注释讲的是同一类毛病。 */
+      if (isCommentLine(line)) return null;
+      if (/\b\d+(?:\.\d+)?(?:ms|s)\b/.test(text) || hasLiteralEasing(text)) {
         return violation(
           file,
           lineNumber,
@@ -767,7 +772,8 @@ const rules = [
         return null;
       const text = stripLineComment(line);
 
-      if (/\d+(?:\.\d+)?(?:ms|s)/.test(text)) {
+      if (isCommentLine(line)) return null;
+      if (/\b\d+(?:\.\d+)?(?:ms|s)\b/.test(text)) {
         return violation(
           file,
           lineNumber,
@@ -2631,7 +2637,7 @@ function isTokenOrNoneMotionValue(value) {
   if (normalized === "none" || normalized.startsWith("none ")) return true;
 
   // 字面时长与曲线函数：连 var() 的回退值里也不允许，故在剥离前先查。
-  if (/\d+(?:\.\d+)?m?s/.test(normalized)) return false;
+  if (/\d+(?:\.\d+)?m?s\b/.test(normalized)) return false;
   if (/cubic-bezier\(|steps\(/.test(normalized)) return false;
 
   const withoutVars = normalized.replace(/var\((?:[^()]|\([^()]*\))*\)/g, " ");
