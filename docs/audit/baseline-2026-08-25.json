@@ -83,7 +83,7 @@
     },
     {
       "key": "测试 · 文件数",
-      "value": 4,
+      "value": 6,
       "how": "packages/ 与 scripts/ 下的 *.test.* / *.spec.*"
     },
     {
