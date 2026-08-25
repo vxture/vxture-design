@@ -46,6 +46,17 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   readonly countLabel?: React.ReactNode;
   readonly previousLabel?: string;
   readonly nextLabel?: string;
+  /** 每页条数选择器的可访问名。默认「每页条数」。 */
+  readonly pageSizeLabel?: string;
+  /**
+   * 每页条数各档的可访问名模板，`{size}` 是槽位。默认「每页 {size} 条」。
+   *
+   * 收模板而不是拼串：`每页 N 条` 的语序是中文的，英文得是 `{size} per page`，
+   * 件替调用方拼就等于替它定了语序（同 `ConfirmDestructive.titleTemplate`）。
+   */
+  readonly pageSizeOptionTemplate?: string;
+  /** 「自适应」档的可访问名。默认「每页条数自适应」。 */
+  readonly pageSizeAutoLabel?: string;
 }
 
 const DEFAULT_PAGE_SIZES: readonly PageSizeChoice[] = ["auto", 10, 20, 50, 100];
@@ -72,6 +83,9 @@ function Pagination({
   countLabel,
   previousLabel = "上一页",
   nextLabel = "下一页",
+  pageSizeLabel = "每页条数",
+  pageSizeOptionTemplate = "每页 {size} 条",
+  pageSizeAutoLabel = "每页条数自适应",
   ...props
 }: PaginationProps) {
   const safePageCount = Math.max(1, pageCount);
@@ -110,7 +124,7 @@ function Pagination({
                control-md。差 4px 时两组数字按钮的基线对不齐，一眼能看出来
                （2026-08-04 opera/atlas/router 实测）。 */
             size="md"
-            ariaLabel="每页条数"
+            ariaLabel={pageSizeLabel}
             value={pageSize}
             onChange={onPageSizeChange}
             items={pageSizeOptions.map((option) => ({
@@ -118,7 +132,9 @@ function Pagination({
               // "auto" 档中英文一律显示 "auto"（owner 定，2026-08-03）。
               label: option === "auto" ? "auto" : option,
               ariaLabel:
-                option === "auto" ? "每页条数自适应" : `每页 ${option} 条`,
+                option === "auto"
+                  ? pageSizeAutoLabel
+                  : pageSizeOptionTemplate.replaceAll("{size}", String(option)),
             }))}
           />
         ) : null}

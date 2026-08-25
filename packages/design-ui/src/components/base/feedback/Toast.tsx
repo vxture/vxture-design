@@ -65,11 +65,19 @@ const TONE_CLS: Record<ToastTone, string> = {
   danger: "border-destructive-border text-destructive-text",
 };
 
+export interface ToastProviderProps {
+  readonly children: React.ReactNode;
+  /** 通知区的可访问名。默认「通知」。 */
+  readonly regionLabel?: string;
+  /** 单条通知关闭钮的可访问名。默认「关闭通知」。 */
+  readonly dismissLabel?: string;
+}
+
 export function ToastProvider({
   children,
-}: {
-  readonly children: React.ReactNode;
-}) {
+  regionLabel = "通知",
+  dismissLabel = "关闭通知",
+}: ToastProviderProps) {
   const [toasts, setToasts] = React.useState<ToastRecord[]>([]);
 
   const dismiss = React.useCallback((id: string) => {
@@ -109,7 +117,7 @@ export function ToastProvider({
       <div
         className="pointer-events-none fixed inset-x-none bottom-none z-toast flex flex-col items-center gap-sm p-lg sm:items-end"
         role="region"
-        aria-label="通知"
+        aria-label={regionLabel}
       >
         {toasts.map((item) => (
           <div
@@ -142,7 +150,7 @@ export function ToastProvider({
             <button
               type="button"
               onClick={() => dismiss(item.id)}
-              aria-label="关闭通知"
+              aria-label={dismissLabel}
               className={cn(
                 "inline-flex size-control-2xs shrink-0 items-center justify-center rounded-sm",
                 "text-muted-foreground hover:bg-accent hover:text-foreground",

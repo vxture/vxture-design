@@ -73,8 +73,20 @@ export type BulkActionBarItem =
 export interface BulkActionBarProps {
   readonly count: number;
   readonly actions: readonly BulkActionBarItem[];
-  /** 计数单位，默认"项"。 */
+  /** 计数单位，默认"项"。填进 `selectionTemplate` 的 `{noun}` 槽位。 */
   readonly noun?: string;
+  /**
+   * 计数语模板，槽位 `{count}` / `{noun}`。默认「已选择 {count} {noun}」。
+   *
+   * 收模板而不是只收 `noun`：`已选择 N 项` 的语序是中文的（数词在前、量词在
+   * 后），英文得是 `{count} {noun} selected`——只开 `noun` 一个口子，调用方
+   * 拼不出那句话。件替调用方定语序是越界，同 `ConfirmDestructive.titleTemplate`。
+   */
+  readonly selectionTemplate?: string;
+  /** 工具条的可访问名。默认「批量操作」。 */
+  readonly toolbarLabel?: string;
+  /** 清除选中的按钮文案。默认「清除」。 */
+  readonly clearLabel?: React.ReactNode;
   readonly onClear?: () => void;
   readonly className?: string;
 }
@@ -83,6 +95,9 @@ function BulkActionBar({
   count,
   actions,
   noun = "项",
+  selectionTemplate = "已选择 {count} {noun}",
+  toolbarLabel = "批量操作",
+  clearLabel = "清除",
   onClear,
   className,
 }: BulkActionBarProps) {
@@ -105,7 +120,7 @@ function BulkActionBar({
     <>
       <div
         role="toolbar"
-        aria-label="批量操作"
+        aria-label={toolbarLabel}
         className={cn(
           "flex flex-wrap items-center justify-between gap-md",
           "rounded-xl bg-card px-lg py-sm shadow-raised ring-1 ring-foreground/10",
@@ -114,11 +129,13 @@ function BulkActionBar({
       >
         <div className="flex min-w-0 items-center gap-sm">
           <span className="text-label-md">
-            已选择 {count} {noun}
+            {selectionTemplate
+              .replaceAll("{count}", String(count))
+              .replaceAll("{noun}", noun)}
           </span>
           {onClear ? (
             <Button variant="ghost" size="md" onClick={onClear}>
-              清除
+              {clearLabel}
             </Button>
           ) : null}
         </div>
