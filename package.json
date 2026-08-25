@@ -20,6 +20,7 @@
     "lint:design-i18n": "node scripts/guardrails/check-i18n-seam.mjs",
     "lint:control-chars": "node scripts/guardrails/check-control-chars.mjs",
     "lint:doc-shape": "node scripts/docs/check-doc-shape.mjs",
+    "test:guardrails": "node scripts/guardrails/self-test.mjs",
     "lint:design-exports": "node scripts/guardrails/check-design-system-exports.mjs",
     "lint:design-tokens": "node scripts/design-tokens/generate-primitive.mjs --check && node scripts/design-tokens/generate-semantic.mjs --check && node scripts/design-tokens/generate-semantic-scales.mjs --check && node scripts/design-tokens/generate-theme.mjs --check && node scripts/design-tokens/generate-token-ts.mjs --check && node scripts/design-tokens/check-utilities.mjs && node scripts/guardrails/check-mode-blocks.mjs",
     "lint:server-entry": "node scripts/guardrails/check-server-entry-safety.mjs",

@@ -39,10 +39,17 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      # 七道守卫。lint:design 会跳过本仓不存在的扫描根（portals/business）——
+      # 十一道守卫（数量随 package.json 的 guardrails 链条走，别在这里手抄）。
+      # lint:design 会跳过本仓不存在的扫描根（portals/business）——
       # 那部分管辖消费方怎么用 DS，不在本仓职责内。
       - name: Design guardrails
         run: pnpm guardrails
+
+      # 守卫自测：给每条守卫一份已知有病的输入，断言它非零退出。
+      # 放在 guardrails **之后**：那一条证明当前代码干净，这一条证明
+      # 上一条的「干净」不是因为检查已经死了。要求干净工作树，CI 天然满足。
+      - name: Guardrail self-test (mutation)
+        run: pnpm test:guardrails
 
   preview-build:
     name: preview-build

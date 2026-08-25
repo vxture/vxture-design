@@ -1,0 +1,100 @@
+{
+  "date": "2026-08-25",
+  "metrics": [
+    {
+      "key": "版本 · design-tokens",
+      "value": "2.2.3",
+      "how": "packages/design-tokens/package.json 的 version"
+    },
+    {
+      "key": "版本 · design-ui",
+      "value": "6.0.0",
+      "how": "packages/design-ui/package.json 的 version"
+    },
+    {
+      "key": "版本 · design-system",
+      "value": "9.0.0",
+      "how": "packages/design-system/package.json 的 version"
+    },
+    {
+      "key": "件 · 总数",
+      "value": 96,
+      "how": "components/ 下的 .tsx 文件数"
+    },
+    {
+      "key": "件 · base",
+      "value": 50,
+      "how": "按 components/ 下的一级目录归层"
+    },
+    {
+      "key": "件 · composite",
+      "value": 28,
+      "how": "按 components/ 下的一级目录归层"
+    },
+    {
+      "key": "件 · layout",
+      "value": 7,
+      "how": "按 components/ 下的一级目录归层"
+    },
+    {
+      "key": "件 · shell",
+      "value": 6,
+      "how": "按 components/ 下的一级目录归层"
+    },
+    {
+      "key": "件 · templates",
+      "value": 5,
+      "how": "按 components/ 下的一级目录归层"
+    },
+    {
+      "key": "导出 · .",
+      "value": 284,
+      "how": "公开入口快照的具名导出数"
+    },
+    {
+      "key": "导出 · ./server",
+      "value": 27,
+      "how": "公开入口快照的具名导出数"
+    },
+    {
+      "key": "导出 · ./tokens",
+      "value": 7,
+      "how": "公开入口快照的具名导出数"
+    },
+    {
+      "key": "导出 · ./types",
+      "value": 0,
+      "how": "公开入口快照的具名导出数"
+    },
+    {
+      "key": "守卫 · 链条条数",
+      "value": 10,
+      "how": "package.json 的 guardrails 串了几条"
+    },
+    {
+      "key": "守卫 · 脚本数",
+      "value": 16,
+      "how": "guardrails 链条实际引用到的 .mjs（含 token 生成器的 --check）"
+    },
+    {
+      "key": "守卫 · 自测覆盖",
+      "value": 7,
+      "how": "self-test.mjs 里的变异用例数"
+    },
+    {
+      "key": "测试 · 文件数",
+      "value": 0,
+      "how": "packages/ 与 scripts/ 下的 *.test.* / *.spec.*"
+    },
+    {
+      "key": "预览面 · 条目数",
+      "value": 95,
+      "how": "registry.tsx 里的 name: 条目"
+    },
+    {
+      "key": "文档 · Artifact 底本",
+      "value": 3,
+      "how": "docs/artifacts/*.html（不含参照物）"
+    }
+  ]
+}
