@@ -38,7 +38,7 @@ const formatter = new Intl.DateTimeFormat("zh-CN", { dateStyle: "long" });
 export function DatePicker({
   value,
   onValueChange,
-  placeholder = "选择日期",
+  placeholder = "Pick a date",
   disabled = false,
   className,
 }: DatePickerProps) {

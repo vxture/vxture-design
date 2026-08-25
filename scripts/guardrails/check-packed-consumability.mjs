@@ -122,7 +122,10 @@ function resolvePackageRoot(req, dep) {
   const segments = dep.split("/");
   const leaf = segments[segments.length - 1];
   for (let i = 0; i < 8 && cur && cur !== path.dirname(cur); i += 1) {
-    if (existsSync(path.join(cur, "package.json")) && path.basename(cur) === leaf)
+    if (
+      existsSync(path.join(cur, "package.json")) &&
+      path.basename(cur) === leaf
+    )
       return cur;
     cur = path.dirname(cur);
   }
@@ -216,7 +219,11 @@ for (const p of PACKAGES) {
     if (!existsSync(target)) continue;
     mkdirSync(path.dirname(link), { recursive: true });
     // Windows 上 "junction" 不需要管理员权限,"dir" 需要。
-    symlinkSync(target, link, process.platform === "win32" ? "junction" : "dir");
+    symlinkSync(
+      target,
+      link,
+      process.platform === "win32" ? "junction" : "dir",
+    );
   }
 }
 

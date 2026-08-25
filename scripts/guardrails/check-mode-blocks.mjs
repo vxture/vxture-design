@@ -26,11 +26,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const SEMANTIC = path.join(
-  ROOT,
-  "packages/design-tokens/src/styles/semantic",
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
 );
+const SEMANTIC = path.join(ROOT, "packages/design-tokens/src/styles/semantic");
 
 /** 每族一条：文件 + 判定"这个顶层块属于本族"的规则。 */
 const FAMILIES = [
@@ -64,12 +65,16 @@ function specificity(selectorList) {
     if (!sel) continue;
     const a = (sel.match(/#[\w-]+/g) ?? []).length;
     // 类、属性、伪类；伪元素（::）不计入这一位，故先排除
-    const b = (sel.match(/\.[\w-]+|\[[^\]]+\]|(?<!:):[\w-]+(?:\([^)]*\))?/g) ?? [])
-      .length;
+    const b = (
+      sel.match(/\.[\w-]+|\[[^\]]+\]|(?<!:):[\w-]+(?:\([^)]*\))?/g) ?? []
+    ).length;
     const c = (sel.match(/(?<![\w.#[:-])[a-z][\w-]*/gi) ?? []).length;
     const cur = [a, b, c];
-    if (cur[0] > best[0] || (cur[0] === best[0] && cur[1] > best[1]) ||
-        (cur[0] === best[0] && cur[1] === best[1] && cur[2] > best[2])) {
+    if (
+      cur[0] > best[0] ||
+      (cur[0] === best[0] && cur[1] > best[1]) ||
+      (cur[0] === best[0] && cur[1] === best[1] && cur[2] > best[2])
+    ) {
       best = cur;
     }
   }
@@ -120,7 +125,9 @@ for (const family of FAMILIES) {
     continue;
   }
 
-  const defaultIndex = blocks.findIndex((b) => /(^|,)\s*:root(?![\w.-])/.test(b.selector));
+  const defaultIndex = blocks.findIndex((b) =>
+    /(^|,)\s*:root(?![\w.-])/.test(b.selector),
+  );
   if (defaultIndex === -1) {
     fail(`${family.name}：没有默认块（不含 :root 的分支）`);
     continue;

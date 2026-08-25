@@ -5,6 +5,27 @@
 
 ---
 
+## 8.0.0 - 2026-08-25
+
+跟随 design-ui 5.0.0（major 传导，050 §2「下层的 major 会向上传导」），tokens 不变。
+
+- **默认文案全部由中文改为英文托底**（83 处 / 20 个文件，含伞包 shell 层的
+  `ShellChrome` / `ShellLauncher` / `ShellSearchBox` / `ShellSidebarNav`）。类型
+  零改动，**不会编译失败**——但每个消费方的界面都会变。
+- **判据：托底，不是产品语言。** 所有应用都应当传参，中文单语的产品也不例外；
+  英文默认值出现在生产界面上说明有人忘了传，不是一种受支持的配置。托底之所以
+  必须是英文：DS 不知道消费方说什么语言，件内写中文就是替某一个产品做了语言选择。
+- **这一版之后件完全兼容 i18n**：任何一处渲染文字都换得掉，含 `aria-label` 与
+  `sr-only`。但兼容 i18n 不等于承担 i18n——DS 仍然没有 locale 上下文，翻译在
+  调用点。
+- `ConfirmDestructive.titleTemplate` 默认值改为 `"{verb} {target}?"`；
+  `BulkActionBar` 的 `selectionTemplate` 与 `noun` 一并改（语序和量词是同一句话
+  的两半）。
+- 守卫 `check-i18n-seam.mjs` 换成二值判据：剥掉注释后不许出现中日韩字符或全角
+  标点。注释不受此限。
+- 05 §3.1 重写，写明「英文是基准语」的判据与三档收法。
+- 详见 design-ui 5.0.0 更新日志。
+
 ## 7.2.0 - 2026-08-25
 
 跟随 design-ui 4.2.0（minor 传导，050 §2），tokens 不变。全部向后兼容。

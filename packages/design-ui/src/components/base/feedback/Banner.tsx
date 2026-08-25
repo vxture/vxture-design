@@ -39,7 +39,7 @@ function Banner({
   description,
   action,
   onDismiss,
-  dismissLabel = "关闭提示",
+  dismissLabel = "Dismiss",
   className,
 }: BannerProps) {
   return (

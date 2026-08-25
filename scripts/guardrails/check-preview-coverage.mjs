@@ -16,7 +16,8 @@
  * 用法：node scripts/guardrails/check-preview-coverage.mjs
  */
 
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import { collectFiles, isTsx } from "./lib/collect-files.mjs";
 import path from "node:path";
 import process from "node:process";
 
@@ -45,15 +46,6 @@ const EXCLUDED = new Map([
   // 批，全仓零消费）——本脚本要求排除清单不留死条目，正确。
 ]);
 
-async function walk(dir, out = []) {
-  for (const f of await readdir(dir, { withFileTypes: true })) {
-    const p = path.join(dir, f.name);
-    if (f.isDirectory()) await walk(p, out);
-    else if (f.name.endsWith(".tsx")) out.push(p);
-  }
-  return out;
-}
-
 const src = await readFile(REGISTRY, "utf8");
 /**
  * 条目名，外加 `covers` 里声明的"本条顺带展示了谁"——一族东西并在一条里看
@@ -67,7 +59,8 @@ for (const m of src.matchAll(/covers:\s*\[([^\]]*)\]/g)) {
 }
 
 const files = [];
-for (const r of ROOTS) files.push(...(await walk(path.join(ROOT, r))));
+for (const r of ROOTS)
+  files.push(...(await collectFiles(path.join(ROOT, r), isTsx)));
 
 /**
  * 一个都没扫到就是错。目录挪过而本清单没跟上时，空集会让检查永远全绿——

@@ -130,10 +130,10 @@ function ConfirmDestructive({
   target,
   consequence,
   preconditions,
-  titleTemplate = "{verb}{target}？",
-  cancelLabel = "取消",
-  pendingLabel = "处理中…",
-  blockedHint = "前置条件未满足，先处理上面未通过的那几条",
+  titleTemplate = "{verb} {target}?",
+  cancelLabel = "Cancel",
+  pendingLabel = "Working…",
+  blockedHint = "Preconditions not met — resolve the items marked above first.",
   onConfirm,
 }: ConfirmDestructiveProps) {
   const [pending, setPending] = React.useState(false);

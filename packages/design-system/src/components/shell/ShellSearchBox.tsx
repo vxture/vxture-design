@@ -92,10 +92,10 @@ export interface ShellSearchBoxProps {
 }
 
 const DEFAULT_LABELS: Required<ShellSearchLabels> = {
-  placeholder: "搜索",
-  empty: "没有匹配结果",
-  loading: "检索中",
-  resultsLabel: "搜索结果",
+  placeholder: "Search",
+  empty: "No results",
+  loading: "Searching",
+  resultsLabel: "Search results",
 };
 
 /**

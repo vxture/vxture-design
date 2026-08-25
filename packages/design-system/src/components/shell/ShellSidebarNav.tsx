@@ -194,10 +194,10 @@ export interface ShellSidebarNavLabels {
 }
 
 const DEFAULT_LABELS: ShellSidebarNavLabels = {
-  expandNav: "展开导航",
-  collapseNav: "收起导航",
-  expandAllGroups: "展开全部分组菜单项",
-  collapseAllGroups: "收起全部分组菜单项",
+  expandNav: "Expand navigation",
+  collapseNav: "Collapse navigation",
+  expandAllGroups: "Expand all groups",
+  collapseAllGroups: "Collapse all groups",
 };
 
 function readClosedGroups(storageKey: string): Set<string> {

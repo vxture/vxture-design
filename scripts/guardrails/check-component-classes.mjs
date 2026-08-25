@@ -18,6 +18,7 @@
  */
 
 import { readFile, readdir } from "node:fs/promises";
+import { collectFiles, isTsx } from "./lib/collect-files.mjs";
 import path from "node:path";
 import process from "node:process";
 import { PENDING_COMPONENTS } from "./pending-components.mjs";
@@ -38,7 +39,8 @@ if (!twDir) {
 }
 const TW = path.join(PNPM, twDir, "node_modules/tailwindcss");
 const { compile } = await import(
-  new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`).href
+  new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`)
+    .href
 );
 
 const PKG = path.join(ROOT, "packages/design-system");
@@ -68,7 +70,11 @@ async function loadStylesheet(id, base) {
   ]) {
     if (id.startsWith(prefix)) {
       const p = path.join(dir, id.slice(prefix.length));
-      return { path: p, base: path.dirname(p), content: await readFile(p, "utf8") };
+      return {
+        path: p,
+        base: path.dirname(p),
+        content: await readFile(p, "utf8"),
+      };
     }
   }
   const p = path.isAbsolute(id)
@@ -90,9 +96,13 @@ const compiled = await compile(
       if (!dir) throw new Error(`未找到插件 ${id}`);
       const entry = path.join(PNPM, dir, "node_modules", id);
       // CJS 包无 exports 字段时目录导入不被 ESM 支持，须显式指到入口文件。
-      const pkg = JSON.parse(await readFile(path.join(entry, "package.json"), "utf8"));
+      const pkg = JSON.parse(
+        await readFile(path.join(entry, "package.json"), "utf8"),
+      );
       const main = path.join(entry, pkg.main ?? "index.js");
-      const mod = await import(new URL(`file://${main.split(path.sep).join("/")}`).href);
+      const mod = await import(
+        new URL(`file://${main.split(path.sep).join("/")}`).href
+      );
       return { base: entry, module: mod.default ?? mod };
     },
   },
@@ -150,15 +160,6 @@ function classListOf(text, strict = false) {
   return tokens.filter((t) => !generated(t));
 }
 
-async function walk(dir, out = []) {
-  for (const f of await readdir(dir, { withFileTypes: true })) {
-    const p = path.join(dir, f.name);
-    if (f.isDirectory()) await walk(p, out);
-    else if (/\.tsx$/.test(f.name)) out.push(p);
-  }
-  return out;
-}
-
 /**
  * 只查已按 shadcn 惯例 + cva 重写完的组件。
  *
@@ -170,7 +171,8 @@ async function walk(dir, out = []) {
 const PENDING = new Set(PENDING_COMPONENTS);
 
 const discovered = [];
-for (const root of COMPONENT_ROOTS) discovered.push(...(await walk(root)));
+for (const root of COMPONENT_ROOTS)
+  discovered.push(...(await collectFiles(root, isTsx)));
 /**
  * 配方层也要扫。
  *
@@ -179,9 +181,7 @@ for (const root of COMPONENT_ROOTS) discovered.push(...(await walk(root)));
  * 而组件自己写同样的类会立刻报错。**共享的东西比各写各的更需要检查**，
  * 因为一处错会静默扩散到所有引用方。
  */
-discovered.push(
-  path.join(ROOT, "packages/design-ui/src/styles/recipes.ts"),
-);
+discovered.push(path.join(ROOT, "packages/design-ui/src/styles/recipes.ts"));
 const files = discovered.filter((f) => !PENDING.has(path.basename(f)));
 
 /**
@@ -223,7 +223,11 @@ for (const file of files) {
       }
       for (const cls of m[1].split(/\s+/)) {
         if (MISRESOLVED.test(cls.replace(/^.*:/, ""))) {
-          misresolved.push({ file: path.relative(ROOT, file), line: i + 1, cls });
+          misresolved.push({
+            file: path.relative(ROOT, file),
+            line: i + 1,
+            cls,
+          });
         }
       }
     }
@@ -234,7 +238,8 @@ if (misresolved.length > 0) {
   console.error(
     "裸容器档的宽度类会命中同名 spacing 档（生成但值错，如 max-w-lg → 24px）：\n",
   );
-  for (const d of misresolved) console.error(`  ✗ ${d.file}:${d.line}  ${d.cls}`);
+  for (const d of misresolved)
+    console.error(`  ✗ ${d.file}:${d.line}  ${d.cls}`);
   console.error("\n容器意图改用 max-w-content-* / max-w-page-* 宽度族。");
   process.exit(1);
 }
@@ -285,18 +290,24 @@ for (const file of files) {
   }
 }
 
-const staleLedger = [...PENDING_RECIPES_SET].filter((b) => !stillHandWritten.has(b));
+const staleLedger = [...PENDING_RECIPES_SET].filter(
+  (b) => !stillHandWritten.has(b),
+);
 
 if (recipeViolations.length > 0 || staleLedger.length > 0) {
   if (recipeViolations.length > 0) {
     console.error("组件手写了本该由配方层提供的片段——改基调时一定会漏掉：\n");
     for (const v of recipeViolations) {
-      console.error(`  ✗ ${v.file}  写了 ${v.pattern}，应引用配方 \`${v.recipe}\``);
+      console.error(
+        `  ✗ ${v.file}  写了 ${v.pattern}，应引用配方 \`${v.recipe}\``,
+      );
     }
     console.error("\n配方在 packages/design-ui/src/styles/recipes.ts。");
   }
   if (staleLedger.length > 0) {
-    console.error("\n以下组件已不再手写这些片段，请从 pending-recipes.mjs 删掉：\n");
+    console.error(
+      "\n以下组件已不再手写这些片段，请从 pending-recipes.mjs 删掉：\n",
+    );
     for (const b of staleLedger) console.error(`  ✗ ${b}`);
   }
   process.exit(1);

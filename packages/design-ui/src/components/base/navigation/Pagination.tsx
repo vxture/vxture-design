@@ -81,11 +81,11 @@ function Pagination({
   onPageSizeChange,
   onPageChange,
   countLabel,
-  previousLabel = "上一页",
-  nextLabel = "下一页",
-  pageSizeLabel = "每页条数",
-  pageSizeOptionTemplate = "每页 {size} 条",
-  pageSizeAutoLabel = "每页条数自适应",
+  previousLabel = "Previous page",
+  nextLabel = "Next page",
+  pageSizeLabel = "Rows per page",
+  pageSizeOptionTemplate = "{size} per page",
+  pageSizeAutoLabel = "Fit rows to height",
   ...props
 }: PaginationProps) {
   const safePageCount = Math.max(1, pageCount);
@@ -105,12 +105,12 @@ function Pagination({
       <div className="text-body-sm text-muted-foreground">
         {countLabel ??
           (typeof total === "number"
-            ? `共 ${total} 条记录${
+            ? `${total} records${
                 typeof filteredTotal === "number" && filteredTotal !== total
-                  ? ` / 当前筛选 ${filteredTotal} 条`
+                  ? ` / ${filteredTotal} filtered`
                   : ""
               }`
-            : `第 ${safePage} / ${safePageCount} 页`)}
+            : `Page ${safePage} of ${safePageCount}`)}
       </div>
       {/* 每页条数与翻页条之间留大距（gap-2xl）：两组都是数字按钮，贴近了
           会读成同一排页码。 */}

@@ -105,7 +105,9 @@ async function collectRuntimeSurface(pkg) {
     if (!existsSync(absolute)) {
       const label = normalize(path.relative(ROOT, absolute));
       if (STRICT) {
-        fail(`入口 ${subpath} 的构建产物缺失：${label}（--strict 下不允许跳过）`);
+        fail(
+          `入口 ${subpath} 的构建产物缺失：${label}（--strict 下不允许跳过）`,
+        );
       } else {
         console.log(`· 跳过 ${subpath}：构建产物缺失（${label}）`);
       }
@@ -192,7 +194,11 @@ async function main() {
         "@vxture/design-system 公开入口快照。变更必须按 docs/050-design-system-release.md 判定 SemVer 影响后，用 --update 显式更新。",
       ...actual,
     };
-    writeFileSync(SNAPSHOT_PATH, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+    writeFileSync(
+      SNAPSHOT_PATH,
+      `${JSON.stringify(payload, null, 2)}\n`,
+      "utf8",
+    );
     console.log(
       `已更新快照：${normalize(path.relative(ROOT, SNAPSHOT_PATH))}\n` +
         "⚠ 请在 PR 描述中说明入口变化及对应的版本号影响（patch / minor / major）。",

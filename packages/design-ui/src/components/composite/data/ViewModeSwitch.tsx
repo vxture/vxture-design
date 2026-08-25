@@ -54,7 +54,7 @@ export interface ViewModeSwitchProps {
 export function ViewModeSwitch({
   value,
   onChange,
-  ariaLabel = "展示方式",
+  ariaLabel = "View mode",
   labels,
   cardsDisabledReason,
   className,
@@ -74,14 +74,14 @@ export function ViewModeSwitch({
     >
       <ToggleGroupItem
         value="list"
-        aria-label={labels?.list ?? "列表视图"}
+        aria-label={labels?.list ?? "List view"}
         className={ITEM}
       >
         <Icon name="list" size="lg" />
       </ToggleGroupItem>
       <ToggleGroupItem
         value="cards"
-        aria-label={labels?.cards ?? "卡片视图"}
+        aria-label={labels?.cards ?? "Card view"}
         className={ITEM}
         {...(cardsDisabledReason
           ? {

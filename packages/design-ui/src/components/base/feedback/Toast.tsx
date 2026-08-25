@@ -75,8 +75,8 @@ export interface ToastProviderProps {
 
 export function ToastProvider({
   children,
-  regionLabel = "通知",
-  dismissLabel = "关闭通知",
+  regionLabel = "Notifications",
+  dismissLabel = "Dismiss notification",
 }: ToastProviderProps) {
   const [toasts, setToasts] = React.useState<ToastRecord[]>([]);
 

@@ -83,8 +83,8 @@ export function Drawer({
   title,
   description,
   footer,
-  closeLabel = "关闭",
-  fallbackTitle = "抽屉",
+  closeLabel = "Close",
+  fallbackTitle = "Drawer",
   children,
   className,
 }: DrawerProps) {
