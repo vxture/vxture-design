@@ -16,7 +16,7 @@
 
 export const ICON_GROUPS = [
   {
-    label: "导航",
+    label: "Navigation",
     icons: [
       "home",
       "arrow-left",
@@ -49,7 +49,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "操作",
+    label: "Actions",
     icons: [
       "search",
       "app-grid",
@@ -97,7 +97,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "状态",
+    label: "Status",
     icons: [
       "success",
       "error",
@@ -110,7 +110,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "云服务与智能体",
+    label: "Cloud & agents",
     icons: [
       "agent",
       "workflow",
@@ -135,7 +135,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "数据与内容",
+    label: "Data & content",
     icons: [
       "chart-bar", // 图表（原 chart 已合并）
       "table",
@@ -154,7 +154,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "文件与文档",
+    label: "Files & documents",
     icons: [
       "file",
       "file-text",
@@ -167,7 +167,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "商业与账务",
+    label: "Business & billing",
     icons: [
       "credit-card",
       "receipt",
@@ -185,7 +185,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "安全与凭证",
+    label: "Security & credentials",
     icons: [
       "shield",
       "shield-warning",
@@ -195,7 +195,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "用户与组织",
+    label: "Users & organizations",
     icons: [
       "user",
       "role", // 角色/权限主体
@@ -210,7 +210,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "通讯与联系",
+    label: "Communication",
     icons: [
       "mail",
       "phone",
@@ -231,7 +231,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "时间与位置",
+    label: "Time & location",
     icons: [
       "calendar", // 日历（原 calendar-days 已合并）
       "clock",
@@ -240,7 +240,7 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "视图与主题",
+    label: "View & theme",
     icons: [
       "sun",
       "moon",
@@ -256,11 +256,11 @@ export const ICON_GROUPS = [
     ],
   },
   {
-    label: "反馈与互动",
+    label: "Feedback & interaction",
     icons: ["thumbs-up", "thumbs-down"],
   },
   {
-    label: "系统保留",
+    label: "System reserved",
     icons: ["placeholder"],
   },
 ] as const satisfies readonly {

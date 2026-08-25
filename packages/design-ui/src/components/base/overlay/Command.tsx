@@ -87,8 +87,8 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>(function Command(
 });
 
 const CommandDialog = ({
-  title = "命令面板",
-  description = "搜索并执行命令",
+  title = "Command palette",
+  description = "Search and run commands",
   children,
   commandProps,
   ...props

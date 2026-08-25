@@ -53,9 +53,9 @@ export function Combobox({
   items,
   value,
   onValueChange,
-  placeholder = "请选择",
-  searchPlaceholder = "搜索…",
-  emptyText = "没有匹配项",
+  placeholder = "Select…",
+  searchPlaceholder = "Search…",
+  emptyText = "No matches",
   disabled = false,
   className,
 }: ComboboxProps) {

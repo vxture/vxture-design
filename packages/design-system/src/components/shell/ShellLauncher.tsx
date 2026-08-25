@@ -46,8 +46,8 @@ export interface ShellLauncherProps {
 export function ShellLauncher({
   items,
   onSelect,
-  buttonLabel = "功能板块",
-  panelLabel = "选择功能板块",
+  buttonLabel = "Sections",
+  panelLabel = "Select a section",
   align = "start",
   className,
 }: ShellLauncherProps) {

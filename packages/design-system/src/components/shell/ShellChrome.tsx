@@ -250,9 +250,9 @@ export interface ShellLegalFooterProps {
 const DEFAULT_LOCALE_OPTIONS: LocaleSelectOption[] = [];
 
 const DEFAULT_LEGAL_LINKS: ShellLegalFooterLink[] = [
-  { href: "/legal/terms", label: "服务条款" },
-  { href: "/legal/privacy", label: "隐私政策" },
-  { href: "/legal/cookies", label: "Cookie 使用政策" },
+  { href: "/legal/terms", label: "Terms of Service" },
+  { href: "/legal/privacy", label: "Privacy Policy" },
+  { href: "/legal/cookies", label: "Cookie Policy" },
 ];
 
 const THEME_OPTIONS: readonly ShellThemePreference[] = [
@@ -526,8 +526,8 @@ export function ShellAgentButton({
 export function ShellLocaleSwitcher({
   currentLocale,
   options = DEFAULT_LOCALE_OPTIONS,
-  buttonLabel = "选择语言",
-  panelLabel = "语言选择",
+  buttonLabel = "Select language",
+  panelLabel = "Language",
   align = "end",
   className,
   buttonClassName,
@@ -572,8 +572,8 @@ export function ShellLocaleSwitcher({
 export function ShellThemeToggle({
   currentTheme = "light",
   buttonLabel,
-  lightLabel = "浅色模式",
-  darkLabel = "深色模式",
+  lightLabel = "Light mode",
+  darkLabel = "Dark mode",
   className,
   activeClassName,
   onThemeChange,
@@ -599,8 +599,8 @@ export function ShellFullscreenToggle({
   targetId,
   mode = "native",
   lockScroll = false,
-  enterLabel = "显示器全屏",
-  exitLabel = "退出全屏",
+  enterLabel = "Enter full screen",
+  exitLabel = "Exit full screen",
   className,
   activeClassName,
   getTargetElement,
@@ -692,7 +692,7 @@ export function ShellPreferencePanel({
               labels?.themeOptions?.[option] ??
               // "系统"而非"跟随系统"：三档并排等宽，最长的一档决定分段宽度，
               // 多两个字会把另外两档也一起撑开。语义没有损失。
-              { system: "系统", light: "浅色", dark: "深色" }[option],
+              { system: "System", light: "Light", dark: "Dark" }[option],
           }))}
         />
       </ShellPanelControlRow>
@@ -708,9 +708,11 @@ export function ShellPreferencePanel({
               value: option,
               label:
                 labels?.densityOptions?.[option] ??
-                { compact: "紧凑", default: "默认", comfortable: "宽松" }[
-                  option
-                ],
+                {
+                  compact: "Compact",
+                  default: "Default",
+                  comfortable: "Comfortable",
+                }[option],
             }))}
           />
         </ShellPanelControlRow>
@@ -727,7 +729,7 @@ export function ShellPreferencePanel({
               value: option,
               label:
                 labels?.fontSizeOptions?.[option] ??
-                { small: "小", default: "默认", large: "大" }[option],
+                { small: "Small", default: "Default", large: "Large" }[option],
             }))}
           />
         </ShellPanelControlRow>
@@ -738,7 +740,7 @@ export function ShellPreferencePanel({
 
 export function ShellUserMenu({
   user,
-  openLabel = "用户菜单",
+  openLabel = "User menu",
   online = true,
   extras,
   settings,
@@ -843,7 +845,7 @@ export function ShellUserMenu({
                 <Button
                   variant="ghost"
                   size="icon-xs"
-                  aria-label={portalReturn.dismissLabel ?? "关闭"}
+                  aria-label={portalReturn.dismissLabel ?? "Close"}
                   onClick={portalReturn.onDismiss}
                 >
                   <Icon name="x" size="xs" />

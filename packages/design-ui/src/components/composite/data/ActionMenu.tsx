@@ -110,7 +110,7 @@ export interface ActionMenuProps {
 
 function ActionMenu({
   items,
-  label = "打开操作菜单",
+  label = "Open actions menu",
   align = "end",
   disabled = false,
 }: ActionMenuProps) {

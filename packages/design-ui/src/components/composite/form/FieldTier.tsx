@@ -35,9 +35,9 @@ import { Icon } from "../../../icons";
 export type FieldTierKind = "identity" | "details" | "advanced";
 
 const TIER_LABEL: Record<FieldTierKind, string> = {
-  identity: "身份",
-  details: "常规",
-  advanced: "高级",
+  identity: "Identity",
+  details: "Details",
+  advanced: "Advanced",
 };
 
 export interface FieldTierProps {

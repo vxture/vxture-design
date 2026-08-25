@@ -94,10 +94,10 @@ export interface BulkActionBarProps {
 function BulkActionBar({
   count,
   actions,
-  noun = "项",
-  selectionTemplate = "已选择 {count} {noun}",
-  toolbarLabel = "批量操作",
-  clearLabel = "清除",
+  noun = "items",
+  selectionTemplate = "{count} {noun} selected",
+  toolbarLabel = "Bulk actions",
+  clearLabel = "Clear",
   onClear,
   className,
 }: BulkActionBarProps) {

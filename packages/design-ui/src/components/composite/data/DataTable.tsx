@@ -234,11 +234,11 @@ export interface DataTableLabels {
 }
 
 const DEFAULT_LABELS: Required<DataTableLabels> = {
-  expand: "展开",
-  selectAll: "全选本页",
-  deselectAll: "取消本页全选",
-  selectRow: "选择本行",
-  rowActions: "操作",
+  expand: "Expand",
+  selectAll: "Select all rows on this page",
+  deselectAll: "Deselect all rows on this page",
+  selectRow: "Select row",
+  rowActions: "Actions",
 };
 
 function nextDirection(
@@ -470,7 +470,7 @@ function DataTable<TRow>({
             ) : rows.length === 0 ? (
               <tr>
                 <td colSpan={colSpan} className="p-lg">
-                  {empty ?? <EmptyState icon="list" title="暂无数据" />}
+                  {empty ?? <EmptyState icon="list" title="No data" />}
                 </td>
               </tr>
             ) : (

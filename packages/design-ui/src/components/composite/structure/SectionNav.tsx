@@ -40,7 +40,7 @@ const SectionNav = React.forwardRef<HTMLElement, SectionNavProps>(
       items,
       activeKey,
       onSelect,
-      "aria-label": ariaLabel = "板块导航",
+      "aria-label": ariaLabel = "Section navigation",
       ...props
     },
     ref,

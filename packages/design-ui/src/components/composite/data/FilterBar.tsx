@@ -74,7 +74,7 @@ const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(
       className,
       search,
       onReset,
-      resetLabel = "重置筛选",
+      resetLabel = "Reset filters",
       actions,
       view,
       onViewChange,
