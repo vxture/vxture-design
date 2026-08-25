@@ -51,6 +51,11 @@ jobs:
       - name: Guardrail self-test (mutation)
         run: pnpm test:guardrails
 
+      # 组件行为测试。守卫自测证明仪器活着，这一条测的是件本身跑起来对不对
+      # ——两者补的不是同一个洞。
+      - name: Component tests
+        run: pnpm test
+
   preview-build:
     name: preview-build
     runs-on: ubuntu-latest
