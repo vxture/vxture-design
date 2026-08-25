@@ -5,6 +5,14 @@
 
 ---
 
+## 9.0.1 - 2026-08-26
+
+跟随 design-ui 6.0.1（patch 传导，050 §2），tokens 不变。
+
+- **`Drawer` 的宽度挡位一直是死的**：传 sm/md/lg 没有任何效果，一律渲染成
+  `w-full max-w-panel-lg`。挡位类名排在 `w-full` 之前，被 tailwind-merge
+  静默丢掉。详见 design-ui 6.0.1。
+
 ## 9.0.0 - 2026-08-25
 
 跟随 design-ui 6.0.0（major 传导，050 §2「下层的 major 会向上传导」），tokens 不变。

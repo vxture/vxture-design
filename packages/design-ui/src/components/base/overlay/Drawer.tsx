@@ -120,7 +120,6 @@ export function Drawer({
         <DialogPrimitive.Content
           style={widthValue ? { width: widthValue } : undefined}
           className={cn(
-            ladder,
             // 抽屉贴着视口边缘，只有朝内的一侧需要边——故留 border 不改 ring，
             // 由 SIDE_CLASS 决定是 border-l 还是 border-r。
             "fixed z-drawer flex h-full w-full flex-col border-border bg-popover text-foreground shadow-dialog",
@@ -128,6 +127,11 @@ export function Drawer({
             "max-w-panel-lg outline-none",
             "duration-base ease-standard data-[state=open]:animate-in data-[state=closed]:animate-out",
             SIDE_CLASS[side],
+            /* 挡位必须排在 w-full **之后**：cn 把 --container-* 登记进了宽度组，
+               于是 w-panel-md 与 w-full 同组冲突、后写的赢。排在前面时挡位被
+               静默丢掉——传 sm/md/lg 一律渲染成 w-full max-w-panel-lg，而且不
+               报错。2026-08-26 写抽屉的宽度回归测试时查到，此前一直如此。 */
+            ladder,
             className,
           )}
         >
