@@ -140,26 +140,45 @@ function BulkActionBar({
           ) : null}
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-sm">
-          {actions.map((action) => (
-            <Button
-              key={action.id}
-              size="md"
-              variant={action.danger ? "destructive" : "outline"}
-              {...(action.disabled !== undefined
+          {actions.map((action) => {
+            const shared = {
+              size: "md" as const,
+              ...(action.disabled !== undefined
                 ? { disabled: action.disabled }
-                : {})}
-              {...(action.confirm !== undefined
+                : {}),
+              ...(action.confirm !== undefined
                 ? { onClick: () => setConfirmingId(action.id) }
                 : action.onSelect !== undefined
                   ? { onClick: action.onSelect }
-                  : {})}
-            >
-              {action.icon ? (
-                <Icon name={action.icon} size={16} aria-hidden="true" />
-              ) : null}
-              {action.label}
-            </Button>
-          ))}
+                  : {}),
+            };
+            const content = (
+              <>
+                {action.icon ? (
+                  <Icon name={action.icon} size={16} aria-hidden="true" />
+                ) : null}
+                {action.label}
+              </>
+            );
+            /* 危险与常规分开写，两个原因：`variant` 一旦是三元表达式，Button 的
+               判别联合就选不出分支；而这里的红按钮**确实**该豁免——拦截在
+               `BulkActionBarItem` 那一层（`action.confirm` 给了就由本件弹确认框，
+               没给则 `action.confirmExempt` 已写明理由），按钮只是它的渲染。 */
+            return action.danger ? (
+              <Button
+                key={action.id}
+                variant="destructive"
+                confirmExempt="拦截在 BulkActionBarItem 一层：action.confirm 给了由本件弹框，没给则 action.confirmExempt 已写明理由"
+                {...shared}
+              >
+                {content}
+              </Button>
+            ) : (
+              <Button key={action.id} variant="outline" {...shared}>
+                {content}
+              </Button>
+            );
+          })}
         </div>
       </div>
       {renderedConfirm ? (

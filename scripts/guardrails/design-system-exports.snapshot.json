@@ -127,6 +127,7 @@
       "DashboardTemplate",
       "DataTable",
       "DatePicker",
+      "DestructiveButton",
       "DetailList",
       "DetailPageTemplate",
       "DetailRow",

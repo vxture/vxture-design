@@ -5,6 +5,111 @@
 
 ---
 
+## 6.0.0 — 2026-08-25
+
+破坏性（major，050 §2：改组件 props）：**`variant="destructive"` 的 Button 也
+必须写明为什么不设防。** 破坏性确认契约的最后一个洞补上了。
+
+### 补的是哪个洞
+
+4.0 把 `danger` 收进 `ActionMenuItem` / `BulkActionBarItem` 的判别联合时，漏掉了
+第三个载体——裸的 `<Button variant="destructive">`。4.1 的处置是把文档改诚实、
+给出两条 grep 的清点口径。
+
+**那让文档对一个洞诚实，并没有把洞补上。** 具体后果：accounts 的删 passkey 按钮
+（红色、不可逆、删的是安全凭据，删掉最后一个就把自己锁在外面）一直不设防，而
+`grep -rn confirmExempt` 会把 accounts 报成干净。清单不完整就不能当清单用。
+
+而当时给出的第二条 grep（`grep 'variant="destructive"'`）是**纯人工纪律、没有
+任何强制力**——正是这套契约一开始要消灭的东西：「现在判不了，因为没有可判的形状」。
+本版把形状补齐。
+
+### 分工：原语只管形状，契约由组合件承担
+
+| 载体                        | 层        | 承担什么                                                                      |
+| --------------------------- | --------- | ----------------------------------------------------------------------------- |
+| `Button` / `ActionButton`   | base      | **类型义务**：`variant="destructive"` 必须写 `confirmExempt` 说明为什么不设防 |
+| `DestructiveButton`（新增） | composite | **拦截**：收 `confirm` 契约，自己弹 `ConfirmDestructive`                      |
+
+这个分工不是设计洁癖，是被守卫逼出来的。第一版让 base 的 `Button` 直接收
+`confirm` 并自己弹框，`check-server-entry-safety` 当场报红：
+
+```
+✗ @vxture/design-ui 的 /server 入口在 react-server 下求值失败：
+  React.createContext is not a function
+```
+
+原因：`MetricCard` 在 server-safe 名单里且引了 `Button`，于是
+`Button → ConfirmDestructive → AlertDialog` 把 Radix 的 `createContext` 拖进了
+`/server` 入口。**一个能弹模态的 base 原语就不是 base 原语。** 改成现在这个分工
+之后 `Button` 零新增 import，server-safe 子集原样保住。
+
+顺带作废了第一版为解引用环做的两项改动（把 `buttonVariants` 拆成独立模块、把
+`ConfirmDestructive` 移进 `base/overlay/`）——没有环了，两项都不必要。后者当时的
+理由也是错的：「依赖全在 base 所以它属于 base」恰恰说反了，**由 base 单件拼装
+正是 composite 的定义**（见 `composite/index.ts`）。
+
+### 契约
+
+```tsx
+// 要拦
+<DestructiveButton confirm={{ verb, target, consequence, onConfirm }}>
+  Revoke
+</DestructiveButton>
+
+// 不拦，写明为什么（理由可 grep）
+<Button variant="destructive" confirmExempt="确认在流程第二步">…</Button>
+```
+
+`variant="destructive-strong"` **不要求**：按 03 §3 它是落锤档——确认对话框里的
+那个提交按钮。要求落锤自己再确认一次是循环。
+
+`ActionButton` 透传 `ButtonProps`，自动跟着收紧。为此把它的 `Omit` 换成
+`DistributiveOmit`：在联合上做 `Omit` 必须分配到每个分支，否则 TS 会先把分支并成
+一个「什么都可选」的对象再删键，`variant` 与 `confirmExempt` 的绑定关系当场丢失
+——`ActionButton` 就成了绕开契约的后门。
+
+于是清点口径回到**一条** grep：`grep -rn confirmExempt portals/`。
+
+### 迁移
+
+所有 `<Button variant="destructive">` 与 `<ActionButton variant="destructive">`
+会编译失败。要拦的换成 `DestructiveButton` 并给 `confirm`，不拦的写一句
+`confirmExempt` 理由。
+
+accounts 那个删 passkey 的按钮：
+
+```tsx
+<DestructiveButton
+  confirm={{
+    verb: "Revoke",
+    target: passkey.name,
+    consequence: "…",
+    preconditions: [
+      { label: "至少还有一把可用的 passkey", met: others.length > 0 },
+    ],
+    onConfirm: () => revoke(passkey.id),
+  }}
+>
+  Revoke
+</DestructiveButton>
+```
+
+`variant` 是运行时值时（遍历全部挡位的画廊）选不出分支，需要回收一次类型——
+预览面的 `galleryVariant` 是这个写法的样板。
+
+`DestructiveButton` 不开 `variant`（按定义就是 destructive 入口档）也不开
+`asChild`（渲染「按钮 + 对话框」两个节点，塞不进 `Slot` 的单子元素约束）。
+`AlertDialogTrigger asChild` 这类场合用 `Button` + `confirmExempt`。
+
+### 守卫
+
+`check-i18n-seam.mjs` 补一条豁免：`confirmExempt` 的值不受「渲染文案一律英文」
+约束。它**从不进 DOM**（`Button` 把它解构丢掉后才展开 props，落到元素上会变成
+React 不认识的属性并报警告），作用全在类型层与 `grep`——和注释同一类，是写给
+维护者的散文，而本仓的维护语言是中文。判据仍是二值的：整行含 `confirmExempt`
+即跳过，不做语义推断。
+
 ## 5.0.0 — 2026-08-25
 
 破坏性（major，050 §2）：**默认文案全部由中文改为英文托底，应用一律传参。**

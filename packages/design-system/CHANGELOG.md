@@ -5,6 +5,23 @@
 
 ---
 
+## 9.0.0 - 2026-08-25
+
+跟随 design-ui 6.0.0（major 传导，050 §2「下层的 major 会向上传导」），tokens 不变。
+
+- **`variant="destructive"` 的 `Button` / `ActionButton` 必须写 `confirmExempt`**，
+  补上破坏性确认契约的最后一个载体。此前判别联合只管 `ActionMenuItem` 与
+  `BulkActionBarItem`，够不到裸的红按钮——`grep confirmExempt` 因此会把只有裸红
+  按钮的产品报成「干净」，清单不完整就不能当清单用。
+- **新增公开入口 `DestructiveButton`**（composite）：「Button + ConfirmDestructive」
+  的固定组合，要拦的红按钮用它。分工是被守卫逼出来的：base 的 `Button` 在
+  server-safe 子集里（`MetricCard` 引它），让它引 `ConfirmDestructive` 会把 Radix
+  AlertDialog 的 `createContext` 拖进 `/server` 入口、在 react-server 下崩——能弹
+  模态的 base 原语就不是 base 原语。
+- `variant="destructive-strong"` 不要求：它是落锤档，要求落锤自己再确认是循环。
+- 清点口径回到一条：`grep -rn confirmExempt portals/`。
+- 详见 design-ui 6.0.0 更新日志。
+
 ## 8.0.0 - 2026-08-25
 
 跟随 design-ui 5.0.0（major 传导，050 §2「下层的 major 会向上传导」），tokens 不变。

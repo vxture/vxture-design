@@ -138,17 +138,60 @@ export type _SizeKeysMatch = Expect<
   Equal<NonNullable<VariantProps<typeof buttonVariants>["size"]>, ButtonSize>
 >;
 
-export interface ButtonProps
-  extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+interface ButtonBase extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   readonly asChild?: boolean;
+  readonly size?: ButtonSize;
 }
 
+/**
+ * 非危险入口档，含 **`destructive-strong`**。
+ *
+ * 落锤档不要求确认：按 03 §3 它就是确认对话框里的那个提交按钮，要求落锤自己再
+ * 确认一次是循环。
+ */
+interface ButtonPlain extends ButtonBase {
+  readonly variant?: Exclude<ButtonVariant, "destructive">;
+  readonly confirmExempt?: never;
+}
+
+/**
+ * 危险入口档：**必须写明这个红按钮为什么不设防**。
+ *
+ * 本件只承担这条**类型义务**，不弹确认框——`Button` 是 base 原语，而且在
+ * server-safe 子集里（`MetricCard` 引它）。让它引 `ConfirmDestructive` 会把
+ * Radix AlertDialog 的 `createContext` 拖进 `/server` 入口，在 react-server 下
+ * 直接崩（2026-08-25 由 check-server-entry-safety 实测抓到）。**一个能弹模态的
+ * base 原语就不是 base 原语。**
+ *
+ * 要带确认的红按钮用 `DestructiveButton`（composite 层，它内部就是
+ * 「Button + ConfirmDestructive」）——与 `Dialog → DialogForm`、
+ * `AlertDialog → ConfirmDestructive` 同一步棋：原语只管形状，契约由组合件承担。
+ *
+ * 什么时候该直接写豁免：按钮打开的是多步流程或另一个表单，确认在下一屏；
+ * 或动作本身可撤销。「用户嫌麻烦」不是理由——那说明这个按钮不该用 destructive 档。
+ */
+interface ButtonExempt extends ButtonBase {
+  readonly variant: "destructive";
+  readonly confirmExempt: string;
+}
+
+export type ButtonProps = ButtonPlain | ButtonExempt;
+
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className, variant, size, asChild = false, type, ...props },
+  {
+    className,
+    variant,
+    size,
+    asChild = false,
+    type,
+    confirmExempt: _confirmExempt,
+    ...props
+  },
   ref,
 ) {
+  /* `confirmExempt` 不进 DOM:它是写给人读、给 grep 用的理由,落到元素上会变成
+     一个 React 不认识的属性并报警告。全部作用在类型层——强迫写下「这个红按钮
+     为什么不设防」,并让这句话可清点。 */
   const Comp = asChild ? Slot : "button";
   return (
     <Comp
