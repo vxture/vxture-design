@@ -56,6 +56,15 @@ export interface DrawerProps {
   readonly title?: React.ReactNode;
   readonly description?: React.ReactNode;
   readonly footer?: React.ReactNode;
+  /** 关闭钮的可访问名。默认「关闭」。仅在给了 `title` 时出现。 */
+  readonly closeLabel?: string;
+  /**
+   * 无 `title` 时给 Radix 的隐藏兜底标题。默认「抽屉」。
+   *
+   * Radix 要求 Content 内必须有可访问名，这一条读屏能听见——所以它是文案不是
+   * 占位符，双语产品得能改。
+   */
+  readonly fallbackTitle?: string;
   readonly children: React.ReactNode;
   readonly className?: string;
 }
@@ -74,6 +83,8 @@ export function Drawer({
   title,
   description,
   footer,
+  closeLabel = "关闭",
+  fallbackTitle = "抽屉",
   children,
   className,
 }: DrawerProps) {
@@ -139,14 +150,14 @@ export function Drawer({
                   "text-muted-foreground hover:bg-accent hover:text-foreground",
                   interactive,
                 )}
-                aria-label="关闭"
+                aria-label={closeLabel}
               >
                 <Icon name="x" size={16} />
               </DialogPrimitive.Close>
             </div>
           ) : (
             <DialogPrimitive.Title className="sr-only">
-              抽屉
+              {fallbackTitle}
             </DialogPrimitive.Title>
           )}
 

@@ -5,6 +5,22 @@
 
 ---
 
+## 7.2.0 - 2026-08-25
+
+跟随 design-ui 4.2.0（minor 传导，050 §2），tokens 不变。全部向后兼容。
+
+- **7 个件补上文案覆盖出口**（`DataTable` / `BulkActionBar` / `Pagination` /
+  `Toast` / `Drawer` / `Banner` / `DialogForm`，共 15 处）。此前这些中文写死在
+  组件里、调用方覆盖不掉，其中 `DataTable` 的「操作」是可见表头，
+  `BulkActionBar` 的「已选择 {count} {noun}」把中文语序也焊了进去。
+- **新增守卫 `check-i18n-seam.mjs`**，已进 `pnpm guardrails`：组件内的中文必须
+  有覆盖出口（形参默认值 / `DEFAULT_*` 常量 / `??` 兜底 / 带理由的豁免）。当前
+  代码零违规，对 7.1.0 的代码精确报出那 15 处。
+- 05 新增 §3.1，写明三档收法：一两条走独立 prop、三条以上走 `labels` 对象、
+  拼接出来的句子收**模板**不收词（语序是语法，不是词汇）。
+- 留出口不等于做 i18n：DS 没有也不打算有 locale 上下文。
+- 详见 design-ui 4.2.0 更新日志。
+
 ## 7.1.0 - 2026-08-25
 
 跟随 design-ui 4.1.0（minor 传导，050 §2），tokens 不变。全部向后兼容。

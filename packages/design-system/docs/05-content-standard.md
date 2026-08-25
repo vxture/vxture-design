@@ -37,6 +37,26 @@
 | 截断     | 省略号截断用 CSS（`truncate`），不在数据层截字符串                                     |              |
 | 空值     | 统一显示 "—"（em dash），不留白、不写 "null"/"暂无"                                    | —            |
 
+## 3.1 件内文案：中文默认值，但必须留得出出口
+
+DS 的约定不是「组件里写中文」，是**「中文默认值 + 调用方可覆盖」**。两者差一个
+双语门户：前者上线即是一句改不掉的中文，后者不是。
+
+| 文案条数       | 收法                        | 先例                                                                  |
+| -------------- | --------------------------- | --------------------------------------------------------------------- |
+| 一两条         | 独立 prop                   | `DialogForm.cancelLabel`、`Banner.dismissLabel`                       |
+| 三条以上       | `labels` 对象，与默认值合并 | `DataTable.labels`、`ShellSearchBox.labels`                           |
+| 拼接出来的句子 | **模板**，不是词            | `ConfirmDestructive.titleTemplate`、`BulkActionBar.selectionTemplate` |
+
+第三行是最容易漏的一条：**语序是语法，不是词汇**。`BulkActionBar` 曾只开 `noun`
+一个口子而把「已选择 {count} {noun}」写死——英文得是 `{count} {noun} selected`，
+只给一个词换不出那句话。件替调用方拼串，就等于替它定了语序。
+
+只给读屏听的文案（`aria-label`、`sr-only`）同样算文案：读屏听见的也是话。
+
+这条由 `scripts/guardrails/check-i18n-seam.mjs` 机器判定，进 `pnpm guardrails`。
+DS 没有也不打算有 locale 上下文——**留出口不等于做 i18n**，翻译是产品的事。
+
 ## 4. 句式模板
 
 | 场景         | 模板                                                                                                                                                                                                 |

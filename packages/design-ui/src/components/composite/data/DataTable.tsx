@@ -207,8 +207,39 @@ export interface DataTableProps<TRow> {
   /* 没有 rowTone / getRowClassName：行不表达业务语气，见文件头。 */
   /** 表尾：分页、总数一类。渲染在虚线上边框之下，左右两端由调用方内容自摆。 */
   readonly footer?: React.ReactNode;
+  /** 覆盖件自带的四处文案，见 `DataTableLabels`。只写要改的那几条。 */
+  readonly labels?: DataTableLabels;
   readonly className?: string;
 }
+
+/**
+ * 表格自带的四处文案。字符串多于两条的件在本仓一律收成 `labels` 对象
+ * （`ShellSearchBox` / `ShellSidebarNav` / `ShellChrome` 同款），与两条以内
+ * 走独立 prop 的做法分工。全部可缺省，只覆盖要改的那几条。
+ *
+ * 其中 `rowActions` 是**可见表头**，其余三条只给读屏——但读屏听见的也是文案，
+ * 双语产品同样得能改。
+ */
+export interface DataTableLabels {
+  /** 折叠列表头的隐藏列名。默认「展开」。 */
+  readonly expand?: string;
+  /** 表头复选框未全选时的可访问名。默认「全选本页」。 */
+  readonly selectAll?: string;
+  /** 表头复选框已全选时的可访问名。默认「取消本页全选」。 */
+  readonly deselectAll?: string;
+  /** 行内复选框的可访问名。默认「选择本行」。 */
+  readonly selectRow?: string;
+  /** 行操作列的表头文字（可见）。默认「操作」。 */
+  readonly rowActions?: string;
+}
+
+const DEFAULT_LABELS: Required<DataTableLabels> = {
+  expand: "展开",
+  selectAll: "全选本页",
+  deselectAll: "取消本页全选",
+  selectRow: "选择本行",
+  rowActions: "操作",
+};
 
 function nextDirection(
   sort: DataTableSort | undefined,
@@ -238,8 +269,10 @@ function DataTable<TRow>({
   onExpandedChange,
   leadingSpacer = false,
   footer,
+  labels,
   className,
 }: DataTableProps<TRow>) {
+  const text = { ...DEFAULT_LABELS, ...labels };
   const selectable = selectedKeys !== undefined;
   const indexed = indexStart !== undefined;
   const expandable =
@@ -316,7 +349,7 @@ function DataTable<TRow>({
                   表头这一格空着——列名要标注的是数据，而这一列没有数据。 */}
               {expandable ? (
                 <th scope="col" className={cn(EDGE_COL, "py-sm font-normal")}>
-                  <span className="sr-only">展开</span>
+                  <span className="sr-only">{text.expand}</span>
                 </th>
               ) : null}
               {leadingSpacer ? (
@@ -329,7 +362,9 @@ function DataTable<TRow>({
                       className={EDGE_CHECKBOX_CLASS}
                       checked={allSelected || (someSelected && "indeterminate")}
                       onCheckedChange={toggleAll}
-                      aria-label={allSelected ? "取消本页全选" : "全选本页"}
+                      aria-label={
+                        allSelected ? text.deselectAll : text.selectAll
+                      }
                     />
                   </div>
                 </th>
@@ -413,7 +448,7 @@ function DataTable<TRow>({
                     "bg-[var(--vx-table-sticky-bg,var(--background))]",
                   )}
                 >
-                  操作
+                  {text.rowActions}
                 </th>
               ) : null}
             </tr>
@@ -535,7 +570,7 @@ function DataTable<TRow>({
                                 className={EDGE_CHECKBOX_CLASS}
                                 checked={isSelected}
                                 onCheckedChange={() => toggleRow(key)}
-                                aria-label="选择本行"
+                                aria-label={text.selectRow}
                               />
                             </div>
                           ) : null}

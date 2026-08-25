@@ -28,6 +28,8 @@ export interface BannerProps {
   readonly action?: React.ReactNode;
   /** 给了才出现关闭按钮——不是所有状态都允许用户自行消掉。 */
   readonly onDismiss?: () => void;
+  /** 关闭钮的可访问名。默认「关闭提示」。 */
+  readonly dismissLabel?: string;
   readonly className?: string;
 }
 
@@ -37,6 +39,7 @@ function Banner({
   description,
   action,
   onDismiss,
+  dismissLabel = "关闭提示",
   className,
 }: BannerProps) {
   return (
@@ -65,7 +68,7 @@ function Banner({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="关闭提示"
+          aria-label={dismissLabel}
           className={cn(
             "-mr-2xs -mt-2xs shrink-0 rounded-sm p-2xs opacity-muted",
             "transition-opacity duration-fast ease-standard outline-none",

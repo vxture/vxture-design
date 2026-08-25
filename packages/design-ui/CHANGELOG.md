@@ -5,6 +5,68 @@
 
 ---
 
+## 4.2.0 — 2026-08-25
+
+全面整改文案出口（minor，050 §2：新增能力 minor）。**全部向后兼容**，新增的
+都是可缺省 prop。
+
+### 起因
+
+4.1.0 只在 `ConfirmDestructive` 里关掉了「件替调用方决定语序」这个洞。全仓审计
+（剥注释后扫中文字面量，逐个核实有无覆盖出口）发现它不是一个件的毛病：**7 个件、
+15 处中文写死在组件里，调用方覆盖不掉**。其中 `DialogForm` 的「处理中…」与
+4.1.0 刚修掉的那一行**一模一样**——我修了自己新写的件，没回头看它抄自哪里。
+
+判据不是「不许写中文」，是**每一处文案都得有办法被调用方换掉**。DS 全仓十几处
+中文默认值（`cancelLabel` / `previousLabel` / `placeholder`）本来都守着这条，破
+它的这 15 处只是没人查。
+
+### 新增的出口
+
+| 件              | 新增                                                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `DataTable`     | `labels`（`expand` / `selectAll` / `deselectAll` / `selectRow` / `rowActions`）——其中 `rowActions` 是**可见表头**「操作」 |
+| `BulkActionBar` | `selectionTemplate` / `toolbarLabel` / `clearLabel`                                                                       |
+| `Pagination`    | `pageSizeLabel` / `pageSizeOptionTemplate` / `pageSizeAutoLabel`                                                          |
+| `Toast`         | `ToastProvider` 的 `regionLabel` / `dismissLabel`                                                                         |
+| `Drawer`        | `closeLabel` / `fallbackTitle`                                                                                            |
+| `Banner`        | `dismissLabel`                                                                                                            |
+| `DialogForm`    | `pendingLabel`                                                                                                            |
+
+收法照 house 分工：一两条走独立 prop，三条以上走 `labels` 对象与默认值合并
+（`ShellSearchBox` / `ShellSidebarNav` 同款）。
+
+**两处收的是模板不是词**，因为它们拼句子：`BulkActionBar.selectionTemplate`
+（默认「已选择 {count} {noun}」）曾只开 `noun` 一个口子，而英文得是
+`{count} {noun} selected`——给一个词换不出那句话；`Pagination.pageSizeOptionTemplate`
+同理。语序是语法不是词汇，件替调用方拼串就等于替它定了语序。
+
+只给读屏听的 `aria-label` / `sr-only` 一并收口：读屏听见的也是话。
+
+### 新增守卫：`check-i18n-seam.mjs`
+
+整改这一批只清掉了当下，下一个件照样会写死而没有任何东西拦得住——这正是 4.0.0
+把 `danger` 收进类型时用过的论证。故落成守卫，已进 `pnpm guardrails`
+（`pnpm lint:design-i18n`）。
+
+认四种出口：形参默认值、`DEFAULT_*` / `*_LABELS` 常量、`??` 兜底、带理由的豁免
+清单。两条实测：**当前代码零违规；对 4.1.0 的代码精确报出那 15 处，一处不多一
+处不少。**
+
+写这条守卫时自己踩了两个坑，都记在脚本头注里：一是用「独占一行的 `];`」找常量块
+收尾，被单行声明 `const DEFAULT_PAGE_SIZES = [...]` 打穿，`inDefaults` 再没关掉，
+**从那一行起整个文件不再检查**——守卫自己静默停止守卫，比没有守卫更坏；二是
+`ariaLabel="每页条数"`（JSX 属性）与 `ariaLabel = "每页条数"`（形参默认值）在正
+则眼里没有区别，靠「形参默认值必然以逗号收尾」才分得开。
+
+### 文档
+
+05 新增 §3.1「件内文案：中文默认值，但必须留得出出口」，写明三档收法与「语序是
+语法不是词汇」这条判据。
+
+**留出口不等于做 i18n**：DS 没有也不打算有 locale 上下文，翻译是产品的事。本版
+只是把决定还回去。
+
 ## 4.1.0 — 2026-08-25
 
 三修一勘误（minor，050 §2：新增能力 minor）。全部向后兼容——4.0.0 的调用点

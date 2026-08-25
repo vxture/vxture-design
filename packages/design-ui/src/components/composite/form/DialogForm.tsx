@@ -52,6 +52,8 @@ export interface DialogFormProps extends Omit<
   /** 提交动作是破坏性的（删除、停用），提交按钮用 destructive 语义色。 */
   readonly danger?: boolean;
   readonly submitting?: boolean;
+  /** 提交进行中的按钮文案。默认「处理中…」，与 `ConfirmDestructive` 同。 */
+  readonly pendingLabel?: React.ReactNode;
   readonly submitDisabled?: boolean;
   readonly onSubmit?: React.FormEventHandler<HTMLFormElement>;
 }
@@ -65,6 +67,7 @@ function DialogForm({
   cancelLabel = "取消",
   danger = false,
   submitting = false,
+  pendingLabel = "处理中…",
   submitDisabled = false,
   onSubmit,
   onOpenChange,
@@ -115,7 +118,7 @@ function DialogForm({
               variant={danger ? "destructive-strong" : "default"}
               disabled={submitDisabled || submitting}
             >
-              {submitting ? "处理中…" : submitLabel}
+              {submitting ? pendingLabel : submitLabel}
             </Button>
           </DialogFooter>
         </form>
