@@ -27,15 +27,13 @@
  * 用法：node scripts/guardrails/check-i18n-seam.mjs
  */
 
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import { collectFiles, isTsOrTsx } from "./lib/collect-files.mjs";
 import path from "node:path";
 import process from "node:process";
 
 const ROOT = process.cwd();
 const ROOTS = ["packages/design-ui/src", "packages/design-system/src"];
-
-/** 豁免逐条带理由。判据只有一条：**它不进渲染**。 */
-const ALLOW = new Map();
 
 /**
  * 汉字、CJK 标点（。、「」）、全角形式（？！：，（））。
@@ -87,22 +85,12 @@ function stripComments(src) {
   return out;
 }
 
-async function walk(dir, out = []) {
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
-    const p = path.join(dir, entry.name);
-    if (entry.isDirectory()) await walk(p, out);
-    else if (/\.tsx?$/.test(entry.name)) out.push(p);
-  }
-  return out;
-}
-
 const problems = [];
 let scanned = 0;
 
 for (const root of ROOTS) {
-  for (const file of await walk(path.join(ROOT, root))) {
+  for (const file of await collectFiles(path.join(ROOT, root), isTsOrTsx)) {
     const rel = path.relative(ROOT, file).split(path.sep).join("/");
-    if (ALLOW.has(rel)) continue;
     scanned += 1;
 
     const src = await readFile(file, "utf8");

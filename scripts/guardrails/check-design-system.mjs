@@ -21,7 +21,8 @@ function adminTokenDefinitions() {
     for (const entry of readdirSync(dir)) {
       if (!entry.endsWith(".css")) continue;
       const text = readFileSync(`${dir}/${entry}`, "utf8");
-      for (const m of text.matchAll(/(--vx-admin-[a-z0-9-]+)\s*:/g)) names.add(m[1]);
+      for (const m of text.matchAll(/(--vx-admin-[a-z0-9-]+)\s*:/g))
+        names.add(m[1]);
     }
   } catch {
     // 目录不在（子集检出）→ 规则自动噤声，不误报。
@@ -176,10 +177,7 @@ const IMPORT_ONLY_STYLE_ENTRIES = new Map([
     "DS globals.css",
   ],
   /* platform.css 聚合入口已删（2026-08-18）：八条子模块退役后它只剩空壳。 */
-  [
-    normalize("packages/design-tokens/src/styles/tokens.css"),
-    "DS tokens.css",
-  ],
+  [normalize("packages/design-tokens/src/styles/tokens.css"), "DS tokens.css"],
   [normalize("portals/admin/src/app/globals.css"), "admin globals.css"],
   [normalize("portals/admin/src/styles/admin-base.css"), "admin base.css"],
   [
@@ -2463,9 +2461,7 @@ function isDsStyleScaleDebtFile(normalized) {
 
 /** 抹掉 CSS 块注释，保留行数（换行不动），行号才对得上。 */
 function stripCssBlockComments(content) {
-  return content.replace(/\/\*[\s\S]*?\*\//g, (m) =>
-    m.replace(/[^\n]/g, " "),
-  );
+  return content.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "));
 }
 
 function hasDsStyleHardcodedScale(line) {
@@ -2603,7 +2599,12 @@ function isDsTokenOwner(file) {
 
 /** 裸缓动曲线：`--vx-ease-*` 是可引用的 token，没有理由写字面量。 */
 function hasLiteralEasing(text) {
-  return /\b(?:cubic-bezier|steps)\s*\(/.test(text) || /\bease(?:-in|-out|-in-out)?\b(?!\s*\))/.test(text.replace(/var\([^)]*\)/g, ""));
+  return (
+    /\b(?:cubic-bezier|steps)\s*\(/.test(text) ||
+    /\bease(?:-in|-out|-in-out)?\b(?!\s*\))/.test(
+      text.replace(/var\([^)]*\)/g, ""),
+    )
+  );
 }
 
 function isTokenOrNoneShadowValue(value) {
@@ -2635,7 +2636,11 @@ function isTokenOrNoneMotionValue(value) {
 
   const withoutVars = normalized.replace(/var\((?:[^()]|\([^()]*\))*\)/g, " ");
   // 剥掉 var() 后只应剩属性名、时长字面量、空白与分段逗号；缓动关键字属字面值。
-  if (/\b(?:ease|ease-in|ease-out|ease-in-out|linear|step-start|step-end)\b/.test(withoutVars))
+  if (
+    /\b(?:ease|ease-in|ease-out|ease-in-out|linear|step-start|step-end)\b/.test(
+      withoutVars,
+    )
+  )
     return false;
   return /^[\w\s,.-]*$/.test(withoutVars);
 }
