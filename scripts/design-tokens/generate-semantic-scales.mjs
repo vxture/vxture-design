@@ -73,7 +73,6 @@ const OUT_DIR = path.join(PKG, "src/styles/semantic");
 const PRIMITIVE = path.join(PKG, "src/styles/primitive");
 
 const errors = [];
-const notes = [];
 
 /* ── 读 T1 ──────────────────────────────────────────────────── */
 
@@ -84,7 +83,9 @@ function loadT1() {
       const full = path.join(dir, f.name);
       if (f.isDirectory()) walk(full);
       else if (f.name.endsWith(".css")) {
-        for (const m of readFileSync(full, "utf8").matchAll(/^\s*(--vx-[\w-]+):\s*([^;]+);/gm)) {
+        for (const m of readFileSync(full, "utf8").matchAll(
+          /^\s*(--vx-[\w-]+):\s*([^;]+);/gm,
+        )) {
           literals.set(m[1], m[2].trim());
         }
       }
@@ -166,11 +167,20 @@ function buildRoles(modeIndex) {
     const step = stepFor(role, shiftFor(role, modeIndex));
     const tightLeading = TIGHT_LEADING_ROLES.test(name);
     const group =
-      TYPE_GROUP_ORDER.find((g) => name === g || name.startsWith(`${g}-`)) ?? name;
+      TYPE_GROUP_ORDER.find((g) => name === g || name.startsWith(`${g}-`)) ??
+      name;
 
-    rows.push([`--${name}-font-family`, t1(`--vx-font-${family}`, where), group]);
+    rows.push([
+      `--${name}-font-family`,
+      t1(`--vx-font-${family}`, where),
+      group,
+    ]);
     rows.push([`--${name}-font-size`, t1(`--vx-text-${step}`, where), group]);
-    rows.push([`--${name}-font-weight`, t1(`--vx-font-weight-${weight}`, where), group]);
+    rows.push([
+      `--${name}-font-weight`,
+      t1(`--vx-font-weight-${weight}`, where),
+      group,
+    ]);
     rows.push([
       `--${name}-line-height`,
       `calc(${
@@ -256,9 +266,13 @@ function assertFluidOrdered() {
     const lo = order.indexOf(minStep);
     const hi = order.indexOf(maxStep);
     if (lo < 0 || hi < 0) {
-      errors.push(`流体间距 ${step}：边界档 ${minStep}/${maxStep} 不在 SPACING_SCALE 内`);
+      errors.push(
+        `流体间距 ${step}：边界档 ${minStep}/${maxStep} 不在 SPACING_SCALE 内`,
+      );
     } else if (lo >= hi) {
-      errors.push(`流体间距 ${step}：下界 ${minStep} 不低于上界 ${maxStep}，clamp 会退化成常数`);
+      errors.push(
+        `流体间距 ${step}：下界 ${minStep} 不低于上界 ${maxStep}，clamp 会退化成常数`,
+      );
     }
   }
 }
@@ -270,12 +284,16 @@ function assertSpacingMonotonic() {
     const kind = SPACING_KINDS.find((k) => step.startsWith(`${k}-`)) ?? "inset";
     for (let i = 1; i < mults.length; i++) {
       if (mults[i] < mults[i - 1]) {
-        errors.push(`间距 ${step}：密度三档非递减被打破（${mults.join(" / ")}）`);
+        errors.push(
+          `间距 ${step}：密度三档非递减被打破（${mults.join(" / ")}）`,
+        );
       }
     }
     const prev = last[kind];
     if (prev && mults.some((m, i) => m < prev[i])) {
-      errors.push(`间距 ${step}：某一档低于族内上一档（${mults.join(" / ")} < ${prev.join(" / ")}）`);
+      errors.push(
+        `间距 ${step}：某一档低于族内上一档（${mults.join(" / ")} < ${prev.join(" / ")}）`,
+      );
     }
     last[kind] = mults;
   }
@@ -355,7 +373,12 @@ function buildMotion() {
     why,
   ]);
   for (const [role, step, why] of EASE_ROLES) {
-    rows.push([`--ease-${role}`, t1(`--vx-ease-${step}`, `ease/${role}`), "ease", why]);
+    rows.push([
+      `--ease-${role}`,
+      t1(`--vx-ease-${step}`, `ease/${role}`),
+      "ease",
+      why,
+    ]);
   }
   return rows;
 }
@@ -444,7 +467,9 @@ function render(rows, indent = "  ") {
   const groups = new Map();
   for (const [name, value, group, why] of rows) {
     if (!groups.has(group)) groups.set(group, []);
-    groups.get(group).push(`${indent}${name}: ${value};${why ? `  /* ${why} */` : ""}`);
+    groups
+      .get(group)
+      .push(`${indent}${name}: ${value};${why ? `  /* ${why} */` : ""}`);
   }
   return [...groups]
     .map(([g, lines]) => `${indent}/* ${g} */\n${lines.join("\n")}`)
@@ -506,7 +531,9 @@ const outputs = [
  * \`font-*\` 工具类承担。`,
     ) +
       "\n" +
-      typoBlocks.map(([sel, rows]) => `${sel} {\n${render(rows)}\n}`).join("\n\n") +
+      typoBlocks
+        .map(([sel, rows]) => `${sel} {\n${render(rows)}\n}`)
+        .join("\n\n") +
       "\n\n" +
       // 中文修正轴：默认零，由 :lang(zh) 打开。写成加法故与字号三档正交，
       // 三个模式块无需各自复制一遍。
@@ -531,7 +558,9 @@ const outputs = [
  * 属性在使用处求值，所以三档密度各自拿到自己的边界。`,
     ) +
       "\n" +
-      spaceBlocks.map(([sel, rows]) => `${sel} {\n${render(rows)}\n}`).join("\n\n") +
+      spaceBlocks
+        .map(([sel, rows]) => `${sel} {\n${render(rows)}\n}`)
+        .join("\n\n") +
       "\n",
   ],
   staticFile(
@@ -549,7 +578,12 @@ const outputs = [
  *   --container-page-3xl / -5xl 因无人用而未产出）。纯 var() 消费的挡位会静默消失，
  *   所以每一档都要有组件以 min-w-* / max-w-* / w-* 消费它。`,
   ),
-  staticFile("radius-semantic.css", "圆角（工具类族 rounded-*）", "scripts/design-tokens/semantic-policy.mjs", buildRadius()),
+  staticFile(
+    "radius-semantic.css",
+    "圆角（工具类族 rounded-*）",
+    "scripts/design-tokens/semantic-policy.mjs",
+    buildRadius(),
+  ),
   staticFile(
     "shadow-semantic.css",
     "视觉高度（工具类族 shadow-*）",
@@ -637,7 +671,7 @@ if (CHECK) {
   }
   console.log(`T2 非色彩层一致（${stat}）`);
 } else {
-  for (const [name, css] of outputs) writeFileSync(path.join(OUT_DIR, name), css, "utf8");
+  for (const [name, css] of outputs)
+    writeFileSync(path.join(OUT_DIR, name), css, "utf8");
   console.log(`已生成 T2 非色彩层：${stat}`);
-  for (const n of notes) console.log(`    · ${n}`);
 }

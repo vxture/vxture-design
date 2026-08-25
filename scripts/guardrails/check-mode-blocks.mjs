@@ -45,7 +45,7 @@ const FAMILIES = [
   {
     name: "密度三档",
     file: "spacing-semantic.css",
-    match: /^:root|density-/,
+    match: /^(?::root)|density-/, // ^ 只锚住 :root 那一支；density- 允许出现在任意位置
   },
   {
     name: "字号三档",
