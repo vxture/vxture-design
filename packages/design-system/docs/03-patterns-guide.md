@@ -41,7 +41,22 @@
 | `confirmExempt: string`       | 显式豁免，**理由必填**（动作可撤销，或上游已拦过一道）      |
 
 不写确认曾是零成本，现在是编译错误；豁免要写理由，且理由是可 `grep` 的字符串
-而不是注释——`grep -rn confirmExempt` 一次列全「本产品有多少个不设防的红色动作」。
+而不是注释。
+
+**契约的边界，以及正确的清点口径。** 这条判别联合只管 `ActionMenu` 与
+`BulkActionBar` 两件，**够不到裸的 `<Button variant="destructive">`**——4.0 的
+文档写了 `grep -rn confirmExempt` 给出「本产品有多少个不设防的红色动作」的完整
+清单，那句话是错的，一份自称完整的清单比没有清单更坏。清点要两条一起看：
+
+```bash
+grep -rn "confirmExempt" portals/          # 已声明豁免的（有理由，可评审）
+grep -rn 'variant="destructive"' portals/  # 契约够不到的（没人替你查）
+```
+
+第二条为什么不收进类型：`variant="destructive"` 的红按钮完全可能是「打开一个
+多步流程」「打开 DialogForm」的入口，确认在下一屏。强制它带 `confirm` 等于 DS
+判定「红＝此处立即落锤」，而那是产品的 UX 判断，不同产品可以不同。这类按钮的
+拦截自己组合 `ConfirmDestructive`（它本就能独立使用，见 §3.1）。
 
 ## 3.1 破坏性确认：ConfirmDestructive
 

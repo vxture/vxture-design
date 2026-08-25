@@ -24,8 +24,11 @@
  * 判据放进类型而不是 guardrail 脚本，是因为 `scripts/guardrails/check-*` 的
  * 消费方那一半扫的是 `portals/**`，本仓没有这个目录（见 check-design-system.mjs
  * 头注释）——lint 规则不跟着 npm 包走，类型跟着包走。豁免用带理由的字符串而不是
- * `confirm: false`，是为了让它**可清点**：`grep -rn confirmExempt` 一次列全所有
- * 无拦截的红色动作，这比报错更有用，因为它给的是清单不是错误。
+ * `confirm: false`，是为了让它**可清点**：`grep -rn confirmExempt` 列全所有已
+ * 声明豁免的红色动作，这比报错更有用，因为它给的是清单不是错误。
+ *
+ * 但清单只在本件与 `BulkActionBar` 的范围内完整——**够不到裸的
+ * `<Button variant="destructive">`**。完整口径要两条 grep 一起看，见 03 §3。
  */
 
 import * as React from "react";
