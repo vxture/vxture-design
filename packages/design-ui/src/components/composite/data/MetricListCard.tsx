@@ -120,6 +120,13 @@ const MetricListCard = React.forwardRef<HTMLElement, MetricListCardProps>(
               // 整卡可点必须键盘可达——Enter 与 Space 都要响应，只接 Enter 的
               // 「按钮」在读屏用户那里是半个按钮。
               onKeyDown: (event: React.KeyboardEvent) => {
+                /* 只处理**落在卡本身**的按键。焦点在卡内的控件上时，那个控件
+                   own 这次按键——早先这里不判来源，于是键盘按行操作里的「更多」
+                   会走到这条分支：preventDefault 掐掉按钮的原生激活，再把整卡的
+                   onClick 触发一遍。**键盘用户按不到行操作，反而进了详情**，而
+                   鼠标那条路有 stopPropagation 护着、看不出问题。
+                   2026-08-26 写指标卡回归测试时实测出来。 */
+                if (event.target !== event.currentTarget) return;
                 if (event.key !== "Enter" && event.key !== " ") return;
                 event.preventDefault();
                 onClick?.();

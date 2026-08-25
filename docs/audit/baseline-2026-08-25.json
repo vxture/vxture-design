@@ -8,12 +8,12 @@
     },
     {
       "key": "版本 · design-ui",
-      "value": "6.0.1",
+      "value": "6.0.2",
       "how": "packages/design-ui/package.json 的 version"
     },
     {
       "key": "版本 · design-system",
-      "value": "9.0.1",
+      "value": "9.0.2",
       "how": "packages/design-system/package.json 的 version"
     },
     {
@@ -83,7 +83,7 @@
     },
     {
       "key": "测试 · 文件数",
-      "value": 13,
+      "value": 15,
       "how": "packages/ 与 scripts/ 下的 *.test.* / *.spec.*"
     },
     {

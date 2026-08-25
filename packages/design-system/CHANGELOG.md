@@ -5,6 +5,15 @@
 
 ---
 
+## 9.0.2 - 2026-08-26
+
+跟随 design-ui 6.0.2（patch 传导，050 §2），tokens 不变。
+
+- **`MetricListCard` 上键盘按不到行操作**：卡的 onKeyDown 对任何冒泡上来的
+  Enter/Space 都响应，掐掉内层按钮的激活并触发整卡。鼠标路径一直是对的，这个洞
+  只在键盘上存在。详见 design-ui 6.0.2。
+- 文档更正：`AlertDialog` 的 Esc 关得掉（外点不关），头注与 03 §1 原先都写错了。
+
 ## 9.0.1 - 2026-08-26
 
 跟随 design-ui 6.0.1（patch 传导，050 §2），tokens 不变。
