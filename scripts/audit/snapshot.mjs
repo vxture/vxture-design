@@ -30,7 +30,8 @@ const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "docs/audit");
 const WRITE = process.argv.includes("--write");
 
-const json = async (p) => JSON.parse(await readFile(path.join(ROOT, p), "utf8"));
+const json = async (p) =>
+  JSON.parse(await readFile(path.join(ROOT, p), "utf8"));
 
 /** 每一项都带 how：**测法与数字同等重要**，下一轮照 how 复测才可比。 */
 const metrics = [];
@@ -48,7 +49,8 @@ const compRoots = [
   "packages/design-system/src/components",
 ];
 let comps = [];
-for (const r of compRoots) comps.push(...(await collectFiles(path.join(ROOT, r), isTsx)));
+for (const r of compRoots)
+  comps.push(...(await collectFiles(path.join(ROOT, r), isTsx)));
 add("件 · 总数", comps.length, "components/ 下的 .tsx 文件数");
 const byLayer = {};
 for (const f of comps) {
@@ -56,17 +58,30 @@ for (const f of comps) {
   const layer = seg[seg.indexOf("components") + 1];
   byLayer[layer] = (byLayer[layer] || 0) + 1;
 }
-for (const [k, v] of Object.entries(byLayer).sort())
+/* 显式给比较函数:默认序按 UTF-16 码元,本来就跨机器确定,但把判据写出来比留给
+   读者推断好。**不用 localeCompare**——那才会随 locale 变,而这份快照要跨轮 diff。 */
+for (const [k, v] of Object.entries(byLayer).sort((a, b) =>
+  a[0] < b[0] ? -1 : 1,
+))
   add(`件 · ${k}`, v, "按 components/ 下的一级目录归层");
 
 // ── 公开面 ──────────────────────────────────────────────────────────────
-const snap = await json("scripts/guardrails/design-system-exports.snapshot.json");
+const snap = await json(
+  "scripts/guardrails/design-system-exports.snapshot.json",
+);
 for (const [entry, list] of Object.entries(snap.runtime ?? {}))
-  add(`导出 · ${entry}`, Array.isArray(list) ? list.length : 0, "公开入口快照的具名导出数");
+  add(
+    `导出 · ${entry}`,
+    Array.isArray(list) ? list.length : 0,
+    "公开入口快照的具名导出数",
+  );
 
 // ── 守卫 ────────────────────────────────────────────────────────────────
 const root = await json("package.json");
-const chain = (root.scripts?.guardrails ?? "").split("&&").map((s) => s.trim()).filter(Boolean);
+const chain = (root.scripts?.guardrails ?? "")
+  .split("&&")
+  .map((s) => s.trim())
+  .filter(Boolean);
 add("守卫 · 链条条数", chain.length, "package.json 的 guardrails 串了几条");
 /* 脚本数从**链条本身**推导，不按目录 glob 数：check-doc-shape 住在
    scripts/docs/ 而不是 scripts/guardrails/，按目录数会少算一条——第一次跑
@@ -80,17 +95,25 @@ const guardScripts = new Set(
     .flatMap((s) => s.split(" "))
     .filter((w) => w.endsWith(".mjs")),
 );
-add("守卫 · 脚本数", guardScripts.size, "guardrails 链条实际引用到的 .mjs（含 token 生成器的 --check）");
+add(
+  "守卫 · 脚本数",
+  guardScripts.size,
+  "guardrails 链条实际引用到的 .mjs（含 token 生成器的 --check）",
+);
 add(
   "守卫 · 自测覆盖",
-  (await readFile(path.join(ROOT, "scripts/guardrails/self-test.mjs"), "utf8")).split("guard:").length - 1,
+  (
+    await readFile(path.join(ROOT, "scripts/guardrails/self-test.mjs"), "utf8")
+  ).split("guard:").length - 1,
   "self-test.mjs 里的变异用例数",
 );
 
 // ── 测试 ────────────────────────────────────────────────────────────────
 let tests = 0;
 for (const r of ["packages", "scripts"]) {
-  const files = await collectFiles(path.join(ROOT, r), (n) => /\.(test|spec)\./.test(n));
+  const files = await collectFiles(path.join(ROOT, r), (n) =>
+    /\.(test|spec)\./.test(n),
+  );
   tests += files.length;
 }
 add("测试 · 文件数", tests, "packages/ 与 scripts/ 下的 *.test.* / *.spec.*");
@@ -100,22 +123,34 @@ const reg = await readFile(
   path.join(ROOT, "packages/design-preview/src/preview/registry.tsx"),
   "utf8",
 );
-add("预览面 · 条目数", (reg.match(/\n\s+name: "/g) || []).length, "registry.tsx 里的 name: 条目");
+add(
+  "预览面 · 条目数",
+  (reg.match(/\n +name: "/g) || []).length,
+  "registry.tsx 里的 name: 条目",
+);
 
 // ── 文档 ────────────────────────────────────────────────────────────────
 const artifacts = (await readdir(path.join(ROOT, "docs/artifacts"))).filter(
   (f) => f.endsWith(".html") && !f.startsWith("_"),
 );
-add("文档 · Artifact 底本", artifacts.length, "docs/artifacts/*.html（不含参照物）");
+add(
+  "文档 · Artifact 底本",
+  artifacts.length,
+  "docs/artifacts/*.html（不含参照物）",
+);
 
 // ── 输出 ────────────────────────────────────────────────────────────────
 const stamp = new Date().toISOString().slice(0, 10);
 const snapshot = { date: stamp, metrics };
 
 const prior = existsSync(OUT_DIR)
-  ? (await readdir(OUT_DIR)).filter((f) => f.startsWith("baseline-") && f.endsWith(".json")).sort()
+  ? (await readdir(OUT_DIR))
+      .filter((f) => f.startsWith("baseline-") && f.endsWith(".json"))
+      .sort()
   : [];
-const previous = prior.length ? await json(`docs/audit/${prior[prior.length - 1]}`) : null;
+const previous = prior.length
+  ? await json(`docs/audit/${prior[prior.length - 1]}`)
+  : null;
 
 const w = Math.max(...metrics.map((m) => [...m.key].length)) + 2;
 console.log(`审计基线 · ${stamp}`);
@@ -125,13 +160,19 @@ for (const m of metrics) {
   let delta = "";
   if (previous) {
     if (!before) delta = "  ← 新增项";
-    else if (String(before.value) !== String(m.value)) delta = `  ← 上轮 ${before.value}`;
+    else if (String(before.value) !== String(m.value))
+      delta = `  ← 上轮 ${before.value}`;
   }
   console.log(`  ${m.key.padEnd(w)}${String(m.value).padStart(6)}${delta}`);
 }
 if (previous) {
-  const gone = previous.metrics.filter((x) => !metrics.some((m) => m.key === x.key));
-  for (const g of gone) console.log(`  ${g.key.padEnd(w)}${"—".padStart(6)}  ← 上轮 ${g.value}，本轮已无此项`);
+  const gone = previous.metrics.filter(
+    (x) => !metrics.some((m) => m.key === x.key),
+  );
+  for (const g of gone)
+    console.log(
+      `  ${g.key.padEnd(w)}${"—".padStart(6)}  ← 上轮 ${g.value}，本轮已无此项`,
+    );
   console.log("");
   console.log(`与 ${previous.date} 的快照比对完毕。`);
 } else {

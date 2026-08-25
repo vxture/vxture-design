@@ -35,8 +35,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import process from "node:process";
 
-const BS = String.fromCharCode(8);
-const WB = String.fromCharCode(92) + "b";
+const BS = String.fromCodePoint(8);
+const WB = String.fromCodePoint(92) + "b";
 
 /** 每个用例：一处变异 + 它必须惊动的那条守卫。 */
 const CASES = [
@@ -120,12 +120,6 @@ const UNCOVERED = [
   ],
 ];
 
-function tree() {
-  return execFileSync("git", ["status", "--porcelain"], {
-    encoding: "utf8",
-  }).trim();
-}
-
 function runGuard(script) {
   try {
     execFileSync(process.execPath, [script], { stdio: "pipe" });
@@ -133,12 +127,6 @@ function runGuard(script) {
   } catch (error) {
     return error.status ?? 1;
   }
-}
-
-if (tree() !== "") {
-  console.error("工作树不干净——自测会改真实文件再还原，脏树会掩盖还原失败。");
-  console.error("先提交或 stash，再跑本自测。");
-  process.exit(1);
 }
 
 const results = [];
@@ -179,14 +167,25 @@ console.log("");
 console.log("未做变异测试的守卫：");
 for (const [g, why] of UNCOVERED) console.log(`  · ${g} —— ${why}`);
 
-const dirty = tree();
-if (dirty !== "") {
+/*
+ * 还原复验：逐文件比对字节，而不是问 git。
+ *
+ * 早先这里跑 `git status --porcelain`，并且脏树就拒绝运行。两处都换掉了：
+ *   · **更精确**：本自测只碰下面这几个文件，逐个比对能指出是**哪一个**没还原；
+ *     全局 git 状态还会被无关的 WIP 干扰
+ *   · **不再拒绝脏树**：改到一半想跑一次自测是正当需求，早先那道门槛纯属自找
+ *   · 顺带去掉一个子进程——靠 PATH 找 `git` 在构建脚本里是不必要的依赖
+ */
+const notRestored = results
+  .filter((r) => r.originalContent !== undefined)
+  .filter((r) => readFileSync(r.file, "utf8") !== r.originalContent)
+  .map((r) => r.file);
+if (notRestored.length > 0) {
   console.error("");
-  console.error("还原失败，工作树被改动：");
-  console.error(dirty);
+  console.error("还原失败，以下文件与自测前不一致：");
+  for (const f of notRestored) console.error(`  "" ${f}`);
   process.exit(1);
 }
-
 const failed = results.filter((r) => !r.ok);
 console.log("");
 if (failed.length > 0) {

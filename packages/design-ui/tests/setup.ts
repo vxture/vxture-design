@@ -19,9 +19,16 @@ beforeAll(() => {
      触发器尺寸。jsdom 没有它，构造时直接抛。 */
   if (!("ResizeObserver" in globalThis)) {
     globalThis.ResizeObserver = class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
+      observe() {
+        /* 空实现是**有意的**：这三个方法存在只为让 Radix 构造得出来。
+           jsdom 不做布局，观察到的尺寸永远是 0，回调即使触发也没有意义。 */
+      }
+      unobserve() {
+        /* 同上。 */
+      }
+      disconnect() {
+        /* 同上。 */
+      }
     } as unknown as typeof ResizeObserver;
   }
 
