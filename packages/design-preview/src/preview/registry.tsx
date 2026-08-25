@@ -1099,6 +1099,16 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ConfirmDestructiveDemo />,
   },
   {
+    name: "ConfirmStepUp",
+    layer: "pattern",
+    group: "浮层",
+    tags: ["vxture", "patterns"],
+    covers: ["ConfirmDestructive"],
+    deviation:
+      "不是新件,是 ConfirmDestructive 的一种调用形态:确认之后还有一道 step-up(admin 删角色)。DS 不建模 step-up——TOTP 是产品的认证策略;接缝就是 onConfirm 返回的 Promise,谁 resolve 它是调用方的事。摆在这里是为了验两层 radix 模态叠加时的焦点陷阱,那是 DS 的活",
+    render: () => <ConfirmStepUpDemo />,
+  },
+  {
     name: "HoverCard",
     layer: "pattern",
     group: "浮层",
@@ -2896,13 +2906,78 @@ function SectionNavDemo() {
   );
 }
 
-function ConfirmDestructiveDemo() {
-  const [open, setOpen] = React.useState<"blocked" | "ready" | null>(null);
+/**
+ * 确认之后还有一道 step-up 的形态(admin 删角色:runWithStepUp(() => deleteRole())).
+ *
+ * DS 不知道 step-up 是什么——TOTP 是 admin 的认证策略,建模它就是把业务焊进来。
+ * 接缝是现成的:onConfirm 返回 Promise,谁来 resolve 它是调用方的事。这里摆出来
+ * 是为了验**形状**问题:两层 radix 模态叠加时,确认框停在「处理中」、step-up 压在
+ * 上面,焦点陷阱会不会打架。这一条是 DS 的活。
+ */
+function ConfirmStepUpDemo() {
+  const [open, setOpen] = React.useState(false);
+  const [stepUp, setStepUp] = React.useState<(() => void) | null>(null);
+
   return (
     <div className="flex w-full flex-col gap-sm">
-      <Row label="前置条件未满足：确认钮灰着，并标出是哪一条没过">
+      <Row label="确认 → 处理中 → step-up 压在上面。两层模态各自的焦点陷阱不该打架">
+        <Button variant="destructive" onClick={() => setOpen(true)}>
+          删除角色
+        </Button>
+      </Row>
+      <ConfirmDestructive
+        open={open}
+        onOpenChange={setOpen}
+        verb="删除"
+        target="角色 平台运营"
+        consequence="删除后不可恢复，绑定该角色的操作员会立即失去对应权限。"
+        onConfirm={() =>
+          /* 调用方把 resolve 攥在手里,step-up 过了才兑现——确认框在此期间
+             停在「处理中」,失败则不关。DS 只认这个 Promise。 */
+          new Promise<void>((resolve) => {
+            setStepUp(() => resolve);
+          })
+        }
+      />
+      <DialogForm
+        open={stepUp !== null}
+        onOpenChange={(next) => {
+          if (!next) setStepUp(null);
+        }}
+        title="二次验证"
+        description="删除角色需要再验证一次身份。"
+        size="sm"
+        danger
+        submitLabel="验证并删除"
+        onSubmit={(event) => {
+          event.preventDefault();
+          stepUp?.();
+          setStepUp(null);
+        }}
+      >
+        <div className="flex flex-col gap-2xs">
+          <Label htmlFor="preview-stepup-totp">动态验证码</Label>
+          <Input id="preview-stepup-totp" placeholder="6 位数字" />
+        </div>
+      </DialogForm>
+    </div>
+  );
+}
+
+function ConfirmDestructiveDemo() {
+  const [open, setOpen] = React.useState<"blocked" | "ready" | "en" | null>(
+    null,
+  );
+  return (
+    <div className="flex w-full flex-col gap-sm">
+      <Row label="三态：对勾=满足、红叉=确认没满足、灰问号=查不到（门闩仍由调用方的 met 决定）">
         <Button variant="destructive" onClick={() => setOpen("blocked")}>
           删除模型服务
+        </Button>
+      </Row>
+      <Row label="titleTemplate 交还语序：英文传 {verb} {target}?，件不再替调用方拼中文">
+        <Button variant="destructive" onClick={() => setOpen("en")}>
+          Delete model service
         </Button>
       </Row>
       <Row label="条件全满足：确认钮亮起，文案是动词本身而不是「确定」">
@@ -2920,8 +2995,29 @@ function ConfirmDestructiveDemo() {
         consequence="删除后不可恢复，已签发给该服务的密钥同时失效，正在进行的请求会立刻中断。"
         preconditions={[
           { label: "服务已下线", met: true },
-          { label: "没有入口或授权还在引用它", met: false },
+          {
+            /* 查不到:门闩由调用方判(这里判「挡住」),件只负责别把它画成红叉——
+               红叉是「确认了没满足」,而这一条我们根本没查到。 */
+            label: "没有入口或授权还在引用它",
+            met: false,
+            unknown: true,
+            note: "汇总接口读不到，按未满足处理",
+          },
         ]}
+        onConfirm={() => setOpen(null)}
+      />
+      <ConfirmDestructive
+        open={open === "en"}
+        onOpenChange={(next) => {
+          if (!next) setOpen(null);
+        }}
+        titleTemplate="{verb} {target}?"
+        verb="Delete"
+        target="model service gpt-4o-mini"
+        consequence="This cannot be undone. Keys issued to this service stop working immediately."
+        cancelLabel="Cancel"
+        pendingLabel="Working…"
+        preconditions={[{ label: "Service is offline", met: true }]}
         onConfirm={() => setOpen(null)}
       />
       <ConfirmDestructive

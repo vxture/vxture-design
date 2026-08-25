@@ -5,6 +5,23 @@
 
 ---
 
+## 7.1.0 - 2026-08-25
+
+跟随 design-ui 4.1.0（minor 传导，050 §2），tokens 不变。全部向后兼容。
+
+- **`ConfirmDestructive` 新增 `titleTemplate`**（默认 `"{verb}{target}？"`）：
+  7.0.0 的件直接拼中文语序，英文下渲染成 `Deletemodel service？` 且覆盖不掉——
+  一个门户说什么语言是产品的决定，DS 本就不该握着。同时补 `pendingLabel` /
+  `blockedHint` 两个漏开口子的文案 prop。
+- **`DestructivePrecondition` 新增 `unknown?: boolean` / `note?: string`**：
+  `met` 仍是唯一门闩（放不放行由调用方判），`unknown` 只管把「查不到」和「确认
+  没满足」在视觉上分开。少了它 `met: false` 会让界面说假话。
+- **勘误**：7.0.0 称 `grep -rn confirmExempt` 给出不设防红色动作的完整清单，
+  这是错的——契约够不到裸 `<Button variant="destructive">`。正确口径见 03 §3。
+- 预览面新增 `ConfirmStepUp`：确认之后叠一道 step-up 的形态，验两层模态的焦点
+  陷阱。DS 不建模 step-up，接缝是 `onConfirm` 返回的 Promise。
+- 详见 design-ui 4.1.0 更新日志。
+
 ## 7.0.0 - 2026-08-25
 
 跟随 design-ui 4.0.0（major 传导，050 §2「下层的 major 会向上传导」），tokens 不变。
