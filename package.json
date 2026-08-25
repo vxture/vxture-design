@@ -18,11 +18,15 @@
     "lint:design-classes": "node scripts/guardrails/check-component-classes.mjs",
     "lint:design-preview": "node scripts/guardrails/check-preview-coverage.mjs",
     "lint:design-i18n": "node scripts/guardrails/check-i18n-seam.mjs",
+    "lint:control-chars": "node scripts/guardrails/check-control-chars.mjs",
+    "lint:doc-shape": "node scripts/docs/check-doc-shape.mjs",
+    "test:guardrails": "node scripts/guardrails/self-test.mjs",
     "lint:design-exports": "node scripts/guardrails/check-design-system-exports.mjs",
     "lint:design-tokens": "node scripts/design-tokens/generate-primitive.mjs --check && node scripts/design-tokens/generate-semantic.mjs --check && node scripts/design-tokens/generate-semantic-scales.mjs --check && node scripts/design-tokens/generate-theme.mjs --check && node scripts/design-tokens/generate-token-ts.mjs --check && node scripts/design-tokens/check-utilities.mjs && node scripts/guardrails/check-mode-blocks.mjs",
     "lint:server-entry": "node scripts/guardrails/check-server-entry-safety.mjs",
     "lint:packed-consumability": "node scripts/guardrails/check-packed-consumability.mjs",
-    "guardrails": "pnpm lint:design-tokens && pnpm lint:design && pnpm lint:design-classes && pnpm lint:design-exports && pnpm lint:design-preview && pnpm lint:design-i18n && pnpm lint:server-entry && pnpm lint:packed-consumability"
+    "guardrails": "pnpm lint:design-tokens && pnpm lint:design && pnpm lint:design-classes && pnpm lint:design-exports && pnpm lint:design-preview && pnpm lint:design-i18n && pnpm lint:control-chars && pnpm lint:doc-shape && pnpm lint:server-entry && pnpm lint:packed-consumability",
+    "test": "pnpm --recursive --if-present test"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

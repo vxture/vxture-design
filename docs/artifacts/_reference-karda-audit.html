@@ -1,0 +1,242 @@
+<!-- 参照物：Karda 审计报告的**已发布内容**（去掉了宿主注入的 frame-runtime）。
+     入仓的唯一目的是让 check-doc-shape.mjs 有东西可对账——DS 的文档形制不是
+     从这份文件里“理解”出来的，是逐项比出来的。参照物变了，这份也要跟着更新。 -->
+<title>Karda 审计报告</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;700&display=swap');
+
+/* ── @vxture/design-tokens · typography T1/T2 subset ─────────────────────
+   Copied from vxture-design (design-system 6.5.x). This page cannot install
+   the DS package - an artifact's CSP admits Google Fonts and nothing else -
+   so the tokens it uses are inlined. They must stay identical to the DS; when
+   the DS moves, this block moves with it. Inherited from the Atlas doc. */
+:root {
+  --vx-font-sans: Inter, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --vx-font-brand: 'Funnel Display', Inter, 'Noto Sans SC', sans-serif;
+  --vx-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono CJK SC', monospace;
+  --vx-text-sm: 0.875rem;  --vx-text-base: 1rem;   --vx-text-lg: 1.125rem;
+  --vx-text-2xl: 1.5rem;   --vx-text-4xl: 2.25rem;
+  /* The whole document is Chinese, so the DS :lang(zh) leading compensation
+     applies. The host <html> is not ours to attribute, so the value lands here. */
+  --vx-cjk-leading-add: 0.15;
+
+  /* Family palette - identical to the Atlas and Runos docs ON PURPOSE. A
+     documentation system that changes colour per product is three products,
+     not one system; karda identifies itself by the rail brand instead. */
+  --bg: #f4f6f8; --surface: #ffffff; --surface2: #f6f8fa; --rail: #ffffff;
+  --border: #d5dbe2; --border-soft: #e6eaef;
+  --accent: #0969da; --accent2: #cf222e; --accent3: #1a7f37;
+  --accent4: #9a6700; --accent5: #8250df;
+  --text: #1f2328; --text-mid: #424950; --text-dim: #656d76;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+    --border: #232a33; --border-soft: #1b2128;
+    --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+    --accent4: #f0b429; --accent5: #b98cff;
+    --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+  --border: #232a33; --border-soft: #1b2128;
+  --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+  --accent4: #f0b429; --accent5: #b98cff;
+  --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--vx-font-sans);
+  font-size: var(--vx-text-base);
+  line-height: calc(1.5 + var(--vx-cjk-leading-add));
+  min-height: 100vh;
+}
+
+/* ── shell ─────────────────────────────────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+.rail {
+  background: var(--rail); border-right: 1px solid var(--border);
+  padding: 26px 18px 40px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.rail-brand {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700;
+}
+.rail-title { font-size: var(--vx-text-lg); font-weight: 700; margin: 6px 0 20px; line-height: 1.35; }
+.rail-group {
+  font-size: var(--vx-text-sm); letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--text-dim); margin: 22px 0 8px; font-weight: 600;
+}
+.rail a, .rail .doc-flat {
+  display: block; font-size: var(--vx-text-sm); color: var(--text-mid);
+  text-decoration: none; padding: 6px 10px; border-radius: 6px;
+  border-left: 2px solid transparent;
+}
+.rail a:hover { background: var(--surface2); color: var(--text); }
+.rail a.cur { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); font-weight: 600; }
+/* A document in the set that is not published yet. Rendered, but not a link -
+   a dead link teaches the reader to distrust the rail. */
+.rail .doc-flat { color: var(--text-dim); opacity: 0.62; cursor: default; }
+.rail .doc-flat::after { content: " · 未发布"; font-size: 11px; }
+.main { padding: 34px 40px 100px; min-width: 0; }
+@media (max-width: 1000px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 24px 20px 60px; }
+}
+
+/* ── header ────────────────────────────────────────────────────────────── */
+.page-head { border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 30px; }
+.eyebrow {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px;
+}
+.page-head h1 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-4xl);
+  font-weight: 600; letter-spacing: -0.4px;
+  line-height: calc(1.25 + var(--vx-cjk-leading-add));
+}
+.lede { color: var(--text-mid); font-size: var(--vx-text-lg); margin-top: 10px; max-width: 62em; }
+
+/* ── sections ──────────────────────────────────────────────────────────── */
+section { margin-bottom: 46px; scroll-margin-top: 20px; }
+h2 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-2xl); font-weight: 600;
+  margin-bottom: 6px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  line-height: calc(1.3 + var(--vx-cjk-leading-add));
+}
+h2 .num { font-size: 15px; color: var(--accent); font-family: var(--vx-font-mono); font-weight: 700; }
+h2 .h2-meta {
+  margin-left: auto; font-size: var(--vx-text-sm); font-weight: 500; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border-soft);
+  padding: 2px 10px; border-radius: 5px;
+}
+h3 { font-size: var(--vx-text-lg); font-weight: 600; margin: 22px 0 8px; }
+.rule { height: 1px; background: var(--border-soft); margin: 8px 0 20px; }
+p { max-width: 62em; margin-bottom: 12px; color: var(--text-mid); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+ul { margin: 0 0 12px 20px; color: var(--text-mid); max-width: 62em; }
+li { margin-bottom: 6px; }
+
+/* ── card ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+}
+.card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.card-title { font-size: var(--vx-text-base); font-weight: 600; color: var(--text); }
+.card-sub { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.grid { display: grid; gap: 16px; }
+.grid.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid.g3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+/* ── key/value rows - the workhorse ────────────────────────────────────── */
+.kv { display: grid; grid-template-columns: minmax(140px, 210px) minmax(0, 1fr); gap: 10px 18px; padding: 7px 0; border-top: 1px solid var(--border-soft); }
+.kv:first-of-type { border-top: none; }
+.kv-k { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.kv-k.hi { color: var(--text); font-weight: 500; }
+.kv-v { font-family: var(--vx-font-mono); font-size: var(--vx-text-sm); color: var(--text); word-break: break-word; }
+.kv-v.txt { font-family: var(--vx-font-sans); color: var(--text-mid); }
+.mono, .key { font-family: var(--vx-font-mono); font-size: 0.92em; }
+.key { background: var(--surface2); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 6px; }
+
+/* ── notes ─────────────────────────────────────────────────────────────── */
+.note {
+  border-left: 3px solid var(--border); background: var(--surface2);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+  font-size: var(--vx-text-sm); color: var(--text-mid); max-width: 62em;
+}
+.note strong { color: var(--text); }
+.note.info { border-left-color: var(--accent); }
+.note.danger { border-left-color: var(--accent2); }
+.note.ok { border-left-color: var(--accent3); }
+.note.warn { border-left-color: var(--accent4); }
+
+/* ── tags ──────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px;
+  border-radius: 999px; border: 1px solid; white-space: nowrap;
+}
+.t-ok { color: var(--accent3); border-color: var(--accent3); }
+.t-info { color: var(--accent); border-color: var(--accent); }
+.t-warn { color: var(--accent4); border-color: var(--accent4); }
+.t-bad { color: var(--accent2); border-color: var(--accent2); }
+.t-dim { color: var(--text-dim); border-color: var(--border); }
+
+/* ── flow diagram (inherited from the Runos doc) ───────────────────────── */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0; }
+.flow-node {
+  flex: 1 1 150px; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px; border-top-width: 3px;
+}
+.flow-node .fn-name { font-weight: 600; font-size: var(--vx-text-sm); color: var(--text); }
+.flow-node .fn-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; line-height: 1.55; }
+.n-blue { border-top-color: var(--accent); }
+.n-green { border-top-color: var(--accent3); }
+.n-amber { border-top-color: var(--accent4); }
+.n-red { border-top-color: var(--accent2); }
+.n-violet { border-top-color: var(--accent5); }
+.flow-arrow { flex: 0 0 34px; display: flex; align-items: center; justify-content: center; position: relative; }
+.flow-arrow-line { height: 1px; width: 100%; background: var(--border); }
+.flow-arrow-head { position: absolute; right: 6px; color: var(--text-dim); font-size: 13px; }
+.flow-arrow-label { position: absolute; top: -16px; font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 22px; transform: rotate(90deg); }
+}
+
+/* ── table ─────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: var(--vx-text-sm); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+th { color: var(--text-dim); font-weight: 600; white-space: nowrap; border-bottom-color: var(--border); }
+td.mono, td .mono { font-family: var(--vx-font-mono); }
+
+.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--text-dim); }
+.theme-btn {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9; cursor: pointer;
+  background: var(--surface); color: var(--text-mid); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--vx-font-sans);
+}
+.theme-btn:hover { color: var(--text); }
+</style>
+<div class="shell" id="top">
+<nav class="rail"><div class="rail-brand">Vxture Karda</div><div class="rail-title">审计报告</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/d1d03c78-d9b6-4cd7-8c5e-e7d6e715e868">· 产品现状</a><a class="doc" href="https://claude.ai/code/artifact/2c305d96-c6c3-45a1-a6c0-a1dde7623bb5">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/50a07490-67b7-463e-8472-96cd4dbd9486">· 数据结构</a><a class="doc" href="https://claude.ai/code/artifact/52d5508d-b0c4-43f4-b552-b874fcd1c8c0">· 接口文档</a><a class="doc cur" href="#top">▸ 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/e9da830c-334c-4297-8be5-219ef8af9e91">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/dca61ae4-c30d-40b9-bd2d-9ec9978a624a">· 设计语言 V1</a><div class="rail-group">本页</div><a href="#method">怎么查出来的</a><a href="#silent">一类：静默失败</a><a href="#cjk">二类：整条能力对中文失明</a><a href="#contract">三类：公布了却没兑现</a><a href="#deadend">四类：看着能操作，其实是死路</a><a href="#stack">五类：环境缺件，表现得像产品缺陷</a><a href="#open">仍然开着的</a><a href="#lesson">结论</a></nav>
+<main class="main">
+  <div class="page-head">
+    <div class="eyebrow">Vxture Karda · 文渊</div>
+    <h1>审计报告</h1>
+    <p class="lede">批次 10–14 期间真实发生的缺陷。它们的共同点比内容更重要：<strong>没有一条是被类型检查、单元测试或构建抓到的</strong>。</p>
+  </div>
+<section id="method"><h2><span class="num">01</span>怎么查出来的<span class="h2-meta">方法</span></h2><div class="rule"></div><p>下面每一条都是<strong>真的发生过</strong>的缺陷，来自批次 10–14 的开发。它们的共同点比内容更重要：</p><div class="note danger" style="font-size:1rem"><strong>类型检查、单元测试、生产构建三者全绿，并不能证明功能可用。</strong>本报告里<strong>没有一条</strong>是被这三样抓到的——全部由「拿真实数据库把流程点一遍」抓到。</div><div class="card"><div class="card-head"><span class="card-title">走查方法</span><span class="card-sub">已固化为习惯</span></div><div class="kv"><div class="kv-k hi">为什么必须连真库</div><div class="kv-v txt">karda 的离线存储是<strong>每请求新建</strong>的——<span class='mono'>getKbStore()</span> 每次返回 <span class='mono'>new InMemoryKbStore()</span>，所以离线点一遍几乎什么都证明不了</div></div><div class="kv"><div class="kv-k hi">怎么起</div><div class="kv-v txt">一次性 <span class='mono'>postgres:18-alpine</span> 容器 + <span class='mono'>apply-local-dev.sh</span>，跑完删掉</div></div><div class="kv"><div class="kv-k hi">查什么</div><div class="kv-v txt">把该批次的<strong>验收标准</strong>当作剧本走完，而不是逐个点按钮</div></div></div></section><section id="silent"><h2><span class="num">02</span>一类：静默失败<span class="h2-meta">最贵</span></h2><div class="rule"></div><p>最贵的一类：<strong>没有任何东西报错</strong>，界面还回报成功。</p><div class="card"><div class="card-head"><span class="card-title">验证策略从来就存不进去</span><span class="card-sub"><span class='tag t-bad'>批次 11 发现</span></span></div><p><span class='mono'>KbService.update</span> 的运行时白名单漏了 <span class='mono'>defaultVerifier</span> 与 <span class='mono'>defaultVerifyIntervalDays</span>。路由读了它们，service 丢掉，界面报成功。</p><p><strong>连锁后果</strong>：没有间隔就没有内容会到期 → 续验扫描永远无事可做 → 待复验队列永远填不满。<strong>批次 11 的整个前提压在一次静默没发生的写入上。</strong></p><p class='kv-v txt' style='margin:0'>已修：白名单补齐，并加测试<strong>逐键</strong>钉住往返——白名单里少一个键是静默丢失，不是报错，所以必须由测试覆盖。</p></div><div class="card"><div class="card-head"><span class="card-title">信封 key 写错 → undefined 进状态</span><span class="card-sub"><span class='tag t-bad'>批次 10 发现</span></span></div><p>某个 PATCH 读 <span class='mono'>kb</span>，而所有 kb 路由发的是 <span class='mono'>knowledgeBase</span>。<span class='mono'>req&lt;T&gt;</span> 是裸类型转换，写错<strong>不是错误</strong>——它是 <span class='mono'>undefined</span>，进了页面状态，几次渲染之后在一张<strong>与该请求无关</strong>的卡片上崩溃。</p><p class='kv-v txt' style='margin:0'>已修：加 <span class='mono'>need()</span> 在 fetch 边界失败，并报出端点与 key；17 个单对象 helper 全接上。</p></div><div class="card"><div class="card-head"><span class="card-title">上传从不携带 folder_id</span><span class="card-sub"><span class='tag t-warn'>批次 10 发现</span></span></div><p style='margin:0'>路由从一开始就在读 <span class='mono'>folder_id</span>，但客户端从来没发过——所以不管用户在哪个目录里操作，文件一律落到「未归档」。没有报错，只是<strong>永远归错档</strong>。</p></div></section><section id="cjk"><h2><span class="num">03</span>二类：整条能力对中文失明<span class="h2-meta">最严重</span></h2><div class="rule"></div><div class="note danger" style="font-size:1rem"><strong>在一个中文优先的产品里，唯一在跑的召回器把中文全部丢弃。</strong></div><div class="card"><div class="card-head"><span class="card-title">BM25 分词器只匹配 [a-z0-9]+</span><span class="card-sub"><span class='tag t-bad'>批次 13 发现</span></span></div><div class='kv'><div class='kv-k hi'>实测</div><div class='kv-v'>tokenize("小雨条件下单架次时长为 25 分钟") → ["25"]<br>tokenize("小雨 单架次 时长") → []</div></div><p>这不是「中文排序差一点」——<strong>中文查询产生零个 token，对中文内容零命中</strong>。而当时 BM25 是<strong>唯一在跑的召回器</strong>（向量召回还等 Atlas A1）。karda 整条能用的检索链路对中文是瞎的。</p><p>注释里写着「Good enough for v1」——那句话是按英文假设写的，而这个假设在这里不成立。</p><p class='kv-v txt' style='margin:0'><strong>已修</strong>：CJK 重叠二元组（Lucene CJK 分析器的做法）。单架次时长 → 单架/架次/次时/时长，查 单架次 靠 单架+架次 命中，<strong>不需要分词词典</strong>。刻意不用词切分：词典是依赖、要维护，而且恰恰在 karda 面向的技术语料里最容易切错。<strong>不需要重建索引</strong>——排序是查询时从存储文本现算的。</p></div><div class="note info"><strong>它是怎么被发现的：</strong>检验台（批次 13 建的那个界面）本身就是为了让人能判断「karda 会不会给我的 agent 好答案」。第一次拿真实中文内容去问它，答案是<strong>不会</strong>。这个界面存在的意义就是这个。</div></section><section id="contract"><h2><span class="num">04</span>三类：公布了却没兑现<span class="h2-meta">契约违约</span></h2><div class="rule"></div><p>公布在契约里、调用方按它编程、而实现从来没兑现的东西。</p><div class="card"><div class="card-head"><span class="card-title">karda.ask 接受 verification_filter 然后丢掉</span><span class="card-sub"><span class='tag t-bad'>批次 13 发现</span></span></div><p><span class='mono'>karda.ask</span> 在工具描述符的输入清单里公布了 <span class='mono'>verification_filter</span>，MCP 通道也把它传下来，而 <span class='mono'>ask-tool</span> <strong>从来没读过</strong>——<span class='mono'>runAsk</span> 调 <span class='mono'>runSearch</span> 时根本不传 params，于是每次问答都悄悄回落到默认档。</p><p><strong>后果</strong>：Agent 要 <span class='mono'>verified_only</span>，拿到的<strong>引用</strong>里混着它明确排除掉的未纳管内容——被当作依据引回给它。在一个带引用问答的产品里，这是承诺被破坏，不是功能缺失。</p><p class='kv-v txt' style='margin:0'>已修：接通，并把系数转换收成一份共享模块（原本两份一模一样的副本，而 ask-tool 一份都没有——<strong>那正是它被漏掉的原因</strong>）。</p></div></section><section id="deadend"><h2><span class="num">05</span>四类：看着能操作，其实是死路</h2><div class="rule"></div><p>界面摆出一个操作，而它必然失败或通向空白。比没有这个操作更糟。</p><div class="card"><div class="card-head"><span class="card-title">低于覆盖基线的列表混入未开治理的库</span><span class="card-sub"><span class='tag t-warn'>批次 11 发现</span></span></div><p style='margin:0'>未开验证治理的库，里面的东西<strong>根本没法验证</strong>，但它以 0% 高踞「接下来看这里」列表首位。点进去是<strong>空队列</strong>。已从<strong>列表</strong>剔除；<strong>覆盖率分母</strong>保留不动——改分母等于改口径，那是 owner 的决定（后来定为 KD-208）。</p></div><div class="card"><div class="card-head"><span class="card-title">撤销的真正后果没人说</span><span class="card-sub"><span class='tag t-bad'>批次 12 发现</span></span></div><p><span class='mono'>uidx_binding_kb_connector_source</span> 对三元组唯一且<strong>没有 state 谓词</strong>，而 <span class='mono'>findBySource</span> 连 revoked 行也匹配——所以一个来源从某个库撤销后，<strong>永远无法再绑回该库</strong>。</p><p style='margin:0'>API 里没有任何地方说这件事。点完才知道就太晚了。现在确认框在点击<strong>之前</strong>说清：多少份文档退出检索、其中多少份是<strong>已验证</strong>的、以及该标识已被永久占用。</p></div><div class="card"><div class="card-head"><span class="card-title">DS DialogTitle 高度为零</span><span class="card-sub"><span class='tag t-warn'>批次 10 发现 · 影响所有消费方</span></span></div><p>DS 的 <span class='mono'>DialogTitle</span> 自带 <span class='mono'>leading-none</span>，在 Tailwind v4 + DS token 下解析为 <span class='mono'>line-height: 0</span>（<span class='mono'>leading-*</span> 回退到 <span class='mono'>--spacing-*</span>，而 DS 注册了 <span class='mono'>--spacing-none: 0px</span>）。</p><p style='margin:0'>它能过类型、在 DOM 里、读屏也正确——<strong>只有截图能看见</strong>它不在。而且 grep 自己的源码找不到：类名在 DS 包里。已上报 <span class='mono'>vxture-design#8</span>，本地 <span class='mono'>leading-[1]</span> 兜住，记 TD-013。</p></div></section><section id="stack"><h2><span class="num">06</span>五类：环境缺件，表现得像产品缺陷</h2><div class="rule"></div><p>不是产品缺陷，但<strong>表现得一模一样</strong>——这类最容易被误判。</p><div class="card"><div class="card-head"><span class="card-title">上传的字节被丢弃</span><span class="card-sub"><span class='tag t-bad'>2026-08-25 发现</span></span></div><p><span class='mono'>KARDA_OBJECT_ROOT</span> 在 dev 栈里没配，对象存储回落到内存实现，而它是<strong>每请求新建</strong>的。上传当场返回 201，之后每次预览/下载都 <span class='mono'>object_missing</span>。批次 10 的主打功能在这套栈上从头就是坏的，而看起来像是预览功能写错了。</p><p style='margin:0'>光加环境变量还不够：Docker 用<strong>镜像里那个目录</strong>（含属主）初始化新的命名卷，镜像从没创建过这个路径，卷就落成 root 属主，而运行用户是 <span class='mono'>nextjs</span>。所以 Dockerfile 里建目录并 chown，compose 挂命名卷。</p></div><div class="card"><div class="card-head"><span class="card-title">dev 库的 schema 停在批次 9 之前</span><span class="card-sub"><span class='tag t-warn'>2026-08-25 发现</span></span></div><p style='margin:0'><span class='mono'>processing_task</span> 等四张表<strong>根本不存在</strong>——<span class='mono'>apply-local-dev.sh</span> 从批次 9 之后就没再跑过。供给通道的消费方下钻在补表前必然 500。脚本是幂等的，补一次就好；问题在于<strong>没有任何东西提醒它该跑了</strong>。</p></div><div class="card"><div class="card-head"><span class="card-title">看的端口在服务旧镜像</span><span class="card-sub"><span class='tag t-warn'>2026-08-25 发现</span></span></div><p style='margin:0'>3240 被容器占着，跑的是构建好的镜像而非工作区代码，所以批次 10–13 的改动<strong>一个都不在里面</strong>——而这看起来就像「做了但没生效」。compose 文件开头就写着它从工作区构建；重建镜像即可。</p></div></section><section id="open"><h2><span class="num">07</span>仍然开着的</h2><div class="rule"></div><p>知道、但有意没修的。</p><div class="tw"><table><thead><tr><th>项</th><th>状态</th><th>为什么</th></tr></thead><tbody><tr><td>DS <span class='mono'>DialogTitle</span> 零高</td><td><span class='tag t-warn'>上游</span></td><td>TD-013 / <span class='mono'>vxture-design#8</span>。本地已兜住；真正的修法是在 tokens 里注册 <span class='mono'>--leading-none: 1</span>，一次修好所有消费方</td></tr><tr><td>验证历史</td><td><span class='tag t-dim'>口径已澄清</span></td><td>三个列只存最近一次验证。真历史需要 append-only 台账——也是企业档 <span class='mono'>governance.audit</span> 要的东西</td></tr><tr><td>管家预验队列</td><td><span class='tag t-dim'>有意不建</span></td><td>背后没有台账。先建 UI 会让演示数字看起来可操作</td></tr><tr><td>评测 API 的连接器降级路径</td><td><span class='tag t-dim'>无实跑</span></td><td>注册表里只有一个连接器，且是能力最强的声明，所以降级与 I4 缺口的渲染路径没跑过；已用投影层单测钉住最弱能力组合</td></tr><tr><td>部署流水线</td><td><span class='tag t-warn'>未演练</span></td><td>已编写；模板里端到端跑通过，karda 这份还没有</td></tr></tbody></table></div></section><section id="lesson"><h2><span class="num">08</span>结论</h2><div class="rule"></div><div class="note ok" style="font-size:1rem"><strong>这些缺陷没有一条是被类型检查、单元测试或生产构建抓到的。</strong>它们全部由「拿真实数据库把验收标准走一遍」抓到。</div><p>为什么会这样，值得说清楚：</p><ul><li><strong>类型系统检查形状，不检查语义。</strong>白名单漏一个键、信封 key 写错、分词器丢掉一整个字符集——三者都是<strong>类型完全正确</strong>的代码。</li><li><strong>单元测试测的是被测到的东西。</strong>没有人会为「路由读了但 service 丢了」写测试，因为写测试的人以为它接通了。</li><li><strong>渲染成功不等于可见。</strong>零高度的标题在 DOM 里、在读屏里都是对的。</li><li><strong>离线路径会掩盖问题。</strong>每请求新建的内存存储让上传「成功」、让数据「消失」，两件事都不报错。</li></ul><div class="note info">已固化为习惯：每批次交付前，起一次性 Postgres，按<strong>验收标准</strong>把流程走完，再清理环境。批次 10–14 每一批都是这样收的口，本报告里的每一条也都是这样来的。</div></section>
+  <div class="foot">Vxture Karda 文档体系 · 审计报告 · 覆盖批次 10–14 · 2026-08-25</div>
+</main>
+</div>
+<button class="theme-btn" id="themeBtn" type="button">主题</button>
+<script>
+(function () {
+  var b = document.getElementById('themeBtn');
+  if (!b) return;
+  // Three states, matching the artifact host: no stamp = follow the system.
+  // The button cycles 系统 -> 亮 -> 暗 rather than toggling, so a reader on a
+  // dark OS can still pin light without fighting the media query.
+  var order = ['system', 'light', 'dark'];
+  var label = { system: '主题 · 跟随系统', light: '主题 · 亮', dark: '主题 · 暗' };
+  var i = 0;
+  try { var s = localStorage.getItem('karda-doc-theme'); if (s && order.indexOf(s) >= 0) i = order.indexOf(s); } catch (e) {}
+  function apply() {
+    var m = order[i];
+    if (m === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', m);
+    b.textContent = label[m];
+    try { localStorage.setItem('karda-doc-theme', m); } catch (e) {}
+  }
+  b.addEventListener('click', function () { i = (i + 1) % order.length; apply(); });
+  apply();
+})();
+</script>

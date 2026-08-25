@@ -1,0 +1,283 @@
+<title>Vxture DS 能力登记册</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;700&display=swap');
+
+/* ── @vxture/design-tokens · typography T1/T2 subset ─────────────────────
+   Copied from vxture-design (design-system 6.5.x). This page cannot install
+   the DS package - an artifact's CSP admits Google Fonts and nothing else -
+   so the tokens it uses are inlined. They must stay identical to the DS; when
+   the DS moves, this block moves with it. Inherited from the Atlas doc. */
+:root {
+  --vx-font-sans: Inter, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --vx-font-brand: 'Funnel Display', Inter, 'Noto Sans SC', sans-serif;
+  --vx-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono CJK SC', monospace;
+  --vx-text-sm: 0.875rem;  --vx-text-base: 1rem;   --vx-text-lg: 1.125rem;
+  --vx-text-2xl: 1.5rem;   --vx-text-4xl: 2.25rem;
+  /* The whole document is Chinese, so the DS :lang(zh) leading compensation
+     applies. The host <html> is not ours to attribute, so the value lands here. */
+  --vx-cjk-leading-add: 0.15;
+
+  /* Family palette - identical to the Atlas and Runos docs ON PURPOSE. A
+     documentation system that changes colour per product is three products,
+     not one system; karda identifies itself by the rail brand instead. */
+  --bg: #f4f6f8; --surface: #ffffff; --surface2: #f6f8fa; --rail: #ffffff;
+  --border: #d5dbe2; --border-soft: #e6eaef;
+  --accent: #0969da; --accent2: #cf222e; --accent3: #1a7f37;
+  --accent4: #9a6700; --accent5: #8250df;
+  --text: #1f2328; --text-mid: #424950; --text-dim: #656d76;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+    --border: #232a33; --border-soft: #1b2128;
+    --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+    --accent4: #f0b429; --accent5: #b98cff;
+    --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+  --border: #232a33; --border-soft: #1b2128;
+  --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+  --accent4: #f0b429; --accent5: #b98cff;
+  --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--vx-font-sans);
+  font-size: var(--vx-text-base);
+  line-height: calc(1.5 + var(--vx-cjk-leading-add));
+  min-height: 100vh;
+}
+
+/* ── shell ─────────────────────────────────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+.rail {
+  background: var(--rail); border-right: 1px solid var(--border);
+  padding: 26px 18px 40px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.rail-brand {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700;
+}
+.rail-title { font-size: var(--vx-text-lg); font-weight: 700; margin: 6px 0 20px; line-height: 1.35; }
+.rail-group {
+  font-size: var(--vx-text-sm); letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--text-dim); margin: 22px 0 8px; font-weight: 600;
+}
+.rail a, .rail .doc-flat {
+  display: block; font-size: var(--vx-text-sm); color: var(--text-mid);
+  text-decoration: none; padding: 6px 10px; border-radius: 6px;
+  border-left: 2px solid transparent;
+}
+.rail a:hover { background: var(--surface2); color: var(--text); }
+.rail a.cur { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); font-weight: 600; }
+/* A document in the set that is not published yet. Rendered, but not a link -
+   a dead link teaches the reader to distrust the rail. */
+.rail .doc-flat { color: var(--text-dim); opacity: 0.62; cursor: default; }
+.rail .doc-flat::after { content: " · 未发布"; font-size: 11px; }
+.main { padding: 34px 40px 100px; min-width: 0; }
+@media (max-width: 1000px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 24px 20px 60px; }
+}
+
+/* ── header ────────────────────────────────────────────────────────────── */
+.page-head { border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 30px; }
+.eyebrow {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px;
+}
+.page-head h1 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-4xl);
+  font-weight: 600; letter-spacing: -0.4px;
+  line-height: calc(1.25 + var(--vx-cjk-leading-add));
+}
+.lede { color: var(--text-mid); font-size: var(--vx-text-lg); margin-top: 10px; max-width: 62em; }
+
+/* ── sections ──────────────────────────────────────────────────────────── */
+section { margin-bottom: 46px; scroll-margin-top: 20px; }
+h2 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-2xl); font-weight: 600;
+  margin-bottom: 6px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  line-height: calc(1.3 + var(--vx-cjk-leading-add));
+}
+h2 .num { font-size: 15px; color: var(--accent); font-family: var(--vx-font-mono); font-weight: 700; }
+h2 .h2-meta {
+  margin-left: auto; font-size: var(--vx-text-sm); font-weight: 500; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border-soft);
+  padding: 2px 10px; border-radius: 5px;
+}
+h3 { font-size: var(--vx-text-lg); font-weight: 600; margin: 22px 0 8px; }
+.rule { height: 1px; background: var(--border-soft); margin: 8px 0 20px; }
+p { max-width: 62em; margin-bottom: 12px; color: var(--text-mid); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+ul { margin: 0 0 12px 20px; color: var(--text-mid); max-width: 62em; }
+li { margin-bottom: 6px; }
+
+/* ── card ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+}
+.card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.card-title { font-size: var(--vx-text-base); font-weight: 600; color: var(--text); }
+.card-sub { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.grid { display: grid; gap: 16px; }
+.grid.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid.g3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+/* ── key/value rows - the workhorse ────────────────────────────────────── */
+.kv { display: grid; grid-template-columns: minmax(140px, 210px) minmax(0, 1fr); gap: 10px 18px; padding: 7px 0; border-top: 1px solid var(--border-soft); }
+.kv:first-of-type { border-top: none; }
+.kv-k { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.kv-k.hi { color: var(--text); font-weight: 500; }
+.kv-v { font-family: var(--vx-font-mono); font-size: var(--vx-text-sm); color: var(--text); word-break: break-word; }
+.kv-v.txt { font-family: var(--vx-font-sans); color: var(--text-mid); }
+.mono, .key { font-family: var(--vx-font-mono); font-size: 0.92em; }
+.key { background: var(--surface2); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 6px; }
+
+/* ── notes ─────────────────────────────────────────────────────────────── */
+.note {
+  border-left: 3px solid var(--border); background: var(--surface2);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+  font-size: var(--vx-text-sm); color: var(--text-mid); max-width: 62em;
+}
+.note strong { color: var(--text); }
+.note.info { border-left-color: var(--accent); }
+.note.danger { border-left-color: var(--accent2); }
+.note.ok { border-left-color: var(--accent3); }
+.note.warn { border-left-color: var(--accent4); }
+
+/* ── tags ──────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px;
+  border-radius: 999px; border: 1px solid; white-space: nowrap;
+}
+.t-ok { color: var(--accent3); border-color: var(--accent3); }
+.t-info { color: var(--accent); border-color: var(--accent); }
+.t-warn { color: var(--accent4); border-color: var(--accent4); }
+.t-bad { color: var(--accent2); border-color: var(--accent2); }
+.t-dim { color: var(--text-dim); border-color: var(--border); }
+
+/* ── flow diagram (inherited from the Runos doc) ───────────────────────── */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0; }
+.flow-node {
+  flex: 1 1 150px; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px; border-top-width: 3px;
+}
+.flow-node .fn-name { font-weight: 600; font-size: var(--vx-text-sm); color: var(--text); }
+.flow-node .fn-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; line-height: 1.55; }
+.n-blue { border-top-color: var(--accent); }
+.n-green { border-top-color: var(--accent3); }
+.n-amber { border-top-color: var(--accent4); }
+.n-red { border-top-color: var(--accent2); }
+.n-violet { border-top-color: var(--accent5); }
+.flow-arrow { flex: 0 0 34px; display: flex; align-items: center; justify-content: center; position: relative; }
+.flow-arrow-line { height: 1px; width: 100%; background: var(--border); }
+.flow-arrow-head { position: absolute; right: 6px; color: var(--text-dim); font-size: 13px; }
+.flow-arrow-label { position: absolute; top: -16px; font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 22px; transform: rotate(90deg); }
+}
+
+/* ── table ─────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: var(--vx-text-sm); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+th { color: var(--text-dim); font-weight: 600; white-space: nowrap; border-bottom-color: var(--border); }
+td.mono, td .mono { font-family: var(--vx-font-mono); }
+
+.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--text-dim); }
+.theme-btn {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9; cursor: pointer;
+  background: var(--surface); color: var(--text-mid); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--vx-font-sans);
+}
+.theme-btn:hover { color: var(--text); }
+</style>
+<div class="shell" id="top">
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">能力登记册</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc cur" href="#top">▸ 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><span class="doc-flat">· 接口文档</span><span class="doc-flat">· 设计语言</span><div class="rail-group">本页</div><a href="#how">怎么读这份清单</a><a href="#contracts">带契约的件</a><a href="#inventory">全部 96 件</a><a href="#gaps">清单之外</a><div class="rail-group">同族</div><a class="doc" href="https://claude.ai/code/artifact/689dbb66-f931-466e-a8f8-aaa692f0e418">· Karda 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/f521c4e5-0075-428e-870d-50134d7499a1">· Atlas 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/899d7ff6-7cdd-4f3b-a4a7-7e7d1c863051">· Runos 审计报告</a></nav>
+<main class="main">
+  <div class="page-head">
+    <div class="eyebrow">Vxture Design System · design-ui 6.0.0 / design-system 9.0.0</div>
+    <h1>能力登记册</h1>
+    <p class="lede">96 个件，按层排。清单本身由脚本从文件树与预览面注册表提取——<strong>手抄的清单会停在抄它的那一天</strong>。</p>
+  </div>
+
+<section id="how"><h2><span class="num">01</span>怎么读这份清单<span class="h2-meta">口径</span></h2><div class="rule"></div>
+<div class="card"><div class="card-head"><span class="card-title">数字的口径</span></div>
+<div class="kv"><div class="kv-k hi">96</div><div class="kv-v txt"><span class="mono">components/</span> 下的 <span class="mono">.tsx</span> 文件数——本页的清单</div></div>
+<div class="kv"><div class="kv-k hi">97</div><div class="kv-v txt">类名守卫报的数：96 个件 <strong>+ 1 个共享配方层</strong>（<span class="mono">styles/recipes.ts</span>）。它不在 <span class="mono">components/</span> 下，但共享的东西比各写各的更需要检查——一处错会静默扩散到所有引用方</div></div>
+<div class="kv"><div class="kv-k hi">89</div><div class="kv-v txt">预览面的条目数。少于 96 不是漏，是一族件<strong>并在一条里看</strong>（<span class="mono">ViewLayout</span> / <span class="mono">Section</span> / <span class="mono">SectionHeader</span> 拆成三条，读者反而看不出层级关系）。并入的那些由条目的 <span class="mono">covers</span> 字段声明，覆盖守卫认这个声明</div></div></div>
+<div class="note info">「一句话」取自各件的文件头首行。<strong>这不是文档，是源码</strong>——写得不好就说明那个件的头注释该补了。本次提取时有 6 个件没有这一行（<span class="mono">Toast</span> / <span class="mono">Drawer</span> / <span class="mono">DropdownMenu</span> / <span class="mono">EntryCard</span> / <span class="mono">Combobox</span> / <span class="mono">DatePicker</span>），表里显示为「—」，是待补项。</div></section>
+
+<section id="contracts"><h2><span class="num">02</span>带契约的件<span class="h2-meta">不只是形状</span></h2><div class="rule"></div>
+<p>大多数件只固定形状。<strong>下面这几件还固定「必须做什么」</strong>——它们的类型会在你漏掉一步时编译失败。这是本轮四个 major 的产物。</p>
+<div class="card"><div class="card-head"><span class="card-title">破坏性确认契约</span><span class="card-sub">三个载体，一条清点口径</span></div>
+<div class="kv"><div class="kv-k"><span class="mono">ActionMenuItem</span></div><div class="kv-v txt"><span class="mono">danger: true</span> 必须给 <span class="mono">confirm</span> 或写明 <span class="mono">confirmExempt</span> 理由</div></div>
+<div class="kv"><div class="kv-k"><span class="mono">BulkActionBarItem</span></div><div class="kv-v txt">同上。批量条误删的是当前选中的全部，门槛只高不低</div></div>
+<div class="kv"><div class="kv-k"><span class="mono">Button</span> / <span class="mono">ActionButton</span></div><div class="kv-v txt"><span class="mono">variant="destructive"</span> 必须写 <span class="mono">confirmExempt</span>；要拦就换 <span class="mono">DestructiveButton</span></div></div>
+<div class="kv"><div class="kv-k"><span class="mono">ConfirmDestructive</span></div><div class="kv-v txt">四项契约：<span class="mono">verb</span> / <span class="mono">target</span> / <span class="mono">consequence</span>（必填）/ <span class="mono">preconditions</span></div></div>
+<div class="kv"><div class="kv-k hi">清点</div><div class="kv-v txt"><span class="mono">grep -rn confirmExempt portals/</span> —— 已声明豁免的红色动作，逐条带理由</div></div>
+<p style="margin:12px 0 0"><strong><span class="mono">destructive-strong</span> 不在契约内</strong>：它是落锤档——确认对话框里的那个提交按钮。要求落锤自己再确认一次是循环。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">前置条件三态</span><span class="card-sub"><span class="mono">DestructivePrecondition</span></span></div>
+<p style="margin:0"><span class="mono">met</span> 是<strong>唯一门闩</strong>，放不放行由调用方判；<span class="mono">unknown</span> 只管把「查不到」和「确认没满足」在视觉上分开（灰问号 vs 红叉）。分开是有意的——「读不到检查单时挡住还是放行」是产品的风险判断，DS 收下就等于把风险偏好焊进来。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">文案出口</span><span class="card-sub">英文托底，应用必须传参</span></div>
+<p style="margin:0">每一处渲染文字都换得掉，含 <span class="mono">aria-label</span> 与 <span class="mono">sr-only</span>。三档收法：一两条走独立 prop，三条以上走 <span class="mono">labels</span> 对象，<strong>拼接出来的句子收模板不收词</strong>（<span class="mono">titleTemplate</span> / <span class="mono">selectionTemplate</span>）——语序是语法，不是词汇。默认值一律英文，且它<strong>只是托底</strong>：英文默认值出现在生产界面上，说明有人忘了传。</p></div></section>
+
+<section id="inventory"><h2><span class="num">03</span>全部 96 件<span class="h2-meta">按层</span></h2><div class="rule"></div>
+<div class="card"><div class="card-head"><span class="card-title">base · 单件</span><span class="card-sub">50 件</span></div><p>一个控件、一个交互单元，或由 Radix 原语换取值而来。可以引 token / recipes / icons，不引任何上层。</p><div class="tw"><table><thead><tr><th>件</th><th>组</th><th>一句话</th><th>预览面</th></tr></thead><tbody><tr><td class="mono">Accordion</td><td>展示</td><td>手风琴。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">AspectRatio</td><td>展示</td><td>定比容器。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Avatar</td><td>展示</td><td>Avatar 组件</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Badge</td><td>展示</td><td>徽标（shadcn 惯例 + cva）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Calendar</td><td>展示</td><td>日历。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Card</td><td>展示</td><td>卡片（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Collapsible</td><td>展示</td><td>折叠区。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">EmptyState</td><td>展示</td><td>空态。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Kbd</td><td>展示</td><td>键位标示（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">LevelMarker</td><td>展示</td><td>等级记号：L1–L5 的圆形底座。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Resizable</td><td>展示</td><td>可拖分栏（shadcn 惯例，底层 react-resizable-panels v4）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ScrollArea</td><td>展示</td><td>自绘滚动条的滚动区。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Separator</td><td>展示</td><td>分隔线。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Skeleton</td><td>展示</td><td>加载占位（shadcn 惯例 + 本仓的形态扩展）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">StatusBadge</td><td>展示</td><td>状态标。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Table</td><td>展示</td><td>表格原语族。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Banner</td><td>反馈</td><td>常驻提示条。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Progress</td><td>反馈</td><td>进度条。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Spinner</td><td>反馈</td><td>行内加载指示（shadcn 惯例 + 本仓图标源）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Toast</td><td>反馈</td><td>—</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ActionButton</td><td>表单</td><td>图标 + 文字的操作按钮。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Button</td><td>表单</td><td>按钮（shadcn 惯例 + cva）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ButtonGroup</td><td>表单</td><td>相连按钮组（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Checkbox</td><td>表单</td><td>复选框。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Field</td><td>表单</td><td>表单行标准件（shadcn 惯例，取其核心子集）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Input</td><td>表单</td><td>单行输入（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">InputGroup</td><td>表单</td><td>输入组：前后缀与输入框拼成一个框身（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">InputOTP</td><td>表单</td><td>一次性验证码输入（shadcn 惯例，底层 input-otp）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Label</td><td>表单</td><td>表单标签。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">NativeSelect</td><td>表单</td><td>原生 `&lt;select&gt;`，外观与 `Input` 对齐。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">RadioGroup</td><td>表单</td><td>单选组。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">SegmentedControl</td><td>表单</td><td>一组互斥选项，选中项就地高亮。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Select</td><td>表单</td><td>Select 组件</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Slider</td><td>表单</td><td>滑杆。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Switch</td><td>表单</td><td>开关（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Textarea</td><td>表单</td><td>多行输入（shadcn 惯例）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Toggle</td><td>表单</td><td>双态按钮。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ToggleGroup</td><td>表单</td><td>双态按钮组。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Breadcrumb</td><td>导航</td><td>Breadcrumb 组件</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Pagination</td><td>导航</td><td>分页（自有实现，非 shadcn 上游件）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Tabs</td><td>导航</td><td>Tabs 组件</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">AlertDialog</td><td>浮层</td><td>阻断式确认对话框。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Command</td><td>浮层</td><td>命令面板族。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ContextMenu</td><td>浮层</td><td>右键菜单。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Dialog</td><td>浮层</td><td>Dialog 组件</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Drawer</td><td>浮层</td><td>—</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DropdownMenu</td><td>浮层</td><td>—</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">HoverCard</td><td>浮层</td><td>悬停信息卡。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Popover</td><td>浮层</td><td>气泡浮层。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Tooltip</td><td>浮层</td><td>提示气泡。</td><td><span class="tag t-ok">有</span></td></tr></tbody></table></div></div>
+<div class="card"><div class="card-head"><span class="card-title">composite · 组合件</span><span class="card-sub">28 件</span></div><p>由 base 单件拼装、零业务、直接给 props 可用。收录门槛是产品实据：得先在多个消费方里被各自重写过。</p><div class="tw"><table><thead><tr><th>件</th><th>组</th><th>一句话</th><th>预览面</th></tr></thead><tbody><tr><td class="mono">ActionMenu</td><td>数据</td><td>行操作菜单（表格行尾的"⋮"）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">BarChart</td><td>数据</td><td>柱状图。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">BulkActionBar</td><td>数据</td><td>列表多选后出现的批量操作条。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DataTable</td><td>数据</td><td>表格骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">EntryCard</td><td>数据</td><td>—</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">FactList</td><td>数据</td><td>右对齐的若干「键 值」。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">FilterBar</td><td>数据</td><td>列表上方的工具行。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">LabeledValue</td><td>数据</td><td>标签在上、读数在下的两行主体。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">ListCard</td><td>数据</td><td>清单页卡片视图的行卡：与 DataTable 行同一份信息的卡片形态。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">MetricCard</td><td>数据</td><td>单个指标读数。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">MetricGrid</td><td>数据</td><td>一排指标卡。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">MetricListCard</td><td>数据</td><td>带卡内指标的列表卡（列表页"卡片视图"的一行）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">TableTitleCell</td><td>数据</td><td>列表主列的两行单元格：主信息 + 辅助信息。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">ViewModeSwitch</td><td>数据</td><td>列表 / 卡片 视图切换。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">Combobox</td><td>表单</td><td>—</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DatePicker</td><td>表单</td><td>—</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DestructiveButton</td><td>表单</td><td>带确认的危险动作按钮。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DialogForm</td><td>表单</td><td>对话框表单骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">FieldTier</td><td>表单</td><td>表单字段的**分档**骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ConfirmDestructive</td><td>浮层</td><td>破坏性动作的二次确认。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DetailList</td><td>结构</td><td>只读字段行列表：一行一条「字段名 — 字段值 — 可选操作」。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">PanelCard</td><td>结构</td><td>带头部的面板卡：一个标题 + 一块自带内容。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">PanelItem</td><td>结构</td><td>面板列表的一项：前导 · 主体 · 尾部。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">PanelList</td><td>结构</td><td>面板里的一列项，与 PanelItem 配对。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">Section</td><td>结构</td><td>view 内的板块容器。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">SectionHeader</td><td>结构</td><td>二级及以下的标题区。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">SectionNav</td><td>结构</td><td>板块间导航，通常放在 `SplitViewLayout` 的左栏。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ViewHeader</td><td>结构</td><td>页头。</td><td><span class="tag t-ok">有</span></td></tr></tbody></table></div></div>
+<div class="card"><div class="card-head"><span class="card-title">templates · 整页骨架</span><span class="card-sub">5 件</span></div><p>整页只说一件事的那几种页型。</p><div class="tw"><table><thead><tr><th>件</th><th>组</th><th>一句话</th><th>预览面</th></tr></thead><tbody><tr><td class="mono">DashboardTemplate</td><td></td><td>工作台骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">DetailPageTemplate</td><td></td><td>详情页骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">FormPageTemplate</td><td></td><td>整页表单骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ListPageTemplate</td><td></td><td>标准列表页骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ResultPageTemplate</td><td></td><td>结果 / 异常页骨架。</td><td><span class="tag t-ok">有</span></td></tr></tbody></table></div></div>
+<div class="card"><div class="card-head"><span class="card-title">layout · 布局容器</span><span class="card-sub">7 件</span></div><p>撑起页面骨架的容器与栅格。</p><div class="tw"><table><thead><tr><th>件</th><th>组</th><th>一句话</th><th>预览面</th></tr></thead><tbody><tr><td class="mono">ShellLayout</td><td></td><td>应用外壳的视口级布局（header 容器 / 侧栏外壳 / 顶层组合）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">SplitViewLayout</td><td></td><td>左导航 + 右内容的 view 骨架。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ViewLayout</td><td></td><td>view 的纵向骨架。</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">Container</td><td>container</td><td>响应式内容容器组件</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">Provider</td><td>fullscreen</td><td>全屏系统 Provider</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">Grid</td><td>grid</td><td>响应式网格布局组件</td><td><span class="tag t-dim">并入他条</span></td></tr><tr><td class="mono">Stack</td><td>stack</td><td>垂直堆叠布局组件</td><td><span class="tag t-ok">有</span></td></tr></tbody></table></div></div>
+<div class="card"><div class="card-head"><span class="card-title">shell · 伞包自持</span><span class="card-sub">6 件</span></div><p>需要运行时接线的那几件——主题、密度、导航壳。放在伞包而不是 design-ui，因为它们带 provider。</p><div class="tw"><table><thead><tr><th>件</th><th>组</th><th>一句话</th><th>预览面</th></tr></thead><tbody><tr><td class="mono">ShellBootScreen</td><td></td><td>会话未定时的整屏加载页。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ShellChrome</td><td></td><td>门户外壳部件族（品牌、工具按钮、语言/主题/全屏、偏好、用户菜单、法务页脚）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ShellLauncher</td><td></td><td>外壳功能板块切换器（launcher）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ShellPanel</td><td></td><td>外壳弹层面板的**结构语法**（零业务语义）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ShellSearchBox</td><td></td><td>外壳全局搜索（header 内联输入 + 下方结果面板）。</td><td><span class="tag t-ok">有</span></td></tr><tr><td class="mono">ShellSidebarNav</td><td></td><td>侧栏导航内容（token 化的通用导航壳）。</td><td><span class="tag t-ok">有</span></td></tr></tbody></table></div></div>
+</section>
+
+<section id="gaps"><h2><span class="num">04</span>清单之外<span class="h2-meta">边界</span></h2><div class="rule"></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">不会进这份清单的</span></div>
+<ul>
+<li><strong>带业务归属的面板</strong>——UserPanel / TenantPanel 一类，归 domain 层</li>
+<li><strong>带产品专名的件</strong>——没有 <span class="mono">console-*</span> / <span class="mono">admin-*</span> 前缀</li>
+<li><strong>业务状态映射</strong>——把「订阅逾期」映射成 <span class="mono">warning</span> 是产品的判断</li>
+<li><strong>认证策略</strong>——step-up / TOTP 由产品接在 <span class="mono">onConfirm</span> 返回的 Promise 上</li>
+</ul></div>
+<div class="card"><div class="card-head"><span class="card-title">收录门槛</span></div>
+<p style="margin:0">「可被产品侧二次封装」是<strong>允许项不是门槛</strong>。真正的门槛是<strong>产品实据</strong>：一个件要进来，得先在多个消费方里被各自重写过。一个件如果只有一个产品用得上，它就还没到进 DS 的时候。</p></div>
+</div>
+<div class="note warn"><strong>这份清单说的是「有什么」，不是「谁在用」。</strong>消费方装了哪版、迁到哪一步，那份数据不在本仓——DS 看不到 portals 的 lockfile，写出来的第一天就是过期的。宁可缺一份文档，也不要一份看起来权威、实际过期的文档。</div></section>
+
+  <div class="foot">Vxture Design System · 能力登记册 · 96 件 · design-ui 6.0.0 / design-system 9.0.0 · 2026-08-25</div>
+</main>
+</div>
+<button class="theme-btn" id="themeBtn" type="button">主题</button>
+<script>
+(function () {
+  var b = document.getElementById('themeBtn');
+  if (!b) return;
+  // Three states, matching the artifact host: no stamp = follow the system.
+  // The button cycles 系统 -> 亮 -> 暗 rather than toggling, so a reader on a
+  // dark OS can still pin light without fighting the media query.
+  var order = ['system', 'light', 'dark'];
+  var label = { system: '主题 · 跟随系统', light: '主题 · 亮', dark: '主题 · 暗' };
+  var i = 0;
+  try { var s = localStorage.getItem('vxture-ds-doc-theme'); if (s && order.indexOf(s) >= 0) i = order.indexOf(s); } catch (e) {}
+  function apply() {
+    var m = order[i];
+    if (m === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', m);
+    b.textContent = label[m];
+    try { localStorage.setItem('vxture-ds-doc-theme', m); } catch (e) {}
+  }
+  b.addEventListener('click', function () { i = (i + 1) % order.length; apply(); });
+  apply();
+})();
+</script>
+

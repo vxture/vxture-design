@@ -21,10 +21,15 @@
  * auth 族已迁出（2026-08-18，owner 判：DS 只收通用、无业务含义的件）——
  * 组件归 accounts（其工具类由 accounts 自己的 Tailwind 扫描产出），
  * auth.css 入口本就是零消费的空壳，一并删除。 */
-@source "../../../design-ui/dist";
-@source "../../dist";
 @import "./brand.css";
 /* platform.css 已删（2026-08-18）：它与 auth.css 同批退役后只剩空壳注释，
  * 留着的唯一理由（"使既有 import 解析成功"）随各 portal 收敛完成而消失。 */
 @import "./fullscreen.css";
 @import "./globals-base.css";
+
+/* @source 排在全部 @import 之后：CSS 规范只允许 @charset / @layer 领先于
+ * @import，夹在中间会让后面的 @import 在按规范解析的工具里被丢弃。Tailwind
+ * 自己的解析器不挑，但这份文件是公开子路径、会进别人的构建。@source 只是追加
+ * 扫描根，与顺序无关，所以下沉零代价。 */
+@source "../../../design-ui/dist";
+@source "../../dist";
