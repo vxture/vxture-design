@@ -92,7 +92,10 @@ const TONE_CLS: Record<ToastTone, string> = {
  * id 的格式是**不透明的**，不要去解析它。
  */
 let toastSeq = 0;
-const nextToastId = () => `toast-${(toastSeq += 1)}`;
+const nextToastId = () => {
+  toastSeq += 1;
+  return `toast-${toastSeq}`;
+};
 
 export interface ToastProviderProps {
   readonly children: React.ReactNode;
