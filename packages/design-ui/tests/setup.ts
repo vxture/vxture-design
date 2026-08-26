@@ -82,7 +82,17 @@ beforeAll(() => {
  * 用例自己 mock 掉 console.error 时（例如钉「缺 Provider 要抛」那条）这里看不到
  * 东西，也不会误报。
  */
-const KEY_WARN = /unique "key"/;
+/*
+ * 两条，因为 React 对两种 key 缺陷用的是两句不同的话：
+ *   · 数组成员没有 key      —— Each child in a list should have a unique "key" prop.
+ *   · 两个成员用了同一个 key —— Encountered two children with the same key, ...
+ *
+ * 后一条 2026-08-26 补：给 MetricGrid 写「同名不同 id 的两张卡都渲染得出来」时，
+ * 把 key 从 id 换成 String(label) 的变异**没有变红**——React 遇到重复 key 会
+ * 警告，但照样把两个都渲染出来，所以从 DOM 上分辨不出。而重复 key 是真缺陷：
+ * 重排时 React 认不出谁是谁，会把状态和 DOM 接到错的那一个上。
+ */
+const KEY_WARN = /unique "key"|two children with the same key/;
 const keyWarnings: string[] = [];
 const passThroughError = console.error;
 console.error = (...args: unknown[]) => {

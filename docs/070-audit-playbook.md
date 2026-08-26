@@ -175,18 +175,20 @@ It was passed a child from AccountDetailPage.  ← 元素被创建的地方（�
 
 复现方式：`pnpm --filter @vxture/design-ui test:coverage` 之后读 `coverage/coverage-summary.json`。
 
+**第一批已铺**（2026-08-26）：`MetricGrid` / `BarChart` / `ShellLayout` / `FieldTier` / `ContextMenu` 五件，61 条用例、26 条变异全红。未覆盖分支 **410 → 347**，零覆盖文件 **39 → 34**，行覆盖 63.5% → 69.6%。
+
 | 件                    | 未覆盖 / 总分支 | 状态   | 备注                                                     |
 | --------------------- | --------------- | ------ | -------------------------------------------------------- |
 | `DataTable`           | 50 / 122        | 部分   | 全仓分支最多的件，已有用例只覆盖了主路径                 |
-| `fullscreen/Provider` | 38 / 64         | 部分   | 刚修过，但**原生模式那半边没测**——jsdom 没有真的全屏 API |
-| `MetricGrid`          | 24 / 24         | 零覆盖 | 4 行 24 分支，密度最高                                   |
+| `fullscreen/Provider` | 38 / 64         | 部分   | **原生模式那半边没测**——jsdom 没有真的全屏 API，要先造桩 |
 | `BulkActionBar`       | 16 / 26         | 部分   |                                                          |
-| `FieldTier`           | 14 / 14         | 零覆盖 |                                                          |
-| `ShellLayout`         | 14 / 14         | 零覆盖 | 伞包侧                                                   |
 | `Skeleton`            | 12 / 20         | 部分   |                                                          |
-| `BarChart`            | 12 / 12         | 零覆盖 |                                                          |
-| `ViewModeSwitch`      | 11 / 11         | 部分   |                                                          |
-| `ContextMenu`         | 10 / 10         | 零覆盖 | 33 行 9 函数，零覆盖文件里最大的一个                     |
+| `ViewModeSwitch`      | 11 / 11         | 部分   | 有用例但一条分支没走到                                   |
+| `MetricListCard`      | 10 / 28         | 部分   | 修过键盘陷阱，其余分支未测                               |
+| `PanelCard`           | 9 / 9           | 零覆盖 | 1 行 9 分支                                              |
+| `SectionNav`          | 9 / 9           | 零覆盖 |                                                          |
+
+**口径提醒**：剩下 347 条里 **251 条（72%）在已经有用例的文件里**——第一批把零覆盖文件那一头削掉一截之后，这个比例还升高了。按「件名」排会把这些当成测过了。
 
 ### 5.2 其余缺口
 
