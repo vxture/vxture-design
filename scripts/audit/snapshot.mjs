@@ -131,27 +131,82 @@ add("测试 · 文件数", tests, "packages/ 与 scripts/ 下的 *.test.* / *.sp
  * 更要紧的是它揪出了一整类被漏掉的东西:0% 榜首几个全是 hooks
  * (useListPagination / useBreakpoint / useFullscreen …)——它们从来不在「件名」
  * 清单里,因为不是组件。纯逻辑,最便宜也最该测。
+ *
+ * ⚠ **这几个数只覆盖 design-ui 一个包。**
+ *
+ * 2026-08-26 查到：本脚本从头到尾只读 `packages/design-ui/coverage/…`，而
+ * `how` 字段——它存在的全部意义就是「下一轮照 how 复测才可比」——**漏了这个
+ * 限定词**。于是基于它写的每一份报告都少说了一句话：「83.9%」是 design-ui 的，
+ * 不是全仓的。
+ *
+ * 更要紧的是漏掉的那个包正是 **design-system**：23 个源文件、零测试，而
+ * **消费方装的就是它**（应用只装伞包）。这与 hooks 那次是同一个形状——它不在
+ * 按包排的清单里，因为 `test:coverage` 当时只存在于 design-ui。
+ *
+ * 指标名与 how 都已带上包名。伞包补上测试之后，这里要改成合并统计。
  */
-const COVERAGE_SUMMARY = "packages/design-ui/coverage/coverage-summary.json";
-if (existsSync(path.join(ROOT, COVERAGE_SUMMARY))) {
-  const cov = await json(COVERAGE_SUMMARY);
-  const how = "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)";
+/**
+ * 两个包各自量、再合并出一个全仓数。
+ *
+ * 分开列是因为它们的成熟度差一个数量级，合成一个数会把这件事抹掉；
+ * 合并那一行则是**唯一诚实的总数**——此前只有 design-ui 那一个数，而它一直被
+ * 当成全仓的。
+ */
+const COVERAGE = [
+  ["design-ui", "packages/design-ui/coverage/coverage-summary.json"],
+  ["design-system", "packages/design-system/coverage/coverage-summary.json"],
+];
+
+const totals = { lines: [0, 0], statements: [0, 0], branches: [0, 0], functions: [0, 0] };
+let anyCoverage = false;
+
+for (const [pkg, file] of COVERAGE) {
+  if (!existsSync(path.join(ROOT, file))) {
+    add(
+      `覆盖率 · ${pkg}`,
+      "未量",
+      `跑 pnpm --filter @vxture/${pkg} test:coverage 之后才有数`,
+    );
+    continue;
+  }
+  anyCoverage = true;
+  const cov = await json(file);
+  const how = `vitest v8 覆盖率(pnpm --filter @vxture/${pkg} test:coverage 后读它的 json-summary)`;
   for (const [key, label] of [
     ["lines", "行"],
     ["statements", "语句"],
     ["branches", "分支"],
     ["functions", "函数"],
   ]) {
-    add(`覆盖率 · ${label}%`, cov.total?.[key]?.pct ?? "—", how);
+    add(`覆盖率 · ${pkg} ${label}%`, cov.total?.[key]?.pct ?? "—", how);
+    const t = cov.total?.[key];
+    if (t) {
+      totals[key][0] += t.covered ?? 0;
+      totals[key][1] += t.total ?? 0;
+    }
   }
   const files = Object.entries(cov).filter(([k]) => k !== "total");
   add(
-    "覆盖率 · 零覆盖文件",
+    `覆盖率 · ${pkg} 零覆盖文件`,
     files.filter(([, v]) => v.lines?.pct === 0).length,
     "从没被任何用例执行过的文件数",
   );
+}
+
+if (anyCoverage) {
+  const pct = ([c, t]) => (t === 0 ? "—" : Math.round((c / t) * 10000) / 100);
+  for (const [key, label] of [
+    ["lines", "行"],
+    ["branches", "分支"],
+  ]) {
+    add(
+      `覆盖率 · 全仓 ${label}%`,
+      pct(totals[key]),
+      `两个包的 covered/total 相加再算——**发布出去的代码的真实数**（${totals[key][0]}/${totals[key][1]}）`,
+    );
+  }
 } else {
-  add("覆盖率 · 行%", "未量", "先跑 pnpm test:coverage");
+  add("覆盖率 · 全仓", "未量", "两个包都没量过");
 }
 
 // ── 预览面 ──────────────────────────────────────────────────────────────
