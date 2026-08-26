@@ -83,7 +83,7 @@
     },
     {
       "key": "测试 · 文件数",
-      "value": 31,
+      "value": 32,
       "how": "packages/ 与 scripts/ 下的 *.test.* / *.spec.*"
     },
     {
@@ -113,38 +113,38 @@
     },
     {
       "key": "覆盖率 · design-system 行%",
-      "value": 10.17,
+      "value": 31.57,
       "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
     },
     {
       "key": "覆盖率 · design-system 语句%",
-      "value": 9.58,
+      "value": 29.07,
       "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
     },
     {
       "key": "覆盖率 · design-system 分支%",
-      "value": 5.4,
+      "value": 10.81,
       "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
     },
     {
       "key": "覆盖率 · design-system 函数%",
-      "value": 9.24,
+      "value": 25.21,
       "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
     },
     {
       "key": "覆盖率 · design-system 零覆盖文件",
-      "value": 8,
+      "value": 6,
       "how": "从没被任何用例执行过的文件数"
     },
     {
       "key": "覆盖率 · 全仓 行%",
-      "value": 66.64,
-      "how": "两个包的 covered/total 相加再算——**发布出去的代码的真实数**（811/1217）"
+      "value": 71.65,
+      "how": "两个包的 covered/total 相加再算——**发布出去的代码的真实数**（872/1217）"
     },
     {
       "key": "覆盖率 · 全仓 分支%",
-      "value": 59.24,
-      "how": "两个包的 covered/total 相加再算——**发布出去的代码的真实数**（798/1347）"
+      "value": 61.02,
+      "how": "两个包的 covered/total 相加再算——**发布出去的代码的真实数**（822/1347）"
     },
     {
       "key": "预览面 · 条目数",
