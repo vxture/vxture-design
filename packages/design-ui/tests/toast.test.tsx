@@ -90,3 +90,101 @@ describe("Toast · 通知区与关闭", () => {
     expect(screen.queryByText("已保存")).not.toBeInTheDocument();
   });
 });
+
+/**
+ * id 的唯一性。
+ *
+ * 2026-08-26 把 id 从 `Date.now()` + `Math.random()` 换成单调计数器（SonarCloud
+ * 报的那条 vulnerability，理由不适用但结论可取——见件内注释）。这一节钉的是
+ * **换法没有换坏**：
+ *
+ *   · 同一次交互里连发多条，id 不许重复。重复的表现是两条通知共用一个 React
+ *     key，后一条把前一条顶掉——而随机数版本这只是**大概率**不发生，写不成断言
+ *   · 调用方显式给了 id 就用它，别偷偷替换
+ *   · 计数器是模块级的，跨 Provider、跨重挂载都不重复；否则上一次挂载残留的
+ *     自动消失定时器会误伤新通知
+ */
+describe("Toast · id 的唯一性", () => {
+  function Burst() {
+    const { toast } = useToast();
+    return (
+      <Button
+        onClick={() => {
+          setIds([
+            toast({ title: "第一条", duration: 0 }),
+            toast({ title: "第二条", duration: 0 }),
+            toast({ title: "第三条", duration: 0 }),
+          ]);
+        }}
+      >
+        连发三条
+      </Button>
+    );
+  }
+
+  let captured: string[] = [];
+  const setIds = (v: string[]) => {
+    captured = v;
+  };
+
+  it("同一次交互连发三条，三个 id 互不相同", async () => {
+    captured = [];
+    const user = userEvent.setup();
+    render(
+      <ToastProvider>
+        <Burst />
+      </ToastProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "连发三条" }));
+
+    expect(captured).toHaveLength(3);
+    expect(new Set(captured).size).toBe(3);
+    // 三条都还在屏上——id 撞了的话 React 会用同一个 key，只剩两条
+    expect(screen.getAllByRole("status")).toHaveLength(3);
+  });
+
+  it("跨两个 Provider 也不重复", async () => {
+    captured = [];
+    const user = userEvent.setup();
+    const first = render(
+      <ToastProvider>
+        <Burst />
+      </ToastProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "连发三条" }));
+    const roundOne = [...captured];
+    first.unmount();
+
+    captured = [];
+    render(
+      <ToastProvider>
+        <Burst />
+      </ToastProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "连发三条" }));
+
+    expect(new Set([...roundOne, ...captured]).size).toBe(6);
+  });
+
+  it("调用方给了 id 就用它", async () => {
+    function Fixed() {
+      const { toast } = useToast();
+      return (
+        <Button
+          onClick={() => setIds([toast({ id: "my-own", title: "自带 id" })])}
+        >
+          发一条
+        </Button>
+      );
+    }
+    captured = [];
+    const user = userEvent.setup();
+    render(
+      <ToastProvider>
+        <Fixed />
+      </ToastProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "发一条" }));
+    expect(captured[0]).toBe("my-own");
+  });
+});
