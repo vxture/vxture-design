@@ -203,7 +203,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">审计报告</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc cur" href="#top">▸ 审计报告</a><span class="doc-flat">· 接口文档</span><span class="doc-flat">· 设计语言</span><div class="rail-group">本页</div><a href="#method">怎么查出来的</a><a href="#base">基线：现在有多大</a><a href="#silent">一类：静默失败</a><a href="#prose">二类：契约只写在散文里</a><a href="#guard">三类：守卫自己停止守卫</a><a href="#layer">四类：分层与打包的隐性约束</a><a href="#coverage">覆盖面盘点</a><a href="#open">仍然开着的</a><a href="#lesson">结论</a><div class="rail-group">同族</div><a class="doc" href="https://claude.ai/code/artifact/689dbb66-f931-466e-a8f8-aaa692f0e418">· Karda 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/f521c4e5-0075-428e-870d-50134d7499a1">· Atlas 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/899d7ff6-7cdd-4f3b-a4a7-7e7d1c863051">· Runos 审计报告</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">审计报告</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc cur" href="#top">▸ 审计报告</a><span class="doc-flat">· 接口文档</span><span class="doc-flat">· 设计语言</span><div class="rail-group">本页</div><a href="#method">怎么查出来的</a><a href="#base">基线：现在有多大</a><a href="#silent">一类：静默失败</a><a href="#prose">二类：契约只写在散文里</a><a href="#guard">三类：守卫自己停止守卫</a><a href="#layer">四类：分层与打包的隐性约束</a><a href="#coverage">覆盖面盘点</a><a href="#open">仍然开着的</a><a href="#lesson">结论</a><a href="#next">四轮之后</a><div class="rail-group">同族</div><a class="doc" href="https://claude.ai/code/artifact/689dbb66-f931-466e-a8f8-aaa692f0e418">· Karda 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/f521c4e5-0075-428e-870d-50134d7499a1">· Atlas 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/899d7ff6-7cdd-4f3b-a4a7-7e7d1c863051">· Runos 审计报告</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
@@ -225,8 +225,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="grid g3">
 <div class="card"><div class="card-head"><span class="card-title">三个发布包</span></div>
 <div class="kv"><div class="kv-k">design-tokens</div><div class="kv-v">2.2.3</div></div>
-<div class="kv"><div class="kv-k">design-ui</div><div class="kv-v">6.0.0</div></div>
-<div class="kv"><div class="kv-k">design-system</div><div class="kv-v">9.0.0</div></div>
+<div class="kv"><div class="kv-k">design-ui</div><div class="kv-v">6.0.4</div></div>
+<div class="kv"><div class="kv-k">design-system</div><div class="kv-v">9.0.4</div></div>
 <div class="kv"><div class="kv-k">design-preview</div><div class="kv-v">私有，不发布</div></div></div>
 <div class="card"><div class="card-head"><span class="card-title">组件 96 个文件</span></div>
 <div class="kv"><div class="kv-k">base</div><div class="kv-v">50</div></div>
@@ -246,12 +246,12 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="kv"><div class="kv-k">T2 非色彩</div><div class="kv-v">排版 21 角色 × 3 档 · 间距 29 × 3 档 · 其余 8 族</div></div>
 <div class="kv"><div class="kv-k hi">为什么入仓</div><div class="kv-v txt">CI 里没有任何步骤会重新生成它们，<span class="mono">--check</span> 只负责守它与策略源同步</div></div></div>
 <div class="card"><div class="card-head"><span class="card-title">SonarCloud</span><span class="card-sub">自动分析，非 CI 扫描</span></div>
-<div class="kv"><div class="kv-k">ncloc / files</div><div class="kv-v">22,359 / 202</div></div>
-<div class="kv"><div class="kv-k">bugs</div><div class="kv-v">17</div></div>
-<div class="kv"><div class="kv-k">code smells</div><div class="kv-v">157</div></div>
-<div class="kv"><div class="kv-k">vulnerabilities</div><div class="kv-v">2</div></div>
-<div class="kv"><div class="kv-k">重复率</div><div class="kv-v">1.0%</div></div>
-<div class="kv"><div class="kv-k hi">覆盖率</div><div class="kv-v txt"><span class="tag t-bad">无</span> 零测试文件，无 lcov 上报</div></div></div>
+<div class="kv"><div class="kv-k">ncloc / files</div><div class="kv-v">22,942 / 228</div></div>
+<div class="kv"><div class="kv-k">bugs</div><div class="kv-v">7 <span class="card-sub">（初审 17）</span></div></div>
+<div class="kv"><div class="kv-k">code smells</div><div class="kv-v">159</div></div>
+<div class="kv"><div class="kv-k">vulnerabilities</div><div class="kv-v">2 <span class="card-sub">（两条都还开着）</span></div></div>
+<div class="kv"><div class="kv-k">重复率</div><div class="kv-v">0.8%</div></div>
+<div class="kv"><div class="kv-k hi">覆盖率</div><div class="kv-v txt"><span class="tag t-ok">63.46%</span> 行覆盖 · 20 文件 189 用例。<strong>Sonar 上仍然是空的</strong>——自动分析不收 lcov，这一格永远不会亮，覆盖率只在本地与 CI 里量</div></div></div>
 </div>
 <div class="note warn"><strong>一天之内发了四个 tag、三个 major。</strong><span class="mono">ds-v7.1.0</span> → <span class="mono">ds-v7.2.0</span> → <span class="mono">ds-v8.0.0</span> → <span class="mono">ds-v9.0.0</span>。这个节奏本身不是成绩，是下面那些缺陷密集暴露的直接结果——每一个 major 都对应一次「原来公布过的判据没有载体」。</div></section>
 <section id="silent"><h2><span class="num">03</span>一类：静默失败<span class="h2-meta">最贵</span></h2><div class="rule"></div>
@@ -327,7 +327,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p class="kv-v txt" style="margin:0">结果是 <span class="mono">ActionButton</span> 成了绕开确认契约的后门，而且是<strong>静默</strong>的。换成 <span class="mono">DistributiveOmit</span> 后契约恢复，已加编译自检钉住。</p></div>
 <div class="card"><div class="card-head"><span class="card-title">数据平表被判成重复代码</span><span class="card-sub"><span class="tag t-info">质量门拦截</span></span></div>
 <p style="margin:0">把 14 个图标分组名改英文后，那 14 行成了「新增行」，落进<strong>本来就存在</strong>的重复块里，PR 的新增重复率冲到 92.9%。重复早就在——图标字典是一张平表，14 个 <span class="mono">{ label, icons: [...] }</span> 结构相同内容不同。给一张数据表发明抽象只会更难读，故走 <span class="mono">sonar.cpd.exclusions</span>，只关重复这一项。</p></div></section>
-<section id="coverage"><h2><span class="num">07</span>覆盖面盘点<span class="h2-meta">九条守卫</span></h2><div class="rule"></div>
+<section id="coverage"><h2><span class="num">07</span>覆盖面盘点<span class="h2-meta">十条守卫</span></h2><div class="rule"></div>
 <p>每条守卫补的是一个具体盲区。判断一条守卫值不值，看的是<strong>它抓到过什么真东西</strong>，而不是它跑得多快。</p>
 <div class="tw"><table>
 <thead><tr><th>守卫</th><th>补的盲区</th><th>抓到过</th></tr></thead>
@@ -341,22 +341,27 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">check-packed-consumability</td><td>发布产物装到消费方就哑（<span class="mono">@source</span> 覆盖）</td><td>持续守着 17 个产物文件</td></tr>
 <tr><td class="mono">check-control-chars</td><td>源码字节里的不可见字符</td><td><span class="tag t-ok">是</span> 6 处退格符，让 4 条检查静默失效</td></tr>
 <tr><td class="mono">check-mode-blocks</td><td>明暗 / 密度 / 字号三轴键集漂移</td><td>持续守着三族模式块</td></tr>
+<tr><td class="mono">check-doc-shape</td><td>文档结构被凭记忆重打（导轨顺序、组名）</td><td><span class="tag t-ok">是</span> 建档当轮就抓到导轨整个反序、一个组被改名</td></tr>
 </tbody></table></div>
 <div class="grid g2">
 <div class="card"><div class="card-head"><span class="card-title">机器守得住</span></div>
 <ul><li><strong>形状对不对</strong>：类名存不存在、导出面变没变、键集齐不齐</li><li><strong>产物装不装得上</strong>：打包边界、server 求值、@source 覆盖</li><li><strong>生成物与策略源同步</strong>：11 个 token 脚本的 <span class="mono">--check</span> 模式</li><li><strong>类型层的契约</strong>：判别联合把「红必带拦」变成编译错误</li></ul></div>
 <div class="card"><div class="card-head"><span class="card-title">机器守不住</span></div>
-<ul><li><strong>形状够不够</strong>：出口开了，但只收词不收模板，语言还是换不掉</li><li><strong>挡位选得对不对</strong>：<span class="mono">destructive</span> 与 <span class="mono">destructive-strong</span> 都合法</li><li><strong>契约覆盖全不全</strong>：本轮最大的一个洞正是「少了第三个载体」</li><li><strong>运行时行为</strong>：零测试，body 锁死那类只能真手点</li></ul></div>
+<ul><li><strong>形状够不够</strong>：出口开了，但只收词不收模板，语言还是换不掉</li><li><strong>挡位选得对不对</strong>：<span class="mono">destructive</span> 与 <span class="mono">destructive-strong</span> 都合法</li><li><strong>契约覆盖全不全</strong>：本轮最大的一个洞正是「少了第三个载体」</li><li><strong>运行时行为</strong>：<span class="tag t-ok">已补</span> 189 条用例，但仍有 410 个分支没跑过——其中 <strong>59% 在已经有用例的文件里</strong></li></ul></div>
 </div></section>
 
 <section id="open"><h2><span class="num">08</span>仍然开着的<span class="h2-meta">未收口</span></h2><div class="rule"></div>
-<div class="card"><div class="card-head"><span class="card-title">零测试</span><span class="card-sub"><span class="tag t-bad">最大的一处</span></span></div>
-<p style="margin:0">96 个组件、22,359 行代码、<strong>0 个测试文件、0 覆盖率</strong>。本报告里那条最贵的运行时缺陷（整页 <span class="mono">pointer-events</span> 锁死）只能靠真实鼠标事件复现——今天没有任何自动化能重现它。<span class="mono">sonar.tests</span> 与 lcov 上报都空着，因为指向不存在的路径会让分析报错。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">未跑过的分支</span><span class="card-sub"><span class="tag t-warn">口径已换</span></span></div>
+<p>初审这一格写的是「<strong>0 个测试文件、0 覆盖率</strong>」。现在是 <strong>20 文件 189 用例、63.46% 行覆盖</strong>，四轮铺完。但把剩下的洞按「还有哪些件没测」来数已经不对了：</p>
+<div class="kv"><div class="kv-k">未覆盖分支</div><div class="kv-v">410</div></div>
+<div class="kv"><div class="kv-k">在 39 个零覆盖文件里</div><div class="kv-v">170（41%）</div></div>
+<div class="kv"><div class="kv-k hi">在<strong>已经有用例</strong>的文件里</div><div class="kv-v txt">240（<strong>59%</strong>）——按件名铺用例这个口径已经衰减，下一轮得按分支排</div></div>
+<p style="margin:0.6rem 0 0">另一条被推翻的判断：我曾说剩下的零覆盖文件「多半是薄封装」。<strong>按行数成立，按分支不成立</strong>——<span class="mono">MetricGrid</span> 4 行 24 分支、<span class="mono">PanelCard</span> 1 行 9 分支。而这几轮修掉的缺陷（Drawer 挡位失效、两处键盘陷阱）<strong>全是分支缺陷，不是行数缺陷</strong>。行数是错的风险代理。</p></div>
 <div class="card"><div class="card-head"><span class="card-title">两个未解决的 vulnerability</span><span class="card-sub">SonarCloud</span></div>
-<div class="kv"><div class="kv-k hi">发布流水线</div><div class="kv-v txt"><span class="mono">setup-node-pnpm/action.yml</span> 缺 <span class="mono">--ignore-scripts</span>，第三方包的 install 脚本可执行。<strong>值得优先看</strong>：发布流水线用的就是这个 action，它跑在有 <span class="mono">packages: write</span> 权限的 job 里。修之前得先确认依赖树里有没有真需要 postinstall 的包</div></div>
+<div class="kv"><div class="kv-k hi">发布流水线</div><div class="kv-v txt"><span class="mono">setup-node-pnpm/action.yml</span> 缺 <span class="mono">--ignore-scripts</span>，跑在有 <span class="mono">packages: write</span> 权限的 job 里。<strong>但照 Sonar 的建议改是错的</strong>：本仓用 pnpm 10，依赖的构建脚本<strong>默认就不执行</strong>，加 <span class="mono">--ignore-scripts</span> 会连本仓自己的 <span class="mono">prepare</span> 一起关掉。对的做法是在 <span class="mono">pnpm-workspace.yaml</span> 里列 <span class="mono">onlyBuiltDependencies</span> 白名单——把「谁可以跑脚本」变成一份可清点的名单</div></div>
 <div class="kv"><div class="kv-k hi">Toast</div><div class="kv-v txt"><span class="mono">Math.random</span> 生成通知 id——低危，但没有理由不换 <span class="mono">crypto.randomUUID</span></div></div></div>
-<div class="card"><div class="card-head"><span class="card-title">17 bugs / 157 code smells</span><span class="card-sub">未逐条评审</span></div>
-<p>抽样看是三类：<span class="mono">globals.css</span> 的 <span class="mono">@import</span> 位置（3 处）、5 处 <span class="mono">sort()</span> 缺比较函数、<span class="mono">MetricListCard</span> 上非交互元素挂了点击处理但缺键盘可达。</p>
+<div class="card"><div class="card-head"><span class="card-title">7 bugs / 159 code smells</span><span class="card-sub">初审 17 bugs，已降 10 条</span></div>
+<p>初审抽样看是三类：<span class="mono">globals.css</span> 的 <span class="mono">@import</span> 位置（3 处，<span class="tag t-ok">已修</span>）、5 处 <span class="mono">sort()</span> 缺比较函数（<strong>误报，不改</strong>，见下）、<span class="mono">MetricListCard</span> 上非交互元素挂了点击处理但缺键盘可达（<span class="tag t-ok">已修</span>，同族的 <span class="mono">EntryCard</span> 也一并修了）。</p>
 <div class="note danger" style="margin-bottom:0"><strong>勘误。</strong>本报告初版称「排序不稳会让对账在别人的机器上假红，sort 那几处值得先看」——<strong>因果写反了</strong>。<span class="mono">Array.sort()</span> 不带比较函数是按 UTF-16 码元排序，<strong>跨机器跨 locale 完全确定</strong>；而 Sonar 建议的 <span class="mono">localeCompare</span> 恰恰随 locale 变。对由 <span class="mono">--check</span> 逐字节对账的生成物来说，换过去才会制造它警告的那个问题。这 5 条在本仓是误报，不改，并已在提交信息里记明理由。<br><br>另两类是真的，已修：<span class="mono">@source</span> 下沉到全部 <span class="mono">@import</span> 之后（CSS 规范只允许 <span class="mono">@charset</span> / <span class="mono">@layer</span> 领先于 <span class="mono">@import</span>，而这份文件是公开子路径、会进别人的构建）。</div></div>
 <div class="card"><div class="card-head"><span class="card-title">消费侧迁移未完成</span><span class="card-sub">不在本仓</span></div>
 <div class="kv"><div class="kv-k">opera</div><div class="kv-v txt">32 处 <span class="mono">danger: true</span> 待迁；升到 9.0 后还需为文案传参</div></div>
@@ -374,8 +379,32 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p style="margin:0">vulnerabilities 从 2 掉到 1 那一次，是覆盖面缩小而不是问题解决。<strong>守卫静默停止守卫，比没有守卫更坏</strong>——本轮栽了两次（sonar 白名单、单行常量打穿常量块追踪），两次的表现都是「绿」。</p></div>
 <div class="card"><div class="card-head"><span class="card-title">豁免要可清点</span></div>
 <p style="margin:0"><span class="mono">confirmExempt</span> 收字符串而不是布尔，是为了让「本产品有多少个不设防的红色动作」变成一条 grep。<strong>清单比错误有用</strong>——但前提是清单完整，不完整的清单比没有清单更坏。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">变异不红，先查代码</span><span class="card-sub">补记于四轮之后</span></div>
+<p style="margin:0">给回归测试做变异时有一条<strong>没变红</strong>。第一反应是断言太松，想补两句。追下去发现不是——<span class="mono">FullscreenProvider</span> 里那个标着「组件卸载时清理」的 effect 依赖数组带着 <span class="mono">state.isFullscreen</span>，<strong>每次进出全屏都在跑清理</strong>，把 <span class="mono">exitFullscreen</span> 自己那次调用顶掉了。<strong>留绿有两种解释：测试没钉住，或者代码里有条多余的路在兜着。</strong>直接补断言，等于把那条多余的路一起焊死。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">别人说「根因在你这」，先做对照组</span><span class="card-sub">补记于四轮之后</span></div>
+<p style="margin:0">消费端报来一条 React key 警告，归因到 <span class="mono">Section</span> 内部用了 <span class="mono">jsx</span> 而非 <span class="mono">jsxs</span>，「DS 改一个字符即可」。把 <span class="mono">Section</span> 换成裸 <span class="mono">&lt;div&gt;</span>——<strong>报的是同一条</strong>，与 DS 无关。真凶是中间层拼出的无 key 数组，而 React 警告点的两个名字恰好都不是它。<strong>造一个不含 DS 的对照组，比读三层调用链快。</strong></p></div>
 </div>
-<div class="note ok"><strong>下一步最值得做的，是把「形状够不够」也变成可判定的一小部分。</strong>本轮做到的是「形状对不对」。至于运行时行为——在补上第一个测试之前，这套系统对自己行为的了解，全部来自有人拿真实鼠标点过一遍。</div>
+<div class="note ok"><strong>四轮之后，这份报告的口径该换了。</strong>初审问的是「形状对不对」——类名存不存在、导出面变没变、键集齐不齐，机器都能答。补完测试之后能问「行为对不对」，但<strong>能问不等于问过</strong>：410 个分支没跑过，59% 在已经有用例的文件里。下一轮的清单不再按件名排，按未覆盖分支排。</div>
+</section>
+
+<section id="next"><h2><span class="num">10</span>四轮之后<span class="h2-meta">方法本身的产出</span></h2><div class="rule"></div>
+<p>初审之后又走了四轮。<strong>值得记的不是修了几个缺陷，是哪些缺陷靠读代码读不出来。</strong></p>
+<div class="tw"><table>
+<thead><tr><th>轮次</th><th>做了什么</th><th>查出来的东西是怎么现形的</th></tr></thead>
+<tbody>
+<tr><td>初审</td><td>守卫 + Sonar + 人工评审</td><td>6 处退格符让 4 条检查静默失效；两条最贵的由<strong>消费侧评审</strong>提出</td></tr>
+<tr><td>一 · 键盘可达</td><td><span class="mono">MetricListCard</span> / <span class="mono">EntryCard</span></td><td>Sonar 报的，但我第一次把它<strong>误判成误报</strong>——理由写反了（keydown 先于 click，preventDefault 会掐掉它）</td></tr>
+<tr><td>二 · 组件用例</td><td>按「出过事的件」优先铺 189 条</td><td>第一条锁死回归测试<strong>通过了两次</strong>——加不加缺陷都绿。换成钉机制才分得开</td></tr>
+<tr><td>三 · 接入覆盖率</td><td>v8 覆盖率 + 基线快照</td><td>hooks <strong>从来不在按件名排的清单里</strong>（不是组件），量了才露头</td></tr>
+<tr><td>四 · hooks</td><td>39 条用例 + <span class="mono">FullscreenProvider</span></td><td>变异<strong>没红</strong>，追下去才是真缺陷。两条弱断言也是这样被逼着重写的</td></tr>
+</tbody></table></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">现在能自证的部分</span></div>
+<ul style="margin:0"><li><strong>守卫会不会失效</strong>：7 条守卫各有一份已知有病的输入，<span class="mono">test:guardrails</span> 每次验一遍</li><li><strong>回归测试算不算数</strong>：每条都把缺陷放回去跑过，不红就重写</li><li><strong>基线是不是估的</strong>：<span class="mono">scripts/audit/snapshot.mjs</span> 每个指标带 <span class="mono">how</span> 字段，写明怎么测出来的</li><li><strong>文档有没有凭记忆重打</strong>：<span class="mono">check-doc-shape</span> 拿底本逐项比对</li></ul></div>
+<div class="card"><div class="card-head"><span class="card-title">仍然只能靠人</span></div>
+<ul style="margin:0"><li><strong>3 条守卫没有变异测试</strong>：两条断言的是已构建的 dist，一条的输入造不出「只坏一边」</li><li><strong>jsdom 抹平的时序</strong>：整页锁死那类竞争重现不了，只能钉机制</li><li><strong>挡位选得对不对</strong>：两个合法值里选错哪一个，机器分不出</li><li><strong>两份文档还没建</strong>：接口文档、设计语言</li></ul></div>
+</div>
+<div class="note warn" style="margin-bottom:0"><strong>分析阶段到这里收口，剩下的是执行。</strong>两条 vulnerability 都已定性（一条连修法都是错的，见 §08），39 个零覆盖文件已按分支排好序，下一轮不需要再"查一遍"才知道从哪下手。</div>
 </section>
 
   <div class="foot">Vxture Design System · 审计报告 · 覆盖 design-ui 3.2 → 6.0 / design-system 6.5 → 9.0 · 2026-08-25</div>
