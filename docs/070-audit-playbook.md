@@ -222,9 +222,12 @@ gh api  run    →  status=queued
 
 |            | design-ui | design-system | **全仓（发布出去的代码）** |
 | ---------- | --------- | ------------- | -------------------------- |
-| 行覆盖     | 83.9%     | **64.9%**     | **79.5%**                  |
-| 分支覆盖   | 85.7%     | **42.1%**     | **71.4%**                  |
-| 未覆盖分支 | 129 / 903 | **257 / 444** | **386 / 1347**             |
+| 行覆盖     | 84.2%     | **98.6%**     | **87.6%**                  |
+| 分支覆盖   | 86.0%     | **94.1%**     | **88.7%**                  |
+| 未覆盖分支 | 127 / 907 | **26 / 442**  | **153 / 1349**             |
+
+（2026-08-27 收口后的数。此前是 design-ui 83.9% / design-system 64.9% 与 42.1%、
+全仓 79.5% / 71.4%，未覆盖分支 386 条。）
 
 指标名与 `how` 都已带上包名，并新增「全仓」两行——**唯一诚实的总数**。
 
@@ -232,18 +235,18 @@ gh api  run    →  status=queued
 
 2026-08-26/27 补齐测试基座（vitest 配置 / setup / `tests` 进 type-check），已铺三批：
 
-| 文件                                                         | 状态       | 未覆盖分支   |
-| ------------------------------------------------------------ | ---------- | ------------ |
-| `theme/script.ts` · `density/densityConfig.ts`               | ✅ 100%    | 0            |
-| `theme/ThemeProvider.tsx`                                    | ✅ 行 100% | 5 / 28       |
-| `theme/fontSizePreference.ts`                                | ✅ 行 100% | 5 / 29       |
-| `components/shell/ShellSearchBox.tsx`                        | ✅ 行 86%  | 6 / 44       |
-| `components/shell/ShellBootScreen.tsx` · `ShellLauncher.tsx` | ✅ 100%    | 0            |
-| `components/shell/ShellChrome.tsx`                           | 🔶 行 60%  | **81 / 164** |
-| **`components/shell/ShellPanel.tsx`**                        | ❌ 0%      | **96**       |
-| **`components/shell/ShellSidebarNav.tsx`**                   | ❌ 0%      | **63**       |
+| 文件                                                         | 状态       | 未覆盖分支 |
+| ------------------------------------------------------------ | ---------- | ---------- |
+| `theme/script.ts` · `density/densityConfig.ts`               | ✅ 100%    | 0          |
+| `theme/ThemeProvider.tsx`                                    | ✅ 行 100% | 5 / 28     |
+| `theme/fontSizePreference.ts`                                | ✅ 行 100% | 5 / 29     |
+| `components/shell/ShellSearchBox.tsx`                        | ✅ 行 86%  | 6 / 44     |
+| `components/shell/ShellBootScreen.tsx` · `ShellLauncher.tsx` | ✅ 100%    | 0          |
+| `components/shell/ShellChrome.tsx`                           | ✅ 行 100% | 6 / 162    |
+| `components/shell/ShellPanel.tsx`                            | ✅ 行 100% | 3 / 96     |
+| `components/shell/ShellSidebarNav.tsx`                       | ✅ 100%    | 0 / 63     |
 
-**下一批**：`ShellPanel`（96）+ `ShellSidebarNav`（63）+ `ShellChrome` 剩下的 81 条——那 81 条集中在三个 Popover 件（`ShellLocaleSwitcher` / `ShellPreferencePanel` / `ShellUserMenu`），与已铺的部分是同一族，可以一起打。
+**伞包已铺完**（2026-08-27）。第六批打掉最后的 240 条：`ShellPanel` 96 + `ShellSidebarNav` 63 + `ShellChrome` 剩余 81（集中在 `ShellLocaleSwitcher` / `ShellPreferencePanel` / `ShellUserMenu` 三个 Popover 件），新增用例 149 条、变异用例 99 条全部验红。剩下的 26 条分散在 `ShellSearchBox`(6) / `ThemeProvider`(5) / `fontSizePreference`(5) / `ShellChrome`(6) / `ShellPanel`(3) / `boot-splash`(1)，都是薄分支，**建议与 design-ui 的尾部同样处理：不追**。
 
 #### design-ui 剩余（建议不追）
 
@@ -313,3 +316,57 @@ gh api  run    →  status=queued
 | ~~两条 vulnerability~~   | **已修**（2026-08-26）                            | `--ignore-scripts` 加进 CI 的 action，并在 `pnpm-workspace.yaml` 补 `onlyBuiltDependencies: []`——两道，前者管 CI、后者管所有安装且可清点；`Toast` 的 `Math.random` 换单调计数器而非 `crypto.randomUUID`（后者安全上下文限定）。**初次处置判定不加 `--ignore-scripts`，理由把成本说重了**，完整经过见 `docs/audit/known-false-positives.md` |
 | 消费方看不见             | DS 仓看不到 portals 的调用点与 lockfile           | 由消费仓自己登记；DS 只保证「怎么迁」写清楚。**判据见 §1.4**：他们说根因在 DS 时，先做对照组                                                                                                                                                                                                                                               |
 | Artifact 文档集          | 六份齐了（2026-08-26 补完接口文档与设计语言）     | 见 `000-doc-map.md` §3                                                                                                                                                                                                                                                                                                                     |
+
+### 5.1.6 第六批学到的：**两个真缺陷都是「邻居已经做了这件事」**
+
+shell 族第二批（`ShellPanel` 96 + `ShellSidebarNav` 63 + `ShellChrome` 剩余 81）写出来两个真缺陷，形状**完全一样**——都是「这件事已经有人做了，本件不知道」：
+
+| 缺陷                                                                  | 邻居是谁                                               | 表现                                                                           |
+| --------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `Progress` 把 `value` 解构走之后没传回 Radix `Root`，只用来算位移     | **上游 shadcn**（这个 bug 是照抄进来的）               | 色条画得好好的，但读屏器听到的永远是「正在忙」——`aria-valuenow` 一次都没发出去 |
+| `ShellUserMenu` 在 `StatusBadge` 的语气图标之外又显式画了一个 `check` | **`StatusBadge` 自己**（文件头：「不必每处各配一张」） | 「已认证」前面并排两个对勾                                                     |
+
+两条都不报错，都不影响布局，都在**看得见的地方**躺了很久。它们躲过审查的方式也一样：**读代码时那一行看起来是对的**——`value` 明明在用，`check` 明明该画。要看出问题，得同时打开邻居的文件。
+
+> 组件调组件的地方，问一句：**这件事被做过两遍，还是一遍都没做？**
+> 单看本文件永远答不上来。答案在 `Root` 的 props 表里，和邻件的文件头里。
+
+`Progress` 那条另有一层：它是**照抄上游抄进来的 bug**。本仓的文件头写着「结构照 shadcn 官方 Progress」——那句话此前读起来是出处说明，现在它同时是一条线索：**上游的缺陷会一并抄进来，而「照抄上游」通常被当作不必再审的理由。**
+
+### 5.1.7 第六批学到的：**编译不过的「红」不算抓到**
+
+变异器最初只认 `Tests N failed`。把 `<TooltipProvider>` 换成 `<>` 而不动闭标签，文件直接编译不过——输出里没有那一行，于是报「全绿，没人管这条」，看起来像测试有洞。
+
+反过来更危险：如果当时按「非零退出码 = 抓到」来判，那条变异会被记成**已验证**，而实际上没有任何一条断言跑过。
+
+同一轮还撞到第三种结局。有一条变异（把可选回调 `onDensityChange?.(value)` 改成硬调用）确实炸了——但炸成的是 vitest 的 **Unhandled Error**，没有任何一条断言接住它，那 50 条用例全绿。
+
+洞在用例这边：它写的是
+
+```ts
+await expect(user.click(...)).resolves.toBeUndefined();   // ← 装饰
+```
+
+**React 事件处理器抛出去的错不在这条 promise 链上。** `user.click` 照样 resolve，异常只以「未捕获」的形式出现在跑批日志的角落里。要真的断言「点下去不抛」，得去接 window 的 `error` 事件：
+
+```ts
+const onError = vi.fn();
+window.addEventListener("error", onError);
+await user.click(...);
+window.removeEventListener("error", onError);
+expect(onError).not.toHaveBeenCalled();
+```
+
+变异器现在分四种结局：抓到 / 全绿 / **编译不过（不算数）** / **炸在未捕获异常上（同样算洞——缺陷是炸了，但没人接住）**，并支持一条变异由多处改动组成（`edits`），供开闭标签这类成对修改使用。
+
+### 5.1.8 待办：有一整类文件从来没被格式检查过
+
+`format:check` 的 glob 是 `"**/*.{js,ts,tsx,json,md}"` —— **没有 `mjs`**。
+
+而 `scripts/` 几乎全是 `.mjs`：十条守卫、令牌生成器、审计快照、守卫自测，一个都不在检查范围里。这一条是在给 `snapshot.mjs` 补一行时撞见的——那一行 prettier 说不合规，而它是 #34 就写进去的，一路绿到今天。
+
+实测：27 个 `.mjs/.cjs` 里 **16 个有真实的格式差异**（其余 11 个只是本机 CRLF）。
+
+改法是把 `mjs,cjs` 加进 glob 并跑一次 `--write`。**没有随本轮一起改**：16 个文件的重排会把一个测试批次的 PR 冲成一片噪音，读不出真正改了什么。留一个单独的小 PR。
+
+> 一条检查的**覆盖面**和它的**判据**一样重要。判据写错了会报假绿；覆盖面漏了一整类文件，则连绿都不报——它根本没看那边。

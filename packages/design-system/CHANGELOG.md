@@ -5,6 +5,28 @@
 
 ---
 
+## 9.0.8 — 2026-08-27
+
+修一处外壳的视觉重复，跟随 `@vxture/design-ui` 6.0.8（patch，050 §2）。
+
+- **修复：`ShellUserMenu` 的认证贴标画了两个对勾。**
+
+  `StatusBadge` 的前导图标**缺省就随语气来**（它的文件头：「图标缺省随语气取自
+  `toneIcons`，因此不必每处各配一张」），`success` 语气自带圆形对勾。这里在它
+  之外又显式画了一个 `<Icon name="check" />`，于是「已认证」前面并排两个勾。
+
+  改法：删掉多画的那一个，语气图标照旧。**调用方无需改动**——`statusTag.verified`
+  的含义不变，仍是「上成功语气 + 带一个前导对勾」，只是现在真的只有一个。
+
+- 跟随 design-ui 6.0.8：`Progress` 现在会把取值报给读屏器。伞包里 `ShellPanelMeterRow`
+  的用量条因此从「正在忙」变成「已完成 N%」，**调用方无需改动**。详见 design-ui 6.0.8。
+
+- 文档订正：`ShellSidebarNav` 的 `labels` 注释此前写「默认值是中文」，而
+  `DEFAULT_LABELS` 一直是英文（提炼进本仓时一并去了业务语言）。注释按实际改正。
+
+- 新增伞包用例 149 条：`ShellPanel` 55 / `ShellSidebarNav` 45 /
+  `ShellChrome` 的三个弹层件 49。
+
 ## 9.0.7 — 2026-08-26
 
 跟随 `@vxture/design-ui` 6.0.7（patch，050 §2）。
