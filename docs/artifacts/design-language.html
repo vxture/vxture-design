@@ -1,0 +1,367 @@
+<title>Vxture DS 设计语言</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;700&display=swap');
+
+/* ── @vxture/design-tokens · typography T1/T2 subset ─────────────────────
+   Copied from vxture-design (design-system 6.5.x). This page cannot install
+   the DS package - an artifact's CSP admits Google Fonts and nothing else -
+   so the tokens it uses are inlined. They must stay identical to the DS; when
+   the DS moves, this block moves with it. Inherited from the Atlas doc. */
+:root {
+  --vx-font-sans: Inter, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --vx-font-brand: 'Funnel Display', Inter, 'Noto Sans SC', sans-serif;
+  --vx-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono CJK SC', monospace;
+  --vx-text-sm: 0.875rem;  --vx-text-base: 1rem;   --vx-text-lg: 1.125rem;
+  --vx-text-2xl: 1.5rem;   --vx-text-4xl: 2.25rem;
+  /* The whole document is Chinese, so the DS :lang(zh) leading compensation
+     applies. The host <html> is not ours to attribute, so the value lands here. */
+  --vx-cjk-leading-add: 0.15;
+
+  /* Family palette - identical to the Atlas and Runos docs ON PURPOSE. A
+     documentation system that changes colour per product is three products,
+     not one system; karda identifies itself by the rail brand instead. */
+  --bg: #f4f6f8; --surface: #ffffff; --surface2: #f6f8fa; --rail: #ffffff;
+  --border: #d5dbe2; --border-soft: #e6eaef;
+  --accent: #0969da; --accent2: #cf222e; --accent3: #1a7f37;
+  --accent4: #9a6700; --accent5: #8250df;
+  --text: #1f2328; --text-mid: #424950; --text-dim: #656d76;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+    --border: #232a33; --border-soft: #1b2128;
+    --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+    --accent4: #f0b429; --accent5: #b98cff;
+    --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+  --border: #232a33; --border-soft: #1b2128;
+  --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+  --accent4: #f0b429; --accent5: #b98cff;
+  --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--vx-font-sans);
+  font-size: var(--vx-text-base);
+  line-height: calc(1.5 + var(--vx-cjk-leading-add));
+  min-height: 100vh;
+}
+
+/* ── shell ─────────────────────────────────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+.rail {
+  background: var(--rail); border-right: 1px solid var(--border);
+  padding: 26px 18px 40px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.rail-brand {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700;
+}
+.rail-title { font-size: var(--vx-text-lg); font-weight: 700; margin: 6px 0 20px; line-height: 1.35; }
+.rail-group {
+  font-size: var(--vx-text-sm); letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--text-dim); margin: 22px 0 8px; font-weight: 600;
+}
+.rail a, .rail .doc-flat {
+  display: block; font-size: var(--vx-text-sm); color: var(--text-mid);
+  text-decoration: none; padding: 6px 10px; border-radius: 6px;
+  border-left: 2px solid transparent;
+}
+.rail a:hover { background: var(--surface2); color: var(--text); }
+.rail a.cur { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); font-weight: 600; }
+/* A document in the set that is not published yet. Rendered, but not a link -
+   a dead link teaches the reader to distrust the rail. */
+.rail .doc-flat { color: var(--text-dim); opacity: 0.62; cursor: default; }
+.rail .doc-flat::after { content: " · 未发布"; font-size: 11px; }
+.main { padding: 34px 40px 100px; min-width: 0; }
+@media (max-width: 1000px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 24px 20px 60px; }
+}
+
+/* ── header ────────────────────────────────────────────────────────────── */
+.page-head { border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 30px; }
+.eyebrow {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px;
+}
+.page-head h1 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-4xl);
+  font-weight: 600; letter-spacing: -0.4px;
+  line-height: calc(1.25 + var(--vx-cjk-leading-add));
+}
+.lede { color: var(--text-mid); font-size: var(--vx-text-lg); margin-top: 10px; max-width: 62em; }
+
+/* ── sections ──────────────────────────────────────────────────────────── */
+section { margin-bottom: 46px; scroll-margin-top: 20px; }
+h2 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-2xl); font-weight: 600;
+  margin-bottom: 6px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  line-height: calc(1.3 + var(--vx-cjk-leading-add));
+}
+h2 .num { font-size: 15px; color: var(--accent); font-family: var(--vx-font-mono); font-weight: 700; }
+h2 .h2-meta {
+  margin-left: auto; font-size: var(--vx-text-sm); font-weight: 500; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border-soft);
+  padding: 2px 10px; border-radius: 5px;
+}
+h3 { font-size: var(--vx-text-lg); font-weight: 600; margin: 22px 0 8px; }
+.rule { height: 1px; background: var(--border-soft); margin: 8px 0 20px; }
+p { max-width: 62em; margin-bottom: 12px; color: var(--text-mid); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+ul { margin: 0 0 12px 20px; color: var(--text-mid); max-width: 62em; }
+li { margin-bottom: 6px; }
+
+/* ── card ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+}
+.card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.card-title { font-size: var(--vx-text-base); font-weight: 600; color: var(--text); }
+.card-sub { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.grid { display: grid; gap: 16px; }
+.grid.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid.g3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+/* ── key/value rows - the workhorse ────────────────────────────────────── */
+.kv { display: grid; grid-template-columns: minmax(140px, 210px) minmax(0, 1fr); gap: 10px 18px; padding: 7px 0; border-top: 1px solid var(--border-soft); }
+.kv:first-of-type { border-top: none; }
+.kv-k { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.kv-k.hi { color: var(--text); font-weight: 500; }
+.kv-v { font-family: var(--vx-font-mono); font-size: var(--vx-text-sm); color: var(--text); word-break: break-word; }
+.kv-v.txt { font-family: var(--vx-font-sans); color: var(--text-mid); }
+.mono, .key { font-family: var(--vx-font-mono); font-size: 0.92em; }
+.key { background: var(--surface2); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 6px; }
+
+/* ── notes ─────────────────────────────────────────────────────────────── */
+.note {
+  border-left: 3px solid var(--border); background: var(--surface2);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+  font-size: var(--vx-text-sm); color: var(--text-mid); max-width: 62em;
+}
+.note strong { color: var(--text); }
+.note.info { border-left-color: var(--accent); }
+.note.danger { border-left-color: var(--accent2); }
+.note.ok { border-left-color: var(--accent3); }
+.note.warn { border-left-color: var(--accent4); }
+
+/* ── tags ──────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px;
+  border-radius: 999px; border: 1px solid; white-space: nowrap;
+}
+.t-ok { color: var(--accent3); border-color: var(--accent3); }
+.t-info { color: var(--accent); border-color: var(--accent); }
+.t-warn { color: var(--accent4); border-color: var(--accent4); }
+.t-bad { color: var(--accent2); border-color: var(--accent2); }
+.t-dim { color: var(--text-dim); border-color: var(--border); }
+
+/* ── flow diagram (inherited from the Runos doc) ───────────────────────── */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0; }
+.flow-node {
+  flex: 1 1 150px; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px; border-top-width: 3px;
+}
+.flow-node .fn-name { font-weight: 600; font-size: var(--vx-text-sm); color: var(--text); }
+.flow-node .fn-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; line-height: 1.55; }
+.n-blue { border-top-color: var(--accent); }
+.n-green { border-top-color: var(--accent3); }
+.n-amber { border-top-color: var(--accent4); }
+.n-red { border-top-color: var(--accent2); }
+.n-violet { border-top-color: var(--accent5); }
+.flow-arrow { flex: 0 0 34px; display: flex; align-items: center; justify-content: center; position: relative; }
+.flow-arrow-line { height: 1px; width: 100%; background: var(--border); }
+.flow-arrow-head { position: absolute; right: 6px; color: var(--text-dim); font-size: 13px; }
+.flow-arrow-label { position: absolute; top: -16px; font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 22px; transform: rotate(90deg); }
+}
+
+/* ── table ─────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: var(--vx-text-sm); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+th { color: var(--text-dim); font-weight: 600; white-space: nowrap; border-bottom-color: var(--border); }
+td.mono, td .mono { font-family: var(--vx-font-mono); }
+
+.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--text-dim); }
+.theme-btn {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9; cursor: pointer;
+  background: var(--surface); color: var(--text-mid); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--vx-font-sans);
+}
+.code {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin: 10px 0 0; overflow-x: auto;
+  font-family: var(--vx-font-mono); font-size: var(--vx-text-sm);
+  line-height: 1.6; color: var(--text); white-space: pre;
+}
+.code code { font: inherit; color: inherit; background: none; }
+.theme-btn:hover { color: var(--text); }
+</style>
+<div class="shell" id="top">
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">设计语言</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/3df7da45-73c7-4c29-ab6d-baaf9a1808ab">· 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc cur" href="#top">▸ 设计语言</a><div class="rail-group">本页</div><a href="#two">为什么是两层</a><a href="#color">色彩</a><a href="#type">排版</a><a href="#space">间距与密度</a><a href="#tone">语气六档</a><a href="#danger">危险两档</a><a href="#axis">三根轴</a></nav>
+<main class="main">
+  <div class="page-head">
+    <div class="eyebrow">Vxture Design System · vxture-design</div>
+    <h1>设计语言</h1>
+    <p class="lede">token 两层、语气六档、危险两档、三根互不相干的轴。<strong>每一条刻度都有载体</strong>——写进文档而没有载体的判据，只对读过那一页的人生效。</p>
+  </div>
+
+<section id="two"><h2><span class="num">01</span>为什么是两层<span class="h2-meta">T1 取值 · T2 语义</span></h2><div class="rule"></div>
+<p>一层不够，是因为<strong>「这是什么颜色」和「这块该用什么颜色」是两个问题</strong>。把它们写在一起，换主题就得改所有调用点；分开之后，换主题只改 T2 的一层映射。</p>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">T1 · 原子层</span><span class="card-sub">21 文件 · 247 个变量</span></div>
+<p>镜像 Tailwind 的刻度：颜色、间距、圆角、阴影、模糊、缓动、断点、容器、字体族与字重。<strong>这一层没有意见</strong>——它只回答「有哪些取值可选」。</p>
+<p style="margin:0.8rem 0 0">件<strong>不许直接用 T1</strong>。用了就等于把「这块是 slate-700」写死，换品牌时无处可改。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">T2 · 语义层</span><span class="card-sub">11 文件 · 756 个变量</span></div>
+<p>产品面：<span class="mono">--color-primary</span>、<span class="mono">--spacing-md</span>、<span class="mono">--text-body-md-font-size</span>。<strong>这一层全是意见</strong>——它回答「主色是哪一个 T1 取值」。</p>
+<p style="margin:0.8rem 0 0">件只认 T2。品牌、明暗、密度、字号四种切换，全部发生在这一层的重定义里，件一个字都不用改。</p></div>
+</div>
+<div class="note danger" style="font-size:1rem"><strong>两层全部由脚本生成并入仓，CI 里没有任何步骤会重新生成它们。</strong>入仓不是偷懒——生成物入仓，diff 才看得见「这次改了哪 3 个取值」。11 个 token 脚本的 <span class="mono">--check</span> 模式只负责守「入仓的这份与策略源同步」，不负责生成。</div>
+<div class="note warn" style="margin-bottom:0"><strong>token 的删改一律按 major，不做「应该没人用」的推定。</strong>判据与代码层不同，是因为载体不同：<strong>删掉一个 CSS 变量不会报错，只会静默失效</strong>——没有编译期能接住它。</div></section>
+
+<section id="color"><h2><span class="num">02</span>色彩<span class="h2-meta">明暗两套，各 132 个</span></h2><div class="rule"></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">键集必须相等</span></div>
+<div class="kv"><div class="kv-k mono">:root</div><div class="kv-v">132 个语义色</div></div>
+<div class="kv"><div class="kv-k mono">:root.dark</div><div class="kv-v">132 个，<strong>同一套键</strong></div></div>
+<p style="margin:0.8rem 0 0">暗色块少一个键，那个件在暗色下会继承亮色的值——<strong>不报错，只是难看</strong>，而且只在切到暗色时才看得见。<span class="mono">check-mode-blocks</span> 守的就是这个：键集、块顺序、特异性三样一起验。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">用实色阶，不用 alpha</span></div>
+<p>危险按钮的淡底用 <span class="mono">--destructive-muted</span> 这样的实色阶，而不是上游那种 <span class="mono">destructive/10</span>。</p>
+<p style="margin:0.8rem 0 0">两个理由：<strong>alpha 叠在未知底色上结果不定</strong>（卡里、抽屉里、表格行上各是一个色）；<strong>alpha 不自适应暗色</strong>——上游为此要补写一行 <span class="mono">dark:</span>，而实色阶在 T2 里已经分好了明暗两套。</p></div>
+</div></section>
+
+<section id="type"><h2><span class="num">03</span>排版<span class="h2-meta">21 个角色 × 5 个属性 × 3 档字号</span></h2><div class="rule"></div>
+<p>角色不是字号——<strong>是「这段文字在信息层级里是什么」</strong>。选 <span class="mono">body-md</span> 是在说「这是正文」，不是在说「这是 16px」。</p>
+<div class="tw"><table>
+<thead><tr><th>族</th><th>档位</th><th>用在哪</th></tr></thead>
+<tbody>
+<tr><td class="mono">display</td><td>lg · md · sm</td><td>营销面、空态里的大字</td></tr>
+<tr><td class="mono">heading</td><td>1 · 2 · 3</td><td>文档流的标题层级</td></tr>
+<tr><td class="mono">title</td><td>xl · lg · md · sm</td><td>件自己的标题：卡头、板块头、对话框头</td></tr>
+<tr><td class="mono">body</td><td>xl · lg · md · sm</td><td>正文</td></tr>
+<tr><td class="mono">label</td><td>xl · lg · md · sm</td><td>控件上的字：按钮、字段名、标</td></tr>
+<tr><td class="mono">code</td><td>md · sm</td><td>等宽</td></tr>
+<tr><td class="mono">overline</td><td>——</td><td>小字眉标，通常大写加字距</td></tr>
+</tbody></table></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">每个角色带 5 个属性</span></div>
+<pre class="code"><code>--text-body-md-font-family
+--text-body-md-font-size
+--text-body-md-font-weight
+--text-body-md-line-height
+--text-body-md-letter-spacing</code></pre>
+<p style="margin:0.8rem 0 0"><strong>行高与字距跟着角色走，不是各处现调。</strong>21 × 5 = 105 个变量，三档字号各定义一遍 = 315，加两个全局项共 317。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">中文的行高补偿</span></div>
+<pre class="code"><code>:root      { --vx-cjk-leading-add: 0 }
+:lang(zh)  { --vx-cjk-leading-add: 0.15 }</code></pre>
+<p style="margin:0.8rem 0 0">汉字的字面框比拉丁字母满，同样的 <span class="mono">line-height</span> 看上去更挤。这条补偿挂在 <span class="mono">:lang(zh)</span> 上而不是写死——<strong>同一份组件要同时排中英文</strong>，写死就总有一边不对。</p></div>
+</div>
+<div class="note ok"><strong>三档字号不是「各自重设 105 个值」，是让每个角色在 T1 刻度上整体挪一档。</strong>以 <span class="mono">body-md</span> 为例：
+<pre class="code"><code>html.vx-font-small    --body-md-font-size: var(--vx-text-xs)
+:root / vx-font-default  --body-md-font-size: var(--vx-text-sm)
+html.vx-font-large    --body-md-font-size: var(--vx-text-base)</code></pre>
+<p style="margin:0.8rem 0 0">整套角色一起挪，<strong>层级关系因此在三档里保持不变</strong>——标题仍然比正文大一档，而不是三档各自调出三套不同的层级观感。行高跟着同一步走。</p></div></section>
+
+<section id="space"><h2><span class="num">04</span>间距与密度<span class="h2-meta">29 个 × 3 档</span></h2><div class="rule"></div>
+<p>密度不是缩放——<strong>是同一套语义间距的三组取值</strong>。件写的永远是 <span class="mono">gap-md</span>，换密度时 <span class="mono">--spacing-md</span> 变，件不动。</p>
+<pre class="code"><code>:root, .density-default   { --spacing-* : … }   29 个
+.density-compact          { --spacing-* : … }   29 个
+.density-comfortable      { --spacing-* : … }   29 个</code></pre>
+<div class="note warn"><strong>为什么不用 <span class="mono">transform: scale</span> 或根字号缩放：</strong>那会把边框、圆角、阴影、图标一起缩，结果是「同一个界面被拉远了」，而不是「同一个界面更紧凑」。<strong>紧凑是把留白收掉，不是把东西变小</strong>——字号是另一根轴，谁要小字自己调那根。</div>
+<div class="card"><div class="card-head"><span class="card-title">层叠阶梯</span><span class="card-sub">12 档，留了空隙</span></div>
+<pre class="code"><code>base          0      drawer      400
+raised       10      modal       500
+sticky      100      popover     600
+overlay     300      dropdown    650
+toast       700      notification 800
+tooltip     900      max        9999</code></pre>
+<p style="margin:0.8rem 0 0">档与档之间留空隙，是为了让<strong>产品能在两档之间插一层</strong>而不用改 DS。<span class="mono">dropdown</span> 排在 <span class="mono">popover</span> 之上是实测定的：菜单从浮层里开出来的场合比反过来常见得多。</p></div></section>
+
+<section id="tone"><h2><span class="num">05</span>语气六档<span class="h2-meta">只表达严重度</span></h2><div class="rule"></div>
+<pre class="code"><code>neutral   brand   info   success   warning   danger</code></pre>
+<div class="note danger" style="font-size:1rem"><strong>这里没有 <span class="mono">overdue</span> / <span class="mono">suspended</span> 之类的值，而且不会有。</strong>把「订阅逾期」映射成 <span class="mono">warning</span> 是<strong>产品的判断</strong>——不同产品对同一状态的严重度本就可以不同。DS 一旦收下这个映射，就等于把业务语义焊了进来。</div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">单独成文件是有原因的</span></div>
+<p style="margin:0"><span class="mono">StatusBadge</span> 与 <span class="mono">Banner</span> 说的是同一件事。各写各的档位，<strong>同一个语气在两处迟早会有两个名字</strong>。新的件要表达语气，一律引 <span class="mono">tone.ts</span>。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">运行时数组而不是只有类型</span></div>
+<pre class="code"><code>export const TONES = [...] as const;
+export type Tone = (typeof TONES)[number];</code></pre>
+<p style="margin:0.8rem 0 0">预览面与图案件要遍历全部档位时引这个数组，<strong>不再各自手抄一份</strong>——手抄的清单加了档位不会跟着加，而且不报错。下游三个 <span class="mono">Record&lt;Tone, …&gt;</span> 以此为键，<strong>档位漂移在编译期就报</strong>。</p></div>
+</div></section>
+
+<section id="danger"><h2><span class="num">06</span>危险两档<span class="h2-meta">判据是数量</span></h2><div class="rule"></div>
+<div class="tw"><table>
+<thead><tr><th>档</th><th>长什么样</th><th>用在哪</th><th>要不要确认</th></tr></thead>
+<tbody>
+<tr><td class="mono">destructive</td><td>淡底 + 同色前景</td><td><strong>入口按钮</strong>：列表行上的删除、菜单里的撤销</td><td><strong>要</strong>（或写豁免理由）</td></tr>
+<tr><td class="mono">destructive-strong</td><td>实心红</td><td><strong>落锤</strong>：确认对话框里的那个提交</td><td>不要——<strong>要求落锤自己再确认是循环</strong></td></tr>
+</tbody></table></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">为什么入口不用实心红</span></div>
+<p style="margin:0"><strong>判据是数量。</strong>入口按钮一屏可能有十个，实心红会把视觉重量全吸过去——一屏十个红块，等于没有红块。而确认按钮一屏只有一个，且按下去不可撤销，<strong>弱化它是在帮倒忙</strong>。</p>
+<p style="margin:0.8rem 0 0">真正的拦截交给二次确认，<strong>不靠按钮颜色吓人</strong>。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">「红」与「拦」是同一个决定</span></div>
+<p style="margin:0">这是 6.0 契约的全部内容：<span class="mono">variant="destructive"</span> 必须<strong>要么带确认，要么写明为什么不设防</strong>，判别联合在编译期拦住第三种写法。</p>
+<p style="margin:0.8rem 0 0">豁免收字符串不收布尔，是为了让「本产品有多少个不设防的红色动作」变成<strong>一条可评审的清单</strong>——详见接口文档 §06。</p></div>
+</div></section>
+
+<section id="axis"><h2><span class="num">07</span>三根轴<span class="h2-meta">互不相干，这是设计</span></h2><div class="rule"></div>
+<div class="tw"><table>
+<thead><tr><th>轴</th><th>档位</th><th>载体</th><th>它<strong>不</strong>管什么</th></tr></thead>
+<tbody>
+<tr><td>明暗</td><td>light · dark · 跟随系统</td><td class="mono">:root.dark</td><td>不管字多大、不管多紧凑</td></tr>
+<tr><td>密度</td><td>compact · default · comfortable</td><td class="mono">.density-*</td><td><strong>不管字号</strong>——紧凑不等于小字</td></tr>
+<tr><td>字号</td><td>small · default · large</td><td class="mono">html.vx-font-*</td><td><strong>不管间距</strong>——大字不等于宽松</td></tr>
+</tbody></table></div>
+<p>三轴正交，所以是 3 × 3 × 2 = 18 种组合，而不是三档「大中小」。<strong>把它们并成一根轴会逼用户在「字大但太挤」和「字小但太空」之间二选一</strong>，而这两个诉求本来就来自不同的人：字号是视力，密度是信息量偏好。</p>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">主题要在 React 之前定</span></div>
+<p style="margin:0"><span class="mono">themeBootstrapScript</span> 在 <span class="mono">/server</span> 与 <span class="mono">/tokens</span> 两个入口里都有——它必须在首帧之前把属性打到 <span class="mono">&lt;html&gt;</span> 上。<strong>晚一帧就是一次白闪</strong>，而白闪在暗色用户那里格外刺眼。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">三档不是三倍工作量</span></div>
+<p style="margin:0">件一次都不用为档位写分支——它们写的是 <span class="mono">gap-md</span> 与 <span class="mono">text-body-md</span>，三档在 T2 里已经各定义了一遍。<strong>档位漂移只可能发生在 token 层</strong>，而那里有 <span class="mono">check-mode-blocks</span> 守着键集一致。</p></div>
+</div>
+<div class="note ok" style="margin-bottom:0"><strong>这一页描述的每一条刻度都有载体。</strong>颜色与间距在 token 的模式块里（<span class="mono">check-mode-blocks</span> 守键集）；语气六档在 <span class="mono">TONES</span> 数组里（档位漂移编译期报）；危险两档在判别联合里（写错编译不过）。<strong>写进文档而没有载体的判据，只对读过那一页的人生效</strong>——这是这套系统四个 major 反复在回答的同一个问题。</div></section>
+
+
+
+
+
+  <div class="foot">Vxture Design System · 设计语言 · design-tokens 2.2.3 / design-ui 6.0.4 / design-system 9.0.4 · 2026-08-26</div>
+</main>
+</div>
+<button class="theme-btn" id="themeBtn" type="button">主题</button>
+<script>
+(function () {
+  var b = document.getElementById('themeBtn');
+  if (!b) return;
+  // Three states, matching the artifact host: no stamp = follow the system.
+  // The button cycles 系统 -> 亮 -> 暗 rather than toggling, so a reader on a
+  // dark OS can still pin light without fighting the media query.
+  var order = ['system', 'light', 'dark'];
+  var label = { system: '主题 · 跟随系统', light: '主题 · 亮', dark: '主题 · 暗' };
+  var i = 0;
+  try { var s = localStorage.getItem('vxture-ds-doc-theme'); if (s && order.indexOf(s) >= 0) i = order.indexOf(s); } catch (e) {}
+  function apply() {
+    var m = order[i];
+    if (m === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', m);
+    b.textContent = label[m];
+    try { localStorage.setItem('vxture-ds-doc-theme', m); } catch (e) {}
+  }
+  b.addEventListener('click', function () { i = (i + 1) % order.length; apply(); });
+  apply();
+})();
+</script>
+

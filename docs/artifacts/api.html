@@ -1,0 +1,387 @@
+<title>Vxture DS 接口文档</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;700&display=swap');
+
+/* ── @vxture/design-tokens · typography T1/T2 subset ─────────────────────
+   Copied from vxture-design (design-system 6.5.x). This page cannot install
+   the DS package - an artifact's CSP admits Google Fonts and nothing else -
+   so the tokens it uses are inlined. They must stay identical to the DS; when
+   the DS moves, this block moves with it. Inherited from the Atlas doc. */
+:root {
+  --vx-font-sans: Inter, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --vx-font-brand: 'Funnel Display', Inter, 'Noto Sans SC', sans-serif;
+  --vx-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono CJK SC', monospace;
+  --vx-text-sm: 0.875rem;  --vx-text-base: 1rem;   --vx-text-lg: 1.125rem;
+  --vx-text-2xl: 1.5rem;   --vx-text-4xl: 2.25rem;
+  /* The whole document is Chinese, so the DS :lang(zh) leading compensation
+     applies. The host <html> is not ours to attribute, so the value lands here. */
+  --vx-cjk-leading-add: 0.15;
+
+  /* Family palette - identical to the Atlas and Runos docs ON PURPOSE. A
+     documentation system that changes colour per product is three products,
+     not one system; karda identifies itself by the rail brand instead. */
+  --bg: #f4f6f8; --surface: #ffffff; --surface2: #f6f8fa; --rail: #ffffff;
+  --border: #d5dbe2; --border-soft: #e6eaef;
+  --accent: #0969da; --accent2: #cf222e; --accent3: #1a7f37;
+  --accent4: #9a6700; --accent5: #8250df;
+  --text: #1f2328; --text-mid: #424950; --text-dim: #656d76;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+    --border: #232a33; --border-soft: #1b2128;
+    --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+    --accent4: #f0b429; --accent5: #b98cff;
+    --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+  --border: #232a33; --border-soft: #1b2128;
+  --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+  --accent4: #f0b429; --accent5: #b98cff;
+  --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--vx-font-sans);
+  font-size: var(--vx-text-base);
+  line-height: calc(1.5 + var(--vx-cjk-leading-add));
+  min-height: 100vh;
+}
+
+/* ── shell ─────────────────────────────────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+.rail {
+  background: var(--rail); border-right: 1px solid var(--border);
+  padding: 26px 18px 40px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.rail-brand {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700;
+}
+.rail-title { font-size: var(--vx-text-lg); font-weight: 700; margin: 6px 0 20px; line-height: 1.35; }
+.rail-group {
+  font-size: var(--vx-text-sm); letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--text-dim); margin: 22px 0 8px; font-weight: 600;
+}
+.rail a, .rail .doc-flat {
+  display: block; font-size: var(--vx-text-sm); color: var(--text-mid);
+  text-decoration: none; padding: 6px 10px; border-radius: 6px;
+  border-left: 2px solid transparent;
+}
+.rail a:hover { background: var(--surface2); color: var(--text); }
+.rail a.cur { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); font-weight: 600; }
+/* A document in the set that is not published yet. Rendered, but not a link -
+   a dead link teaches the reader to distrust the rail. */
+.rail .doc-flat { color: var(--text-dim); opacity: 0.62; cursor: default; }
+.rail .doc-flat::after { content: " · 未发布"; font-size: 11px; }
+.main { padding: 34px 40px 100px; min-width: 0; }
+@media (max-width: 1000px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 24px 20px 60px; }
+}
+
+/* ── header ────────────────────────────────────────────────────────────── */
+.page-head { border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 30px; }
+.eyebrow {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px;
+}
+.page-head h1 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-4xl);
+  font-weight: 600; letter-spacing: -0.4px;
+  line-height: calc(1.25 + var(--vx-cjk-leading-add));
+}
+.lede { color: var(--text-mid); font-size: var(--vx-text-lg); margin-top: 10px; max-width: 62em; }
+
+/* ── sections ──────────────────────────────────────────────────────────── */
+section { margin-bottom: 46px; scroll-margin-top: 20px; }
+h2 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-2xl); font-weight: 600;
+  margin-bottom: 6px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  line-height: calc(1.3 + var(--vx-cjk-leading-add));
+}
+h2 .num { font-size: 15px; color: var(--accent); font-family: var(--vx-font-mono); font-weight: 700; }
+h2 .h2-meta {
+  margin-left: auto; font-size: var(--vx-text-sm); font-weight: 500; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border-soft);
+  padding: 2px 10px; border-radius: 5px;
+}
+h3 { font-size: var(--vx-text-lg); font-weight: 600; margin: 22px 0 8px; }
+.rule { height: 1px; background: var(--border-soft); margin: 8px 0 20px; }
+p { max-width: 62em; margin-bottom: 12px; color: var(--text-mid); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+ul { margin: 0 0 12px 20px; color: var(--text-mid); max-width: 62em; }
+li { margin-bottom: 6px; }
+
+/* ── card ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+}
+.card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.card-title { font-size: var(--vx-text-base); font-weight: 600; color: var(--text); }
+.card-sub { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.grid { display: grid; gap: 16px; }
+.grid.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid.g3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+/* ── key/value rows - the workhorse ────────────────────────────────────── */
+.kv { display: grid; grid-template-columns: minmax(140px, 210px) minmax(0, 1fr); gap: 10px 18px; padding: 7px 0; border-top: 1px solid var(--border-soft); }
+.kv:first-of-type { border-top: none; }
+.kv-k { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.kv-k.hi { color: var(--text); font-weight: 500; }
+.kv-v { font-family: var(--vx-font-mono); font-size: var(--vx-text-sm); color: var(--text); word-break: break-word; }
+.kv-v.txt { font-family: var(--vx-font-sans); color: var(--text-mid); }
+.mono, .key { font-family: var(--vx-font-mono); font-size: 0.92em; }
+.key { background: var(--surface2); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 6px; }
+
+/* ── notes ─────────────────────────────────────────────────────────────── */
+.note {
+  border-left: 3px solid var(--border); background: var(--surface2);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+  font-size: var(--vx-text-sm); color: var(--text-mid); max-width: 62em;
+}
+.note strong { color: var(--text); }
+.note.info { border-left-color: var(--accent); }
+.note.danger { border-left-color: var(--accent2); }
+.note.ok { border-left-color: var(--accent3); }
+.note.warn { border-left-color: var(--accent4); }
+
+/* ── tags ──────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px;
+  border-radius: 999px; border: 1px solid; white-space: nowrap;
+}
+.t-ok { color: var(--accent3); border-color: var(--accent3); }
+.t-info { color: var(--accent); border-color: var(--accent); }
+.t-warn { color: var(--accent4); border-color: var(--accent4); }
+.t-bad { color: var(--accent2); border-color: var(--accent2); }
+.t-dim { color: var(--text-dim); border-color: var(--border); }
+
+/* ── flow diagram (inherited from the Runos doc) ───────────────────────── */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0; }
+.flow-node {
+  flex: 1 1 150px; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px; border-top-width: 3px;
+}
+.flow-node .fn-name { font-weight: 600; font-size: var(--vx-text-sm); color: var(--text); }
+.flow-node .fn-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; line-height: 1.55; }
+.n-blue { border-top-color: var(--accent); }
+.n-green { border-top-color: var(--accent3); }
+.n-amber { border-top-color: var(--accent4); }
+.n-red { border-top-color: var(--accent2); }
+.n-violet { border-top-color: var(--accent5); }
+.flow-arrow { flex: 0 0 34px; display: flex; align-items: center; justify-content: center; position: relative; }
+.flow-arrow-line { height: 1px; width: 100%; background: var(--border); }
+.flow-arrow-head { position: absolute; right: 6px; color: var(--text-dim); font-size: 13px; }
+.flow-arrow-label { position: absolute; top: -16px; font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 22px; transform: rotate(90deg); }
+}
+
+/* ── table ─────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: var(--vx-text-sm); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+th { color: var(--text-dim); font-weight: 600; white-space: nowrap; border-bottom-color: var(--border); }
+td.mono, td .mono { font-family: var(--vx-font-mono); }
+
+.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--text-dim); }
+.theme-btn {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9; cursor: pointer;
+  background: var(--surface); color: var(--text-mid); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--vx-font-sans);
+}
+.code {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin: 10px 0 0; overflow-x: auto;
+  font-family: var(--vx-font-mono); font-size: var(--vx-text-sm);
+  line-height: 1.6; color: var(--text); white-space: pre;
+}
+.code code { font: inherit; color: inherit; background: none; }
+.theme-btn:hover { color: var(--text); }
+</style>
+<div class="shell" id="top">
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">接口文档</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc" href="https://claude.ai/code/artifact/3df7da45-73c7-4c29-ab6d-baaf9a1808ab">· 发版说明</a><a class="doc cur" href="#top">▸ 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#who">谁在读这个面</a><a href="#main">主入口</a><a href="#server">server 子集</a><a href="#data">纯数据与纯类型</a><a href="#css">CSS 子路径</a><a href="#contract">类型契约</a><a href="#rule">什么算破坏性</a></nav>
+<main class="main">
+  <div class="page-head">
+    <div class="eyebrow">Vxture Design System · vxture-design</div>
+    <h1>接口文档</h1>
+    <p class="lede">三个包的公开面：<strong>入口按读法切，不按功能切</strong>。四种调用者各读一个入口，而真正硬的那一半不在导出清单里——在判别联合。</p>
+  </div>
+
+<section id="who"><h2><span class="num">01</span>谁在读这个面<span class="h2-meta">四种调用者</span></h2><div class="rule"></div>
+<p>公开面不是一份清单，是<strong>四种不同的读法</strong>。同一个 <span class="mono">Badge</span>，应用直接 import，server 组件要它不带 <span class="mono">createContext</span>，构建要它的类名进得了 Tailwind 的扫描范围，主题脚本则要在 React 还没接管之前就能跑。<strong>入口是按读法切的，不是按功能切的。</strong></p>
+<div class="tw"><table>
+<thead><tr><th>调用者</th><th>读哪个入口</th><th>它要的是什么</th></tr></thead>
+<tbody>
+<tr><td>应用代码</td><td class="mono">@vxture/design-system</td><td>284 个具名导出，件 + provider + shell</td></tr>
+<tr><td>server 组件</td><td class="mono">@vxture/design-system/server</td><td>27 个——在 react-server 条件下<strong>真的求值得出来</strong></td></tr>
+<tr><td>非 React 场合</td><td class="mono">…/tokens</td><td>7 个纯数据：z 阶梯、密度、字号、主题常量</td></tr>
+<tr><td>只要类型</td><td class="mono">…/types</td><td><strong>0 个运行时导出</strong>——它是 <span class="mono">export type *</span></td></tr>
+<tr><td>构建 / 样式</td><td>5 条 CSS 子路径</td><td>token 两层、品牌、字体、工作台</td></tr>
+</tbody></table></div>
+<div class="note danger" style="font-size:1rem"><strong>应用只装伞包。</strong>直接装 <span class="mono">@vxture/design-ui</span> 拿不到运行时接线（主题 / 密度 / 字号 provider），且版本约束不再由伞包保证——伞包对另两包钉的是<strong>精确版本</strong>而非 caret：它把两包的类型原样 re-export，caret 允许消费方解析到与伞包构建时不同的次版本，在转发边界上产生类型不匹配，<strong>而这类不匹配在伞包自己的 CI 里看不见</strong>。</div></section>
+
+<section id="main"><h2><span class="num">02</span>主入口<span class="h2-meta">284 个具名导出</span></h2><div class="rule"></div>
+<p>伞包把 <span class="mono">design-ui</span> 与 <span class="mono">design-tokens</span> 原样转发，再加上自持的三样：主题 / 密度 / 字号 provider、shell、样式入口。</p>
+<div class="grid g3">
+<div class="card"><div class="card-head"><span class="card-title">件</span><span class="card-sub">96 个文件</span></div>
+<div class="kv"><div class="kv-k">base</div><div class="kv-v">50</div></div>
+<div class="kv"><div class="kv-k">composite</div><div class="kv-v">28</div></div>
+<div class="kv"><div class="kv-k">layout / templates</div><div class="kv-v">12</div></div>
+<div class="kv"><div class="kv-k">shell（伞包自持）</div><div class="kv-v">6</div></div></div>
+<div class="card"><div class="card-head"><span class="card-title">peer 依赖</span><span class="card-sub">由应用提供</span></div>
+<div class="kv"><div class="kv-k mono">react</div><div class="kv-v mono">^19.0.0</div></div>
+<div class="kv"><div class="kv-k mono">react-dom</div><div class="kv-v mono">^19.0.0</div></div>
+<div class="kv"><div class="kv-k mono">tailwindcss</div><div class="kv-v mono">^4.2.1</div></div>
+<div class="kv"><div class="kv-k mono">@phosphor-icons/react</div><div class="kv-v mono">^2.1.10</div></div>
+<div class="kv"><div class="kv-k mono">next-themes</div><div class="kv-v mono">^0.4.6</div></div></div>
+<div class="card"><div class="card-head"><span class="card-title">发布进包的</span><span class="card-sub">files</span></div>
+<div class="kv"><div class="kv-k mono">dist</div><div class="kv-v">构建产物</div></div>
+<div class="kv"><div class="kv-k mono">src/styles</div><div class="kv-v">CSS 子路径的真身</div></div>
+<div class="kv"><div class="kv-k mono">assets</div><div class="kv-v">字体等</div></div>
+<div class="kv"><div class="kv-k mono">docs</div><div class="kv-v">七份规范</div></div>
+<div class="kv"><div class="kv-k mono">CHANGELOG.md</div><div class="kv-v">迁移段在这里</div></div></div>
+</div>
+<div class="note warn"><strong>这 284 个数字本身是一条守卫。</strong><span class="mono">check-design-system-exports</span> 拿它与快照对账——<strong>增删导出必须显式确认版本影响</strong>，而不是等消费方装上才发现少了个件。快照里连 <span class="mono">files</span> 与 <span class="mono">peerDependencies</span> 一起钉住：漏掉 <span class="mono">src/styles</span> 的那一版，CSS 子路径会在消费方那边 404，而流水线自己全绿。</div></section>
+
+<section id="server"><h2><span class="num">03</span>server 子集<span class="h2-meta">27 个 · 边界不是约定，是断言</span></h2><div class="rule"></div>
+<p>Next 的 server 组件在 <span class="mono">react-server</span> 条件下求值，那里<strong>没有 <span class="mono">createContext</span></strong>。一个件只要在依赖链上碰到 Radix 的 context，整个入口就崩。</p>
+<pre class="code"><code>✗ @vxture/design-ui 的 /server 入口在 react-server 下求值失败：
+  React.createContext is not a function</code></pre>
+<p>这不是假想——6.0 设计契约时，第一版让 base 的 <span class="mono">Button</span> 直接收 <span class="mono">confirm</span> 并自己弹框，守卫当场报红：<span class="mono">MetricCard</span> 在 server-safe 名单里且引了 <span class="mono">Button</span>，于是 <span class="mono">Button → ConfirmDestructive → AlertDialog</span> 把 <span class="mono">createContext</span> 拖了进来。<strong>一个能弹模态的 base 原语就不是 base 原语。</strong></p>
+<div class="card"><div class="card-head"><span class="card-title">27 个 server-safe 导出</span><span class="card-sub">design-ui 侧 19 个，伞包补 8 个</span></div>
+<pre class="code"><code>Badge          BADGE_VARIANTS   badgeVariants
+Banner         Card             CardContent
+CardDescription CardFooter      CardHeader
+CardTitle      Container        EmptyState
+Grid           MetricCard       MetricGrid
+Section        Stack            StatusBadge
+ViewLayout
+
+DENSITIES      FONT_SIZES       Z_INDEX
+THEME_CONSTANTS  PREFERENCE_CONSTANTS
+densityClass   fontSizeClass    themeBootstrapScript</code></pre></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">守卫怎么验</span></div>
+<p style="margin:0"><span class="mono">check-server-entry-safety</span> 在 <span class="mono">react-server</span> 导出条件下<strong>真的 import 一次已构建的 dist</strong>，不是读源码猜。<span class="mono">check-packed-consumability</span> 再验一条：<strong>类型面 == 运行时面</strong>（design-ui 19 个、伞包 27 个）。两者不等意味着有个导出「类型上有、运行时没有」——消费方写得出来、跑不起来。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">这个名单为什么这么短</span></div>
+<p style="margin:0">能进来的只有<strong>不需要状态的件</strong>：卡、标、空态、栅格、版式容器。任何要 provider、要浮层、要事件的件都进不来——不是没做，是<strong>它们在 server 上本来就没有意义</strong>。要交互就用 client 组件从主入口引。</p></div>
+</div></section>
+
+<section id="data"><h2><span class="num">04</span>纯数据与纯类型<span class="h2-meta">tokens · types</span></h2><div class="rule"></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">./tokens</span><span class="card-sub">7 个，不含 React</span></div>
+<pre class="code"><code>Z_INDEX          层叠阶梯，12 档
+DENSITIES        compact / default / comfortable
+FONT_SIZES       small / default / large
+THEME_CONSTANTS  主题的存储键与属性名
+PREFERENCE_CONSTANTS
+densityClass     档位 → 类名
+fontSizeClass</code></pre>
+<p style="margin:0.8rem 0 0">给的是<strong>不需要渲染就要用到的东西</strong>：middleware 里读主题偏好、脚本里算层叠、测试里遍历全部档位。从主入口引这些会把整个组件库拖进去。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">./types</span><span class="card-sub">0 个运行时导出</span></div>
+<p>这个 <strong>0 不是漏了，是它的定义</strong>：</p>
+<pre class="code"><code>export type * from "@vxture/design-ui";</code></pre>
+<p style="margin:0.8rem 0 0"><span class="mono">export type *</span> 编译后什么都不剩——所以运行时面是空的，而类型面是全的。给的是「只要类型标注、一个字节的运行时代码都不想要」的场合：类型声明文件、纯类型的工具包、server 边界上的签名。</p>
+<p style="margin:0.8rem 0 0">导出快照把它记成 <span class="mono">0</span> 也是有意的——哪天它<strong>不是</strong> 0 了，说明有人往里塞了值，守卫会红。</p></div>
+</div></section>
+
+<section id="css"><h2><span class="num">05</span>CSS 子路径<span class="h2-meta">五条 + tokens 两条</span></h2><div class="rule"></div>
+<p>CSS 走的是 <span class="mono">src/</span> 而不是 <span class="mono">dist/</span>——它不需要编译，而且必须让消费方的 Tailwind <strong>扫得到里面的类名</strong>。</p>
+<div class="tw"><table>
+<thead><tr><th>子路径</th><th>装什么</th><th>什么时候引</th></tr></thead>
+<tbody>
+<tr><td class="mono">design-system/styles/globals.css</td><td>总入口：串起 token 两层 + <span class="mono">@source</span> 指向</td><td><strong>必引</strong>，一次</td></tr>
+<tr><td class="mono">design-system/styles/fonts.css</td><td>字体声明</td><td>用自带字体时</td></tr>
+<tr><td class="mono">design-system/styles/brand.css</td><td>品牌层入口</td><td>要品牌色时</td></tr>
+<tr><td class="mono">design-system/styles/brands/vxture.css</td><td>vxture 这一套品牌值</td><td>由 brand.css 引</td></tr>
+<tr><td class="mono">design-system/styles/workbench.css</td><td>工作台专用版式</td><td>只有工作台类页面</td></tr>
+<tr><td class="mono">design-tokens/styles/tokens.css</td><td>T1 + T2 两层变量</td><td>由 globals.css 引</td></tr>
+<tr><td class="mono">design-tokens/styles/tailwind.css</td><td>把 token 接进 Tailwind 的 <span class="mono">@theme</span></td><td>由 globals.css 引</td></tr>
+</tbody></table></div>
+<div class="note warn"><strong><span class="mono">@source</span> 是这里最容易静默失效的一处。</strong>tsup 不跑 Tailwind——DS 的类名<strong>不在消费方的扫描范围里就不会被生成</strong>，件渲染出来没有样式，而<strong>没有任何报错</strong>。<span class="mono">globals.css</span> 里的 <span class="mono">@source</span> 指向 DS 的 dist，<span class="mono">check-packed-consumability</span> 每次验它是否还指得中（当前覆盖 17 个产物文件），并抽查 <span class="mono">bg-primary</span> / <span class="mono">h-control-lg</span> / <span class="mono">shadow-raised</span> 这类类名是否真的扫得到。</div>
+<div class="note danger" style="margin-bottom:0"><strong><span class="mono">@source</span> 必须排在所有 <span class="mono">@import</span> 之后。</strong>CSS 规范只允许 <span class="mono">@charset</span> 与 <span class="mono">@layer</span> 领先于 <span class="mono">@import</span>。这份文件是<strong>公开子路径、会进别人的构建</strong>，位置错了在消费方那边才炸。审计时这里报过三处，已修。</div></section>
+
+<section id="contract"><h2><span class="num">06</span>类型契约<span class="h2-meta">这才是接口的硬的那一半</span></h2><div class="rule"></div>
+<p>导出清单说的是「有什么」，<strong>判别联合说的是「不许怎么用」</strong>。DS 仓的守卫看不见消费方的调用点——要在你的编译期拦住误用，判据只能放类型。</p>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">红必带拦</span><span class="card-sub">ButtonProps</span></div>
+<pre class="code"><code>// 不拦：必须写明为什么
+&lt;Button variant="destructive"
+        confirmExempt="确认在流程第二步" /&gt;
+
+// 要拦：换成 composite 的那一个
+&lt;DestructiveButton confirm={{ … }} /&gt;</code></pre>
+<p style="margin:0.8rem 0 0">没有第三种写法能过 <span class="mono">tsc</span>。<span class="mono">ActionButton</span> 透传 <span class="mono">ButtonProps</span> 自动跟着收紧——它的 <span class="mono">Omit</span> 换成了 <span class="mono">DistributiveOmit</span>，否则 TS 会把联合分支先并成一个「什么都可选」的对象再删键，<strong>绑定关系当场丢失</strong>。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">同一判据的另外两个载体</span></div>
+<div class="kv"><div class="kv-k mono">ActionMenuItem</div><div class="kv-v txt"><span class="mono">danger: true</span> 必须带 confirm 或豁免</div></div>
+<div class="kv"><div class="kv-k mono">BulkActionBarItem</div><div class="kv-v txt">同上</div></div>
+<div class="kv"><div class="kv-k hi">为什么要三个</div><div class="kv-v txt">少一个就有绕路。4.0 只收了前两个，裸的 <span class="mono">&lt;Button variant="destructive"&gt;</span> 一直在洞里——而 <span class="mono">grep confirmExempt</span> 会把只有裸红按钮的产品报成「干净」。<strong>不完整的清单比没有清单更坏</strong></div></div></div>
+</div>
+<div class="card"><div class="card-head"><span class="card-title">DestructivePrecondition</span><span class="card-sub">前置条件的形状</span></div>
+<pre class="code"><code>{ label: string; met: boolean; unknown?: boolean; note?: string }</code></pre>
+<p style="margin:0.8rem 0 0"><strong><span class="mono">met</span> 是唯一的闸门，<span class="mono">unknown</span> 只影响显示。</strong>这是有意的：「查不出来算不算通过」是<strong>风险策略，属于产品</strong>。有的产品要求查不出来就拦，有的允许放行并记一笔——DS 收下这个判断就等于把业务语义焊了进来。</p></div>
+<div class="note ok" style="margin-bottom:0"><strong>清点口径是一条 grep：</strong><span class="mono">grep -rn confirmExempt portals/</span>。它完整，是因为剩下的情况编译不过。读的时候读<strong>理由本身</strong>——收字符串不收布尔就是为了让这份清单可以被人评审：「确认在流程第二步」是个理由，<span class="mono">"ok"</span> 不是。</div></section>
+
+<section id="rule"><h2><span class="num">07</span>什么算破坏性<span class="h2-meta">版本口径</span></h2><div class="rule"></div>
+<div class="tw"><table>
+<thead><tr><th>变更</th><th>tokens</th><th>ui</th><th>system</th></tr></thead>
+<tbody>
+<tr><td>修 token 取值（不增删名字）</td><td>Patch</td><td>不变</td><td>Patch</td></tr>
+<tr><td>增 token 语义名 / 扩展档</td><td>Minor</td><td>不变</td><td>Minor</td></tr>
+<tr><td><strong>删除或改名 token / 收窄色板</strong></td><td><strong>Major</strong></td><td>视情况</td><td><strong>Major</strong></td></tr>
+<tr><td>修组件样式或行为 bug</td><td>不变</td><td>Patch</td><td>Patch</td></tr>
+<tr><td>新增组件、新增 cva 变体</td><td>不变</td><td>Minor</td><td>Minor</td></tr>
+<tr><td><strong>删除或改名组件、改组件 props</strong></td><td>不变</td><td><strong>Major</strong></td><td><strong>Major</strong></td></tr>
+<tr><td><strong>删除或改名任一包的公开入口</strong></td><td>—</td><td>—</td><td><strong>Major</strong></td></tr>
+<tr><td>仅文档、CI、发布流程</td><td colspan="3">不发版</td></tr>
+</tbody></table></div>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">token 的删改一律 major</span></div>
+<p style="margin:0"><strong>删掉一个 CSS 变量不会报错，只会静默失效。</strong>没有编译期能接住它——所以这里不做「应该没人用」的推定。这条与代码层的判据不同，是因为载体不同。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">下层 major 向上传导</span></div>
+<p style="margin:0">tokens 删一个名字，ui 的组件可能哑火，伞包的公开行为随之改变——所以下层 major 时上层同样按 major 处理，<strong>除非能证明变更未穿透</strong>。伞包用精确版本，这一点无法靠版本范围回避。</p></div>
+</div>
+<div class="note warn" style="margin-bottom:0"><strong>预发布的通道即标识符。</strong><span class="mono">2.0.0-alpha.0</span> 发到 dist-tag <span class="mono">alpha</span>，不发到 <span class="mono">latest</span>——这条由流水线从版本号自动推出。<span class="mono">pnpm publish</span> 不带 <span class="mono">--tag</span> 一律打 <span class="mono">latest</span>，<strong>预发布版也不例外</strong>，漏了这一步等于把未完成的 major 推给了所有按默认范围安装的消费方。预发布期间请<strong>显式钉版本</strong>，不用 caret。</div></section>
+
+
+
+
+
+  <div class="foot">Vxture Design System · 接口文档 · design-tokens 2.2.3 / design-ui 6.0.4 / design-system 9.0.4 · 2026-08-26</div>
+</main>
+</div>
+<button class="theme-btn" id="themeBtn" type="button">主题</button>
+<script>
+(function () {
+  var b = document.getElementById('themeBtn');
+  if (!b) return;
+  // Three states, matching the artifact host: no stamp = follow the system.
+  // The button cycles 系统 -> 亮 -> 暗 rather than toggling, so a reader on a
+  // dark OS can still pin light without fighting the media query.
+  var order = ['system', 'light', 'dark'];
+  var label = { system: '主题 · 跟随系统', light: '主题 · 亮', dark: '主题 · 暗' };
+  var i = 0;
+  try { var s = localStorage.getItem('vxture-ds-doc-theme'); if (s && order.indexOf(s) >= 0) i = order.indexOf(s); } catch (e) {}
+  function apply() {
+    var m = order[i];
+    if (m === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', m);
+    b.textContent = label[m];
+    try { localStorage.setItem('vxture-ds-doc-theme', m); } catch (e) {}
+  }
+  b.addEventListener('click', function () { i = (i + 1) % order.length; apply(); });
+  apply();
+})();
+</script>
+
