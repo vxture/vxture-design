@@ -15,5 +15,19 @@ runs:
         cache: "pnpm"
 
     - name: Install dependencies
+      # --ignore-scripts：不执行任何安装期脚本。
+      #
+      # 这是**第二道**，不是第一道。第一道是 pnpm-workspace.yaml 里的
+      # `onlyBuiltDependencies: []`——它对所有安装生效（含开发者本机），是那份
+      # 可清点的名单。这里再关一次，图的是纵深：这个 action 被
+      # publish-design-system.yml 用，那个 job 有 `packages: write` 权限，
+      # 依赖的 postinstall 在那里执行等于把发布凭据交给依赖树。
+      #
+      # 在 CI 里这个开关的代价是零：全仓唯一的生命周期钩子是根 package.json 的
+      # `prepare: husky || true`（装 git 钩子），而 CI 不用 git 钩子。
+      # 2026-08-26 实测过——清空 node_modules、带这个开关重装，
+      # type-check / build / guardrails / 192 条用例全过。
+      #
+      # 本机开发不走这个 action，`prepare` 照常。
       shell: bash
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --frozen-lockfile --ignore-scripts

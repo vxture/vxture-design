@@ -106,42 +106,53 @@ Enter 与 Space 仍要响应），免得把「该触发」也一起修没了。
 
 ---
 
-### `pnpm install` 缺 `--ignore-scripts` · `setup-node-pnpm/action.yml` · 已处置
+### `pnpm install` 缺 `--ignore-scripts` · `setup-node-pnpm/action.yml` · 已修
 
-|          |                                                                     |
-| -------- | ------------------------------------------------------------------- |
-| 工具主张 | 给 `pnpm install` 加 `--ignore-scripts`，防止第三方包的安装脚本执行 |
-| 结论     | **担心是对的，开的药是错的**。2026-08-26 改用显式白名单处置         |
+|          |                                                    |
+| -------- | -------------------------------------------------- |
+| 工具主张 | 给 `pnpm install` 加 `--ignore-scripts`            |
+| 结论     | **报得对，已加**。同时补了一道 pnpm 层的显式白名单 |
 
-**担心为什么是对的。** 这个 action 被发布流水线用，而那个 job 有 `packages: write`
-权限。依赖的 `postinstall` 在那里执行，等于把发布凭据交给了依赖树。
+**担心为什么是对的。** 这个 action 被 `publish-design-system.yml` 用，那个 job 有
+`packages: write` 权限。依赖的 `postinstall` 在那里执行，等于把发布凭据交给依赖树。
 
-**为什么照它改是错的。** 两条，都实测过：
+**处置：两道都上。**
 
-1. **它拦不住任何东西——依赖脚本本来就没在跑。** 本仓 pnpm 10.30.3，pnpm 10 起
-   依赖的构建脚本默认不执行。实测 `pnpm install` 打印：
+| 载体                                                 | 管到哪                     | 作用                                                 |
+| ---------------------------------------------------- | -------------------------- | ---------------------------------------------------- |
+| `pnpm-workspace.yaml` 的 `onlyBuiltDependencies: []` | **所有安装**，含开发者本机 | 把「谁可以跑脚本」变成一份**可清点、进 diff** 的名单 |
+| action 里的 `--ignore-scripts`                       | 只有 CI                    | 纵深的第二道，不依赖 pnpm 的默认行为                 |
 
-   ```
-   Ignored build scripts: esbuild@0.27.7, sharp@0.34.5, unrs-resolver@1.12.2.
-   ```
-
-2. **它会关掉本仓自己的 `prepare`**（`husky || true`，装 git 钩子）。
-   `--ignore-scripts` 不区分「依赖的脚本」与「自己的脚本」。
-
-**改成了什么。** `pnpm-workspace.yaml` 里写 `onlyBuiltDependencies: []`——把一个
-可能随版本变的**默认值**，变成一份可清点、进 diff、有人看得见的**空白名单**。
-将来某个依赖真需要 `postinstall`，得往里加一行，那一行会出现在评审里。
-
-**这份名单确实生效，不是摆设。** 实证：把 `esbuild` 临时加进去再装一次，它的
+**名单确实生效，不是摆设。** 实证：把 `esbuild` 临时加进去再装一次，它的
 postinstall 当场跑了（`esbuild postinstall$ node install.js`），拿掉就不跑。
 
-⚠ pnpm 仍会打印那行 `Ignored build scripts: …`——**那不是字段没被读取**，
-只是它在报告跳过了谁。别因为这行以为配置没生效而去加 `--ignore-scripts`。
+⚠ pnpm 仍会打印 `Ignored build scripts: …`——**那不是字段没被读取**，只是它在
+报告跳过了谁。别因为这行以为配置没生效。
 
-**Sonar 这条大概率会继续报**（它匹配的是命令行里有没有那个开关）。这不是误报，
-是「结论对、药方错」——所以登记在这里而不是误报区。
+---
 
-**复核期限：** pnpm 主版本升级时。若 pnpm 11 改了默认行为，第 1 条即失效。
+**这一条本身踩过一次坑，值得留着。**
+
+初次处置判定**不加** `--ignore-scripts`，给的两条理由是：
+
+1. 它拦不住任何东西——pnpm 10 起依赖的构建脚本默认不执行（实测打印
+   `Ignored build scripts: esbuild, sharp, unrs-resolver`）。**这条成立。**
+2. 它会连本仓自己的 `prepare`（husky）一起关掉。**这条把成本说重了。**
+
+第 2 条错在**没分清这个 action 用在哪**。它只在 CI 用（`ci.yml` 两处、
+`publish-design-system.yml` 一处），本机开发不走它；而全仓唯一的生命周期钩子就是
+`prepare: husky || true`，装的是 git 钩子——**CI 不用 git 钩子**。所以在 CI 里这个
+开关的代价是零。
+
+清空 `node_modules` 带这个开关重装后实测：type-check / build / guardrails /
+192 条用例全过。于是改成两道都上。
+
+> **判据：说一个开关「代价太大」之前，先查清它作用在哪个范围。** 第 1 条是关于
+> 行为的、查过就成立；第 2 条是关于代价的，而代价永远是「对谁的代价」——
+> 范围没查清，成本估计就是凭印象。
+
+**复核期限：** pnpm 主版本升级时。若 pnpm 11 改了默认行为，第 1 条即失效，而两道
+防线正是为这一天准备的。
 
 ### ~~`Toast` 用 `Math.random` 生成通知 id~~ · 已修
 
