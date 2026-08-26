@@ -8,12 +8,12 @@
     },
     {
       "key": "版本 · design-ui",
-      "value": "6.0.4",
+      "value": "6.0.5",
       "how": "packages/design-ui/package.json 的 version"
     },
     {
       "key": "版本 · design-system",
-      "value": "9.0.4",
+      "value": "9.0.5",
       "how": "packages/design-system/package.json 的 version"
     },
     {
@@ -88,22 +88,22 @@
     },
     {
       "key": "覆盖率 · 行%",
-      "value": 63.46,
+      "value": 63.54,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 语句%",
-      "value": 63.05,
+      "value": 63.16,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 分支%",
-      "value": 54.59,
+      "value": 54.7,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 函数%",
-      "value": 53.16,
+      "value": 53.31,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {

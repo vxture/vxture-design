@@ -65,6 +65,38 @@ const TONE_CLS: Record<ToastTone, string> = {
   danger: "border-destructive-border text-destructive-text",
 };
 
+/**
+ * 通知 id 的生成。
+ *
+ * 原实现是 `toast-${Date.now()}-${Math.random()…}`。SonarCloud 把它报成
+ * vulnerability（`Math.random` 不是密码学安全的）——**报得对，但那条理由不适用
+ * 于这里**：这个 id 不需要不可预测，它只是 React 的 key 与 dismiss 时的查找键，
+ * 被猜中也什么都做不了。
+ *
+ * 也没有换成 `crypto.randomUUID`。那是**安全上下文限定**的 API：在 http 页面上
+ * （内网工具、局域网预览）`crypto.randomUUID` 是 undefined，调用直接抛。
+ * 为了消一条不适用的告警，引入一个只在一半环境里存在的 API，是把告警换成故障。
+ *
+ * 换成单调计数器——对这个用途它比前两者都更合适：
+ *
+ *   · 随机数**可能碰撞**（同一毫秒内连发两条，36 进制尾巴还撞上），计数器按
+ *     构造不会。这不是理论问题：碰撞的表现是两条通知共用一个 React key，
+ *     后一条把前一条顶掉，而且只在手快的时候偶发
+ *   · 不依赖任何环境 API，SSR / http / jsdom 三处行为一致
+ *   · **可测**：「两条通知的 id 必须不同」这条断言，对随机数只是大概率成立，
+ *     对计数器是恒真——所以它才值得写成回归测试
+ *
+ * 计数器放模块级而不是 Provider 级：跨 Provider、跨重挂载都不重复，
+ * 于是上一次挂载残留的 `setTimeout(() => dismiss(id))` 不可能误伤新的通知。
+ *
+ * id 的格式是**不透明的**，不要去解析它。
+ */
+let toastSeq = 0;
+const nextToastId = () => {
+  toastSeq += 1;
+  return `toast-${toastSeq}`;
+};
+
 export interface ToastProviderProps {
   readonly children: React.ReactNode;
   /** 通知区的可访问名。默认「通知」。 */
@@ -86,9 +118,7 @@ export function ToastProvider({
 
   const toast = React.useCallback(
     (input: ToastInput) => {
-      const id =
-        input.id ??
-        `toast-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const id = input.id ?? nextToastId();
       const record: ToastRecord = {
         id,
         tone: input.tone ?? "info",

@@ -3,3 +3,26 @@ packages:
   - "packages/design-ui"
   - "packages/design-system"
   - "packages/design-preview"
+
+# 依赖的构建脚本：一律不执行。
+#
+# pnpm 10 起这已经是默认行为——本仓实测，`pnpm install` 会打印
+# `Ignored build scripts: esbuild@0.27.7, sharp@0.34.5`。这里把它写成一份
+# **显式的空白名单**，图的不是改变行为，是让「谁可以跑脚本」从一个可能随版本
+# 变的默认值，变成一份可清点、进 diff、有人看得见的清单。将来某个依赖真需要
+# postinstall，得往这里加一行——那一行会出现在评审里。
+#
+# ⚠ 不要改成给 `pnpm install` 加 `--ignore-scripts`。SonarCloud 会这么建议
+# （发布流水线跑在有 `packages: write` 权限的 job 里，它的担心是对的），但那个
+# 开关是错药：
+#
+#   · 它拦不住任何 pnpm 10 默认没拦住的东西——依赖脚本本来就没在跑
+#   · 它连**本仓自己的** `prepare`（husky 装 git 钩子）一起关掉
+#
+# 判据见 docs/070-audit-playbook.md §5.2。
+#
+# 这份名单**确实生效**，不是摆设——2026-08-26 实证：把 esbuild 临时加进来再装一
+# 次，它的 postinstall 当场跑了（`esbuild postinstall$ node install.js`）；拿掉
+# 就不跑。注意 pnpm 仍会打印一行 `Ignored build scripts: …` 告知跳过了谁，
+# **那不是字段没被读取**，只是它在报告结果。
+onlyBuiltDependencies: []
