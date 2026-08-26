@@ -157,7 +157,12 @@ const COVERAGE = [
   ["design-system", "packages/design-system/coverage/coverage-summary.json"],
 ];
 
-const totals = { lines: [0, 0], statements: [0, 0], branches: [0, 0], functions: [0, 0] };
+const totals = {
+  lines: [0, 0],
+  statements: [0, 0],
+  branches: [0, 0],
+  functions: [0, 0],
+};
 let anyCoverage = false;
 
 for (const [pkg, file] of COVERAGE) {
@@ -231,7 +236,13 @@ add(
 );
 
 // ── 输出 ────────────────────────────────────────────────────────────────
-const stamp = new Date().toISOString().slice(0, 10);
+// 本地日期，不是 UTC 日期。`toISOString()` 走 UTC——本机在 UTC+8 的凌晨跑一次，
+// 戳出来是**昨天**，于是 `--write` 直接覆盖掉昨天那份基线，"上轮"的比较点就没了。
+// 而它不报错：比较照常打印（读在写之前），只是被比的那份文件从此消失。
+const now = new Date();
+const stamp = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+  .toISOString()
+  .slice(0, 10);
 const snapshot = { date: stamp, metrics };
 
 const prior = existsSync(OUT_DIR)

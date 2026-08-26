@@ -5,6 +5,43 @@
 
 ---
 
+## 6.0.8 — 2026-08-27
+
+修一处**照抄上游抄进来的**无障碍缺陷（patch，050 §2）。
+
+- **修复：`Progress` 的取值从来没传给 Radix，进度条对读屏器永远是「未定」。**
+
+  原实现把 `value` 从 props 里解构走之后，只拿它算填充位移，**忘了传回
+  `ProgressPrimitive.Root`**。屏幕上一切正常——色条画在 70% 的位置；语义上
+  整条丢了：
+
+  ```html
+  <!-- 修复前：value={70} -->
+  <div
+    role="progressbar"
+    aria-valuemax="100"
+    aria-valuemin="0"
+    data-state="indeterminate"
+  >
+    <!-- 没有 aria-valuenow -->
+  </div>
+  ```
+
+  读屏器因此只会播报「正在忙」，播报不出「已完成 70%」；`data-state` 也永远
+  停在 `indeterminate`，靠它做样式的调用方拿不到 `loading` / `complete`。
+
+  这一条是**从上游 shadcn 照抄进来的**——本仓文件头写的「结构照 shadcn 官方
+  Progress」此前读起来是出处说明，现在它同时是一条线索。
+
+  同一次改动里把位移也接上了 `max`：此前写死按 100 折算，`max={50} value={25}`
+  会画在四分之一处，而 `aria-valuenow` 说的是一半——同一条进度条，眼睛和读屏器
+  给出两个答案。
+
+  **调用方无需改动**，视觉零变化；此前靠 `[data-state=indeterminate]` 选中
+  「有取值的进度条」的样式（如果有）需要改判据。
+
+- 新增 `Progress` 用例 6 条。
+
 ## 6.0.7 — 2026-08-26
 
 修一处「看起来在防、实际没防住」的守卫（patch，050 §2）。

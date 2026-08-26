@@ -164,7 +164,13 @@ export interface ShellUserBadge {
 export interface ShellUserStatusTag {
   /** Tag text, e.g. 已认证 / 未认证. */
   label: ReactNode;
-  /** When true, renders a leading check icon and the verified accent. */
+  /**
+   * 认证与否，决定贴标的**语气**——`success`（自带圆形对勾）对 `neutral`。
+   *
+   * 前导图标不在这里另配：`StatusBadge` 的图标缺省就随语气来（见它的文件头
+   * ——「不必每处各配一张」）。这里曾经额外画过一个 `check`，于是「已认证」
+   * 前面并排两个对勾。
+   */
   verified?: boolean | undefined;
 }
 
@@ -800,7 +806,6 @@ export function ShellUserMenu({
                   <StatusBadge
                     tone={user.statusTag.verified ? "success" : "neutral"}
                   >
-                    {user.statusTag.verified ? <Icon name="check" /> : null}
                     {user.statusTag.label}
                   </StatusBadge>
                 ),

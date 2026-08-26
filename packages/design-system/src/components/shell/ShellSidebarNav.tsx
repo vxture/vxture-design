@@ -179,9 +179,11 @@ export interface ShellSidebarNavProps {
   /** 底部固定块（h-header-xl=64）的内容；不传则是空占位，高度不变。 */
   readonly footer?: React.ReactNode;
   /**
-   * 两个控件的无障碍名。默认值是中文——本件从一个纯中文产品提炼而来，保留
-   * 默认可以让不做 i18n 的消费方零配置接入；做 i18n 的消费方（console 是
-   * 双语）必须传入，否则英文档下这两个按钮会显中文。
+   * 两个控件的无障碍名。默认值是英文——本件从产品里提炼出来时把默认值一并
+   * 去了业务语言，保留默认可以让不做 i18n 的消费方零配置接入；做 i18n 的
+   * 消费方（console 是双语）必须传入，否则中文档下这两个按钮会显英文。
+   *
+   * 只覆盖其中一两个也可以，`Partial` 与默认值逐项合并。
    */
   readonly labels?: Partial<ShellSidebarNavLabels>;
 }

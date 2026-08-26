@@ -19,6 +19,7 @@ import {
   UserAvatar,
 } from "../src/components/base/display/Avatar";
 import { ResultPageTemplate } from "../src/components/templates/ResultPageTemplate";
+import { Progress } from "../src/components/base/feedback/Progress";
 import { TONES, toneIcons } from "../src/components/tone";
 
 /* ── Spinner ──────────────────────────────────────────────────────────────── */
@@ -335,5 +336,73 @@ describe("UserAvatar · 没有头像就出剪影", () => {
     rerender(<UserAvatar alt="头像" />);
     await screen.findByLabelText("头像");
     expect(container.querySelector("svg")).not.toBeNull();
+  });
+});
+
+/* ── Progress ─────────────────────────────────────────────────────────────── */
+
+describe("Progress · 取值要同时进语义与位移", () => {
+  const bar = (root: ParentNode) =>
+    root.querySelector('[role="progressbar"]') as HTMLElement;
+  const fill = (root: ParentNode) =>
+    root.querySelector("[data-state] [data-state]") as HTMLElement;
+
+  /**
+   * **`value` 必须传回 Radix Root。**
+   *
+   * 上游 shadcn 把 `value` 从 props 里解构走之后只拿它算 transform，忘了传回
+   * Root。后果不在屏幕上：色条画得好好的，但 Radix 认不出取值，整条进度条对
+   * 读屏器永远是 `indeterminate`——看得见「70%」，听到的是「正在忙」。
+   * 这一条 2023 年就在 shadcn 仓里挂着，本仓直接照抄了它。
+   */
+  it("有取值时报出 aria-valuenow，而不是一直「未定」", () => {
+    const { container } = render(<Progress value={70} />);
+    expect(bar(container)).toHaveAttribute("aria-valuenow", "70");
+    expect(bar(container)).toHaveAttribute("data-state", "loading");
+  });
+
+  it("满值时状态是「已完成」", () => {
+    const { container } = render(<Progress value={100} />);
+    expect(bar(container)).toHaveAttribute("aria-valuenow", "100");
+    expect(bar(container)).toHaveAttribute("data-state", "complete");
+  });
+
+  /** 不给取值才是真的「未定」——加载条不知道总量时用得上。 */
+  it("不给取值时才是未定态", () => {
+    const { container } = render(<Progress />);
+    expect(bar(container)).not.toHaveAttribute("aria-valuenow");
+    expect(bar(container)).toHaveAttribute("data-state", "indeterminate");
+  });
+
+  it("位移跟着取值走", () => {
+    const a = render(<Progress value={0} />);
+    expect(fill(a.container).style.transform).toBe("translateX(-100%)");
+    a.unmount();
+
+    const b = render(<Progress value={25} />);
+    expect(fill(b.container).style.transform).toBe("translateX(-75%)");
+    b.unmount();
+
+    const { container } = render(<Progress value={100} />);
+    expect(fill(container).style.transform).toBe("translateX(-0%)");
+  });
+
+  /**
+   * **`max` 不是 100 时位移要折算。**
+   *
+   * 写死 `100 - value` 的话，`max={50} value={25}` 会画在四分之一处，而
+   * `aria-valuenow` 说的是一半——同一条进度条，眼睛和读屏器给出两个答案。
+   */
+  it("max 不是 100 时按比例折算", () => {
+    const { container } = render(<Progress value={25} max={50} />);
+    expect(bar(container)).toHaveAttribute("aria-valuenow", "25");
+    expect(bar(container)).toHaveAttribute("aria-valuemax", "50");
+    expect(fill(container).style.transform).toBe("translateX(-50%)");
+  });
+
+  /** 认不出的取值画空条，不画越界色带。 */
+  it("非有限值当作空条", () => {
+    const { container } = render(<Progress value={Number.NaN} />);
+    expect(fill(container).style.transform).toBe("translateX(-100%)");
   });
 });
