@@ -12,14 +12,19 @@ packages:
 # 变的默认值，变成一份可清点、进 diff、有人看得见的清单。将来某个依赖真需要
 # postinstall，得往这里加一行——那一行会出现在评审里。
 #
-# ⚠ 不要改成给 `pnpm install` 加 `--ignore-scripts`。SonarCloud 会这么建议
-# （发布流水线跑在有 `packages: write` 权限的 job 里，它的担心是对的），但那个
-# 开关是错药：
+# ⚠ 这不是「用它取代 --ignore-scripts」。CI 的 action 里两道都开着（见
+# .github/actions/setup-node-pnpm/action.yml）。分工是：
 #
-#   · 它拦不住任何 pnpm 10 默认没拦住的东西——依赖脚本本来就没在跑
-#   · 它连**本仓自己的** `prepare`（husky 装 git 钩子）一起关掉
+#   · 这份名单对**所有安装**生效，含开发者本机，而且它是可清点的——将来某个
+#     依赖真需要 postinstall，得往里加一行，那一行会出现在评审里
+#   · action 里的 --ignore-scripts 只管 CI，是纵深的第二道
 #
-# 判据见 docs/070-audit-playbook.md §5.2。
+# 初次处置（2026-08-26 早些时候）曾判定不加 --ignore-scripts，理由是「它会连
+# 本仓自己的 prepare 一起关掉」。**那句把成本说重了**：这个 action 只在 CI 用，
+# 而全仓唯一的钩子是 `prepare: husky || true`（装 git 钩子），CI 不用 git 钩子。
+# 清装实测后改成两道都上。
+#
+# 判据见 docs/070-audit-playbook.md §5.2 与 docs/audit/known-false-positives.md。
 #
 # 这份名单**确实生效**，不是摆设——2026-08-26 实证：把 esbuild 临时加进来再装一
 # 次，它的 postinstall 当场跑了（`esbuild postinstall$ node install.js`）；拿掉
