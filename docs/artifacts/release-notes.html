@@ -1,0 +1,344 @@
+<title>Vxture DS 发版说明</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;700&display=swap');
+
+/* ── @vxture/design-tokens · typography T1/T2 subset ─────────────────────
+   Copied from vxture-design (design-system 6.5.x). This page cannot install
+   the DS package - an artifact's CSP admits Google Fonts and nothing else -
+   so the tokens it uses are inlined. They must stay identical to the DS; when
+   the DS moves, this block moves with it. Inherited from the Atlas doc. */
+:root {
+  --vx-font-sans: Inter, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --vx-font-brand: 'Funnel Display', Inter, 'Noto Sans SC', sans-serif;
+  --vx-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono CJK SC', monospace;
+  --vx-text-sm: 0.875rem;  --vx-text-base: 1rem;   --vx-text-lg: 1.125rem;
+  --vx-text-2xl: 1.5rem;   --vx-text-4xl: 2.25rem;
+  /* The whole document is Chinese, so the DS :lang(zh) leading compensation
+     applies. The host <html> is not ours to attribute, so the value lands here. */
+  --vx-cjk-leading-add: 0.15;
+
+  /* Family palette - identical to the Atlas and Runos docs ON PURPOSE. A
+     documentation system that changes colour per product is three products,
+     not one system; karda identifies itself by the rail brand instead. */
+  --bg: #f4f6f8; --surface: #ffffff; --surface2: #f6f8fa; --rail: #ffffff;
+  --border: #d5dbe2; --border-soft: #e6eaef;
+  --accent: #0969da; --accent2: #cf222e; --accent3: #1a7f37;
+  --accent4: #9a6700; --accent5: #8250df;
+  --text: #1f2328; --text-mid: #424950; --text-dim: #656d76;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+    --border: #232a33; --border-soft: #1b2128;
+    --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+    --accent4: #f0b429; --accent5: #b98cff;
+    --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c10; --surface: #12161c; --surface2: #171c23; --rail: #0e1218;
+  --border: #232a33; --border-soft: #1b2128;
+  --accent: #6e9fff; --accent2: #ff6b7d; --accent3: #4ede9a;
+  --accent4: #f0b429; --accent5: #b98cff;
+  --text: #e6edf3; --text-mid: #a9b4c0; --text-dim: #8b98a5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--vx-font-sans);
+  font-size: var(--vx-text-base);
+  line-height: calc(1.5 + var(--vx-cjk-leading-add));
+  min-height: 100vh;
+}
+
+/* ── shell ─────────────────────────────────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+.rail {
+  background: var(--rail); border-right: 1px solid var(--border);
+  padding: 26px 18px 40px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.rail-brand {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700;
+}
+.rail-title { font-size: var(--vx-text-lg); font-weight: 700; margin: 6px 0 20px; line-height: 1.35; }
+.rail-group {
+  font-size: var(--vx-text-sm); letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--text-dim); margin: 22px 0 8px; font-weight: 600;
+}
+.rail a, .rail .doc-flat {
+  display: block; font-size: var(--vx-text-sm); color: var(--text-mid);
+  text-decoration: none; padding: 6px 10px; border-radius: 6px;
+  border-left: 2px solid transparent;
+}
+.rail a:hover { background: var(--surface2); color: var(--text); }
+.rail a.cur { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); font-weight: 600; }
+/* A document in the set that is not published yet. Rendered, but not a link -
+   a dead link teaches the reader to distrust the rail. */
+.rail .doc-flat { color: var(--text-dim); opacity: 0.62; cursor: default; }
+.rail .doc-flat::after { content: " · 未发布"; font-size: 11px; }
+.main { padding: 34px 40px 100px; min-width: 0; }
+@media (max-width: 1000px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 24px 20px 60px; }
+}
+
+/* ── header ────────────────────────────────────────────────────────────── */
+.page-head { border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 30px; }
+.eyebrow {
+  font-family: var(--vx-font-brand); font-size: 13px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px;
+}
+.page-head h1 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-4xl);
+  font-weight: 600; letter-spacing: -0.4px;
+  line-height: calc(1.25 + var(--vx-cjk-leading-add));
+}
+.lede { color: var(--text-mid); font-size: var(--vx-text-lg); margin-top: 10px; max-width: 62em; }
+
+/* ── sections ──────────────────────────────────────────────────────────── */
+section { margin-bottom: 46px; scroll-margin-top: 20px; }
+h2 {
+  font-family: var(--vx-font-brand); font-size: var(--vx-text-2xl); font-weight: 600;
+  margin-bottom: 6px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  line-height: calc(1.3 + var(--vx-cjk-leading-add));
+}
+h2 .num { font-size: 15px; color: var(--accent); font-family: var(--vx-font-mono); font-weight: 700; }
+h2 .h2-meta {
+  margin-left: auto; font-size: var(--vx-text-sm); font-weight: 500; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border-soft);
+  padding: 2px 10px; border-radius: 5px;
+}
+h3 { font-size: var(--vx-text-lg); font-weight: 600; margin: 22px 0 8px; }
+.rule { height: 1px; background: var(--border-soft); margin: 8px 0 20px; }
+p { max-width: 62em; margin-bottom: 12px; color: var(--text-mid); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+ul { margin: 0 0 12px 20px; color: var(--text-mid); max-width: 62em; }
+li { margin-bottom: 6px; }
+
+/* ── card ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+}
+.card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.card-title { font-size: var(--vx-text-base); font-weight: 600; color: var(--text); }
+.card-sub { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.grid { display: grid; gap: 16px; }
+.grid.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid.g3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+/* ── key/value rows - the workhorse ────────────────────────────────────── */
+.kv { display: grid; grid-template-columns: minmax(140px, 210px) minmax(0, 1fr); gap: 10px 18px; padding: 7px 0; border-top: 1px solid var(--border-soft); }
+.kv:first-of-type { border-top: none; }
+.kv-k { font-size: var(--vx-text-sm); color: var(--text-dim); }
+.kv-k.hi { color: var(--text); font-weight: 500; }
+.kv-v { font-family: var(--vx-font-mono); font-size: var(--vx-text-sm); color: var(--text); word-break: break-word; }
+.kv-v.txt { font-family: var(--vx-font-sans); color: var(--text-mid); }
+.mono, .key { font-family: var(--vx-font-mono); font-size: 0.92em; }
+.key { background: var(--surface2); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 6px; }
+
+/* ── notes ─────────────────────────────────────────────────────────────── */
+.note {
+  border-left: 3px solid var(--border); background: var(--surface2);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+  font-size: var(--vx-text-sm); color: var(--text-mid); max-width: 62em;
+}
+.note strong { color: var(--text); }
+.note.info { border-left-color: var(--accent); }
+.note.danger { border-left-color: var(--accent2); }
+.note.ok { border-left-color: var(--accent3); }
+.note.warn { border-left-color: var(--accent4); }
+
+/* ── tags ──────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px;
+  border-radius: 999px; border: 1px solid; white-space: nowrap;
+}
+.t-ok { color: var(--accent3); border-color: var(--accent3); }
+.t-info { color: var(--accent); border-color: var(--accent); }
+.t-warn { color: var(--accent4); border-color: var(--accent4); }
+.t-bad { color: var(--accent2); border-color: var(--accent2); }
+.t-dim { color: var(--text-dim); border-color: var(--border); }
+
+/* ── flow diagram (inherited from the Runos doc) ───────────────────────── */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0; }
+.flow-node {
+  flex: 1 1 150px; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px; border-top-width: 3px;
+}
+.flow-node .fn-name { font-weight: 600; font-size: var(--vx-text-sm); color: var(--text); }
+.flow-node .fn-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; line-height: 1.55; }
+.n-blue { border-top-color: var(--accent); }
+.n-green { border-top-color: var(--accent3); }
+.n-amber { border-top-color: var(--accent4); }
+.n-red { border-top-color: var(--accent2); }
+.n-violet { border-top-color: var(--accent5); }
+.flow-arrow { flex: 0 0 34px; display: flex; align-items: center; justify-content: center; position: relative; }
+.flow-arrow-line { height: 1px; width: 100%; background: var(--border); }
+.flow-arrow-head { position: absolute; right: 6px; color: var(--text-dim); font-size: 13px; }
+.flow-arrow-label { position: absolute; top: -16px; font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 22px; transform: rotate(90deg); }
+}
+
+/* ── table ─────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: var(--vx-text-sm); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+th { color: var(--text-dim); font-weight: 600; white-space: nowrap; border-bottom-color: var(--border); }
+td.mono, td .mono { font-family: var(--vx-font-mono); }
+
+.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--text-dim); }
+.theme-btn {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9; cursor: pointer;
+  background: var(--surface); color: var(--text-mid); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--vx-font-sans);
+}
+.code {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin: 10px 0 0; overflow-x: auto;
+  font-family: var(--vx-font-mono); font-size: var(--vx-text-sm);
+  line-height: 1.6; color: var(--text); white-space: pre;
+}
+.code code { font: inherit; color: inherit; background: none; }
+.theme-btn:hover { color: var(--text); }
+</style>
+<div class="shell" id="top">
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><span class="doc-flat">· 接口文档</span><span class="doc-flat">· 设计语言</span><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking">必须改的</a><a href="#patches">不用改，但行为变了</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<main class="main">
+  <div class="page-head">
+    <div class="eyebrow">Vxture Design System · vxture-design</div>
+    <h1>发版说明</h1>
+    <p class="lede">升到 <strong>design-system 9.0.4</strong> 要做什么、不用做什么。<strong>四个 patch 不需要改任何调用点</strong>；要改代码的是 9.0.0 那次 major——如果你还没迁完，§02 是给你的。</p>
+  </div>
+
+<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-08-26</span></h2><div class="rule"></div>
+<p><strong>应用只装伞包。</strong>直接装 <span class="mono">design-ui</span> 拿不到运行时接线（主题 / 密度 / 字号 provider），且版本约束不再由伞包保证。</p>
+<div class="tw"><table>
+<thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
+<tbody>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">9.0.4</td><td><span class="tag t-ok">新</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">6.0.4</td><td><span class="tag t-ok">新</span> 由伞包精确钉版，不要直接装</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">2.2.3</td><td>不变，流水线跳过</td></tr>
+</tbody></table></div>
+<div class="note ok"><strong>从 9.0.x 的任何一版升到 9.0.4，不需要改任何调用点。</strong>四个 patch 全是行为修复，没有 API 变化。真正要改代码的是 <strong>9.0.0 那次 major</strong>——如果你还没迁完，见 §02。</div></section>
+
+<section id="breaking"><h2><span class="num">02</span>必须改的<span class="h2-meta">9.0.0 major · 未迁完的看这里</span></h2><div class="rule"></div>
+<div class="note danger" style="font-size:1rem"><strong><span class="mono">variant="destructive"</span> 的 <span class="mono">Button</span> / <span class="mono">ActionButton</span> 现在会编译失败</strong>，除非写明为什么不设防。这是「红」与「拦」变成同一个决定的最后一块。</div>
+<p>此前判别联合只管 <span class="mono">ActionMenuItem</span> 与 <span class="mono">BulkActionBarItem</span>，够不到裸的红按钮——于是 <span class="mono">grep confirmExempt</span> 会把只有裸红按钮的产品报成「干净」。<strong>清单不完整就不能当清单用。</strong></p>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">要拦</span><span class="card-sub">换成 DestructiveButton</span></div>
+<pre class="code"><code>&lt;DestructiveButton
+  confirm={{
+    verb: "Revoke",
+    target: passkey.name,
+    consequence: "…",
+    preconditions: [
+      { label: "至少还有一把可用的 passkey",
+        met: others.length &gt; 0 },
+    ],
+    onConfirm: () =&gt; revoke(passkey.id),
+  }}
+&gt;
+  Revoke
+&lt;/DestructiveButton&gt;</code></pre></div>
+<div class="card"><div class="card-head"><span class="card-title">不拦</span><span class="card-sub">写明理由，理由可 grep</span></div>
+<pre class="code"><code>&lt;Button
+  variant="destructive"
+  confirmExempt="确认在流程第二步"
+&gt;
+  …
+&lt;/Button&gt;</code></pre>
+<p style="margin:0.8rem 0 0"><span class="mono">confirmExempt</span> 收字符串而不是布尔，是为了让「本产品有多少个不设防的红色动作」变成<strong>一条 grep</strong>。它从不进 DOM。</p></div>
+</div>
+<div class="kv"><div class="kv-k hi">destructive-strong</div><div class="kv-v txt"><strong>不要求</strong>。它是落锤档——确认对话框里的那个提交按钮。要求落锤自己再确认一次是循环</div></div>
+<div class="kv"><div class="kv-k hi">DestructiveButton 的限制</div><div class="kv-v txt">不开 <span class="mono">variant</span>（按定义就是 destructive 入口档），也不开 <span class="mono">asChild</span>（它渲染「按钮 + 对话框」两个节点，塞不进 <span class="mono">Slot</span> 的单子元素约束）。<span class="mono">AlertDialogTrigger asChild</span> 这类场合用 <span class="mono">Button</span> + <span class="mono">confirmExempt</span></div></div>
+<div class="kv"><div class="kv-k hi">variant 是运行时值时</div><div class="kv-v txt">遍历全部挡位的画廊选不出分支，需要回收一次类型——预览面的 <span class="mono">galleryVariant</span> 是这个写法的样板</div></div></section>
+
+<section id="patches"><h2><span class="num">03</span>不用改，但行为变了<span class="h2-meta">四个 patch</span></h2><div class="rule"></div>
+<p>下面四条<strong>不需要你动任何代码</strong>，但它们改的是「本来就该这样、此前一直不是」的行为。如果你为这些症状做过绕法，<strong>绕法现在可以撤了</strong>。</p>
+<div class="tw"><table>
+<thead><tr><th>版本</th><th>症状（你可能见过的样子）</th><th>绕法可以撤吗</th></tr></thead>
+<tbody>
+<tr><td class="mono">6.0.4</td><td>原生全屏退出时控制台一条 <span class="mono">TypeError</span>——<span class="mono">exitFullscreen()</span> 被调了两次，第二次时文档已不在全屏态</td><td><span class="tag t-ok">可以</span> 如果你 catch 过它</td></tr>
+<tr><td class="mono">6.0.3</td><td><span class="mono">EntryCard</span> 只给 <span class="mono">onClick</span> 不给 <span class="mono">href</span> 时，<strong>鼠标点得到、键盘进不去</strong>。而且两者都不给时，卡也一直摆着可点的外观</td><td><span class="tag t-ok">可以</span> 如果你手动补过 <span class="mono">role</span> / <span class="mono">tabIndex</span></td></tr>
+<tr><td class="mono">6.0.2</td><td><span class="mono">MetricListCard</span> 上焦点停在「更多」按 Enter，<strong>菜单不开、详情打开了</strong>。鼠标那条路一直是对的，所以这个洞只在键盘上存在</td><td><span class="tag t-ok">可以</span> 如果你在行操作上加过 <span class="mono">stopPropagation</span></td></tr>
+<tr><td class="mono">6.0.1</td><td><span class="mono">Drawer</span> 的 <span class="mono">width="sm" | "md" | "lg"</span> <strong>一直是死的</strong>，一律渲染成 <span class="mono">w-full max-w-panel-lg</span>。没有任何报错，DOM 上连那条类都不剩</td><td><span class="tag t-warn">注意</span> 如果你用 <span class="mono">className</span> 或内联样式盖过宽度，<strong>现在挡位真的生效了</strong>，两者会打架</td></tr>
+</tbody></table></div>
+<div class="note warn"><strong>6.0.1 那条值得单独看一眼。</strong>挡位失效期间，任何需要窄抽屉的地方只能靠外部盖宽度。现在挡位活了——<span class="mono">cn</span> 把 <span class="mono">--container-*</span> 登记进了宽度组，你外部再传一个宽度类，<strong>谁赢取决于书写顺序</strong>，而不是你的意图。升级后请检查所有传了 <span class="mono">width</span> 又同时盖过宽度的 <span class="mono">Drawer</span>。</div>
+<div class="kv"><div class="kv-k">6.0.2 文档更正</div><div class="kv-v txt"><span class="mono">AlertDialog</span> 的 <strong>Esc 是关得掉的</strong>。头注此前写「Esc 与点遮罩也不关」，错了一半：Esc 触发 <span class="mono">onOpenChange</span>，外点不触发。Esc 能关是<strong>对的</strong>——没有键盘出路的模态是键盘陷阱。「要求表态」靠的是拿掉随手可点的出口（无 X 钮、外点不关），不是堵死所有出口</div></div></section>
+
+<section id="check"><h2><span class="num">04</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
+<p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
+<pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">这条 grep 现在是完整的</span></div>
+<p style="margin:0">因为剩下的情况<strong>编译不过</strong>：要拦的走 <span class="mono">DestructiveButton</span>，不拦的必须写 <span class="mono">confirmExempt</span>。没有第三种写法能通过 <span class="mono">tsc</span>。<span class="mono">ActionButton</span> 透传 <span class="mono">ButtonProps</span> 自动跟着收紧——它的 <span class="mono">Omit</span> 换成了 <span class="mono">DistributiveOmit</span>，否则 TS 会把联合分支先并成一个「什么都可选」的对象再删键，<span class="mono">variant</span> 与 <span class="mono">confirmExempt</span> 的绑定当场丢失，<span class="mono">ActionButton</span> 就成了绕开契约的后门。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">grep 出来之后读什么</span></div>
+<p style="margin:0">读<strong>理由本身</strong>。<span class="mono">confirmExempt</span> 收的是散文不是布尔，就是为了让这份清单可以被人评审：「确认在流程第二步」是个理由，<span class="mono">"ok"</span> 不是。清单比错误有用——<strong>但前提是清单完整</strong>，不完整的清单比没有清单更坏。</p></div>
+</div></section>
+
+<section id="notmine"><h2><span class="num">05</span>报错查到 DS 头上时<span class="h2-meta">先做对照组</span></h2><div class="rule"></div>
+<p>这一节是 2026-08-26 一次真实误判的产物，写在这里是因为<strong>它会再发生</strong>。</p>
+<div class="note danger" style="font-size:1rem">消费端报来一条 React key 警告，追进 DS 的构建产物，看到 <span class="mono">Section</span> 用的是 <span class="mono">jsx</span> 而不是 <span class="mono">jsxs</span>，结论是「根因在 DS，改一个字符就行」，并登记了技术债等 DS 修。<strong>结论是错的，而链条讲得通——这正是它值得记下来的原因。</strong></div>
+<div class="tw"><table>
+<thead><tr><th>对照组</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td><span class="mono">&lt;Section&gt;{a}{b}{c}&lt;/Section&gt;</span> 静态多孩子</td><td><span class="tag t-ok">不报警</span></td></tr>
+<tr><td>中间层拼数组 → 交给 <span class="mono">Section</span></td><td>报警</td></tr>
+<tr><td>中间层拼数组 → 交给<strong>裸 <span class="mono">&lt;div&gt;</span></strong>（DS 完全不参与）</td><td><strong>同样报警</strong></td></tr>
+<tr><td>中间层改用带 key 的 Fragment → 交给 <span class="mono">Section</span></td><td>不报警</td></tr>
+</tbody></table></div>
+<p>裸 <span class="mono">&lt;div&gt;</span> 报的是同一条，所以跟 DS 无关。第一行同样关键：<strong><span class="mono">Section</span> 内部对 children 用 <span class="mono">jsx</span> 并不引发警告</strong>——静态多孩子在外层 <span class="mono">jsxs(Section, …)</span> 那一步就被标记成已校验了。这也是为什么 React 生态里成千上万个包 children 的组件不会集体刷屏。</p>
+<div class="grid g2">
+<div class="card"><div class="card-head"><span class="card-title">为什么会查到 DS 头上</span></div>
+<p>React 的警告原文点了两个名字，恰好<strong>都不是真凶</strong>：</p>
+<pre class="code"><code>Check the render method of `Section`.
+  ← 收下这个数组的件（DS 的）
+
+It was passed a child from AccountDetailPage.
+  ← 元素被创建的地方（你的页面）</code></pre>
+<p style="margin:0.8rem 0 0">真正拼出无 key 数组的<strong>中间层一个字都没被提到</strong>。顺着两个名字走，一个通向 DS，一个通向页面，中间层正好被跳过。</p></div>
+<div class="card"><div class="card-head"><span class="card-title">这条警告不该被压掉</span></div>
+<p>它指向的是真会咬人的东西。<span class="mono">[a, b].filter(Boolean)</span> 少一个成员时，后面的会落到前面的索引上，React 按索引复用实例——<strong>同类型的兄弟之间状态会串</strong>：</p>
+<pre class="code"><code>[改动前]   A:0  B:3   ← 把 B 的计数器点到 3
+[A 消失后] B:0        ← B 落到索引 0，捡了 A 那一格</code></pre>
+<p style="margin:0.8rem 0 0">DS 不会用 <span class="mono">Children.toArray</span> 之类的手法把它吃掉：那等于把你的真缺陷盖住。<strong>DS 保证的是自己不出这个形状</strong>——测试基座现在把 key 警告一律判失败，189 条用例零警告。</p></div>
+</div>
+<div class="note ok" style="margin-bottom:0"><strong>规矩：怀疑 DS 是根因时，先造一个不含 DS 的对照组。</strong>症状在对照组里照样出现，讨论就结束了；照样不出现，才轮到看 DS 的实现。这比读三层调用链快，也比读构建产物可靠——产物里的 <span class="mono">jsx</span> / <span class="mono">jsxs</span> 是编译器按调用点决定的，不是作者的选择。</div></section>
+
+
+
+  <div class="foot">Vxture Design System · 发版说明 · design-tokens 2.2.3 / design-ui 6.0.4 / design-system 9.0.4 · 2026-08-26</div>
+</main>
+</div>
+<button class="theme-btn" id="themeBtn" type="button">主题</button>
+<script>
+(function () {
+  var b = document.getElementById('themeBtn');
+  if (!b) return;
+  // Three states, matching the artifact host: no stamp = follow the system.
+  // The button cycles 系统 -> 亮 -> 暗 rather than toggling, so a reader on a
+  // dark OS can still pin light without fighting the media query.
+  var order = ['system', 'light', 'dark'];
+  var label = { system: '主题 · 跟随系统', light: '主题 · 亮', dark: '主题 · 暗' };
+  var i = 0;
+  try { var s = localStorage.getItem('vxture-ds-doc-theme'); if (s && order.indexOf(s) >= 0) i = order.indexOf(s); } catch (e) {}
+  function apply() {
+    var m = order[i];
+    if (m === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', m);
+    b.textContent = label[m];
+    try { localStorage.setItem('vxture-ds-doc-theme', m); } catch (e) {}
+  }
+  b.addEventListener('click', function () { i = (i + 1) % order.length; apply(); });
+  apply();
+})();
+</script>
+
