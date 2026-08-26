@@ -153,8 +153,22 @@ export function FullscreenProvider({
       if (shouldLock) {
         lockScroll();
       } else {
-        // 确保上次残留的锁定状态被清除
-        isScrollLockedRef.current = false;
+        /* 这一次不锁——**而上一次可能锁着**。
+         *
+         * 一页上有多个可全屏面板时，从 A（锁滚动）直接切到 B（不锁）是常见路径
+         * （`toggle` 换 id 就是切换，不是先退出）。此前这里写的是
+         * `isScrollLockedRef.current = false`，注释说「确保上次残留的锁定状态被
+         * 清除」——清除的却是**记号而不是锁**：body 上的 `overflow: hidden` 还在，
+         * 只是没人记得它是谁上的了，于是退出时 `unlockScroll()` 拒绝还原。
+         *
+         * 结果是 A → B → 退出之后整页滚不动，而且离病因很远：用户只会觉得
+         * 「关掉全屏以后页面卡住了」。2026-08-26 由变异测试查到（那条变异不变红，
+         * 追下去才发现不是测试弱，是这一支本身就不对）。
+         *
+         * 真的解锁：B 不要这把锁，那就把它还回去。unlockScroll 自己带幂等判断，
+         * 上一次没锁时这里是空操作。
+         */
+        unlockScroll();
       }
 
       setState({ isFullscreen: true, targetId: id, mode: targetMode });
@@ -165,6 +179,7 @@ export function FullscreenProvider({
       isNativeSupported,
       enterNativeFullscreen,
       lockScroll,
+      unlockScroll,
     ],
   );
 
