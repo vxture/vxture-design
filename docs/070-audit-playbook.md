@@ -222,31 +222,28 @@ gh api  run    →  status=queued
 
 |            | design-ui | design-system | **全仓（发布出去的代码）** |
 | ---------- | --------- | ------------- | -------------------------- |
-| 行覆盖     | 83.9%     | **31.6%**     | **71.7%**                  |
-| 分支覆盖   | 85.7%     | **10.8%**     | **61.0%**                  |
-| 未覆盖分支 | 129 / 903 | **396 / 444** | **525 / 1347**             |
+| 行覆盖     | 83.9%     | **64.9%**     | **79.5%**                  |
+| 分支覆盖   | 85.7%     | **42.1%**     | **71.4%**                  |
+| 未覆盖分支 | 129 / 903 | **257 / 444** | **386 / 1347**             |
 
 指标名与 `how` 都已带上包名，并新增「全仓」两行——**唯一诚实的总数**。
 
 #### 伞包已铺的与未铺的
 
-2026-08-26 补齐测试基座（vitest 配置 / setup / `tests` 进 type-check），已铺两批：
+2026-08-26/27 补齐测试基座（vitest 配置 / setup / `tests` 进 type-check），已铺三批：
 
-| 文件                                   | 状态                  | 未覆盖分支 |
-| -------------------------------------- | --------------------- | ---------- |
-| `theme/script.ts`                      | ✅ 100%               | 0          |
-| `theme/ThemeProvider.tsx`              | ✅ 行 100% / 分支 82% | 5 / 28     |
-| `theme/fontSizePreference.ts`          | ✅ 行 100% / 分支 83% | 5 / 29     |
-| `theme/boot-splash.tsx`                | ✅ 行 100%            | 1 / 2      |
-| `density/densityConfig.ts`             | ✅ 100%               | 0          |
-| **`components/shell/ShellChrome.tsx`** | ❌ 0%                 | **164**    |
-| `components/shell/ShellPanel.tsx`      | ❌ 0%                 | 96         |
-| `components/shell/ShellSidebarNav.tsx` | ❌ 0%                 | 63         |
-| `components/shell/ShellSearchBox.tsx`  | ❌ 0%                 | 44         |
-| `components/shell/ShellBootScreen.tsx` | ❌ 0%                 | 9          |
-| `components/shell/ShellLauncher.tsx`   | ❌ 0%                 | 9          |
+| 文件                                                         | 状态       | 未覆盖分支   |
+| ------------------------------------------------------------ | ---------- | ------------ |
+| `theme/script.ts` · `density/densityConfig.ts`               | ✅ 100%    | 0            |
+| `theme/ThemeProvider.tsx`                                    | ✅ 行 100% | 5 / 28       |
+| `theme/fontSizePreference.ts`                                | ✅ 行 100% | 5 / 29       |
+| `components/shell/ShellSearchBox.tsx`                        | ✅ 行 86%  | 6 / 44       |
+| `components/shell/ShellBootScreen.tsx` · `ShellLauncher.tsx` | ✅ 100%    | 0            |
+| `components/shell/ShellChrome.tsx`                           | 🔶 行 60%  | **81 / 164** |
+| **`components/shell/ShellPanel.tsx`**                        | ❌ 0%      | **96**       |
+| **`components/shell/ShellSidebarNav.tsx`**                   | ❌ 0%      | **63**       |
 
-**下一批是 shell 族**，385 条分支全在这六件里。`ShellChrome` 一件 164 条，比 design-ui 任何单个文件都大（那边最大的 `DataTable` 是 122）。
+**下一批**：`ShellPanel`（96）+ `ShellSidebarNav`（63）+ `ShellChrome` 剩下的 81 条——那 81 条集中在三个 Popover 件（`ShellLocaleSwitcher` / `ShellPreferencePanel` / `ShellUserMenu`），与已铺的部分是同一族，可以一起打。
 
 #### design-ui 剩余（建议不追）
 
