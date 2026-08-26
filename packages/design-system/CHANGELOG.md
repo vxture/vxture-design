@@ -5,6 +5,13 @@
 
 ---
 
+## 9.0.4 — 2026-08-26
+
+跟随 `@vxture/design-ui` 6.0.4（patch，050 §2「改 provider」）。
+
+- `FullscreenProvider` 的卸载清理不再在每次进出全屏时误触发；原生模式退出不再
+  重复调用 `exitFullscreen()`。详见 design-ui 6.0.4。
+
 ## 9.0.3 - 2026-08-26
 
 跟随 design-ui 6.0.3（patch 传导，050 §2），tokens 不变。

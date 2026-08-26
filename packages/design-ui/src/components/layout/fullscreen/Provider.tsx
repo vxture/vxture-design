@@ -254,17 +254,40 @@ export function FullscreenProvider({
     };
   }, [state.isFullscreen, state.mode, unlockScroll]);
 
-  /** 组件卸载时清理 */
+  /**
+   * 组件卸载时清理。
+   *
+   * ⚠ **依赖数组必须是空的**，否则它就不是「卸载时」清理。
+   *
+   * 原先写的是 `[state.isFullscreen, state.mode, unlockScroll, exitNativeFullscreen]`
+   * ——effect 的清理在**每次依赖变化时**都会跑一遍，而 `state.isFullscreen` 恰恰
+   * 每次进出全屏都变。于是：
+   *
+   *   · 退出时这里先跑一次清理（那时旧的 state.isFullscreen 还是 true），
+   *     把 `exitFullscreen` 里那次 `unlockScroll()` 变成了多余的
+   *   · 原生模式下退出会**调两次** `exitNativeFullscreen()`
+   *   · 注释说的和代码做的不是一回事
+   *
+   * 2026-08-26 由变异测试查到：把 `exitFullscreen` 里的 `unlockScroll()` 删掉，
+   * 测试**照样绿**——追下去才发现是这个 effect 在背后兜着。
+   *
+   * 空依赖要读最新状态，所以 state 走 ref——同步放在无依赖 effect 里，不在渲染期写 ref。
+   */
+  const cleanupRef = useRef({ state, unlockScroll, exitNativeFullscreen });
+  useEffect(() => {
+    cleanupRef.current = { state, unlockScroll, exitNativeFullscreen };
+  });
   useEffect(() => {
     return () => {
-      if (state.isFullscreen) {
-        unlockScroll();
-        if (state.mode === "native") {
-          exitNativeFullscreen();
+      const latest = cleanupRef.current;
+      if (latest.state.isFullscreen) {
+        latest.unlockScroll();
+        if (latest.state.mode === "native") {
+          latest.exitNativeFullscreen();
         }
       }
     };
-  }, [state.isFullscreen, state.mode, unlockScroll, exitNativeFullscreen]);
+  }, []);
 
   // ─── Context Value ─────────────────────────────────────────────────────────
 
