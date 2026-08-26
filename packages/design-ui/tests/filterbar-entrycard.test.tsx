@@ -118,11 +118,10 @@ describe("FilterBar · 右段顺序是契约", () => {
   });
 });
 
-describe("EntryCard · 它是一张链接卡，不是按钮卡", () => {
+describe("EntryCard · 三种形态，判据是能不能点", () => {
   /**
-   * 与 MetricCard 的分工：MetricCard 报数，EntryCard **引路**——所以它整卡可点，
-   * 渲染成 <a>。正确用法是给 href：那样它才有 link 角色、才在 Tab 序里、
-   * Enter 才触发。
+   * 与 MetricCard 的分工：MetricCard 报数，EntryCard **引路**——所以它整卡可点。
+   * 但「可点」有两种来源（href 与 onClick），此前只有第一种是真的可用。
    */
   it("给了 href：是链接、可聚焦、Enter 能进", async () => {
     const user = userEvent.setup();
@@ -131,7 +130,6 @@ describe("EntryCard · 它是一张链接卡，不是按钮卡", () => {
       <EntryCard
         icon="database"
         title="模型服务"
-        description="d"
         href="/services"
         onClick={onClick}
       />,
@@ -144,25 +142,68 @@ describe("EntryCard · 它是一张链接卡，不是按钮卡", () => {
   });
 
   /**
-   * ⚠ 已知陷阱，本条钉的是**现状**不是理想：只给 onClick 不给 href 时，
-   * <a> 没有 link 角色、不在 Tab 序里——**鼠标点得到，键盘进不去**，而卡片
-   * 的样式是 cursor-pointer + interactive，看上去完全就是个可点的东西。
+   * 6.0.3 修的那条：`<a>` 没有 href 就**没有角色、不进 Tab 序**——鼠标点得到、
+   * 键盘进不去，而卡的样式是 cursor-pointer，看上去完全就是个可点的东西。
    *
-   * 这条测试存在的意义是：将来若给 EntryCard 补上「无 href 时降级成 button」
-   * 或加运行时警告，这里会红，提醒改测试的人这是**有意的行为变更**。
+   * 修法是补上按钮语义。这条测试此前钉的是「现状」（查不到任何角色），现在
+   * 钉的是修好之后。
    */
-  it("只给 onClick 不给 href：没有角色、进不了 Tab 序（现状）", () => {
+  it("只给 onClick：补上按钮语义，键盘进得去", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<EntryCard icon="database" title="模型服务" onClick={onClick} />);
+    const card = screen.getByRole("button", { name: /模型服务/ });
+    card.focus();
+    expect(card).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(onClick).toHaveBeenCalledTimes(1);
+    await user.keyboard(" ");
+    expect(onClick).toHaveBeenCalledTimes(2);
+  });
+
+  it("只给 onClick 时，鼠标那条路照旧", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<EntryCard icon="database" title="模型服务" onClick={onClick} />);
+    await user.click(screen.getByRole("button", { name: /模型服务/ }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * **卡内不该再嵌控件**，所以这里不测「嵌了会怎样」，只钉边界。
+   *
+   * EntryCard 整卡就是那个控件——在 `<a>` 里嵌 `<button>` 本身就是无效 HTML，
+   * 读屏对嵌套控件的行为也没有统一约定。需要「一行数据 + 行内操作」的场景用
+   * `ListCard` / `MetricListCard`，它们有明确的 actions 槽并且拦了冒泡。
+   *
+   * 与 MetricListCard 的区别正在这里：那件的契约里有 actions，所以它**必须**
+   * 处理；本件没有，替一种它不支持的用法发明机制只会让契约变模糊。
+   */
+  it("children 是内容不是控件槽——卡本身就是那个控件", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
     render(
-      <EntryCard
-        icon="database"
-        title="模型服务"
-        description="d"
-        onClick={() => undefined}
-      />,
+      <EntryCard icon="database" title="模型服务" onClick={onClick}>
+        <span>附加说明</span>
+      </EntryCard>,
+    );
+    const card = screen.getByRole("button", { name: /模型服务/ });
+    expect(card).toHaveTextContent("附加说明");
+    // 点内容区就是点卡
+    await user.click(screen.getByText("附加说明"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  /** 两个都没有 → 它就不可点，**别再画成可点的样子**。 */
+  it("既没 href 也没 onClick：没有角色，也不摆出可点的样子", () => {
+    const { container } = render(
+      <EntryCard icon="database" title="模型服务" description="d" />,
     );
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
-    expect(screen.getByText("模型服务")).toBeInTheDocument();
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.className).not.toContain("cursor-pointer");
+    expect(root.className).not.toContain("hover:bg-primary-muted");
   });
 
   /** 色块底的图标是**记号**不是信息——读屏念它只会多一句噪声。 */
