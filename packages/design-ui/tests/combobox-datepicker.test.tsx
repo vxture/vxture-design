@@ -97,7 +97,7 @@ describe("DatePicker · 可清空是契约", () => {
     await user.click(within(grid).getByRole("button", { name: /August 20th/ }));
 
     expect(onValueChange).toHaveBeenCalledTimes(1);
-    expect(onValueChange.mock.calls[0][0]).toBeUndefined();
+    expect(onValueChange.mock.calls[0]![0]).toBeUndefined();
   });
 
   it("没选时出 placeholder，选了出格式化日期", () => {

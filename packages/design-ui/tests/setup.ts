@@ -45,6 +45,16 @@ beforeAll(() => {
     Element.prototype.scrollIntoView = () => {};
   }
 
+  /* elementFromPoint：input-otp 在一个定时器里用它判断「光标现在压在哪一格」。
+     jsdom 没有这个方法，而调用点在 setTimeout 里——抛出来的是**未捕获异常**，
+     不会让哪条用例变红，只让整个进程以非零码退出。表现是「用例全过，命令却
+     失败」，最容易被当成 CI 抽风。
+
+     返回 null 是诚实的：jsdom 不做布局，任何一点上都没有元素。 */
+  if (!document.elementFromPoint) {
+    document.elementFromPoint = () => null;
+  }
+
   /* matchMedia：密度/主题相关的 hook 会读。 */
   if (!globalThis.matchMedia) {
     globalThis.matchMedia = ((query: string) => ({

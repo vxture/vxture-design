@@ -29,7 +29,7 @@ describe("DataTable · 三态一次定齐", () => {
    */
   it("加载态出骨架行，行数就是 loadingRows，且对读屏隐藏", () => {
     render(<DataTable<Row> {...base} rows={[]} loading loadingRows={3} />);
-    const body = screen.getAllByRole("rowgroup", { hidden: true })[1];
+    const body = screen.getAllByRole("rowgroup", { hidden: true })[1]!;
     const skeletons = within(body).getAllByRole("row", { hidden: true });
     expect(skeletons).toHaveLength(3);
 
@@ -127,7 +127,7 @@ describe("DataTable · 选择态受控", () => {
         onSelectionChange={onSelectionChange}
       />,
     );
-    await user.click(screen.getAllByRole("checkbox")[0]);
+    await user.click(screen.getAllByRole("checkbox")[0]!);
     expect(onSelectionChange).toHaveBeenCalledWith(["a", "b"]);
   });
 });

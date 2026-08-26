@@ -145,7 +145,9 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
    * 后者被内层 svg 自带的属性满足，把这一层拿掉也不变红。
    */
   it("图标那一层对读屏器隐藏", () => {
-    const { container } = render(<SectionHeader title="标题" icon="gear" />);
+    const { container } = render(
+      <SectionHeader title="标题" icon="settings" />,
+    );
     const wrap = container.firstElementChild?.firstElementChild as HTMLElement;
     expect(wrap.querySelector("svg")).not.toBeNull();
     expect(wrap).toHaveAttribute("aria-hidden", "true");
@@ -226,7 +228,7 @@ describe("PanelCard · 语气只染顶缘", () => {
         title="产品排行"
         titleSuffix={<span>口径</span>}
         description="近 30 天"
-        icon="gear"
+        icon="settings"
         action={<button>详情</button>}
       >
         <p>内容</p>
@@ -380,7 +382,7 @@ describe("ViewHeader · 页面级标题", () => {
       <ViewHeader
         title="租户详情"
         description="一句话"
-        icon="gear"
+        icon="settings"
         secondary={<span>运行中</span>}
         action={<button>编辑</button>}
       />,
@@ -396,7 +398,9 @@ describe("ViewHeader · 页面级标题", () => {
 
   /** 图标是装饰，不进无障碍树——标题已经把这一页是什么说清楚了。 */
   it("图标对读屏器隐藏", () => {
-    const { container } = render(<ViewHeader title="租户详情" icon="gear" />);
+    const { container } = render(
+      <ViewHeader title="租户详情" icon="settings" />,
+    );
     const wrap = container.querySelector('[aria-hidden="true"]') as HTMLElement;
     expect(wrap.querySelector("svg")).not.toBeNull();
   });
