@@ -17,7 +17,7 @@ export const themeBootstrapScript = `
   try {
     var saved = localStorage.getItem('${THEME_CONSTANTS.STORAGE_KEY}') || '${THEME_CONSTANTS.DEFAULT_THEME}';
     var isDark = saved === 'dark' || (saved === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.classList.toggle('${THEME_CONSTANTS.DARK_CLASS}', isDark);
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
   } catch (_) {}
 })();

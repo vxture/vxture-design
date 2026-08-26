@@ -83,33 +83,68 @@
     },
     {
       "key": "测试 · 文件数",
-      "value": 29,
+      "value": 31,
       "how": "packages/ 与 scripts/ 下的 *.test.* / *.spec.*"
     },
     {
-      "key": "覆盖率 · 行%",
+      "key": "覆盖率 · design-ui 行%",
       "value": 83.9,
-      "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-ui test:coverage 后读它的 json-summary)"
     },
     {
-      "key": "覆盖率 · 语句%",
+      "key": "覆盖率 · design-ui 语句%",
       "value": 83.58,
-      "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-ui test:coverage 后读它的 json-summary)"
     },
     {
-      "key": "覆盖率 · 分支%",
+      "key": "覆盖率 · design-ui 分支%",
       "value": 85.71,
-      "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-ui test:coverage 后读它的 json-summary)"
     },
     {
-      "key": "覆盖率 · 函数%",
+      "key": "覆盖率 · design-ui 函数%",
       "value": 77.6,
-      "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-ui test:coverage 后读它的 json-summary)"
     },
     {
-      "key": "覆盖率 · 零覆盖文件",
+      "key": "覆盖率 · design-ui 零覆盖文件",
       "value": 22,
       "how": "从没被任何用例执行过的文件数"
+    },
+    {
+      "key": "覆盖率 · design-system 行%",
+      "value": 10.17,
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
+    },
+    {
+      "key": "覆盖率 · design-system 语句%",
+      "value": 9.58,
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
+    },
+    {
+      "key": "覆盖率 · design-system 分支%",
+      "value": 5.4,
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
+    },
+    {
+      "key": "覆盖率 · design-system 函数%",
+      "value": 9.24,
+      "how": "vitest v8 覆盖率(pnpm --filter @vxture/design-system test:coverage 后读它的 json-summary)"
+    },
+    {
+      "key": "覆盖率 · design-system 零覆盖文件",
+      "value": 8,
+      "how": "从没被任何用例执行过的文件数"
+    },
+    {
+      "key": "覆盖率 · 全仓 行%",
+      "value": 66.64,
+      "how": "两个包的 covered/total 相加再算——**发布出去的代码的真实数**（811/1217）"
+    },
+    {
+      "key": "覆盖率 · 全仓 分支%",
+      "value": 59.24,
+      "how": "两个包的 covered/total 相加再算——**发布出去的代码的真实数**（798/1347）"
     },
     {
       "key": "预览面 · 条目数",
