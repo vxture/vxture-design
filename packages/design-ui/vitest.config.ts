@@ -24,5 +24,29 @@ export default defineConfig({
     /* 每个用例后自动清 DOM。不清的话上一条用例留下的 portal 节点会被下一条
        的 getByRole 找到——而且是**间歇性**的，取决于用例顺序。 */
     restoreMocks: true,
+    /*
+     * 覆盖率不设阈值门槛（thresholds），这是有意的。
+     *
+     * 阈值会立刻催生「为过线而写的测试」——断言一个必然成立的东西，行数涨了、
+     * 什么都没钉住。本仓这一轮的判据始终是「把缺陷放回去，测试红不红」，那件事
+     * 覆盖率量不了。
+     *
+     * 它在这里的作用只有一个：**回答「哪些代码从没被执行过」**。此前判断「测什么」
+     * 靠的是 CHANGELOG 里的缺陷记录（好启发）与「件名有没有出现在测试里」（坏
+     * 代理——Button 出现只是因为 DialogForm 渲染了它）。数字进基线快照，跨轮可比。
+     */
+    coverage: {
+      provider: "v8",
+      reporter: ["text-summary", "json-summary", "lcov"],
+      reportsDirectory: "./coverage",
+      include: [
+        "src/components/**",
+        "src/icons/**",
+        "src/utils/**",
+        "src/hooks/**",
+      ],
+      exclude: ["**/*.types.ts", "src/components/**/index.ts"],
+      all: true,
+    },
   },
 });

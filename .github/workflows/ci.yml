@@ -53,8 +53,10 @@ jobs:
 
       # 组件行为测试。守卫自测证明仪器活着，这一条测的是件本身跑起来对不对
       # ——两者补的不是同一个洞。
-      - name: Component tests
-        run: pnpm test
+      # 带覆盖率跑：不设阈值门槛（阈值会催生「为过线而写的测试」），
+      # 只为把「哪些代码从没被执行过」这个数留在 CI 日志里。
+      - name: Component tests (with coverage)
+        run: pnpm --filter @vxture/design-ui test:coverage
 
   preview-build:
     name: preview-build

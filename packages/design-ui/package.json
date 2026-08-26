@@ -1,6 +1,6 @@
 {
   "name": "@vxture/design-ui",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "Vxture 设计系统的组件层：基础组件、平台图案、图标与 hook。",
   "license": "UNLICENSED",
   "private": false,
@@ -44,7 +44,8 @@
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",
@@ -96,6 +97,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "@typescript-eslint/parser": "^8.46.1",
     "@vitejs/plugin-react": "^6.1.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "jsdom": "^30.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

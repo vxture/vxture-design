@@ -118,6 +118,42 @@ for (const r of ["packages", "scripts"]) {
 }
 add("测试 · 文件数", tests, "packages/ 与 scripts/ 下的 *.test.* / *.spec.*");
 
+// ── 覆盖率 ────────────────────────────────────────────────────────────────
+/*
+ * 读 vitest 的 json-summary。**没跑过 test:coverage 就不报数**，而不是报 0——
+ * 「没测过」与「没量过」是两件事，混成同一个数字正是这一轮反复栽的那个坑。
+ *
+ * 为什么必须量:此前判断「还差什么没测」靠的是「件名有没有出现在测试里」,
+ * 那是个会说谎的代理——Button 出现在测试里只因为 DialogForm 渲染了它。第一次
+ * 真量出来:语句 47.3%,而且 46 个文件是 0%、1–40% 之间只有 1 个。分布是两极的,
+ * 说明剩下的活是「给这些补第一条测试」不是「加深已有的」。
+ *
+ * 更要紧的是它揪出了一整类被漏掉的东西:0% 榜首几个全是 hooks
+ * (useListPagination / useBreakpoint / useFullscreen …)——它们从来不在「件名」
+ * 清单里,因为不是组件。纯逻辑,最便宜也最该测。
+ */
+const COVERAGE_SUMMARY = "packages/design-ui/coverage/coverage-summary.json";
+if (existsSync(path.join(ROOT, COVERAGE_SUMMARY))) {
+  const cov = await json(COVERAGE_SUMMARY);
+  const how = "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)";
+  for (const [key, label] of [
+    ["lines", "行"],
+    ["statements", "语句"],
+    ["branches", "分支"],
+    ["functions", "函数"],
+  ]) {
+    add(`覆盖率 · ${label}%`, cov.total?.[key]?.pct ?? "—", how);
+  }
+  const files = Object.entries(cov).filter(([k]) => k !== "total");
+  add(
+    "覆盖率 · 零覆盖文件",
+    files.filter(([, v]) => v.lines?.pct === 0).length,
+    "从没被任何用例执行过的文件数",
+  );
+} else {
+  add("覆盖率 · 行%", "未量", "先跑 pnpm test:coverage");
+}
+
 // ── 预览面 ──────────────────────────────────────────────────────────────
 const reg = await readFile(
   path.join(ROOT, "packages/design-preview/src/preview/registry.tsx"),

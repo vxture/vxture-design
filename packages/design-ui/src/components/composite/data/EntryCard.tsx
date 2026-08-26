@@ -37,6 +37,23 @@ const EntryCard = React.forwardRef<HTMLAnchorElement, EntryCardProps>(
     { className, style, icon, title, meta, description, children, ...props },
     ref,
   ) {
+    /*
+     * 三种形态，判据是**它到底能不能点**：
+     *
+     *   有 href            → 天然的链接。有 link 角色、在 Tab 序里、Enter 触发
+     *   只有 onClick       → <a> 没有 href 就**没有角色、不进 Tab 序**：鼠标点得到、
+     *                        键盘进不去，而卡的样式是 cursor-pointer，看上去完全
+     *                        就是个可点的东西。这里补上按钮语义：role / tabIndex /
+     *                        Enter 与 Space
+     *   两个都没有         → 它就不可点，**别再画成可点的样子**。此前无条件挂
+     *                        cursor-pointer 与 hover 变色，等于骗人
+     *
+     * 2026-08-26 由审计的第二轮补上。此前那一版只用测试钉住了「现状」，没修。
+     */
+    const isLink = props.href !== undefined;
+    const onClick = props.onClick;
+    const clickable = isLink || onClick !== undefined;
+
     return (
       <a
         ref={ref}
@@ -46,9 +63,28 @@ const EntryCard = React.forwardRef<HTMLAnchorElement, EntryCardProps>(
           "flex items-start gap-lg p-xl text-foreground",
           veil.strong,
           interactive,
-          "cursor-pointer no-underline hover:bg-primary-muted/70",
+          "no-underline",
+          clickable && "cursor-pointer hover:bg-primary-muted/70",
           className,
         )}
+        {...(!isLink && onClick
+          ? {
+              role: "button",
+              tabIndex: 0,
+              /* 这里**不需要**「只处理落在卡本身的按键」那道判定（MetricListCard
+                 6.0.2 加过一条）：那件的契约里有 actions 槽，卡内本来就会有别的
+                 控件；本件整卡就是控件，而 `<a>` 里嵌交互元素是无效 HTML，所以
+                 keydown 只可能落在卡自己身上。加一道没有任何输入能触发的判定，
+                 读起来像在防什么，实际是死代码。 */
+              onKeyDown: (event: React.KeyboardEvent<HTMLAnchorElement>) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                onClick(
+                  event as unknown as React.MouseEvent<HTMLAnchorElement>,
+                );
+              },
+            }
+          : {})}
         {...props}
       >
         <span
