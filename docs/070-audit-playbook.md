@@ -5,7 +5,7 @@
 第一轮的结论写在 Artifact 的「审计报告」里。**这一份写的是怎么做那一轮，以及
 那一轮的方法在哪里失灵。**
 
-## 1. 四条不要相信
+## 1. 六条不要相信
 
 第一轮踩到的，按代价排：
 
@@ -79,6 +79,47 @@ It was passed a child from AccountDetailPage.  ← 元素被创建的地方（�
 计数器在 A 消失后变回 `B:0`，它捡了 A 的那一格）。DS 若用 `Children.toArray` 之类
 的手法把警告吃掉，就是把消费端的真缺陷盖住。DS 该做的是保证自己不出这个形状——
 已落成 `tests/setup.ts` 里的 key 守卫，整套 189 条用例目前零警告。
+
+### 1.5 不要接受一个太顺理成章的解释
+
+2026-08-26 GitHub Actions 出了一次 critical 级故障，我们一个 PR 的 CI run 卡在 `queued`。状态页说「积压正在消化，一小时内完成」——**这个解释太合身了**，于是我照着它等，一等 142 分钟。
+
+真正的判据一直摆在那儿，一条 API 就查得到：
+
+```
+status=queued   updated_at = created_at = 15:11:31Z   ← 142 分钟没被碰过
+```
+
+**孤儿 run 与排队中的 run 长得一模一样，都是 `queued`。** 区分它们的是 `updated_at`：真在排队的 run 会被反复更新（分片调度、优先级重算都会写它），孤儿的 `updated_at` 永远等于 `created_at`。
+
+更能说明问题的是 GitHub 自己前后矛盾：
+
+```
+gh run cancel  →  "Cannot cancel a workflow run that is completed"
+gh api  run    →  status=queued
+```
+
+取消接口说它已完成，查询接口说它在排队——**两边对不上就是状态坏了**，那一刻就该动手，而不是继续等。
+
+`gh pr close` + `gh pr reopen` 重新触发 `pull_request` 事件（默认 activity types 含 `reopened`），**20 秒后 in_progress**，2 分 9 秒跑完。队列对我们一直是通的。
+
+> **一个平台故障正在进行时，「还没轮到我」是个太容易接受的解释。**
+> 它解释得了现象，但它没有被验证过——而验证它只要一个字段。
+>
+> 这与 §1.1 是同一条：**「说得通」不等于「查过了」。**
+
+顺带一提：拆开这个僵局的不是我的排查，是消费侧一句「其他任务线都好了」。**外部对照组**——同 §1.4 是一条判据。
+
+### 1.6 也不要把红当成「查出问题了」
+
+本机跑 `pnpm format:check` 恒红，56 个文件不合格式，其中大半是从没碰过的。
+
+查下来**唯一差异是行尾**：`core.autocrlf=true` 让 Windows 磁盘上是 CRLF，而 prettier 默认 `endOfLine: "lf"`。把同一个文件转成 LF 再检就通过。CI 跑在 Linux 上、文件是 LF，所以历来都过。
+
+> **本机的 `pnpm format:check` 不是信号。**
+> 复现 CI 的其余每一步都有效：`build` / `type-check` / `lint` / `guardrails` / `test:guardrails` / 测试 / `build:preview`。只有这一条要跳过。
+
+§1.1 说的是不要把绿当成查过；这一条是它的反面——**一个恒红的检查同样什么都没查**，而且更费时间：它每次都要求你重新说服自己「这次也是行尾问题」。
 
 ## 2. 顺序
 
