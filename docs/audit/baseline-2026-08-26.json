@@ -118,7 +118,7 @@
     },
     {
       "key": "文档 · Artifact 底本",
-      "value": 4,
+      "value": 6,
       "how": "docs/artifacts/*.html（不含参照物）"
     }
   ]
