@@ -5,6 +5,41 @@
 
 ---
 
+## 6.0.7 — 2026-08-26
+
+修一处「看起来在防、实际没防住」的守卫（patch，050 §2）。
+
+- **修复：`InputOTPSlot` 脱离 `<InputOTP>` 单独渲染时直接抛。**
+
+  ```
+  TypeError: Cannot read properties of undefined (reading '0')
+  ```
+
+  原实现写的是 `inputOTPContext?.slots[index]`——那个 `?.` 是想兜住「没有上下文」
+  的，但**它兜不住**：上游的 `OTPInputContext` 默认值是 `createContext({})`，
+  一个**真值空对象**。于是 `?.` 永远不会短路，而 `.slots` 必然是 `undefined`。
+
+  这与本仓查过的 6 处死正则同一类：**一个从来没生效过的守卫，比没有守卫更糟**
+  ——它让读代码的人以为这里已经防过了。
+
+  改法：可选链一路点到底（`?.slots?.[index]`）。
+
+- 新增表单族用例 35 条（`Field` 一家 / `InputGroup` / `InputOTP` /
+  `SegmentedControl`）与反馈族 28 条（`Spinner` / `Avatar` /
+  `ResultPageTemplate`）。行覆盖 79.18% → 83.69%，分支覆盖 81.39% → 84.93%。
+
+### 测试基座的两处修补（不影响发布产物）
+
+- **`tests/` 此前从来没被类型检查过**：`tsconfig.json` 的 `include` 只有 `src`。
+  接上去之后一次报出 11 条真错误，其中 5 条是无效的图标名（`gear` 不在词表里，
+  写在源码里会编译失败，写在用例里一路绿到底）。这条缺口的代价不是假绿——用例
+  照样跑、照样通过——而是**用例可以断言一个类型上根本不成立的用法**。已全部修掉，
+  `tests` 现已纳入 `pnpm type-check`。
+
+- 补 `document.elementFromPoint` 桩。`input-otp` 在定时器里调它，jsdom 没有——
+  抛出来的是**未捕获异常**，不会让哪条用例变红，只让整个进程以非零码退出。
+  表现是「用例全过，命令却失败」，最容易被当成 CI 抽风。
+
 ## 6.0.6 — 2026-08-26
 
 修一处滚动锁泄漏（patch，050 §2）。

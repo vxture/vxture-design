@@ -5,6 +5,13 @@
 
 ---
 
+## 9.0.7 — 2026-08-26
+
+跟随 `@vxture/design-ui` 6.0.7（patch，050 §2）。
+
+- `InputOTPSlot` 脱离 `<InputOTP>` 单独渲染不再抛 `TypeError`。调用方无需改动
+  ——正常用法（格子放在 `<InputOTP>` 里）此前此后都一样。详见 design-ui 6.0.7。
+
 ## 9.0.6 — 2026-08-26
 
 跟随 `@vxture/design-ui` 6.0.6（patch，050 §2「改 provider」）。

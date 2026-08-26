@@ -216,9 +216,12 @@ describe("useControllableState · 受控与非受控", () => {
    */
   it("受控期间不污染内部状态——撤掉 value 后回到 defaultValue", () => {
     const { result, rerender } = renderHook(
-      ({ value }: { value?: string }) =>
+      // `value?: string | undefined` 而不是 `value?: string`：本仓开了
+      // exactOptionalPropertyTypes，后者不接受**显式**传 undefined——而这条用例
+      // 的整个意思就是「显式撤掉 value」。
+      ({ value }: { value?: string | undefined }) =>
         useControllableState({ value, defaultValue: "初始" }),
-      { initialProps: { value: "受控值" as string | undefined } },
+      { initialProps: { value: "受控值" } as { value?: string | undefined } },
     );
     expect(result.current[0]).toBe("受控值");
 

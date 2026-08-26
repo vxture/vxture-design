@@ -62,7 +62,19 @@ export function InputOTPSlot({
   ...props
 }: InputOTPSlotProps) {
   const inputOTPContext = React.useContext(OTPInputContext);
-  const slot = inputOTPContext?.slots[index];
+  /*
+   * `?.` 要一路点到底。
+   *
+   * 上游的 `OTPInputContext` 默认值是 `createContext({})`——一个**真值空对象**。
+   * 于是 `inputOTPContext?.slots[index]` 里的 `?.` 永远不会短路，而 `.slots` 必然
+   * 是 undefined，脱离 `<InputOTP>` 单独渲染一个格子当场抛
+   * `Cannot read properties of undefined`。
+   *
+   * 那个 `?.` 写下来是想兜住「没有上下文」这一种情况的，但它兜住的是
+   * context 为空，而这个 context 从来不为空。**看起来在防什么，实际没防住**——
+   * 与本仓查过的 6 处死正则同一类（2026-08-26 由用例查到）。
+   */
+  const slot = inputOTPContext?.slots?.[index];
 
   return (
     <div
