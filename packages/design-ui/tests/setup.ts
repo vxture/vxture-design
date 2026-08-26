@@ -59,3 +59,46 @@ beforeAll(() => {
     })) as unknown as typeof globalThis.matchMedia;
   }
 });
+
+/* ── React 的 key 警告一律当失败 ───────────────────────────────────────────
+ *
+ * 2026-08-26 opera 报来一条「Section 是数组里没有 key 的孩子的根因」，实测不是：
+ * 裸 <div> 换上去报的是同一条警告，跟 DS 没关系。真正的成因是**中间层把 props
+ * 拼成数组再当 children 传下去**，而 React 的警告原文点的两个名字里恰好没有它：
+ *
+ *   Check the render method of `Section`.        ← 收数组的那个（DS 的件）
+ *   It was passed a child from AccountDetailPage. ← 元素被创建的地方（页面）
+ *
+ * 拼数组的那一层一个字都没提，所以查的人自然会去查 Section。
+ *
+ * 这条警告本身值钱：`[a, b].filter(Boolean)` 少一个成员时，后面的会落到前面的
+ * 索引上，React 按索引复用实例——同类型的兄弟之间**状态会串**（实测 B:3 变
+ * 成 B:0，B 捡了 A 的那一格）。所以 DS 绝不能用 Children.toArray 之类的手法
+ * 把它压掉：那是把消费端的真缺陷盖住。
+ *
+ * DS 能做的是保证**自己不出这个形状**。收集而不是当场抛：在 console.error 里
+ * 抛会打断 React 自己的错误处理路径，攒到 afterEach 再判更稳。
+ *
+ * 用例自己 mock 掉 console.error 时（例如钉「缺 Provider 要抛」那条）这里看不到
+ * 东西，也不会误报。
+ */
+const KEY_WARN = /unique "key"/;
+const keyWarnings: string[] = [];
+const passThroughError = console.error;
+console.error = (...args: unknown[]) => {
+  const text = args.map(String).join(" ");
+  if (KEY_WARN.test(text)) keyWarnings.push(text);
+  passThroughError(...(args as []));
+};
+
+afterEach(() => {
+  if (keyWarnings.length > 0) {
+    const seen = keyWarnings.join("\n");
+    keyWarnings.length = 0;
+    throw new Error(
+      "这条用例触发了 React 的 key 警告。DS 内部不允许出现无 key 的元素数组——\n" +
+        "成因通常是把若干 props 拼成数组再当 children 传下去。\n\n" +
+        seen,
+    );
+  }
+});
