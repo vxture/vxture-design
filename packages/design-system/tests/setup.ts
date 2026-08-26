@@ -18,11 +18,33 @@ afterEach(() => {
   cleanup();
 });
 
+/**
+ * 逐条重置**被测代码写过的每一处**。
+ *
+ * 第一版只清了 localStorage 与两个 class/属性，结果三条字号用例串了状态——
+ * 偏好还落在 **cookie** 里（跨子域那一半），而 `data-app-ready` 是另一个用例的
+ * Provider 挂载时打上的。表现是「单跑绿、全套红」，而且红的那几条看起来毫无关系。
+ *
+ * 判据：**共享的 setup 必须重置被测代码写过的每一处**，不是「我想得起来的那几处」。
+ * 想不全就会变成用例顺序的函数。
+ */
 beforeEach(() => {
   localStorage.clear();
-  document.documentElement.className = "";
-  document.documentElement.removeAttribute("data-theme");
-  document.documentElement.style.colorScheme = "";
+  sessionStorage.clear();
+
+  // cookie：jsdom 只增不减，逐条置过期
+  for (const entry of document.cookie.split(";")) {
+    const name = entry.split("=")[0]?.trim();
+    if (name) document.cookie = `${name}=; path=/; max-age=0`;
+  }
+
+  const root = document.documentElement;
+  root.className = "";
+  root.style.colorScheme = "";
+  // 主题、密度、字号、启动占位——四处都写在 <html> 上，逐个摘干净
+  for (const attr of [...root.attributes]) {
+    if (attr.name !== "lang") root.removeAttribute(attr.name);
+  }
 });
 
 /**
