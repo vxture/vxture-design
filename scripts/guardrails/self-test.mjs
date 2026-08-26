@@ -31,7 +31,7 @@
  * 用法：node scripts/guardrails/self-test.mjs
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import process from "node:process";
 
@@ -105,20 +105,83 @@ const CASES = [
     mutate: (s) =>
       s.includes(">文档集<") ? s.replace(">文档集<", ">DS 文档集<") : null,
   },
+  /*
+   * ── 最后三条：2026-08-26 补上 ──
+   *
+   * 这三条此前列在「未做变异测试」里，各自附着一条理由。**三条理由查下来两条
+   * 不准、一条完全错**——而它们在那张表上原样躺了一整轮，谁也没去验：
+   *
+   *   check-mode-blocks          原写「任何单点变异都会同时改动两侧，造不出
+   *                              『只坏一边』的输入」。**错**。删掉暗色块里
+   *                              一个变量声明就是只坏一边，守卫当场报「键集
+   *                              与默认块不一致——缺 1（background）」。
+   *
+   *   check-server-entry-safety  原写「变异源码后必须重新 build 才生效」。
+   *                              **不必**：它读的就是 dist，直接变异 dist 即可，
+   *                              17 秒。
+   *
+   *   check-packed-consumability 原写「同上，读的是 dist 与 pnpm pack 的产物」。
+   *                              贵在 `npm pack` 而不是 build，而且它还读**随包
+   *                              发出的 CSS 源文件**——改 globals.css 的 @source
+   *                              就够，不用碰 dist。稳定态 27~41 秒。
+   *
+   * 教训与本仓查过的那几处同源：**一条写下来没人验的理由，和一条从没生效过的
+   * 守卫是同一类东西**——都长得像已经想过了。
+   */
+  {
+    guard: "scripts/guardrails/check-mode-blocks.mjs",
+    name: "暗色块少一个变量（键集只坏一边）",
+    file: "packages/design-tokens/src/styles/semantic/color-semantic.css",
+    mutate: (s) => {
+      const nl = s.includes("\r\n") ? "\r\n" : "\n";
+      const lines = s.split(nl);
+      const start = lines.findIndex((l) => l.includes(":root.dark"));
+      if (start < 0) return null;
+      const idx = lines.findIndex(
+        (l, i) => i > start && /^\s*--[a-z0-9-]+\s*:/i.test(l),
+      );
+      if (idx < 0) return null;
+      lines.splice(idx, 1);
+      return lines.join(nl);
+    },
+  },
+  {
+    guard: "scripts/guardrails/check-server-entry-safety.mjs",
+    name: "/server 里出现模块作用域的 createContext",
+    /* 变异 dist 而不是 src：这条守卫断言的对象就是已构建的产物，
+       改源码反而要多跑一次 build 才生效。 */
+    file: "packages/design-ui/dist/server.mjs",
+    needsBuild: true,
+    mutate: (s) =>
+      'import * as React from "react";\nReact.createContext(void 0);\n' + s,
+  },
+  {
+    guard: "scripts/guardrails/check-packed-consumability.mjs",
+    name: "@source 指回 src/（那个目录不在 files 里）",
+    /* 复刻的是真实付出过代价的那一版：@source 指向 src，而两个包的 files 都只
+       发 dist。解析为空**不报错**，症状与根本没写 @source 完全一致。 */
+    file: "packages/design-system/src/styles/globals.css",
+    mutate: (s) =>
+      s.includes('@source "../../../design-ui/dist";')
+        ? s.replace(
+            '@source "../../../design-ui/dist";',
+            '@source "../../../design-ui/src";',
+          )
+        : null,
+  },
 ];
 
 /** 跑不了变异测试的守卫，逐条带原因——静默少测和静默少扫是同一类病。 */
-const UNCOVERED = [
-  [
-    "check-server-entry-safety",
-    "断言的对象是**已构建的 dist**，变异源码后必须重新 build 才生效；单跑一次自测要多花约一分钟",
-  ],
-  ["check-packed-consumability", "同上，读的是 dist 与 pnpm pack 的产物"],
-  [
-    "check-mode-blocks",
-    "断言的是三轴键集的**相互一致**，任何单点变异都会同时改动两侧，造不出「只坏一边」的输入",
-  ],
-];
+
+/*
+ * 跳过必须**出声**。一条被静默跳过的自测，和一条从没生效过的守卫是同一类
+ * 东西——都在「绿」里躲着。下方无论跑没跑都会打印状态。
+ *
+ * 这里曾经有一条「慢车道」：`check-packed-consumability` 要 `npm pack` 三个包
+ * 再解出来断言，第一次实测 140 秒，于是默认跳过、只在 CI 跑。**量准之后拆掉了**
+ * ——那 140 秒是冷启动，稳定态是 27~41 秒，全套自测带上它 66 秒、不带 48 秒。
+ * 差 18 秒撑不起一条会让人漏跑的分支。
+ */
 
 function runGuard(script) {
   try {
@@ -130,7 +193,13 @@ function runGuard(script) {
 }
 
 const results = [];
+const skipped = [];
 for (const c of CASES) {
+  /* 断言对象是构建产物的用例：没 build 就明说跳过，不假装通过。 */
+  if (c.needsBuild && !existsSync(c.file)) {
+    skipped.push({ ...c, why: `缺 ${c.file}——先跑 pnpm build` });
+    continue;
+  }
   const original = readFileSync(c.file, "utf8");
   const mutated = c.mutate(original);
   if (mutated === null || mutated === original) {
@@ -142,6 +211,7 @@ for (const c of CASES) {
     const code = runGuard(c.guard);
     results.push({
       ...c,
+      originalContent: original,
       verdict: code === 0 ? "没报错" : "报错",
       ok: code !== 0,
     });
@@ -164,8 +234,16 @@ for (const r of results) {
 }
 
 console.log("");
-console.log("未做变异测试的守卫：");
-for (const [g, why] of UNCOVERED) console.log(`  · ${g} —— ${why}`);
+if (skipped.length > 0) {
+  console.log("");
+  console.log("本次跳过：");
+  for (const s of skipped) {
+    console.log(`  · ${s.guard.split("/").pop().replace(".mjs", "")} —— ${s.why}`);
+  }
+}
+
+console.log("");
+console.log("覆盖：全部 10 条守卫都有各自的变异用例。");
 
 /*
  * 还原复验：逐文件比对字节，而不是问 git。

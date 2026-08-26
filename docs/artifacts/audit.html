@@ -402,7 +402,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="card"><div class="card-head"><span class="card-title">现在能自证的部分</span></div>
 <ul style="margin:0"><li><strong>守卫会不会失效</strong>：7 条守卫各有一份已知有病的输入，<span class="mono">test:guardrails</span> 每次验一遍</li><li><strong>回归测试算不算数</strong>：每条都把缺陷放回去跑过，不红就重写</li><li><strong>基线是不是估的</strong>：<span class="mono">scripts/audit/snapshot.mjs</span> 每个指标带 <span class="mono">how</span> 字段，写明怎么测出来的</li><li><strong>文档有没有凭记忆重打</strong>：<span class="mono">check-doc-shape</span> 拿底本逐项比对</li></ul></div>
 <div class="card"><div class="card-head"><span class="card-title">仍然只能靠人</span></div>
-<ul style="margin:0"><li><strong>3 条守卫没有变异测试</strong>：两条断言的是已构建的 dist，一条的输入造不出「只坏一边」</li><li><strong>jsdom 抹平的时序</strong>：整页锁死那类竞争重现不了，只能钉机制</li><li><strong>挡位选得对不对</strong>：两个合法值里选错哪一个，机器分不出</li><li><strong>刻度选得对不对</strong>：语气六档里选 <span class="mono">warning</span> 还是 <span class="mono">danger</span>，两个都合法</li></ul></div>
+<ul style="margin:0"><li><strong>jsdom 抹不平的那些</strong>：Radix 的 <span class="mono">AvatarImage</span> 在图片加载成功前根本不进 DOM，「给没给 src」因此观察不到——那类断言只能删掉，不能假装钉住</li><li><strong>jsdom 抹平的时序</strong>：整页锁死那类竞争重现不了，只能钉机制</li><li><strong>挡位选得对不对</strong>：两个合法值里选错哪一个，机器分不出</li><li><strong>刻度选得对不对</strong>：语气六档里选 <span class="mono">warning</span> 还是 <span class="mono">danger</span>，两个都合法</li></ul></div>
 </div>
 <div class="note warn" style="margin-bottom:0"><strong>分析阶段到这里收口，剩下的是执行。</strong>两条 vulnerability 都已定性（一条连修法都是错的，见 §08），39 个零覆盖文件已按分支排好序，下一轮不需要再"查一遍"才知道从哪下手。</div>
 </section>

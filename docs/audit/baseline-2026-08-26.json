@@ -78,7 +78,7 @@
     },
     {
       "key": "守卫 · 自测覆盖",
-      "value": 7,
+      "value": 10,
       "how": "self-test.mjs 里的变异用例数"
     },
     {
