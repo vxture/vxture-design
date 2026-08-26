@@ -83,32 +83,32 @@
     },
     {
       "key": "测试 · 文件数",
-      "value": 20,
+      "value": 22,
       "how": "packages/ 与 scripts/ 下的 *.test.* / *.spec.*"
     },
     {
       "key": "覆盖率 · 行%",
-      "value": 63.54,
+      "value": 69.63,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 语句%",
-      "value": 63.16,
+      "value": 69.31,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 分支%",
-      "value": 54.7,
+      "value": 61.57,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 函数%",
-      "value": 53.31,
+      "value": 58.99,
       "how": "vitest v8 覆盖率(pnpm test:coverage 后读 json-summary)"
     },
     {
       "key": "覆盖率 · 零覆盖文件",
-      "value": 39,
+      "value": 34,
       "how": "从没被任何用例执行过的文件数"
     },
     {
