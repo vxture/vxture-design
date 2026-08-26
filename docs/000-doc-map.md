@@ -35,7 +35,7 @@
 | `050-design-system-release.md`             | 版本判据、dry run、发布顺序、tag 规则        |
 | `060-design-system.md`                     | DS 整体设计                                  |
 | `065-design-token-pipeline.md`             | token 从策略源到 CSS 的生成链路              |
-| `070-audit-playbook.md`                    | 怎么做一轮审计：顺序、分类判据、四条不要相信 |
+| `070-audit-playbook.md`                    | 怎么做一轮审计：顺序、分类判据、六条不要相信 |
 
 ### 2.2 `packages/design-system/docs/` —— 用与做的规范
 
