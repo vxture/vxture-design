@@ -1,7 +1,7 @@
 # Design System 版本发布规范
 
-版本：3.1.0
-日期：2026-08-27
+适用版本：**DS 9.0.8**
+更新：2026-08-27
 范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`publish-design-system.yml`
 
 本文定义设计包的版本判断、发布准备、dry run、真实发布与发布后验证。发布必须走 PR、CI、merge、workflow，禁止从本地直接 `pnpm publish` 到 GitHub Packages。实现文件为 `.github/workflows/publish-design-system.yml`。

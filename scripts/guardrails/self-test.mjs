@@ -105,6 +105,22 @@ const CASES = [
     mutate: (s) =>
       s.includes(">文档集<") ? s.replace(">文档集<", ">DS 文档集<") : null,
   },
+  {
+    /*
+     * 变异的是**伞包版本**而不是文档——因为真实场景就是这个方向：发版时改了
+     * package.json，六份仓内文档与六份 Artifact 底本忘了跟。反过来变异一份
+     * 文档只能证明「守卫在读那一份」，证明不了它盯的是发布这件事。
+     */
+    guard: "scripts/docs/check-doc-version.mjs",
+    name: "伞包发了新版而文档没跟",
+    file: "packages/design-system/package.json",
+    mutate: (s) => {
+      const m = s.match(/"version": "(\d+)\.(\d+)\.(\d+)"/);
+      if (!m) return null;
+      const bumped = `"version": "${m[1]}.${m[2]}.${Number(m[3]) + 1}"`;
+      return s.replace(m[0], bumped);
+    },
+  },
   /*
    * ── 最后三条：2026-08-26 补上 ──
    *
@@ -244,8 +260,32 @@ if (skipped.length > 0) {
   }
 }
 
+/*
+ * 覆盖数**算出来**，不写死。
+ *
+ * 这一行原本是字符串 "全部 10 条守卫都有各自的变异用例"。接第 11 条守卫时它
+ * 一个字都没变，照样声称 10 条全覆盖——**一个自称完整的清单比没有清单更坏**
+ * （070 §1.1 与 §5.1.4 是同一条：写下来没人验的话，坏起来和从没生效过的守卫
+ * 一模一样）。现在两边都从事实取：链条读 package.json，用例读本文件的 CASES。
+ */
+const chain = JSON.parse(readFileSync("package.json", "utf8"))
+  .scripts.guardrails.split("&&")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const covered = new Set(CASES.map((c) => c.guard));
+
 console.log("");
-console.log("覆盖：全部 10 条守卫都有各自的变异用例。");
+if (covered.size === chain.length) {
+  console.log(`覆盖：全部 ${chain.length} 条守卫都有各自的变异用例。`);
+} else {
+  console.log(
+    `覆盖：${covered.size} / ${chain.length} —— 有守卫还没有变异用例。`,
+  );
+  console.log(
+    "  一条没被变异验过的守卫，和一条从没生效过的守卫，看起来都是绿的。",
+  );
+  process.exitCode = 1;
+}
 
 /*
  * 还原复验：逐文件比对字节，而不是问 git。

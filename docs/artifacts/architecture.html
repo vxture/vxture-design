@@ -215,7 +215,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="flow">
 <div class="flow-node n-blue"><div class="fn-name">@vxture/design-tokens</div><div class="fn-desc">取值。T1 原子层镜像 Tailwind，T2 语义层是产品面。全部由脚本生成并入仓。</div></div>
 <div class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-head">▸</div></div>
-<div class="flow-node n-green"><div class="fn-name">@vxture/design-ui</div><div class="fn-desc">无状态的件。90 个组件，只认形状不认业务。不含任何 provider。</div></div>
+<div class="flow-node n-green"><div class="fn-name">@vxture/design-ui</div><div class="fn-desc">无状态的件。96 个件，只认形状不认业务。不含任何 provider。</div></div>
 <div class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-head">▸</div></div>
 <div class="flow-node n-violet"><div class="fn-name">@vxture/design-system</div><div class="fn-desc">伞包 + 运行时接线：主题 / 密度 / 字号 provider、shell、品牌样式入口。<strong>应用侧主依赖</strong>。</div></div>
 </div>
@@ -223,8 +223,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <thead><tr><th>包</th><th>版本</th><th>装什么</th><th>谁装它</th></tr></thead>
 <tbody>
 <tr><td class="mono">design-tokens</td><td class="mono">2.2.3</td><td>CSS 变量两层 + z 阶梯/密度/字号的 TS 面</td><td>只被上面两个包装</td></tr>
-<tr><td class="mono">design-ui</td><td class="mono">6.0.4</td><td>组件、图标、recipes、hooks</td><td>被伞包装</td></tr>
-<tr><td class="mono">design-system</td><td class="mono">9.0.4</td><td>把两包原样转发 + 自持的 provider / shell / 样式入口</td><td><strong>五个门户</strong></td></tr>
+<tr><td class="mono">design-ui</td><td class="mono">6.0.8</td><td>组件、图标、recipes、hooks</td><td>被伞包装</td></tr>
+<tr><td class="mono">design-system</td><td class="mono">9.0.8</td><td>把两包原样转发 + 自持的 provider / shell / 样式入口</td><td><strong>五个门户</strong></td></tr>
 <tr><td class="mono">design-preview</td><td class="mono">私有</td><td>预览面。这套系统唯一的验收面</td><td>不发布</td></tr>
 </tbody></table></div>
 <div class="note info"><strong>应用只装伞包。</strong>直接装 design-ui 就拿不到运行时接线（主题/密度/字号 provider），且版本约束不再由伞包保证——伞包对另两包钉的是<strong>精确版本</strong>而不是 caret，因为它把两包的类型原样 re-export，caret 允许消费方解析到与伞包构建时不同的次版本，在转发边界上产生类型不匹配，而这类不匹配在伞包自己的 CI 里看不见。</div></section>
@@ -235,7 +235,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p>让 base 的 <span class="mono">Button</span> 引 <span class="mono">ConfirmDestructive</span> 时出现过 <span class="mono">Button → ConfirmDestructive → AlertDialog → Button</span>。ESM 能加载循环，但 <span class="mono">const</span> 导出会撞上 TDZ，<strong>而撞不撞取决于打包器的模块顺序</strong>——这类故障不会在开发机稳定复现。</p>
 <p class="kv-v txt" style="margin:0">解法有两种：把共用的叶子（<span class="mono">buttonVariants</span>）拆成独立模块，或者让上层不引下层。6.0 选了后者——因为环只是症状，<strong>base 引 composite 本身就是方向错了</strong>。</p></div></section>
 
-<section id="layers"><h2><span class="num">03</span>件的四层<span class="h2-meta">97 个</span></h2><div class="rule"></div>
+<section id="layers"><h2><span class="num">03</span>件的四层<span class="h2-meta">96 个</span></h2><div class="rule"></div>
 <div class="tw"><table>
 <thead><tr><th>层</th><th>数量</th><th>判据</th><th>可以引</th></tr></thead>
 <tbody>
@@ -302,11 +302,12 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="kv"><div class="kv-k hi">机制陷阱</div><div class="kv-v txt"><span class="mono">DRY_RUN</span> 取的是 <span class="mono">github.event.inputs.dry_run</span>，tag 推送时它是空的 → <strong>直接真实发布</strong>。打 tag 前必须已在同一 commit 完成 dry run</div></div>
 <div class="kv"><div class="kv-k">幂等</div><div class="kv-v txt">每包各自判断该版本是否已存在，已存在即跳过；同一个 tag 重跑安全</div></div></div></section>
 
-<section id="guard"><h2><span class="num">08</span>守卫布点<span class="h2-meta">十条</span></h2><div class="rule"></div>
+<section id="guard"><h2><span class="num">08</span>守卫布点<span class="h2-meta">十一条</span></h2><div class="rule"></div>
 <p>每条守卫补一个具体盲区，头注释写明「补的是哪个盲区」与「实测抓到过什么」。<strong>那段注释是它存在的理由</strong>——删了它，这条守卫就没人知道为什么不能删。</p>
 <div class="tw"><table>
 <thead><tr><th>守卫</th><th>守在哪一层</th><th>判据形态</th></tr></thead>
 <tbody>
+<tr><td class="mono">check-doc-version</td><td>文档 → 发布</td><td>12 份文档声称的 DS 版本 == 伞包实际版本</td></tr>
 <tr><td class="mono">check-design-system</td><td>包依赖方向 · token 桥 · 消费方用法</td><td>规则集，双管辖</td></tr>
 <tr><td class="mono">check-component-classes</td><td>组件 → Tailwind</td><td>把 982 处类名喂真实编译器</td></tr>
 <tr><td class="mono">check-mode-blocks</td><td>token 的明暗/密度/字号三轴</td><td>块顺序 · 特异性 · 键集一致</td></tr>
@@ -322,7 +323,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="card"><div class="card-head"><span class="card-title">守卫也会坏，而且坏了是「绿」</span><span class="card-sub"><span class="tag t-bad">2026-08-25 查到</span></span></div>
 <p style="margin:0"><span class="mono">check-design-system.mjs</span> 里曾有 6 处字面量 <span class="mono">U+0008</span>（退格符），位置全是本该写词边界的地方——含它的正则永远匹配不上，<strong>四条检查从写下那天起就在打勾、什么都没查</strong>。修回词边界后第一次跑就报出真违规。病因是转义层被吃掉一层。<span class="mono">check-control-chars</span> 就是为这一类落成的。</p></div></section>
 
-  <div class="foot">Vxture Design System · 系统架构 · design-tokens 2.2.3 / design-ui 6.0.4 / design-system 9.0.4 · 2026-08-26</div>
+  <div class="foot">Vxture Design System · 系统架构 · DS 9.0.8 · design-tokens 2.2.3 / design-ui 6.0.8 / design-system 9.0.8 · 2026-08-27</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

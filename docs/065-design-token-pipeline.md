@@ -1,7 +1,7 @@
 # Design Token 构建规范
 
-版本：2.0.0
-日期：2026-08-27
+适用版本：**DS 9.0.8**
+更新：2026-08-27
 范围：`@vxture/design-tokens` 的 T1/T2 两层、`scripts/design-tokens/*` 生成器
 
 本文定义 token 的**唯一构建路径**与权威边界。层级的对外定义见包内
