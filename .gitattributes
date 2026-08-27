@@ -1,0 +1,34 @@
+# 行尾归一：工作树一律 LF，与索引里存的一致。
+#
+# ── 补的是哪个盲区 ──
+# 没有这份文件时，检出用什么行尾由**每个人自己机器上的 core.autocrlf** 决定。
+# Windows 上它默认是 true，于是检出成 CRLF；而 prettier 的 endOfLine 默认是 lf
+# （本仓没有 prettier 配置文件，用的就是默认值）。两者相撞的结果是
+# `pnpm format:check` 在 Windows 上**恒红**——112 个文本文件里 89 个落在
+# format 的 glob 内，全部报「不合格式」，而它们的内容一个字都没错。
+#
+# 恒红的检查比没有检查更糟：它每次都要求人重新说服自己「这次也是行尾问题」，
+# 而真出现一次格式问题时没人分得出来（判据见 docs/070-audit-playbook.md §1.6）。
+# CI 跑在 Linux 上、检出就是 LF，所以这条一直只坑本地，从没在 CI 上现形。
+#
+# `.gitattributes` 随仓走，**压过各人的 core.autocrlf**，因此是唯一能一次修好
+# 所有机器的地方。改 core.autocrlf 只修一台。
+#
+# 索引里存的一直是 LF（autocrlf 提交时已经转过），所以这份文件不改变任何已提交
+# 的内容，只让检出与之一致。
+
+* text=auto eol=lf
+
+# 二进制资产：显式标记，不做任何行尾处理。text=auto 的自动探测通常也对，但
+# 探测失败一次就是文件损坏，而损坏的图标不会报错，只是显示不出来。
+*.ico   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.pdf   binary
