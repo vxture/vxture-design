@@ -1,7 +1,7 @@
 # Design System 版本发布规范
 
-版本：3.0.0
-日期：2026-08-22
+版本：3.1.0
+日期：2026-08-27
 范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`publish-design-system.yml`
 
 本文定义设计包的版本判断、发布准备、dry run、真实发布与发布后验证。发布必须走 PR、CI、merge、workflow，禁止从本地直接 `pnpm publish` 到 GitHub Packages。实现文件为 `.github/workflows/publish-design-system.yml`。
@@ -73,10 +73,9 @@ pnpm 打包时把 `workspace:` 协议替换成真实版本号，所以 `design-u
 5. 本地至少运行：
 
 ```bash
-# 仓库级守卫：token 生成物同步、组件类名真能产出、包依赖方向
-pnpm lint:design-tokens
-pnpm lint:design
-pnpm lint:design-classes
+# 先证明仪器活着，再用仪器（判据见 070 §1.1）
+pnpm test:guardrails      # 10 条守卫各自被一份已知有病的输入惊动
+pnpm guardrails           # 10 条守卫成链
 
 # 按依赖方向逐包构建。design-system 的类型依赖 design-ui 的产物，
 # 用 --parallel 会随机失败。
@@ -85,7 +84,12 @@ for p in design-tokens design-ui design-system; do
   pnpm --filter "@vxture/$p" lint
   pnpm --filter "@vxture/$p" build
 done
+
+pnpm test                 # 组件行为测试（tests/ 已纳入 type-check）
 ```
+
+**本机的 `pnpm format:check` 恒红，跳过它**——唯一差异是行尾（`core.autocrlf` 对上
+prettier 的 `endOfLine: lf`），CI 跑在 LF 上历来都过。理由与判据见 `070` §1.6。
 
 6. 创建 PR，等待 CI 的 required checks 通过。
 7. 通过 squash merge 合并到 `main`。
@@ -112,8 +116,10 @@ chore(ds): release design-tokens 1.1.0, design-ui 1.1.0 and design-system 3.1.0
 dry run 会执行：
 
 - 三包按依赖方向逐个 type-check / lint / build
-- 仓库级守卫：`lint:design-tokens`、`lint:design`、`lint:design-classes`
+- 仓库级守卫链（`pnpm guardrails`，10 条）
 - 公开入口快照校验（`check-design-system-exports.mjs --strict`）
+- `/server` 入口在 `react-server` 条件下可求值
+- 打包后可消费性（`@source` 覆盖随包发出的产物）
 - 三包各自 `pnpm pack --dry-run`
 - 查询 GitHub Packages 中每个包的当前版本是否已存在，并在 job summary 里列出
   "待发布 / 已存在，跳过"
@@ -132,13 +138,13 @@ dry run 失败时禁止真实发布，必须新建修复分支，通过 PR 合�
 | 手动发布 | `workflow_dispatch`，显式设置 `dry_run=false` | 常规 DS 包发布        |
 | tag 发布 | 推送 `ds-v*.*.*` tag                          | 需要以 tag 固化发布点 |
 
-常规优先使用手动发布。tag 发布前也必须先在同一 `main` 提交上完成 dry run。
+**两种入口都必须先在同一个 `main` 提交上完成 dry run。** tag 发布会把发布点固化成
+一个附注标签，标签消息里写清三包各自的版本与本次修了什么——**推标签就是真发布**，
+没有第二次确认。
 
 workflow 按第 3 节的顺序逐包处理：查询该版本是否已存在 → 不存在则发布 → 已存在则跳过。
 
 相同版本已存在时跳过，因此整条流水线幂等，同一个 tag 重跑安全。**禁止删除远端 package 后复用同一个版本号**——消费方的 lockfile 会指向一个内容已变的版本，且没有任何提示。
-
-长期规划：DS 发布不再作为游离的模块级发布能力扩张，而是作为 `publish-*` 包发布体系中的一个清晰入口。未来如果引入统一包发布调度层，应通过输入参数或 job matrix 表达发布对象，例如 `package_group=design-system`，并保持本规范中的 dry run、版本检查、发布顺序和发布后验证规则不变。
 
 ## 7. 发布后验证
 
