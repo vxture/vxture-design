@@ -37,7 +37,9 @@ async function runtimeExports(pkg) {
 
 const ui = await runtimeExports("@vxture/design-ui");
 const uiSet = new Set(ui);
-const tokens = (await runtimeExports("@vxture/design-tokens")).filter((k) => !uiSet.has(k));
+const tokens = (await runtimeExports("@vxture/design-tokens")).filter(
+  (k) => !uiSet.has(k),
+);
 
 const list = (names) => names.map((n) => `  ${n},`).join("\n");
 

@@ -79,7 +79,9 @@ function loadVars() {
       const full = path.join(dir, f.name);
       if (f.isDirectory()) walk(full);
       else if (f.name.endsWith(".css")) {
-        for (const m of readFileSync(full, "utf8").matchAll(/^\s*(--[\w-]+):\s*([^;]+);/gm)) {
+        for (const m of readFileSync(full, "utf8").matchAll(
+          /^\s*(--[\w-]+):\s*([^;]+);/gm,
+        )) {
           if (!map.has(m[1])) map.set(m[1], m[2].trim());
         }
       }
@@ -149,7 +151,9 @@ stats.push(`偏离 ${devLines.length}`);
 const colorLines = declaredVars("color-semantic.css").map(
   (name) => `  --color-${name.slice(2)}: var(${name});`,
 );
-inlineBlocks.push(`  /* bg-* / text-* / border-* / ring-* */\n${colorLines.join("\n")}`);
+inlineBlocks.push(
+  `  /* bg-* / text-* / border-* / ring-* */\n${colorLines.join("\n")}`,
+);
 stats.push(`color ${colorLines.length}`);
 
 /* ── 3. T2 语义：排版角色 ───────────────────────────────────── */
@@ -230,7 +234,9 @@ if (CHECK) {
     /* 缺文件即视为不同步 */
   }
   if (current !== css) {
-    console.error("@theme 注册与 token 层不同步。运行：node scripts/design-tokens/generate-theme.mjs");
+    console.error(
+      "@theme 注册与 token 层不同步。运行：node scripts/design-tokens/generate-theme.mjs",
+    );
     process.exit(1);
   }
   console.log(`@theme 注册一致（${stats.join(" · ")}）`);

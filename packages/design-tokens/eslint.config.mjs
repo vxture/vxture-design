@@ -1,36 +1,6 @@
-import js from '@eslint/js';
-import tsParser from '@typescript-eslint/parser';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
+// 规则本体在仓根 `eslint.config.package.mjs`——三个发布包共用一份。
+// `@eslint/js` 由各包自己解析后传进去，理由见那边的文件头。
+import js from "@eslint/js";
+import { makePackageConfig } from "../../eslint.config.package.mjs";
 
-const config = [
-  {
-    ignores: ['dist/**', 'coverage/**', 'node_modules/**'],
-  },
-  js.configs.recommended,
-  {
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 2023,
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-    plugins: {
-      '@typescript-eslint': tsPlugin,
-    },
-    rules: {
-      ...tsPlugin.configs.recommended.rules,
-      'no-undef': 'off',
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'with-single-extends' }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-    },
-  },
-];
-
-export default config;
+export default makePackageConfig(js.configs.recommended);

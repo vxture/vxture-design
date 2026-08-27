@@ -20,7 +20,11 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-import { NAMESPACES, readBaseline, readKeyframes } from "./tailwind-baseline.mjs";
+import {
+  NAMESPACES,
+  readBaseline,
+  readKeyframes,
+} from "./tailwind-baseline.mjs";
 import {
   KEEP_HUES,
   KEEP_COLOR_SINGLES,
@@ -69,9 +73,16 @@ for (const r of rows) {
   byNs.get(r.ns).push(r);
 }
 
-const droppedHues = [...new Set(rows.filter((r) => r.ns === "color").map((r) => r.step.replace(/-\d+$/, "")))]
-  .filter((h) => !KEEP_HUES.includes(h) && !KEEP_COLOR_SINGLES.includes(h));
-notes.push(`色板保留 ${KEEP_HUES.length} 色相，弃用 ${droppedHues.length} 个：${droppedHues.join(" ")}`);
+const droppedHues = [
+  ...new Set(
+    rows
+      .filter((r) => r.ns === "color")
+      .map((r) => r.step.replace(/-\d+$/, "")),
+  ),
+].filter((h) => !KEEP_HUES.includes(h) && !KEEP_COLOR_SINGLES.includes(h));
+notes.push(
+  `色板保留 ${KEEP_HUES.length} 色相，弃用 ${droppedHues.length} 个：${droppedHues.join(" ")}`,
+);
 
 /* ── 品牌与合成色：Tailwind 不可能有，取自既有产物 ── */
 /* 这一族没有上游对应物，只能自持。生成时从上一版产物读回，故它既是输入也是输出——
@@ -96,14 +107,20 @@ const keepBrandRow = (step) => {
 
 const brandRows = [];
 try {
-  const prev = readFileSync(path.join(OUT_DIR, "color-brand-primitive.css"), "utf8");
+  const prev = readFileSync(
+    path.join(OUT_DIR, "color-brand-primitive.css"),
+    "utf8",
+  );
   for (const m of prev.matchAll(/^\s*--vx-color-([\w-]+):\s*([^;]+);/gm)) {
     brandRows.push({ step: m[1], value: m[2].trim() });
   }
 } catch {
   // 首次生成：从旧色板里挑出品牌与 alpha 合成色
   try {
-    const legacy = readFileSync(path.join(OUT_DIR, "color-primitive.css"), "utf8");
+    const legacy = readFileSync(
+      path.join(OUT_DIR, "color-primitive.css"),
+      "utf8",
+    );
     for (const m of legacy.matchAll(/^\s*--vx-color-([\w-]+):\s*([^;]+);/gm)) {
       if (BRAND_COLOR_PATTERNS.some((p) => p.test(m[1]))) {
         brandRows.push({ step: m[1], value: m[2].trim() });
@@ -121,11 +138,14 @@ for (const [step, value] of EXTRA_BRAND_ROWS) {
 const orphanRows = brandRows.filter((r) => !keepBrandRow(r.step));
 if (orphanRows.length > 0) {
   const hues = [...new Set(orphanRows.map((r) => hueOf(r.step)))];
-  notes.push(`剔除无本体合成色 ${orphanRows.length} 项：${hues.join(" ")}（色相已在减色时删除）`);
+  notes.push(
+    `剔除无本体合成色 ${orphanRows.length} 项：${hues.join(" ")}（色相已在减色时删除）`,
+  );
 }
 const keptBrandRows = brandRows.filter((r) => keepBrandRow(r.step));
 
-if (keptBrandRows.length === 0) throw new Error("未取得品牌 / 合成色，中止（避免生成残缺色板）");
+if (keptBrandRows.length === 0)
+  throw new Error("未取得品牌 / 合成色，中止（避免生成残缺色板）");
 notes.push(`品牌与合成色 ${keptBrandRows.length} 项（DS 自有，上游无对应）`);
 
 /* ── 组装各命名空间文件 ── */
@@ -144,7 +164,9 @@ for (const ns of NAMESPACES) {
     const key = `${ns.ns}/${r.step}`;
     if (OVERRIDES[key]) {
       overCount++;
-      notes.push(`覆盖 ${key}：${OVERRIDES[key].value}（${OVERRIDES[key].why}）`);
+      notes.push(
+        `覆盖 ${key}：${OVERRIDES[key].value}（${OVERRIDES[key].why}）`,
+      );
       return `  --vx-${r.name.slice(2)}: ${OVERRIDES[key].value};`;
     }
     return `  --vx-${r.name.slice(2)}: ${r.value};`;
@@ -155,7 +177,9 @@ for (const ns of NAMESPACES) {
     addBlock(
       "color-brand-primitive.css",
       `  /* 品牌与合成色。DS 自有，非 Tailwind 镜像。 */\n` +
-        keptBrandRows.map((r) => `  --vx-color-${r.step}: ${r.value};`).join("\n"),
+        keptBrandRows
+          .map((r) => `  --vx-color-${r.step}: ${r.value};`)
+          .join("\n"),
     );
   }
 
@@ -183,7 +207,8 @@ for (const [file, blocks] of outputs) {
       : `primitive/${file} - T1 原子层 · ${meta?.title ?? file}。`;
   files.set(
     file,
-    header(title, meta?.utility ?? "—") + `\n:root {\n${blocks.join("\n\n")}\n}\n`,
+    header(title, meta?.utility ?? "—") +
+      `\n:root {\n${blocks.join("\n\n")}\n}\n`,
   );
 }
 
@@ -191,11 +216,17 @@ for (const [file, blocks] of outputs) {
 const keyframes = readKeyframes(ROOT);
 if (byNs.has("animate") && keyframes.length > 0) {
   const kfFile = NAMESPACES.find((n) => n.ns === "animate").file;
-  files.set(kfFile, files.get(kfFile) + "\n" + keyframes.map((k) => k.css).join("\n\n") + "\n");
+  files.set(
+    kfFile,
+    files.get(kfFile) + "\n" + keyframes.map((k) => k.css).join("\n\n") + "\n",
+  );
   notes.push(`@keyframes ${keyframes.length} 组随 animate 一并镜像`);
 }
 
-const total = [...byNs.values()].reduce((s, l) => s + l.length, 0) + keptBrandRows.length + extCount;
+const total =
+  [...byNs.values()].reduce((s, l) => s + l.length, 0) +
+  keptBrandRows.length +
+  extCount;
 
 if (CHECK) {
   const stale = [];
@@ -213,12 +244,16 @@ if (CHECK) {
     console.error("运行：node scripts/design-tokens/generate-primitive.mjs");
     process.exit(1);
   }
-  console.log(`T1 镜像一致（${files.size} 文件 / ${total} 项 · 扩展 ${extCount} · 覆盖 ${overCount}）`);
+  console.log(
+    `T1 镜像一致（${files.size} 文件 / ${total} 项 · 扩展 ${extCount} · 覆盖 ${overCount}）`,
+  );
 } else {
   for (const [file, css] of files) {
     mkdirSync(path.dirname(path.join(OUT_DIR, file)), { recursive: true });
     writeFileSync(path.join(OUT_DIR, file), css, "utf8");
   }
-  console.log(`已生成 T1 镜像：${files.size} 文件 / ${total} 项 · 扩展 ${extCount} · 覆盖 ${overCount}`);
+  console.log(
+    `已生成 T1 镜像：${files.size} 文件 / ${total} 项 · 扩展 ${extCount} · 覆盖 ${overCount}`,
+  );
   for (const n of notes) console.log(`    · ${n}`);
 }

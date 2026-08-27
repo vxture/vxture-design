@@ -20,8 +20,19 @@
 
 /** T1 字号阶梯，字号三档沿此表平移。 */
 export const TEXT_LADDER = [
-  "xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl",
-  "7xl", "8xl", "9xl",
+  "xs",
+  "sm",
+  "base",
+  "lg",
+  "xl",
+  "2xl",
+  "3xl",
+  "4xl",
+  "5xl",
+  "6xl",
+  "7xl",
+  "8xl",
+  "9xl",
 ];
 
 /** 字号三档 = 默认档在阶梯上 −1 / 0 / +1。两处例外由角色自己声明。 */
@@ -123,5 +134,11 @@ export const TYPE_ROLES = [
 
 /** 产物里的分组顺序，与角色名前缀一致。 */
 export const TYPE_GROUP_ORDER = [
-  "display", "heading", "title", "body", "label", "code", "overline",
+  "display",
+  "heading",
+  "title",
+  "body",
+  "label",
+  "code",
+  "overline",
 ];
