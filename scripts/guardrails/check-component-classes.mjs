@@ -19,6 +19,7 @@
 
 import { readFile, readdir } from "node:fs/promises";
 import { collectFiles, isTsx } from "./lib/collect-files.mjs";
+import { loadTailwind } from "./lib/load-tailwind.mjs";
 import path from "node:path";
 import process from "node:process";
 import { PENDING_COMPONENTS } from "./pending-components.mjs";
@@ -31,17 +32,7 @@ import { RECIPE_PATTERNS } from "./pending-recipes.mjs";
 const PENDING_RECIPES_SET = new Set();
 
 const ROOT = process.cwd();
-const PNPM = path.join(ROOT, "node_modules/.pnpm");
-const twDir = (await readdir(PNPM)).find((d) => /^tailwindcss@\d/.test(d));
-if (!twDir) {
-  console.error("未找到 tailwindcss 安装目录，跳过组件类名实测。");
-  process.exit(0);
-}
-const TW = path.join(PNPM, twDir, "node_modules/tailwindcss");
-const { compile } = await import(
-  new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`)
-    .href
-);
+const { compile, dir: TW, pnpmDir: PNPM } = await loadTailwind("组件类名实测");
 
 const PKG = path.join(ROOT, "packages/design-system");
 const STYLES = path.join(PKG, "src/styles");

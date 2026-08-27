@@ -12,25 +12,13 @@
  * 用法：node scripts/design-tokens/check-utilities.mjs
  */
 
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { loadTailwind } from "../guardrails/lib/load-tailwind.mjs";
 
 const ROOT = process.cwd();
-
-// tailwindcss 不是本仓根 package.json 的直接依赖（由各 portal 持有），
-// 故从 pnpm store 目录解析，而非 import 裸名。
-const PNPM = path.join(ROOT, "node_modules/.pnpm");
-const twDir = (await readdir(PNPM)).find((d) => /^tailwindcss@\d/.test(d));
-if (!twDir) {
-  console.error("未找到 tailwindcss 安装目录，跳过工具类实测。");
-  process.exit(0);
-}
-const TW = path.join(PNPM, twDir, "node_modules/tailwindcss");
-const { compile } = await import(
-  new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`)
-    .href
-);
+const { compile, dir: TW } = await loadTailwind("工具类实测");
 const STYLES = path.join(ROOT, "packages/design-tokens/src/styles");
 
 /**
