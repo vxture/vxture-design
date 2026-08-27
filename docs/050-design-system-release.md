@@ -88,8 +88,8 @@ done
 pnpm test                 # 组件行为测试（tests/ 已纳入 type-check）
 ```
 
-**本机的 `pnpm format:check` 恒红，跳过它**——唯一差异是行尾（`core.autocrlf` 对上
-prettier 的 `endOfLine: lf`），CI 跑在 LF 上历来都过。理由与判据见 `070` §1.6。
+`pnpm format:check` 现在本机也该是绿的（`.gitattributes` 把检出行尾归一为 LF）。
+**它再红就是真的格式问题**，不要再当成行尾噪音跳过——那条恒红已经修掉，见 `070` §1.6。
 
 6. 创建 PR，等待 CI 的 required checks 通过。
 7. 通过 squash merge 合并到 `main`。
