@@ -238,7 +238,9 @@ if (skipped.length > 0) {
   console.log("");
   console.log("本次跳过：");
   for (const s of skipped) {
-    console.log(`  · ${s.guard.split("/").pop().replace(".mjs", "")} —— ${s.why}`);
+    console.log(
+      `  · ${s.guard.split("/").pop().replace(".mjs", "")} —— ${s.why}`,
+    );
   }
 }
 

@@ -28,7 +28,8 @@ if (!twDir) {
 }
 const TW = path.join(PNPM, twDir, "node_modules/tailwindcss");
 const { compile } = await import(
-  new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`).href
+  new URL(`file://${path.join(TW, "dist/lib.mjs").split(path.sep).join("/")}`)
+    .href
 );
 const STYLES = path.join(ROOT, "packages/design-tokens/src/styles");
 
@@ -75,7 +76,7 @@ const EXPECTED = [
   // T1 偏离：扩展档与覆盖值
   ["font-brand", "T1 扩展 · 品牌字体族"],
   ["font-cjk", "T1 扩展 · 中文字体栈"],
-  
+
   ["3xl:p-4", "T1 扩展 · 断点变体"],
   ["font-sans", "T1 覆盖 · 正文字体栈"],
   ["font-mono", "T1 覆盖 · 等宽字体栈"],
@@ -90,14 +91,31 @@ const EXPECTED = [
 
 /** 模式轴：三档必须都在，缺一档意味着该模式下整族回落到默认值且不报错。 */
 const MODE_BLOCKS = [
-  ["typography-semantic.css", ["html.vx-font-small", "html.vx-font-large"], "字号三档"],
-  ["spacing-semantic.css", [".density-compact", ".density-comfortable"], "密度三档"],
+  [
+    "typography-semantic.css",
+    ["html.vx-font-small", "html.vx-font-large"],
+    "字号三档",
+  ],
+  [
+    "spacing-semantic.css",
+    [".density-compact", ".density-comfortable"],
+    "密度三档",
+  ],
   ["color-semantic.css", [".dark"], "暗色"],
-  ["typography-semantic.css", [":lang(zh)", "--vx-cjk-leading-add"], "中文修正轴"],
+  [
+    "typography-semantic.css",
+    [":lang(zh)", "--vx-cjk-leading-add"],
+    "中文修正轴",
+  ],
 ];
 
 /** 排版角色须一次落齐四个属性，只出 font-size 等于注册没生效。 */
-const TEXT_ROLE_PROPS = ["font-size", "line-height", "letter-spacing", "font-weight"];
+const TEXT_ROLE_PROPS = [
+  "font-size",
+  "line-height",
+  "letter-spacing",
+  "font-weight",
+];
 
 async function loadStylesheet(id, base) {
   if (id === "tailwindcss") {
@@ -144,9 +162,7 @@ function generated(util) {
  */
 function cssIdent(name) {
   const escaped = name.replace(/[:./]/g, (c) => `\\${c}`);
-  return /^\d/.test(escaped)
-    ? `\\3${escaped[0]} ${escaped.slice(1)}`
-    : escaped;
+  return /^\d/.test(escaped) ? `\\3${escaped[0]} ${escaped.slice(1)}` : escaped;
 }
 
 const missing = EXPECTED.filter(([u]) => !generated(u));
@@ -154,7 +170,9 @@ const missing = EXPECTED.filter(([u]) => !generated(u));
 if (missing.length > 0) {
   console.error("工具类未生成——T2 注册有缺口：\n");
   for (const [u, note] of missing) console.error(`  ✗ ${u}  （${note}）`);
-  console.error("\n检查 src/styles/theme.css 的 @theme 注册，以及被引用变量是否在链路中声明。");
+  console.error(
+    "\n检查 src/styles/theme.css 的 @theme 注册，以及被引用变量是否在链路中声明。",
+  );
   process.exit(1);
 }
 
@@ -165,7 +183,9 @@ const roleCss = roleOut.slice(roleOut.indexOf("@layer utilities {"));
 const lacking = TEXT_ROLE_PROPS.filter((p) => !roleCss.includes(`${p}:`));
 if (lacking.length > 0) {
   console.error(`text-body-md 只落了部分属性，缺：${lacking.join(" / ")}`);
-  console.error("检查 generate-theme.mjs 的 `--text-<role>--<modifier>` 子键拼写。");
+  console.error(
+    "检查 generate-theme.mjs 的 `--text-<role>--<modifier>` 子键拼写。",
+  );
   process.exit(1);
 }
 

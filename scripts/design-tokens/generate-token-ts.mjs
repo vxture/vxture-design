@@ -50,7 +50,9 @@ function header(title, utility) {
 `;
 }
 
-const zLines = Z_LADDER.map(([name, value, why]) => `  ${name}: ${value}, // ${why}`);
+const zLines = Z_LADDER.map(
+  ([name, value, why]) => `  ${name}: ${value}, // ${why}`,
+);
 const zIndex = `${header(
   "zIndex.ts - 叠放次序（与 --z-index-* 同源）。",
   "首选用 `z-<role>` 工具类；本表供内联 style、portal 容器等拿不到类名的场合使用。",
@@ -142,8 +144,13 @@ if (CHECK) {
     );
     process.exit(1);
   }
-  console.log(`TS 面一致（z 阶梯 ${Z_LADDER.length} 档 · 密度 3 档 · 字号 3 档）`);
+  console.log(
+    `TS 面一致（z 阶梯 ${Z_LADDER.length} 档 · 密度 3 档 · 字号 3 档）`,
+  );
 } else {
-  for (const [name, code] of outputs) writeFileSync(path.join(OUT_DIR, name), code, "utf8");
-  console.log(`已生成 TS 面：z 阶梯 ${Z_LADDER.length} 档 · 密度 3 档 · 字号 3 档`);
+  for (const [name, code] of outputs)
+    writeFileSync(path.join(OUT_DIR, name), code, "utf8");
+  console.log(
+    `已生成 TS 面：z 阶梯 ${Z_LADDER.length} 档 · 密度 3 档 · 字号 3 档`,
+  );
 }

@@ -50,7 +50,9 @@ const errors = [];
 function loadT1Vars() {
   const names = new Set();
   for (const file of T1_COLOR_FILES) {
-    for (const m of readFileSync(file, "utf8").matchAll(/^\s*(--vx-color-[\w-]+):/gm)) {
+    for (const m of readFileSync(file, "utf8").matchAll(
+      /^\s*(--vx-color-[\w-]+):/gm,
+    )) {
       names.add(m[1]);
     }
   }
@@ -110,11 +112,7 @@ function levelRows(mode) {
       const name = slot ? `level-${level}-${slot}` : `level-${level}`;
       const where = `${mode} ${name}`;
       const step =
-        slot === ""
-          ? ramp.fill
-          : slot === "deep"
-            ? ramp.deep
-            : ramp.foreground;
+        slot === "" ? ramp.fill : slot === "deep" ? ramp.deep : ramp.foreground;
       rows.push([name, `var(${t1Ref(LEVEL_HUE, step, where)})`, "level"]);
     }
   }
@@ -124,10 +122,20 @@ function levelRows(mode) {
 /* ── 渲染 ───────────────────────────────────────────────────── */
 
 /** 分组顺序保持稳定，便于逐行比对产物。 */
-const GROUP_ORDER = ["surface", "content", "stroke", "intent", "level", "chart", "gradient"];
+const GROUP_ORDER = [
+  "surface",
+  "content",
+  "stroke",
+  "intent",
+  "level",
+  "chart",
+  "gradient",
+];
 const groupOf = (name) => {
-  if (/^(background|surface|card|popover|scrim|accent)/.test(name)) return "surface";
-  if (/^(foreground|muted-foreground|content-|link)/.test(name)) return "content";
+  if (/^(background|surface|card|popover|scrim|accent)/.test(name))
+    return "surface";
+  if (/^(foreground|muted-foreground|content-|link)/.test(name))
+    return "content";
   if (/^(border|input|stroke-|ring)/.test(name)) return "stroke";
   if (/^chart-/.test(name)) return "chart";
   return "gradient";
@@ -153,7 +161,9 @@ function render(rows, indent = "  ") {
     ...GROUP_ORDER.filter((g) => groups.has(g)),
     ...[...groups.keys()].filter((g) => !GROUP_ORDER.includes(g)),
   ];
-  return ordered.map((g) => `${indent}/* ${g} */\n${groups.get(g).join("\n")}`).join("\n\n");
+  return ordered
+    .map((g) => `${indent}/* ${g} */\n${groups.get(g).join("\n")}`)
+    .join("\n\n");
 }
 
 const light = buildMode("light");

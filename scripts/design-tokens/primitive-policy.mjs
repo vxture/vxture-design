@@ -23,7 +23,14 @@
  *   若数据可视化确有需要，再把 teal / orange 作为**明确扩展**加回，
  *   而不是默认全量保留。
  */
-export const KEEP_HUES = ["neutral", "red", "amber", "emerald", "sky", "purple"];
+export const KEEP_HUES = [
+  "neutral",
+  "red",
+  "amber",
+  "emerald",
+  "sky",
+  "purple",
+];
 
 /** 色板里不属于任何色相的单值（Tailwind 的 black / white）。 */
 export const KEEP_COLOR_SINGLES = ["black", "white"];
