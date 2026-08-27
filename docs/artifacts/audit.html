@@ -225,8 +225,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="grid g3">
 <div class="card"><div class="card-head"><span class="card-title">三个发布包</span></div>
 <div class="kv"><div class="kv-k">design-tokens</div><div class="kv-v">2.2.3</div></div>
-<div class="kv"><div class="kv-k">design-ui</div><div class="kv-v">6.0.4</div></div>
-<div class="kv"><div class="kv-k">design-system</div><div class="kv-v">9.0.4</div></div>
+<div class="kv"><div class="kv-k">design-ui</div><div class="kv-v">6.0.8</div></div>
+<div class="kv"><div class="kv-k">design-system</div><div class="kv-v">9.0.8</div></div>
 <div class="kv"><div class="kv-k">design-preview</div><div class="kv-v">私有，不发布</div></div></div>
 <div class="card"><div class="card-head"><span class="card-title">组件 96 个文件</span></div>
 <div class="kv"><div class="kv-k">base</div><div class="kv-v">50</div></div>
@@ -249,9 +249,9 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="kv"><div class="kv-k">ncloc / files</div><div class="kv-v">22,942 / 228</div></div>
 <div class="kv"><div class="kv-k">bugs</div><div class="kv-v">7 <span class="card-sub">（初审 17）</span></div></div>
 <div class="kv"><div class="kv-k">code smells</div><div class="kv-v">159</div></div>
-<div class="kv"><div class="kv-k">vulnerabilities</div><div class="kv-v">2 <span class="card-sub">（两条都还开着）</span></div></div>
+<div class="kv"><div class="kv-k">vulnerabilities</div><div class="kv-v">0 <span class="card-sub">（两条均已关闭，安全评级 A）</span></div></div>
 <div class="kv"><div class="kv-k">重复率</div><div class="kv-v">0.8%</div></div>
-<div class="kv"><div class="kv-k hi">覆盖率</div><div class="kv-v txt"><span class="tag t-ok">63.46%</span> 行覆盖 · 20 文件 189 用例。<strong>Sonar 上仍然是空的</strong>——自动分析不收 lcov，这一格永远不会亮，覆盖率只在本地与 CI 里量</div></div></div>
+<div class="kv"><div class="kv-k hi">覆盖率</div><div class="kv-v txt"><span class="tag t-ok">87.6%</span> 行 / <span class="tag t-ok">88.7%</span> 分支 · 37 文件 808 用例 · <strong>全仓口径</strong>（两个发布包合并）。<strong>Sonar 上仍然是空的</strong>——自动分析不收 lcov，这一格永远不会亮，覆盖率只在本地与 CI 里量</div></div></div>
 </div>
 <div class="note warn"><strong>一天之内发了四个 tag、三个 major。</strong><span class="mono">ds-v7.1.0</span> → <span class="mono">ds-v7.2.0</span> → <span class="mono">ds-v8.0.0</span> → <span class="mono">ds-v9.0.0</span>。这个节奏本身不是成绩，是下面那些缺陷密集暴露的直接结果——每一个 major 都对应一次「原来公布过的判据没有载体」。</div></section>
 <section id="silent"><h2><span class="num">03</span>一类：静默失败<span class="h2-meta">最贵</span></h2><div class="rule"></div>
@@ -267,6 +267,12 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p>Radix 的模态 DropdownMenu 与模态 Dialog 各自往 <span class="mono">&lt;body&gt;</span> 挂 <span class="mono">pointer-events: none</span>。菜单项 <span class="mono">onSelect</span> 里打开对话框时，菜单的解锁与对话框的加锁同拍竞争，<strong>对话框关闭后锁残留</strong>。</p>
 <p class="kv-v txt" style="margin:0">在 opera 模型服务页以真实鼠标事件复现（菜单 → 编辑 → 取消 → body 恒为 <span class="mono">pointer-events: none</span>）。页首按钮直开的对话框始终干净——锁死只发生在「菜单开出来的对话框」这条路上。<strong>没有任何静态检查能看见它。</strong></p></div></section>
 
+<div class="card"><div class="card-head"><span class="card-title">进度条对读屏器永远是「正在忙」</span><span class="card-sub"><span class="tag t-bad">本轮发现</span> <span class="tag t-ok">6.0.8 已修</span></span></div>
+<p><span class="mono">Progress</span> 把 <span class="mono">value</span> 从 props 里解构走之后，只拿它算填充位移，<strong>忘了传回 Radix 的 <span class="mono">Root</span></strong>。屏幕上一切正常——色条画在 70% 的位置；语义上整条丢了：<span class="mono">aria-valuenow</span> 一次都没发出去，<span class="mono">data-state</span> 永远停在 <span class="mono">indeterminate</span>。</p>
+<div class="note warn" style="margin-bottom:0"><strong>这是从上游 shadcn 照抄进来的 bug。</strong>本仓文件头写着「结构照 shadcn 官方 Progress」——那句话此前读起来是出处说明，现在它同时是一条线索：<strong>上游的缺陷会一并抄进来，而「照抄上游」通常被当作不必再审的理由</strong>。</div></div>
+<div class="card"><div class="card-head"><span class="card-title">「已认证」前面并排两个对勾</span><span class="card-sub"><span class="tag t-bad">本轮发现</span> <span class="tag t-ok">9.0.8 已修</span></span></div>
+<p><span class="mono">StatusBadge</span> 的前导图标<strong>缺省就随语气来</strong>（它的文件头写着「不必每处各配一张」），<span class="mono">success</span> 语气自带圆形对勾。<span class="mono">ShellUserMenu</span> 在它之外又显式画了一个 <span class="mono">check</span>。</p>
+<div class="note" style="margin-bottom:0"><strong>两条缺陷是同一个形状：「这件事已经有人做了，本件不知道」。</strong>都不报错、都不影响布局、都在看得见的地方躺了很久——读代码时那一行看起来都是对的（<span class="mono">value</span> 明明在用，<span class="mono">check</span> 明明该画）。要看出问题，得<strong>同时打开邻居的文件</strong>。<br><br>由此得到一条可复用的判据：组件调组件的地方，问一句「<strong>这件事被做过两遍，还是一遍都没做</strong>」——单看本文件永远答不上来。</div></div>
 <section id="prose"><h2><span class="num">04</span>二类：契约只写在散文里<span class="h2-meta">最普遍</span></h2><div class="rule"></div>
 <p>判据已经想清楚、已经写进文档，但<strong>没有载体</strong>——于是只有读过那一页文档的人写得出正确代码，读没读过没有任何反馈。</p>
 <div class="note danger" style="font-size:1rem">这一类是本轮四个 major 的共同起因。每一个 major 都在回答同一个问题：<strong>这条判据的形状在哪？</strong></div>
@@ -313,6 +319,13 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p style="margin:0">三个守卫各写了一份目录遍历，彼此只差一个扩展名过滤。<strong>漏改的那一处不会报错，只会少扫一些文件</strong>——又是一次守卫静默缩小覆盖面。已抽成 <span class="mono">lib/collect-files.mjs</span>。</p></div>
 <div class="note ok"><strong>本轮之后，这条守卫的判据换成了二值的：</strong>剥掉注释后不许出现中日韩字符或全角标点。没有启发式，就没有误判，也不存在「看起来在查其实没查」的中间态。脚本从 151 行缩到 60 行。</div></section>
 
+<div class="card"><div class="card-head"><span class="card-title">一整类文件从来没被格式检查过</span><span class="card-sub"><span class="tag t-bad">本轮发现</span> <span class="tag t-ok">已修</span></span></div>
+<p><span class="mono">format:check</span> 的 glob 是 <span class="mono">**/*.{js,ts,tsx,json,md}</span> —— <strong>没有 <span class="mono">mjs</span></strong>。而 <span class="mono">scripts/</span> 几乎全是 <span class="mono">.mjs</span>：十条守卫、令牌生成器、审计快照、守卫自测，一个都不在检查范围里。</p>
+<p style="margin:0.6rem 0 0">是在给快照脚本补一行时撞见的——那一行 prettier 说不合规，而它两周前就写进去了，一路绿到当天。实测 27 个 <span class="mono">.mjs/.cjs</span> 里 <strong>16 个有真实格式差异</strong>。</p>
+<div class="note danger" style="margin-bottom:0"><strong>一条检查的「覆盖面」和它的「判据」一样重要。</strong>判据写错了会报假绿；覆盖面漏了一整类文件，则连绿都不报——<strong>它根本没看那边</strong>。这与本节第一条（扫描面被白名单缩小）是同一个形状，只是这次漏的不是目录而是扩展名。</div></div>
+<div class="card"><div class="card-head"><span class="card-title">一个恒红的检查，同样什么都没查</span><span class="card-sub"><span class="tag t-bad">本轮发现</span> <span class="tag t-ok">已修</span></span></div>
+<p>本机 <span class="mono">pnpm format:check</span> <strong>恒红</strong>：112 个文本文件是 CRLF，其中 89 个落在 glob 内，全部报「不合格式」——而它们的内容一个字都没错。根因是仓里<strong>没有 <span class="mono">.gitattributes</span></strong>，检出行尾由各人机器上的 <span class="mono">core.autocrlf</span> 决定；CI 跑在 Linux 上、检出就是 LF，所以从没在 CI 上现形。</p>
+<div class="note danger" style="margin-bottom:0"><strong>恒红比恒绿更费时间</strong>：它每次都要求你重新说服自己「这次也是行尾问题」，而真出现一次格式问题时没人分得出来。<br><br>两者的<strong>处置相反</strong>：恒绿要补变异测试去戳穿它，恒红要<strong>去掉那个恒定项</strong>，让它重新变成信号。已补 <span class="mono">.gitattributes</span>（<span class="mono">* text=auto eol=lf</span>），CRLF 文件 112 → 0。</div></div>
 <section id="layer"><h2><span class="num">06</span>四类：分层与打包的隐性约束<span class="h2-meta">最容易踩</span></h2><div class="rule"></div>
 <p>这一类不是逻辑写错，是<strong>把一件正确的东西放错了层</strong>。共同点：约束不写在任何一份文档里，只写在打包器和运行时的行为里。</p>
 <div class="card"><div class="card-head"><span class="card-title">能弹模态的 base 原语，就不是 base 原语</span><span class="card-sub"><span class="tag t-bad">6.0 设计推翻重来</span></span></div>
@@ -327,7 +340,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p class="kv-v txt" style="margin:0">结果是 <span class="mono">ActionButton</span> 成了绕开确认契约的后门，而且是<strong>静默</strong>的。换成 <span class="mono">DistributiveOmit</span> 后契约恢复，已加编译自检钉住。</p></div>
 <div class="card"><div class="card-head"><span class="card-title">数据平表被判成重复代码</span><span class="card-sub"><span class="tag t-info">质量门拦截</span></span></div>
 <p style="margin:0">把 14 个图标分组名改英文后，那 14 行成了「新增行」，落进<strong>本来就存在</strong>的重复块里，PR 的新增重复率冲到 92.9%。重复早就在——图标字典是一张平表，14 个 <span class="mono">{ label, icons: [...] }</span> 结构相同内容不同。给一张数据表发明抽象只会更难读，故走 <span class="mono">sonar.cpd.exclusions</span>，只关重复这一项。</p></div></section>
-<section id="coverage"><h2><span class="num">07</span>覆盖面盘点<span class="h2-meta">十条守卫</span></h2><div class="rule"></div>
+<section id="coverage"><h2><span class="num">07</span>覆盖面盘点<span class="h2-meta">十一条守卫</span></h2><div class="rule"></div>
 <p>每条守卫补的是一个具体盲区。判断一条守卫值不值，看的是<strong>它抓到过什么真东西</strong>，而不是它跑得多快。</p>
 <div class="tw"><table>
 <thead><tr><th>守卫</th><th>补的盲区</th><th>抓到过</th></tr></thead>
@@ -351,15 +364,20 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 </div></section>
 
 <section id="open"><h2><span class="num">08</span>仍然开着的<span class="h2-meta">未收口</span></h2><div class="rule"></div>
-<div class="card"><div class="card-head"><span class="card-title">未跑过的分支</span><span class="card-sub"><span class="tag t-warn">口径已换</span></span></div>
-<p>初审这一格写的是「<strong>0 个测试文件、0 覆盖率</strong>」。现在是 <strong>20 文件 189 用例、63.46% 行覆盖</strong>，四轮铺完。但把剩下的洞按「还有哪些件没测」来数已经不对了：</p>
-<div class="kv"><div class="kv-k">未覆盖分支</div><div class="kv-v">410</div></div>
-<div class="kv"><div class="kv-k">在 39 个零覆盖文件里</div><div class="kv-v">170（41%）</div></div>
-<div class="kv"><div class="kv-k hi">在<strong>已经有用例</strong>的文件里</div><div class="kv-v txt">240（<strong>59%</strong>）——按件名铺用例这个口径已经衰减，下一轮得按分支排</div></div>
-<p style="margin:0.6rem 0 0">另一条被推翻的判断：我曾说剩下的零覆盖文件「多半是薄封装」。<strong>按行数成立，按分支不成立</strong>——<span class="mono">MetricGrid</span> 4 行 24 分支、<span class="mono">PanelCard</span> 1 行 9 分支。而这几轮修掉的缺陷（Drawer 挡位失效、两处键盘陷阱）<strong>全是分支缺陷，不是行数缺陷</strong>。行数是错的风险代理。</p></div>
-<div class="card"><div class="card-head"><span class="card-title">两个未解决的 vulnerability</span><span class="card-sub">SonarCloud</span></div>
-<div class="kv"><div class="kv-k hi">发布流水线</div><div class="kv-v txt"><span class="mono">setup-node-pnpm/action.yml</span> 缺 <span class="mono">--ignore-scripts</span>，跑在有 <span class="mono">packages: write</span> 权限的 job 里。<strong>但照 Sonar 的建议改是错的</strong>：本仓用 pnpm 10，依赖的构建脚本<strong>默认就不执行</strong>，加 <span class="mono">--ignore-scripts</span> 会连本仓自己的 <span class="mono">prepare</span> 一起关掉。对的做法是在 <span class="mono">pnpm-workspace.yaml</span> 里列 <span class="mono">onlyBuiltDependencies</span> 白名单——把「谁可以跑脚本」变成一份可清点的名单</div></div>
-<div class="kv"><div class="kv-k hi">Toast</div><div class="kv-v txt"><span class="mono">Math.random</span> 生成通知 id——低危，但没有理由不换 <span class="mono">crypto.randomUUID</span></div></div></div>
+<div class="card"><div class="card-head"><span class="card-title">未跑过的分支</span><span class="card-sub"><span class="tag t-ok">已收口</span></span></div>
+<p>初审这一格写的是「<strong>0 个测试文件、0 覆盖率</strong>」。现在是 <strong>37 文件 808 用例</strong>，两个发布包都铺完。</p>
+<div class="tw"><table>
+<thead><tr><th>口径</th><th>行覆盖</th><th>分支覆盖</th><th>未覆盖分支</th></tr></thead>
+<tbody>
+<tr><td class="mono">design-ui</td><td>84.2%</td><td>86.0%</td><td>127 / 907</td></tr>
+<tr><td class="mono">design-system</td><td>98.6%</td><td>94.1%</td><td>26 / 442</td></tr>
+<tr><td><strong>全仓（发出去的代码）</strong></td><td><strong>87.6%</strong></td><td><strong>88.7%</strong></td><td><strong>153 / 1349</strong></td></tr>
+</tbody></table></div>
+<p style="margin:0.6rem 0 0"><strong>此前报的覆盖率只覆盖三个包里的一个。</strong>快照脚本从接入那天起只读 design-ui 的产物，而 <span class="mono">how</span> 字段——它存在的全部意义就是「下一轮照 how 复测才可比」——漏了这个限定词。漏掉的那个包正是 <strong>design-system</strong>，而<strong>应用只装伞包</strong>。现已加上包名并新增「全仓」两行。</p>
+<div class="note ok" style="margin-bottom:0"><strong>剩下的 153 条建议不追。</strong>它们分散在薄封装的 className 分支上。判据是这一整轮的产出结构：<strong>查出的真缺陷全部来自变异测试或「为了写用例而读契约」，没有一条是覆盖率数字追出来的</strong>。继续追分支号的边际产出主要是给 className 分支配断言。</div></div>
+<div class="card"><div class="card-head"><span class="card-title">两个 vulnerability</span><span class="card-sub"><span class="tag t-ok">均已关闭</span></span></div>
+<div class="kv"><div class="kv-k hi">发布流水线</div><div class="kv-v txt">已补两道：CI 的 action 加 <span class="mono">--ignore-scripts</span>，<span class="mono">pnpm-workspace.yaml</span> 补 <span class="mono">onlyBuiltDependencies: []</span>——前者管 CI，后者管所有安装且<strong>可清点</strong>。<br><br><strong>初次处置判定「不加 <span class="mono">--ignore-scripts</span>」，理由把成本说重了</strong>：说它会连本仓自己的 <span class="mono">prepare</span> 一起关掉——属实，但那个 action 只在 CI 用，而 husky 在 CI 里本就无关。实测一次干净安装后加上了，零代价</div></div>
+<div class="kv"><div class="kv-k hi">Toast</div><div class="kv-v txt"><span class="mono">Math.random</span> 换成模块级<strong>单调计数器</strong>，不是 <span class="mono">crypto.randomUUID</span>——后者限安全上下文。顺带修掉一个真缺陷：同一毫秒连发两条时可能共用一个 React key</div></div></div>
 <div class="card"><div class="card-head"><span class="card-title">7 bugs / 159 code smells</span><span class="card-sub">初审 17 bugs，已降 10 条</span></div>
 <p>初审抽样看是三类：<span class="mono">globals.css</span> 的 <span class="mono">@import</span> 位置（3 处，<span class="tag t-ok">已修</span>）、5 处 <span class="mono">sort()</span> 缺比较函数（<strong>误报，不改</strong>，见下）、<span class="mono">MetricListCard</span> 上非交互元素挂了点击处理但缺键盘可达（<span class="tag t-ok">已修</span>，同族的 <span class="mono">EntryCard</span> 也一并修了）。</p>
 <div class="note danger" style="margin-bottom:0"><strong>勘误。</strong>本报告初版称「排序不稳会让对账在别人的机器上假红，sort 那几处值得先看」——<strong>因果写反了</strong>。<span class="mono">Array.sort()</span> 不带比较函数是按 UTF-16 码元排序，<strong>跨机器跨 locale 完全确定</strong>；而 Sonar 建议的 <span class="mono">localeCompare</span> 恰恰随 locale 变。对由 <span class="mono">--check</span> 逐字节对账的生成物来说，换过去才会制造它警告的那个问题。这 5 条在本仓是误报，不改，并已在提交信息里记明理由。<br><br>另两类是真的，已修：<span class="mono">@source</span> 下沉到全部 <span class="mono">@import</span> 之后（CSS 规范只允许 <span class="mono">@charset</span> / <span class="mono">@layer</span> 领先于 <span class="mono">@import</span>，而这份文件是公开子路径、会进别人的构建）。</div></div>
@@ -407,7 +425,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note warn" style="margin-bottom:0"><strong>分析阶段到这里收口，剩下的是执行。</strong>两条 vulnerability 都已定性（一条连修法都是错的，见 §08），39 个零覆盖文件已按分支排好序，下一轮不需要再"查一遍"才知道从哪下手。</div>
 </section>
 
-  <div class="foot">Vxture Design System · 审计报告 · 覆盖 design-ui 3.2 → 6.0 / design-system 6.5 → 9.0 · 2026-08-25</div>
+  <div class="foot">Vxture Design System · 审计报告 · DS 9.0.8 · 覆盖 design-ui 3.2 → 6.0 / design-system 6.5 → 9.0 · 2026-08-27</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>
