@@ -238,8 +238,9 @@
   --text-overline--letter-spacing: var(--overline-letter-spacing);
   --text-overline--font-weight: var(--overline-font-weight);
 
-  /* p-* / gap-* / h-control-* / h-row-*（跟随密度三档） */
-  --spacing-none: var(--space-none);
+  /* p-* / gap-* / h-control-* / h-row-*（跟随密度三档）
+   * 不含 none 档：字面词 none 登记进 spacing 会让 leading-none / max-w-none
+   * 一并被解析成 0。判据见 generate-theme.mjs 的 SPACING_UNREGISTERED。 */
   --spacing-2xs: var(--space-2xs);
   --spacing-xs: var(--space-xs);
   --spacing-sm: var(--space-sm);

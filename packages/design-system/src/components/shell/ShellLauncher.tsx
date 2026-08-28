@@ -81,7 +81,7 @@ export function ShellLauncher({
                 }}
               >
                 <Icon name={item.icon} size="md" />
-                <span className="flex min-w-0 flex-1 flex-col items-start gap-none">
+                <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
                   <span className="text-label-md">{item.label}</span>
                   {item.description ? (
                     <span className="text-body-sm text-muted-foreground">

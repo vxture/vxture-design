@@ -5,6 +5,20 @@
 
 ---
 
+## 7.0.0 — 2026-08-28
+
+跟随 `@vxture/design-tokens@3.0.0`（major：peer 依赖跨主版本）。
+
+- 31 处 `p-none` / `pt-none` / `gap-none` / `inset-x-none` 等改写为 `-0`。tokens
+  不再注册 `--spacing-none`，这些类不再产出工具类——改写前它们是有效的，改写后
+  仍然是有效的，取值不变（都是 0）。
+- `utils/cn.ts` 的 `isSpacingStep` 摘掉 `none`。零档现在走 tailwind-merge 内建
+  刻度表，`cn("p-xl pt-0", "p-4")` 这类冲突能被正确合并了（`pt-none` 一直不能，
+  见该处注释里 2026-08-03 的实测记录）。
+- `DialogTitle` / `AlertDialogTitle` 的 `leading-none` **不变**：它本来就是上游
+  原义（`line-height: 1`），此前被间距档解析成 0 才出的叠字。token 修好后这行
+  自动正确，代码旁留了判据，避免后人误以为是漏网。
+
 ## 6.0.8 — 2026-08-27
 
 修一处**照抄上游抄进来的**无障碍缺陷（patch，050 §2）。

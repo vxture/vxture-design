@@ -184,7 +184,7 @@ const MetricListCard = React.forwardRef<HTMLElement, MetricListCardProps>(
             }}
           >
             {metrics.map((m) => (
-              <span key={m.key} className="flex min-w-0 flex-col gap-none">
+              <span key={m.key} className="flex min-w-0 flex-col gap-0">
                 <b className="truncate text-title-sm font-semibold text-foreground tabular-nums">
                   {m.value}
                 </b>

@@ -395,7 +395,7 @@ function DataTable<TRow>({
                     }
                     className={cn(
                       "whitespace-nowrap px-md py-sm font-normal",
-                      "first:pl-none last:pr-none",
+                      "first:pl-0 last:pr-0",
                       // 表头一律居中，与列的 align 无关——align 说的是数据。
                       "text-center",
                       column.width && column.width !== "auto"
@@ -458,10 +458,7 @@ function DataTable<TRow>({
               Array.from({ length: loadingRows }, (_, i) => (
                 <tr key={`skeleton-${i}`} aria-hidden="true">
                   {Array.from({ length: colSpan }, (_, c) => (
-                    <td
-                      key={c}
-                      className="px-md py-sm first:pl-none last:pr-none"
-                    >
+                    <td key={c} className="px-md py-sm first:pl-0 last:pr-0">
                       <Skeleton className="h-control-xs w-full" />
                     </td>
                   ))}
@@ -592,7 +589,7 @@ function DataTable<TRow>({
                           key={column.id}
                           className={cn(
                             "px-md py-md align-middle text-foreground",
-                            "first:pl-none last:pr-none",
+                            "first:pl-0 last:pr-0",
                             ALIGN[column.align ?? "left"],
                             column.width && column.width !== "auto"
                               ? WIDTH[column.width]
@@ -663,7 +660,7 @@ function DataTable<TRow>({
                           两个字面量迟早分叉，而分叉的表现就是那一列颜色对不上。 */}
                         <td
                           colSpan={colSpan}
-                          className="bg-primary-muted p-none"
+                          className="bg-primary-muted p-0"
                           style={
                             {
                               "--vx-table-sticky-bg": "var(--primary-muted)",

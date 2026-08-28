@@ -69,6 +69,12 @@ const borderWidthGroups = Object.fromEntries(
  * 内边距静默归零（2026-08-03 opera 对照 admin 抓到，与 vx-type / border-width 同族）。
  * 档名走文法谓词而非穷举：spacing 新增档位不必回来改这里。
  *
+ * 2026-08-28：`none` 已从谓词里摘掉，因为 tokens 不再注册 `--spacing-none`
+ *（理由见 design-tokens `theme.css` 那段长注释：字面词 `none` 登记进 spacing
+ * 命名空间会让 `leading-none` / `max-w-none` 一并被解析成 0）。仓内 31 处
+ * `p-none` 之类已改写成 `p-0` —— 那是 Tailwind 内建档，**本来就在** tailwind-merge
+ * 的刻度表里，所以上面这个"认不出于是不合并"的问题在零档上自动消失了。
+ *
  * ⚠ `--spacing-*` 命名空间不止"内边距档"：Tailwind v4 里 `size-*` / `w-*` /
  * `h-*` 也从这里取值，所以 `icon-* / media-* / header-* / sidebar-*` 四族必须
  * 一并登记。漏登记的症状同样是静默的——2026-08-04 实测：`Avatar` 基类的
@@ -77,7 +83,7 @@ const borderWidthGroups = Object.fromEntries(
  * 传什么都不动。判据：凡 T2 有 `--spacing-<族>-<档>` 的族，这里都要认。
  */
 const isSpacingStep = (value: string) =>
-  /^(none|2xs|xs|sm|md|lg|[2-6]?xl|(row|control|icon|media|header|sidebar)-[a-z0-9-]+)$/.test(
+  /^(2xs|xs|sm|md|lg|[2-6]?xl|(row|control|icon|media|header|sidebar)-[a-z0-9-]+)$/.test(
     value,
   );
 

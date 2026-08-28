@@ -181,11 +181,43 @@ stats.push(`text ${roles.length} 档`);
 
 /* ── 4. T2 语义：间距（密度三档）─────────────────────────────── */
 
-const spaceLines = declaredVars("spacing-semantic.css").map(
-  (name) => `  --spacing-${name.replace(/^--space-/, "")}: var(${name});`,
-);
+/**
+ * `none` 档**刻意不注册**（2026-08-28）。
+ *
+ * `none` 是 CSS 全局关键字，在不同属性上含义不同：`padding` 上我们想表达的是 0，
+ * 而 `max-width: none` 是"无上限"、`line-height` 的 Tailwind 原义是 1。一旦把字面
+ * 词 `none` 登记进 spacing 命名空间，**凡是读 spacing 档的工具类族都会把 `X-none`
+ * 解析成 0**——Tailwind 不区分"这个族的 none 是不是 0"。
+ *
+ * 实测（admin 编译产物）：14 个 `*-none` 工具类落到这一档，12 个是对的
+ *（p / px / pt / gap / top / right / bottom / inset-x，none 就是 0），2 个是错的：
+ *
+ *     .leading-none { line-height: var(--space-none) }   → 0，应为 1
+ *     .max-w-none   { max-width: none;
+ *                     max-width: var(--space-none) }     → 0，应为 none
+ *
+ * 后者尤其隐蔽：Tailwind 先输出自己的 `max-width: none`，再被本档覆盖，类名照常
+ * 生成、肉眼看不出异常。实际后果是三个门户 18 处 `DialogTitle` 行高归零、标题与
+ * 描述叠字，以及对话框被夹成 34px 宽。
+ *
+ * 摘掉后 `leading-none` / `max-w-none` 自动回到 CSS 原义（同日实测验证）。代价是
+ * `p-none` / `gap-none` 不再生成——写 Tailwind 内建的 `p-0` / `gap-0`，含义完全
+ * 相同，且它们**本来就在** tailwind-merge 的刻度表里，冲突还能被正确合并。
+ *
+ * `--space-none` 作为语义取值仍然存在，CSS 里要引用就写 `var(--space-none)`。
+ * 想加回来之前先读这段：这不是遗漏。
+ */
+const SPACING_UNREGISTERED = new Set(["none"]);
+
+const spaceLines = declaredVars("spacing-semantic.css")
+  .map((name) => name.replace(/^--space-/, ""))
+  .filter((step) => !SPACING_UNREGISTERED.has(step))
+  .map((step) => `  --spacing-${step}: var(--space-${step});`);
 inlineBlocks.push(
-  `  /* p-* / gap-* / h-control-* / h-row-*（跟随密度三档） */\n${spaceLines.join("\n")}`,
+  `  /* p-* / gap-* / h-control-* / h-row-*（跟随密度三档）\n` +
+    `   * 不含 none 档：字面词 none 登记进 spacing 会让 leading-none / max-w-none\n` +
+    `   * 一并被解析成 0。判据见 generate-theme.mjs 的 SPACING_UNREGISTERED。 */\n` +
+    spaceLines.join("\n"),
 );
 stats.push(`spacing ${spaceLines.length}`);
 

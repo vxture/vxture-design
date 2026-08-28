@@ -8,6 +8,35 @@
 
 ---
 
+## 3.0.0 — 2026-08-28
+
+**移除 `--spacing-none` 的 `@theme` 注册**（major：删 token 一律按 major）。
+
+`none` 是 CSS 全局关键字，在不同属性上含义不同：`padding` 上我们想表达的是 0，
+而 `max-width: none` 是"无上限"、`line-height` 的 Tailwind 原义是 1。把字面词
+`none` 登记进 spacing 命名空间后，**凡是读 spacing 档的工具类族都会把 `X-none`
+解析成 0**——Tailwind 不区分"这个族的 none 是不是 0"。
+
+实测 admin 编译产物，14 个 `*-none` 工具类落到这一档，12 个是对的
+（p / px / pt / gap / top / right / bottom / inset-x），2 个是错的：
+
+    .leading-none { line-height: var(--space-none) }   → 0，应为 1
+    .max-w-none   { max-width: none;
+                    max-width: var(--space-none) }     → 0，应为 none
+
+后者尤其隐蔽：Tailwind 先输出自己的 `max-width: none`，再被本档覆盖，**类名照常
+生成**，肉眼与「类是否产出」的检查都看不出异常。实际后果：三个门户 18 处
+`DialogTitle` 行高归零、标题与描述叠字；对话框写 `max-w-none` 被夹成 34px 宽。
+
+**升级要做的**：`p-none` / `gap-none` / `pt-none` 这类不再产出工具类，改写成
+Tailwind 内建的 `p-0` / `gap-0` / `pt-0`——含义完全相同，且它们本来就在
+tailwind-merge 的刻度表里，同组冲突还能被正确合并（`p-none` 一直不能）。
+`--space-none` 作为语义取值仍然存在，CSS 里引用写 `var(--space-none)`。
+
+守卫：`check-utilities.mjs` 新增"关键字档不得被间距档遮蔽"断言，且改为编译
+**消费方真正编的那条链**（design-system 的 `globals.css`）而不是只编 tokens——
+在窄链上 `max-w-none` 是干净的，只有真链才复现，守卫编窄了等于自发假绿灯。
+
 ## 2.2.3 — 2026-08-22
 
 修 `repository.url` 的 scheme 前缀（patch，050 §4）。

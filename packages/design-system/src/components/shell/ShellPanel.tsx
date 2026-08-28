@@ -320,7 +320,7 @@ export function ShellPanelRow({
   const inner = (
     <>
       <RowLead icon={icon} danger={danger} />
-      <span className="flex min-w-0 flex-1 flex-col items-start gap-none text-left">
+      <span className="flex min-w-0 flex-1 flex-col items-start gap-0 text-left">
         <span className="w-full truncate text-label-md">{label}</span>
         {description ? (
           <span className="w-full truncate text-body-sm text-muted-foreground">

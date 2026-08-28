@@ -365,7 +365,7 @@ function splitBrandTitle(
  * ds/no-native-primitive）。size="sm" 已经是 h-control-md(32)，圆角
  * radiusClamp 在默认基数下等值于 rounded-md；其余三处配方默认值必须显式
  * 抵消，否则会改变既有视觉：
- * - `px-none` 抵消 size="sm" 的 px-sm——本行零内边距，缩进由 NavLabel 的
+ * - `px-0` 抵消 size="sm" 的 px-sm——本行零内边距，缩进由 NavLabel 的
  *   pl-xs 与 chevron 导轨的 ml-2xs 负责。
  * - `justify-start` 抵消 Button 基类的 justify-center——见头部"图标行容器
  *   一律不用 justify-center"那段，收起态会在宽度过渡中途跳一下。
@@ -397,7 +397,7 @@ function NavGroupHeader({
       aria-expanded={open}
       className={cn(
         // 焦点环与 outline-none 不在此重复：Button 基类已含配方 `interactive`。
-        "flex h-control-md w-full items-center justify-start gap-xs px-none border-none",
+        "flex h-control-md w-full items-center justify-start gap-xs px-0 border-none",
         "text-overline transition-colors duration-fast ease-standard",
         "text-muted-foreground hover:bg-accent hover:text-foreground",
         "aria-expanded:bg-transparent aria-expanded:text-muted-foreground",

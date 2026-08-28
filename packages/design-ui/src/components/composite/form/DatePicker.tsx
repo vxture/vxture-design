@@ -60,7 +60,7 @@ export function DatePicker({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto p-none">
+      <PopoverContent align="start" className="w-auto p-0">
         <Calendar
           mode="single"
           {...(value !== undefined ? { selected: value } : {})}

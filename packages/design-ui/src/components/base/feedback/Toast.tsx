@@ -145,7 +145,7 @@ export function ToastProvider({
     <ToastContext.Provider value={value}>
       {children}
       <div
-        className="pointer-events-none fixed inset-x-none bottom-none z-toast flex flex-col items-center gap-sm p-lg sm:items-end"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-toast flex flex-col items-center gap-sm p-lg sm:items-end"
         role="region"
         aria-label={regionLabel}
       >

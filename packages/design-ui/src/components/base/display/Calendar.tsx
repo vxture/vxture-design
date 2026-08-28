@@ -86,7 +86,7 @@ function Calendar({
         months: "relative flex flex-col gap-md sm:flex-row",
         month: "flex w-full flex-col gap-sm",
         // 导航钮绝对定位到两个角，月份标题因此可以稳居中。
-        nav: "absolute inset-x-none top-none flex w-full items-center justify-between",
+        nav: "absolute inset-x-0 top-0 flex w-full items-center justify-between",
         button_previous: cn(
           buttonVariants({ variant: "ghost", size: "icon-md" }),
           "text-muted-foreground",
@@ -101,7 +101,7 @@ function Calendar({
         weekdays: "flex",
         weekday: "w-control-lg text-label-sm font-normal text-muted-foreground",
         week: "mt-xs flex w-full",
-        day: "relative p-none text-center",
+        day: "relative p-0 text-center",
         outside: "text-muted-foreground",
         disabled: "text-muted-foreground opacity-disabled",
         hidden: "invisible",

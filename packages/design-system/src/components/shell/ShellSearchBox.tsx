@@ -261,7 +261,7 @@ export function ShellSearchBox({
                       {item.icon ? (
                         <Icon name={item.icon} size="sm" className="shrink-0" />
                       ) : null}
-                      <span className="flex min-w-0 flex-1 flex-col gap-none">
+                      <span className="flex min-w-0 flex-1 flex-col gap-0">
                         <span className="truncate text-label-md">
                           {item.label}
                         </span>

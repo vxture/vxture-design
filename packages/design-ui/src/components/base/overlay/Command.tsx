@@ -95,7 +95,7 @@ const CommandDialog = ({
 }: CommandDialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className="overflow-hidden p-none">
+      <DialogContent className="overflow-hidden p-0">
         {/* 标题只给读屏：可见的"标题"就是输入框本身。 */}
         <DialogHeader className="sr-only">
           <DialogTitle>{title}</DialogTitle>

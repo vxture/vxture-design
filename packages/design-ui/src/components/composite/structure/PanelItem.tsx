@@ -27,7 +27,7 @@ function PanelItem({ lead, main, trail, className }: PanelItemProps) {
   return (
     <div
       className={cn(
-        "flex min-w-0 items-center gap-md py-sm first:pt-none last:pb-none",
+        "flex min-w-0 items-center gap-md py-sm first:pt-0 last:pb-0",
         className,
       )}
     >

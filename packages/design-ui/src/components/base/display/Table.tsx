@@ -125,7 +125,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
         ref={ref}
         className={cn(
           "whitespace-nowrap px-md py-sm text-left align-middle text-label-sm",
-          "first:pl-none last:pr-none",
+          "first:pl-0 last:pr-0",
           className,
         )}
         {...props}
@@ -141,7 +141,7 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
         ref={ref}
         className={cn(
           "px-md py-md align-middle text-foreground",
-          "first:pl-none last:pr-none",
+          "first:pl-0 last:pr-0",
           className,
         )}
         {...props}

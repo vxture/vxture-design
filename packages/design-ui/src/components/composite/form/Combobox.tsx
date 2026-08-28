@@ -82,7 +82,7 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-auto p-none"
+        className="w-auto p-0"
         style={{ width: "var(--radix-popover-trigger-width)" }}
       >
         <Command>

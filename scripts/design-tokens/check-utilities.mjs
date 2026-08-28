@@ -12,6 +12,8 @@
  * 用法：node scripts/design-tokens/check-utilities.mjs
  */
 
+import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -110,6 +112,19 @@ async function loadStylesheet(id, base) {
     const p = path.join(TW, "index.css");
     return { path: p, base: TW, content: await readFile(p, "utf8") };
   }
+  // 工作区包名导入（`@vxture/design-tokens/styles/x.css`）→ 直接落到源码目录。
+  // 走 globals.css 那条真链后才需要这一支：包之间是用包名互相 import 的。
+  const WS = /^@vxture\/(design-tokens|design-ui|design-system)\/(.+)$/.exec(
+    id,
+  );
+  if (WS) {
+    const p = path.join(ROOT, "packages", WS[1], "src", WS[2]);
+    return {
+      path: p,
+      base: path.dirname(p),
+      content: await readFile(p, "utf8"),
+    };
+  }
   // 绝对路径直接用；相对路径按引用方目录解析；其余当作 tailwind 内部资源。
   const p = path.isAbsolute(id)
     ? id
@@ -119,12 +134,43 @@ async function loadStylesheet(id, base) {
   return { path: p, base: path.dirname(p), content: await readFile(p, "utf8") };
 }
 
-const entry = [
-  '@import "tailwindcss";',
-  `@import "${path.join(STYLES, "tokens.css").split(path.sep).join("/")}";`,
-].join("\n");
+/**
+ * 编**消费方真正编的那条链**（design-system 的 globals.css），不是只编 tokens。
+ *
+ * 2026-08-28 的教训：本脚本原先只 `@import tailwindcss + tokens.css`。在那条窄链
+ * 上 `max-w-none` 编出来是干净的 `max-width: none`；而 admin 的真实构建里同一个
+ * 类是 `max-width: none; max-width: var(--space-none);`——后一条覆盖前一条。同一个
+ * Tailwind 版本、同一份 tokens，**只因为链不同就得出相反结论**。
+ *
+ * 守卫编的链比消费方窄，等于给自己发了一张假绿灯——这正是本文件开头那段话说的
+ * 盲区，只是当时没意识到"链"本身也是盲区的一部分。
+ */
+const DS_GLOBALS = path.join(
+  ROOT,
+  "packages/design-system/src/styles/globals.css",
+);
+const entry = `@import "${DS_GLOBALS.split(path.sep).join("/")}";`;
 
-const compiled = await compile(entry, { base: ROOT, loadStylesheet });
+/**
+ * 真链里带 `@plugin "tailwindcss-animate"`，编译器要能把它 import 进来。
+ *
+ * 从 tokens 包的 node_modules 解析而不是本脚本所在目录：pnpm 的严格布局下
+ * 插件只装在声明它的那个包里，scripts/ 这边 import 不到。
+ */
+const require_ = createRequire(
+  path.join(ROOT, "packages/design-tokens/package.json"),
+);
+async function loadModule(id) {
+  const resolved = pathToFileURL(require_.resolve(id)).href;
+  const mod = await import(resolved);
+  return { path: resolved, base: ROOT, module: mod.default ?? mod };
+}
+
+const compiled = await compile(entry, {
+  base: ROOT,
+  loadStylesheet,
+  loadModule,
+});
 
 /**
  * 判定工具类是否真的产出。
@@ -177,6 +223,63 @@ if (lacking.length > 0) {
   process.exit(1);
 }
 
+/**
+ * 关键字档不得被间距档遮蔽。
+ *
+ * `none` 是 CSS 全局关键字，在不同属性上含义不同。把字面词 `none` 登记进
+ * `--spacing-*` 命名空间，**凡是读 spacing 档的工具类族都会把 `X-none` 解析成 0**
+ * ——Tailwind 不区分"这个族的 none 是不是 0"。2026-08-28 实测的两个受害者：
+ *
+ *     .leading-none { line-height: var(--space-none) }   → 0，应为 1
+ *     .max-w-none   { max-width: none;
+ *                     max-width: var(--space-none) }     → 0，应为 none
+ *
+ * 后者尤其隐蔽：Tailwind 先输出自己的 `max-width: none`，再被间距档覆盖，**类名
+ * 照常生成**——所以 `generated()` 那一关是绿的，只有比对取值才看得见。实际后果
+ * 是三个门户 18 处 `DialogTitle` 行高归零、标题与描述叠字。
+ *
+ * 断言的是「取值」而不是「有没有这个档」：将来若换别的机制遮蔽（比如误注册
+ * `--leading-none`），这里同样会红。
+ *
+ * ⚠ 覆盖面的实话：这两条里**只有 `leading-none` 在本脚本的编译上跑得出来**。
+ * `max-w-none` 的双声明只在 Next/Turbopack 的真实构建里复现，用 Tailwind 的
+ * `compile()` API 编同一条链（无论窄链还是 globals 全链）都是干净的一条
+ * `max-width: none`——差异出在打包器那一层，不在 tokens。留着它是因为两者**同一个
+ * 成因**（字面词 none 进了 spacing 命名空间），抓住任一条即抓住成因；哪天打包器
+ * 行为变了它也能跟着报。别因为它现在恒绿就删掉，也别以为它已经在守着。
+ */
+const KEYWORD_UTILS = [
+  ["leading-none", "line-height", "1", "行高关键字"],
+  ["max-w-none", "max-width", "none", "宽度关键字（见上：本编译上恒绿）"],
+];
+
+const shadowed = [];
+for (const [util, prop, want, note] of KEYWORD_UTILS) {
+  const out = compiled.build([util]);
+  const layer = out.slice(out.indexOf("@layer utilities {"));
+  const block = layer.slice(layer.indexOf(`.${cssIdent(util)} {`));
+  const decls = [
+    ...block
+      .slice(0, block.indexOf("}"))
+      .matchAll(new RegExp(`${prop}:\\s*([^;]+);`, "g")),
+  ].map((m) => m[1].trim());
+  // 同属性多次声明时后者生效，故只看最后一条。
+  const got = decls.at(-1);
+  if (got !== want) {
+    shadowed.push(
+      `${util} → ${prop}: ${got ?? "（未声明）"}，应为 ${want}（${note}）`,
+    );
+  }
+}
+if (shadowed.length > 0) {
+  console.error("CSS 关键字被间距档遮蔽——类名照常生成，只有取值不对：\n");
+  for (const s of shadowed) console.error(`  ✗ ${s}`);
+  console.error(
+    "\n多半是 `--spacing-none` 之类被重新注册了。见 generate-theme.mjs 的 SPACING_UNREGISTERED。",
+  );
+  process.exit(1);
+}
+
 const missingModes = [];
 for (const [file, selectors, note] of MODE_BLOCKS) {
   const css = await readFile(path.join(STYLES, "semantic", file), "utf8");
@@ -191,5 +294,5 @@ if (missingModes.length > 0) {
 }
 
 console.log(
-  `工具类实测通过（${EXPECTED.length} 个样例全部生成，排版角色四属性齐备，模式轴三族齐备）`,
+  `工具类实测通过（${EXPECTED.length} 个样例全部生成，排版角色四属性齐备，${KEYWORD_UTILS.length} 个关键字未被间距档遮蔽，模式轴三族齐备）`,
 );

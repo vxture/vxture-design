@@ -5,6 +5,15 @@
 
 ---
 
+## 10.0.0 — 2026-08-28
+
+跟随 `@vxture/design-tokens@3.0.0` 与 `@vxture/design-ui@7.0.0`（major）。
+
+- shell 层 10 处 `gap-none` / `px-none` / `right-none` / `bottom-none` 改写为 `-0`。
+- 消费方升级要做的：搜 `-none` 结尾的间距工具类（`p-none` / `gap-none` /
+  `pt-none` / `inset-x-none` …）改成 `-0`。**不改也不报错**——类名不再产出，间距
+  静默回落到该元素的继承值，这正是本次要根除的那类失效。
+
 ## 9.0.8 — 2026-08-27
 
 修一处外壳的视觉重复，跟随 `@vxture/design-ui` 6.0.8（patch，050 §2）。

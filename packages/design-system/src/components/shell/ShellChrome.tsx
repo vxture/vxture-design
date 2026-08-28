@@ -307,7 +307,7 @@ export function LocaleSelectPanel({
                 {option.flag}
               </span>
             ) : null}
-            <span className="flex min-w-0 flex-1 flex-col items-start gap-none">
+            <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
               <span className="text-label-md">
                 {option.nativeName ?? option.label ?? option.locale}
               </span>
@@ -776,7 +776,7 @@ export function ShellUserMenu({
             <span
               aria-hidden="true"
               className={cn(
-                "absolute right-none bottom-none size-2xs rounded-full",
+                "absolute right-0 bottom-0 size-2xs rounded-full",
                 "bg-success ring-2 ring-background",
                 statusClassName,
               )}

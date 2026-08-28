@@ -65,7 +65,7 @@ export function Shell({ children }: { readonly children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       {/* 透明模式 V2：侧栏与内容同底、零分隔——预览外壳自己就是这条规则的活演示。 */}
-      <aside className="sticky top-none hidden h-screen w-sidebar-expanded shrink-0 flex-col gap-lg overflow-y-auto p-lg lg:flex">
+      <aside className="sticky top-0 hidden h-screen w-sidebar-expanded shrink-0 flex-col gap-lg overflow-y-auto p-lg lg:flex">
         <div className="flex flex-col gap-2xs">
           <span className="text-label-lg text-foreground">Design Preview</span>
           <span className="text-body-sm text-muted-foreground">
@@ -124,7 +124,7 @@ export function Shell({ children }: { readonly children: React.ReactNode }) {
         {/* pb 加在这里而不是靠 aside 的内边距：sticky 贴的是滚动容器的 padding-box
             底沿，容器自己的 bottom padding 顶不开它。 */}
         {/* bg-background 而非透明：sticky 块要盖住从它底下滚过的导航项。 */}
-        <div className="sticky bottom-none mt-auto flex flex-col gap-sm border-t border-dashed border-primary/10 bg-background pb-sm pt-lg dark:border-primary/20">
+        <div className="sticky bottom-0 mt-auto flex flex-col gap-sm border-t border-dashed border-primary/10 bg-background pb-sm pt-lg dark:border-primary/20">
           <Axis
             label="主题"
             value={mounted ? (theme ?? "") : ""}
