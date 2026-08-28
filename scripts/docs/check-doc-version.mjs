@@ -48,7 +48,7 @@ const problems = [];
 const DOCS = path.join(ROOT, "docs");
 for (const name of (await readdir(DOCS)).filter((f) => /^\d.*\.md$/.test(f))) {
   const text = await readFile(path.join(DOCS, name), "utf8");
-  const m = text.match(/适用版本：\*\*DS ([0-9]+\.[0-9]+\.[0-9]+)\*\*/);
+  const m = text.match(/适用版本：\*\*DS (\d+\.\d+\.\d+)\*\*/);
   if (!m) {
     problems.push(`docs/${name}：头部没有「适用版本：**DS x.y.z**」`);
   } else if (m[1] !== version) {
@@ -67,7 +67,7 @@ for (const name of (await readdir(ART)).filter(
     problems.push(`docs/artifacts/${name}：没有页脚`);
     continue;
   }
-  const m = foot[1].match(/·\s*DS ([0-9]+\.[0-9]+\.[0-9]+)\s*·/);
+  const m = foot[1].match(/·\s*DS (\d+\.\d+\.\d+)\s*·/);
   if (!m) {
     problems.push(`docs/artifacts/${name}：页脚里没有「· DS x.y.z ·」`);
   } else if (m[1] !== version) {
@@ -77,7 +77,7 @@ for (const name of (await readdir(ART)).filter(
   }
 
   // 同一条页脚里若还写了 design-system 的明细版本，它必须是同一个号。
-  const inline = foot[1].match(/design-system ([0-9]+\.[0-9]+\.[0-9]+)/);
+  const inline = foot[1].match(/design-system (\d+\.\d+\.\d+)/);
   if (inline && inline[1] !== version) {
     problems.push(
       `docs/artifacts/${name}：页脚里 design-system 写的是 ${inline[1]}，` +
