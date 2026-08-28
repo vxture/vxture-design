@@ -240,6 +240,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
                 max-width: var(--space-none) }     → 0，应为 none</code></pre>
 
 <div class="note warn"><strong><span class="mono">max-w-none</span> 尤其隐蔽。</strong>Tailwind 先输出自己的 <span class="mono">max-width: none</span>，再被本档覆盖——<strong>类名照常生成</strong>。「这个类有没有产出」这一类检查全是绿的，<strong>只有比对取值才看得见</strong>。实际后果：三个门户 18 处 <span class="mono">DialogTitle</span> 行高归零、标题与描述叠字，以及对话框写 <span class="mono">max-w-none</span> 被夹成 34px 宽。</div>
+<div class="note"><strong>这条修复的回归断言，覆盖面有个限度，说明白。</strong>DS 仓里为它写了两条断言，但只有 <span class="mono">leading-none</span> 那条能在<strong>本仓自己的编译上</strong>跑出来；<span class="mono">max-w-none</span> 的<strong>双声明只在 Next / Turbopack 里复现</strong>——同一段 CSS，不同构建器的产出形态不同。<br><br>两者是<strong>同一个成因</strong>（字面词 <span class="mono">none</span> 进了 spacing 命名空间），抓住任一即抓住成因，所以没有为此再搭一套 Next 构建。<strong>但这不等于两条都被覆盖了</strong>，限度写在了 DS 的代码注释里，这里一并告诉你：如果哪天你的门户换了构建器，<span class="mono">max-w-none</span> 这一侧<strong>没有回归网</strong>接着——那时值得手动比对一次编译产物的取值，而不是只看类名有没有产出。</div>
 
 <div class="tw"><table>
 <thead><tr><th>你写的</th><th>改成</th><th>为什么</th></tr></thead>
