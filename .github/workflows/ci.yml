@@ -53,10 +53,18 @@ jobs:
 
       # 组件行为测试。守卫自测证明仪器活着，这一条测的是件本身跑起来对不对
       # ——两者补的不是同一个洞。
+      #
+      # **递归跑，不要在这里点名某个包。** 这一步曾写死
+      # `--filter @vxture/design-ui`，于是伞包的 321 条用例在 CI 里一次都没跑过
+      # ——而伞包正是应用唯一直接安装的包。这与当时快照脚本「只读 design-ui 的
+      # 覆盖产物」是同一个形状：**清单按「我记得谁有测试」排，新增的那个不会有人
+      # 回来补**。`--if-present` 让没有 test 脚本的包自动跳过，所以哪个包哪天加了
+      # 用例，这里不必再改。
+      #
       # 带覆盖率跑：不设阈值门槛（阈值会催生「为过线而写的测试」），
       # 只为把「哪些代码从没被执行过」这个数留在 CI 日志里。
       - name: Component tests (with coverage)
-        run: pnpm --filter @vxture/design-ui test:coverage
+        run: pnpm --recursive --if-present test:coverage
 
   preview-build:
     name: preview-build
