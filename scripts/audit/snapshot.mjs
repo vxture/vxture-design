@@ -21,7 +21,7 @@
  */
 
 import { readFile, readdir, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { collectFiles, isTsx } from "../guardrails/lib/collect-files.mjs";
@@ -146,16 +146,30 @@ add("测试 · 文件数", tests, "packages/ 与 scripts/ 下的 *.test.* / *.sp
  * 指标名与 how 都已带上包名。伞包补上测试之后，这里要改成合并统计。
  */
 /**
- * 两个包各自量、再合并出一个全仓数。
+ * 各包各自量、再合并出一个全仓数。
  *
- * 分开列是因为它们的成熟度差一个数量级，合成一个数会把这件事抹掉；
+ * 分开列是因为它们的成熟度可能差一个数量级，合成一个数会把这件事抹掉；
  * 合并那一行则是**唯一诚实的总数**——此前只有 design-ui 那一个数，而它一直被
  * 当成全仓的。
+ *
+ * **清单是算出来的，不是列出来的。** 这里曾经手写两行；手写的清单会漂——
+ * 下一个包哪天加了用例，没有人会回来补这一行，而它漏掉时不报错，只是那个包
+ * 的代码从此不计入「全仓」。2026-08-28 在 ci.yml 里撞到同一个形状的孪生
+ * （测试步骤写死 `--filter @vxture/design-ui`，伞包 321 条用例在 CI 里一次都
+ * 没跑过），两处一并改成按事实推导。
+ *
+ * 判据取「这个包有没有 test:coverage 脚本」——有脚本就该有产物，没产物说明
+ * 没跑，那是调用方的事（下面会明说跳过了谁），不是这份清单该猜的。
  */
-const COVERAGE = [
-  ["design-ui", "packages/design-ui/coverage/coverage-summary.json"],
-  ["design-system", "packages/design-system/coverage/coverage-summary.json"],
-];
+const COVERAGE = readdirSync(path.join(ROOT, "packages"))
+  .filter((pkg) => {
+    const manifest = path.join(ROOT, "packages", pkg, "package.json");
+    if (!existsSync(manifest)) return false;
+    const { scripts = {} } = JSON.parse(readFileSync(manifest, "utf8"));
+    return Boolean(scripts["test:coverage"]);
+  })
+  .sort()
+  .map((pkg) => [pkg, `packages/${pkg}/coverage/coverage-summary.json`]);
 
 const totals = {
   lines: [0, 0],
