@@ -108,7 +108,36 @@ Tailwind v4 的工具类编译为对同名主题变量的引用——`rounded-md
 排查方法：把 T2 全部变量名与 `tailwindcss/theme.css` 的变量名取交集。新增 token 时
 重跑该比对。
 
-### 4.3 T1 前缀
+### 4.3 档名不能是 CSS 的字面关键字
+
+`none` / `auto` / `inherit` 这类词在**不同属性上含义不同**。把它们登记成档名，等于
+让**所有读这个命名空间的工具类族**都按同一个值解析——而 Tailwind 不区分「这个族的
+`none` 是不是 0」。
+
+`--space-none: 0` 曾经就在 spacing 命名空间里。后果：
+
+```
+.leading-none { line-height: var(--space-none) }   → 0，应为 1
+.max-w-none   { max-width: none;
+                max-width: var(--space-none) }     → 0，应为 none
+```
+
+`max-w-none` 尤其隐蔽——Tailwind 先输出自己的 `max-width: none`，再被本档覆盖，
+**类名照常生成**。`check-utilities` 那种「这个类有没有产出」的检查全是绿的，
+**只有比对取值才看得见**。
+
+> **不要用补一个影子档来救。** 补 `--leading-none` 只是为了在名字解析上抢赢
+> spacing 档，而一个叫「none」的行高不表达任何设计决策；而且它只管一族，
+> `max-w-none` 要再造 `--container-none`，每个「CSS 里 none ≠ 0」的属性族都得再补
+> 一次。**这是开口的税。** 根因只有一个：字面词不该做档名。
+
+对应地，零档一律用 Tailwind 内建的 `-0`（`p-0` / `gap-0`）——含义完全相同，且它
+**本来就在** `tailwind-merge` 的刻度表里，顺带绕开了自定义档名不被合并的老问题。
+
+不再注册的档记在 `generate-theme.mjs` 的 `SPACING_UNREGISTERED`，`--space-none`
+本身仍在 semantic 层（有人直接 `var()` 引它不受影响），**只是不进 `@theme`**。
+
+### 4.4 T1 前缀
 
 **T1 保留 `--vx-` 前缀**——它不进 `@theme`、不产出工具类，前缀用于与 T2 / Tailwind
 命名空间区隔。T2 一律用 shadcn / Tailwind 约定名，不另起一套词汇。

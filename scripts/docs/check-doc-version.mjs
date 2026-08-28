@@ -17,9 +17,14 @@
  * 三包各自独立 SemVer，一次发布常常只动其中一两个；而「这份文档描述哪次发布」
  * 只需要一个号。伞包是应用唯一直接安装的包，也是标签用的号。
  *
- * 页脚里另外列出的三包版本不在本守卫范围内——它们是明细，会随各自的发布走；
- * 真要一并盯住，代价是每次单包 patch 都要改六份文档，而那正是让人开始
+ * 页脚里另外列出的 tokens / ui 两个版本不在本守卫范围内——它们是明细，会随各自
+ * 的发布走；一并盯住的代价是每次单包 patch 都要改六份文档，而那正是让人开始
  * 「顺手改一下数字」的开端。
+ *
+ * **但同一条页脚里的 `design-system` 版本要盯**：它和 `DS x.y.z` 是同一个号。
+ * 这一条是踩出来的——2026-08-28 的 major 只改了 `DS 9.0.8 → 10.0.0`，紧挨着的
+ * `design-system 9.0.8` 原样留着，页脚于是自相矛盾，而本守卫当时报绿。
+ * 同一行里的两个数指同一件事，对不上就是错，检查它零成本。
  *
  * ── 实测抓到过什么 ──
  * 接入当天即抓到：把伞包 bump 到 9.0.9 而不改文档，六份 Artifact 底本 + 六份
@@ -43,7 +48,7 @@ const problems = [];
 const DOCS = path.join(ROOT, "docs");
 for (const name of (await readdir(DOCS)).filter((f) => /^\d.*\.md$/.test(f))) {
   const text = await readFile(path.join(DOCS, name), "utf8");
-  const m = text.match(/适用版本：\*\*DS ([0-9]+\.[0-9]+\.[0-9]+)\*\*/);
+  const m = text.match(/适用版本：\*\*DS (\d+\.\d+\.\d+)\*\*/);
   if (!m) {
     problems.push(`docs/${name}：头部没有「适用版本：**DS x.y.z**」`);
   } else if (m[1] !== version) {
@@ -62,12 +67,21 @@ for (const name of (await readdir(ART)).filter(
     problems.push(`docs/artifacts/${name}：没有页脚`);
     continue;
   }
-  const m = foot[1].match(/·\s*DS ([0-9]+\.[0-9]+\.[0-9]+)\s*·/);
+  const m = foot[1].match(/·\s*DS (\d+\.\d+\.\d+)\s*·/);
   if (!m) {
     problems.push(`docs/artifacts/${name}：页脚里没有「· DS x.y.z ·」`);
   } else if (m[1] !== version) {
     problems.push(
       `docs/artifacts/${name}：写的是 DS ${m[1]}，伞包实际是 ${version}`,
+    );
+  }
+
+  // 同一条页脚里若还写了 design-system 的明细版本，它必须是同一个号。
+  const inline = foot[1].match(/design-system (\d+\.\d+\.\d+)/);
+  if (inline && inline[1] !== version) {
+    problems.push(
+      `docs/artifacts/${name}：页脚里 design-system 写的是 ${inline[1]}，` +
+        `而同一行的 DS 是 ${m ? m[1] : "?"}／伞包实际是 ${version}`,
     );
   }
 }
