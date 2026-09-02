@@ -46,7 +46,11 @@ export const NativeSelect = React.forwardRef<
         ref={ref}
         data-slot="native-select"
         className={cn(
-          "flex h-control-md w-full min-w-0 appearance-none rounded-md border border-input pl-sm pr-xl py-2xs",
+          // pr-2xl(40px)而非 pr-xl(32px):箭头锚在包裹层右缘 right-sm(10px)、宽 16px,
+          // 占 10–26px;pr-xl 只把文字裁到距右缘 32px,窄框(如 basis-media-xl=96px)里长值
+          // 的尾字仍压在箭头下(2026-09-02 arche /admins owner 实测)。2xl 把裁切线推到 40px,
+          // 与箭头留 14px 净空,任意宽度下文字都不再被箭头遮住。
+          "flex h-control-md w-full min-w-0 appearance-none rounded-md border border-input pl-sm pr-2xl py-2xs",
           "bg-transparent shadow-raised dark:bg-input/30",
           "text-body-lg md:text-body-md text-foreground",
           interactive,
