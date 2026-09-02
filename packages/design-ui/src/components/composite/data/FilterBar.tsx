@@ -33,6 +33,24 @@ import { ViewModeSwitch, type ViewModeSwitchValue } from "./ViewModeSwitch";
 /** 与 `ViewModeSwitchValue` 同一个值域；保留别名是因为调用方按板块命名。 */
 export type FilterBarView = ViewModeSwitchValue;
 
+/**
+ * 右段控件（搜索 / 筛选下拉）比表单常规小一档。
+ *
+ * 表单控件默认字号 `body-lg` / `md:body-md`，放进密集筛选行显得偏大（owner
+ * 2026-09-02）。但 Input / InputGroup / NativeSelect 是全平台共用件——官网、账户
+ * 的消费级表单也用同一批，全局调小会连登录/结算表单一起缩。所以只在 FilterBar
+ * 右段内、按 `data-slot` 命中这三类控件压字号，不动它们在别处的常规尺寸；只压
+ * 字号不压高度（`h-control-md` 不变）。响应式跟随控件自身的一档降：
+ * lg→md（窄屏）、md→sm（宽屏）。
+ */
+// 三类控件各写一条(不用 `:is()`/逗号——那类带逗号的任意变体 Tailwind 可能
+// 静默丢掉,是踩过的 CSS 陷阱)。emit 的规则由平台构建产物核验,不看构建绿。
+const COMPACT_CONTROLS = [
+  "[&_[data-slot=input]]:text-body-md md:[&_[data-slot=input]]:text-body-sm",
+  "[&_[data-slot=input-group-input]]:text-body-md md:[&_[data-slot=input-group-input]]:text-body-sm",
+  "[&_[data-slot=native-select]]:text-body-md md:[&_[data-slot=native-select]]:text-body-sm",
+].join(" ");
+
 export interface FilterBarProps extends React.HTMLAttributes<HTMLDivElement> {
   /** 搜索框，右段第一位。 */
   readonly search?: React.ReactNode;
@@ -114,8 +132,14 @@ const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(
           ) : null}
           {scope}
         </div>
-        {/* 右段：搜索 → 重置 → 筛选组 → 操作区，一起靠右；中间由 justify-between 留白。 */}
-        <div className="flex min-w-0 flex-wrap items-center justify-end gap-sm">
+        {/* 右段：搜索 → 重置 → 筛选组 → 操作区，一起靠右；中间由 justify-between 留白。
+            右段内的搜索/筛选控件压小一档字号，见 COMPACT_CONTROLS。 */}
+        <div
+          className={cn(
+            "flex min-w-0 flex-wrap items-center justify-end gap-sm",
+            COMPACT_CONTROLS,
+          )}
+        >
           {search}
           {onReset ? (
             <Button

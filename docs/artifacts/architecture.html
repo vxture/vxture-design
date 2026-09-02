@@ -323,7 +323,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="card"><div class="card-head"><span class="card-title">守卫也会坏，而且坏了是「绿」</span><span class="card-sub"><span class="tag t-bad">2026-08-25 查到</span></span></div>
 <p style="margin:0"><span class="mono">check-design-system.mjs</span> 里曾有 6 处字面量 <span class="mono">U+0008</span>（退格符），位置全是本该写词边界的地方——含它的正则永远匹配不上，<strong>四条检查从写下那天起就在打勾、什么都没查</strong>。修回词边界后第一次跑就报出真违规。病因是转义层被吃掉一层。<span class="mono">check-control-chars</span> 就是为这一类落成的。</p></div></section>
 
-  <div class="foot">Vxture Design System · 系统架构 · DS 10.0.1 · design-tokens 3.0.0 / design-ui 7.0.1 / design-system 10.0.1 · 2026-09-02</div>
+  <div class="foot">Vxture Design System · 系统架构 · DS 10.0.2 · design-tokens 3.0.0 / design-ui 7.0.2 / design-system 10.0.2 · 2026-09-02</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>
