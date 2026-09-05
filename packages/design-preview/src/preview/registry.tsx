@@ -134,6 +134,7 @@ import {
   NativeSelect,
   DetailList,
   DetailRow,
+  EditableRow,
   Section,
   SectionHeader,
   SectionNav,
@@ -1339,6 +1340,62 @@ export const ENTRIES: readonly Entry[] = [
           </>
         }
       />
+    ),
+  },
+  {
+    name: "EditableRow",
+    layer: "pattern",
+    group: "图案",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "详情页里能改的字段行：展示态是文字，点「修改」才变成控件（owner 2026-09-05：此前用禁用的输入框当展示，整页灰字看不清；规则覆盖整个网站）。长在 DetailList 里、与只读 DetailRow 同一套名列宽与虚线；高度按控件撑住切换不跳；空值画占位；action 可整体替换默认修改/取消（如「重新认证」）；readOnly 只剩展示态；提示放在值后面",
+    axes: [
+      { name: "editing", values: ["view", "edit"] },
+      { name: "action", values: ["default", "custom", "readOnly"] },
+    ],
+    render: () => (
+      <DetailList className="w-full">
+        <EditableRow
+          label="Display name"
+          value="Zhang San"
+          editing={false}
+          labels={{ edit: "Edit", cancel: "Cancel" }}
+          hint="Shown in the sidebar"
+        >
+          <Input defaultValue="Zhang San" className="w-full max-w-overlay-lg" />
+        </EditableRow>
+        <EditableRow
+          label="Industry"
+          value=""
+          editing
+          labels={{ edit: "Edit", cancel: "Cancel" }}
+        >
+          <Input defaultValue="" className="w-full max-w-overlay-lg" />
+        </EditableRow>
+        <EditableRow
+          label="Registered name"
+          value="Vxture Ltd."
+          editing={false}
+          labels={{ edit: "Edit", cancel: "Cancel" }}
+          action={
+            <Button variant="ghost" size="sm">
+              Re-verify
+            </Button>
+          }
+          hint="Verified"
+        >
+          <Input defaultValue="Vxture Ltd." />
+        </EditableRow>
+        <EditableRow
+          label="Tenant ID"
+          value="T-2765001234"
+          editing={false}
+          labels={{ edit: "Edit", cancel: "Cancel" }}
+          readOnly
+        >
+          <Input defaultValue="T-2765001234" />
+        </EditableRow>
+      </DetailList>
     ),
   },
   {

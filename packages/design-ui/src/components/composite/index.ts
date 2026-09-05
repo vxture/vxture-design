@@ -36,6 +36,7 @@ export * from "./data/ListCard";
 export * from "./data/LabeledValue";
 export * from "./data/FactList";
 export * from "./structure/DetailList";
+export * from "./structure/EditableRow";
 export * from "./structure/PanelCard";
 export * from "./structure/PanelList";
 export * from "./structure/PanelItem";

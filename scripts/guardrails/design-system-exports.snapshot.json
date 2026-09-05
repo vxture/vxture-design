@@ -158,6 +158,7 @@
       "DropdownMenuSubContent",
       "DropdownMenuSubTrigger",
       "DropdownMenuTrigger",
+      "EditableRow",
       "EmptyState",
       "EntryCard",
       "FIELD_ORIENTATIONS",

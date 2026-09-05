@@ -15,12 +15,19 @@
  * 本身该多宽由调用方通过 grid/flex 自己控制（如 `products` 表单里的
  * `grid-cols-2`），不再由模板兜底限死。
  *
- * 动作条与表单区之间是虚线上边框（hairline.field）：060 的线型语义——实线开
- * 区块，虚线分行 / 分字段；动作条属于表单的收束行，不是新板块。
+ * 动作条左右带 `px-lg` 内距：它与上方 Section（raised 档 `p-lg`）的内容左右
+ * 对齐，按钮不再顶到内容区边缘（2026-09-05 owner 走查：账号页 / 租户页动作条
+ * "左右没有缩进，直接顶头"）。
  *
- * `sticky` 打开时动作条粘底：长表单滚到哪里都能提交。底色补 `bg-background`
- * ——透明模式下页面唯一实色底就是它，粘底条延续页面底色而非引入新表面；
- * 不补则滚过的字段会从虚线下面透出来叠在按钮上。
+ * 非粘底：动作条与表单区之间是虚线上边框（hairline.field）：060 的线型语义——
+ * 实线开区块，虚线分行 / 分字段；动作条属于表单的收束行，不是新板块。
+ *
+ * `sticky` 打开时动作条粘底：长表单滚到哪里都能提交。粘底条**是一个浮起的
+ * 表面**而不是页面底色的延续：`bg-card + ring-1 ring-foreground/10 +
+ * shadow-sticky`，与 Section raised 档同一套高度语汇（`--shadow-sticky` 就是
+ * 为粘住的条留的那一档）。此前只补 `bg-background`，条与页面同色，滚动时
+ * 看不出它是浮着的（2026-09-05 owner 走查）。不做"贴底才变色"的滚动侦测：
+ * 页面短到不滚时它本来就落在内容末尾，浮起的样子同样成立，省掉一个观察者。
  *
  * 响应式：动作条 flex-wrap，窄屏按钮多时折行。
  */
@@ -57,9 +64,10 @@ export function FormPageTemplate({
         {footer ? (
           <div
             className={cn(
-              "flex flex-wrap items-center justify-end gap-sm border-t pt-lg",
-              hairline.field,
-              sticky && "sticky bottom-0 bg-background pb-lg",
+              "flex flex-wrap items-center justify-end gap-sm px-lg pt-lg",
+              sticky
+                ? "sticky bottom-0 rounded-t-xl bg-card pb-lg shadow-sticky ring-1 ring-foreground/10"
+                : cn("border-t", hairline.field),
             )}
           >
             {footer}

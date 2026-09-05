@@ -1,6 +1,6 @@
 # Design System 版本发布规范
 
-适用版本：**DS 10.0.3**
+适用版本：**DS 10.1.0**
 更新：2026-08-27
 范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`publish-design-system.yml`
 
