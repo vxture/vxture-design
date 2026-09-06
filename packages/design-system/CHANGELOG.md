@@ -5,6 +5,14 @@
 
 ---
 
+## 10.2.0 — 2026-09-07
+
+跟随 `@vxture/design-ui@7.2.0`（minor）。
+
+- `BarChart` 补上纵轴刻度、读数条与键盘可达；调用方无需改动。见 ui 的 7.2.0 条目。
+
+---
+
 ## 10.0.0 — 2026-08-28
 
 跟随 `@vxture/design-tokens@3.0.0` 与 `@vxture/design-ui@7.0.0`（major）。

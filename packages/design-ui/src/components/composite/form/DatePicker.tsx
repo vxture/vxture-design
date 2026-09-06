@@ -63,7 +63,14 @@ export function DatePicker({
       <PopoverContent align="start" className="w-auto p-0">
         <Calendar
           mode="single"
-          {...(value !== undefined ? { selected: value } : {})}
+          /* `defaultMonth` 与 `selected` 必须同时给:只给 selected 时
+             react-day-picker 把显示月份落在**今天**,于是选了 8 月 20 日的人
+             下次打开看到的是当月,得自己往回翻(2026-09-07 实测)。这条此前有
+             测试覆盖却一直是绿的——它把值写死成"今天所在的月",判据跟着系统
+             时钟走,跨月才现形。 */
+          {...(value !== undefined
+            ? { selected: value, defaultMonth: value }
+            : {})}
           onSelect={(next) => {
             onValueChange?.(next);
             setOpen(false);
