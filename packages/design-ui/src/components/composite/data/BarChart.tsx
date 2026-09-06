@@ -34,6 +34,12 @@
  *
  * 键盘：图区是**一个** tab 停靠点（31 个停靠点是灾难），进去后 ← → 逐根移动、
  * Home/End 跳首尾，读数条跟着走。触屏没有悬停，读数条停在峰值——精确值看下方的表。
+ *
+ * 读屏器的两层角色是**有判据的**：外层 `role="group"` 承调用方传来的 `aria-label`
+ * （给整块一个名字），内层图区才是 `role="img"`。外层**不能**是 `img`——那会让整棵
+ * 子树变成一张不透明的图，读数条那段真文本反而读不到，正好抵消这次改动的意义。
+ * 内层 `img` 的名字取当前读数（`标签: 值`，由调用方的数据生成，不是件里写死的语言），
+ * 所以键盘左右移动时读屏器会把新的那一根念出来。
  */
 
 import * as React from "react";
@@ -121,6 +127,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     return (
       <div
         ref={ref}
+        role="group"
         className={cn("flex w-full flex-col gap-xs", className)}
         {...props}
       >
@@ -164,6 +171,9 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           {/* 柱区。左内距给刻度列让位（与刻度列同一档 media-sm，两者因此对齐）。 */}
           <div
             role="img"
+            aria-label={
+              active ? `${active.label}: ${fmt(active.value)}` : undefined
+            }
             tabIndex={0}
             onKeyDown={onKeyDown}
             onBlur={() => setCursor(null)}

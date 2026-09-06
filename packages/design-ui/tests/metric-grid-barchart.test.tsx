@@ -8,6 +8,7 @@
  */
 
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { MetricGrid } from "../src/components/composite/data/MetricGrid";
 import { BarChart } from "../src/components/composite/data/BarChart";
@@ -244,7 +245,7 @@ describe("BarChart · 横轴标签是刻度不是数据", () => {
   });
 });
 
-describe("BarChart · 报数走 title", () => {
+describe("BarChart · 图上要有数字", () => {
   /** 逐柱数值不上图（挤），悬停以原生 title 报数；精确数字归下方配套的表。 */
   it("title 是「标签: 格式化后的值」", () => {
     render(
@@ -265,14 +266,96 @@ describe("BarChart · 报数走 title", () => {
     expect(fmt).toHaveBeenCalledWith(7);
   });
 
-  /** 整张图对读屏器是一个图形，不是一堆 div。 */
-  it("整体带 img 角色", () => {
+  /**
+   * 两层角色各有各的活（DS 10.2.0）：外层 group 承调用方的名字，内层图区才是 img。
+   * 外层**不能**是 img——那会让整棵子树变成一张不透明的图，读数条那段真文本就读不到，
+   * 正好抵消「图上要有数字」这次改动。
+   */
+  it("外层 group 承调用方的 aria-label，内层图区是 img", () => {
     render(
       <BarChart
         data={[{ key: "a", label: "1 日", value: 1 }]}
         aria-label="30 天用量"
       />,
     );
-    expect(screen.getByRole("img", { name: "30 天用量" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "30 天用量" }),
+    ).toBeInTheDocument();
+    // 内层 img 的名字是当前读数，随键盘移动而变
+    expect(screen.getByRole("img", { name: "1 日: 1" })).toBeInTheDocument();
+  });
+
+  /** 纵轴三档刻度长显示——没有它，同样形状的图可能是 1 万也可能是 100 万。 */
+  it("纵轴给出顶/中/底三档刻度", () => {
+    render(
+      <BarChart
+        data={[
+          { key: "a", label: "1 日", value: 100 },
+          { key: "b", label: "2 日", value: 50 },
+        ]}
+      />,
+    );
+    // 顶档与读数条同为峰值 100，所以它出现两次；中/底两档只有纵轴有
+    expect(screen.getAllByText("100")).toHaveLength(2);
+    expect(screen.getByText("50")).toBeInTheDocument();
+    expect(screen.getByText("0")).toBeInTheDocument();
+  });
+
+  it("hideAxis 关掉刻度", () => {
+    render(
+      <BarChart data={[{ key: "a", label: "1 日", value: 100 }]} hideAxis />,
+    );
+    // 读数条里仍有 100，但刻度那三档不再出现（0 是只有刻度才画的）
+    expect(screen.queryByText("0")).not.toBeInTheDocument();
+  });
+
+  /** 读数条默认停在峰值：图上永远有一个真数字，不用等人来悬停。 */
+  it("读数条默认停在峰值，peakLabel 作前缀", () => {
+    render(
+      <BarChart
+        data={[
+          { key: "a", label: "1 日", value: 3 },
+          { key: "b", label: "2 日", value: 9 },
+        ]}
+        peakLabel="峰值"
+      />,
+    );
+    expect(screen.getByText("峰值")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "2 日: 9" })).toBeInTheDocument();
+  });
+
+  it("不给 peakLabel 就不显示前缀（DS 零语言假设）", () => {
+    render(
+      <BarChart
+        data={[
+          { key: "a", label: "1 日", value: 3 },
+          { key: "b", label: "2 日", value: 9 },
+        ]}
+      />,
+    );
+    // 前缀让位给峰值那根自己的标签
+    expect(screen.getByRole("img", { name: "2 日: 9" })).toBeInTheDocument();
+  });
+
+  /** 键盘：图区一个 tab 停靠点，← → 逐根移动，内层 img 的名字跟着走。 */
+  it("方向键移动读数，Home/End 跳首尾", async () => {
+    const user = userEvent.setup();
+    render(
+      <BarChart
+        data={[
+          { key: "a", label: "1 日", value: 3 },
+          { key: "b", label: "2 日", value: 9 },
+          { key: "c", label: "3 日", value: 5 },
+        ]}
+      />,
+    );
+    const plot = screen.getByRole("img", { name: "2 日: 9" });
+    plot.focus();
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("img", { name: "3 日: 5" })).toBeInTheDocument();
+    await user.keyboard("{Home}");
+    expect(screen.getByRole("img", { name: "1 日: 3" })).toBeInTheDocument();
+    await user.keyboard("{End}");
+    expect(screen.getByRole("img", { name: "3 日: 5" })).toBeInTheDocument();
   });
 });

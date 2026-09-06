@@ -174,8 +174,11 @@ describe("FormPageTemplate · 表单区不限宽", () => {
     );
     const sticky = screen.getByText("ACTIONS").parentElement as HTMLElement;
     expect(sticky.className).toContain("sticky");
-    // 粘底条延续页面底色，不引入新表面
-    expect(sticky.className).toContain("bg-background");
+    /* 粘底条**是一个浮起的表面**，不是页面底色的延续（DS 10.1.0 有意改的：
+       同色时滚动到底看不出条与内容的边界，件的头注里写了判据）。这条断言
+       一直停在改之前的 `bg-background` 上，随那次发布就红了。 */
+    expect(sticky.className).toContain("bg-card");
+    expect(sticky.className).toContain("shadow-sticky");
   });
 
   it("不给 footer 就没有动作条", () => {
