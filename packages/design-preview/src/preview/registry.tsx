@@ -1688,7 +1688,7 @@ export const ENTRIES: readonly Entry[] = [
     group: "图案",
     tags: ["vxture", "patterns"],
     deviation:
-      "DS 首件数据可视化原语（上图下表布局的图位）：等宽柱铺满容器、组内最大值归一;柱体 bg-primary 与 Progress 填充同色（量的表达一种颜色）;零值留 bg-accent 基线刻度区分「没数据」与「没画」;横轴标签抽样显示,精确数字归下方配套的表;柱高运行时数据走内联 style（Progress 先例）",
+      "DS 首件数据可视化原语（上图下表布局的图位）：等宽柱铺满容器、组内最大值归一;柱体 bg-primary 与 Progress 填充同色（量的表达一种颜色）;零值留 bg-accent 基线刻度区分「没数据」与「没画」;横轴标签抽样显示,精确数字归下方配套的表;柱高运行时数据走内联 style（Progress 先例）;纵轴三档刻度 + 参考线长显示（解决量级：没有它同样形状可能是 1 万也可能是 100 万）;读数条默认停在峰值、悬停或键盘 ← → 切换（原来唯一的数值出口是原生 title——触屏没有、键盘不可达、读屏器拿不到）;图区是一个 tab 停靠点而不是每根柱子一个",
     render: () => <BarChartDemo />,
   },
   {
@@ -3333,7 +3333,8 @@ function BarChartDemo() {
       value,
     };
   });
-  return <BarChart aria-label="近 30 天用量" data={data} />;
+  // peakLabel 由调用方给（DS 零语言假设，件里不烧死中文）
+  return <BarChart aria-label="近 30 天用量" data={data} peakLabel="Peak" />;
 }
 
 function MetricGridDemo() {
