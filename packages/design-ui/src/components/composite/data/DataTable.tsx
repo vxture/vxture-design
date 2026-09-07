@@ -131,18 +131,20 @@ const ALIGN: Record<DataTableAlign, string> = {
 
 /**
  * `money` 列的内层块。宽度按 `ch`：`tabular-nums` 下一个 `ch` 正好是一位数字，
- * 16 位放得下「¥1,234,567,890.12」这类带符号、带千分位、两位小数的金额
- * （owner 2026-09-07 定的档）。
+ * 12 位放得下「¥1,234,567.89」这类带符号、带千分位、两位小数的百万级金额
+ * （owner 2026-09-07 在预览页实测后由 16 调到 12——16 位在真实表格里明显偏宽，
+ * 短值左边空出一大截）。
  *
  * 是 `min-w` 不是 `w`：真有更长的值时**让它左右延伸**，不截断也不换行（owner 认可
  * 这个退化）。代价是那一行的块比别行宽，居中之下左右各外移超出量的一半，个位与别行
- * 错开——所以这个数要按业务的金额上限取，宁可宽一点。截掉金额的位数不可接受。
+ * 错开。所以这个数是**按业务的常见量级取**，不是按上限取：让绝大多数行整齐，少数
+ * 超长行退化，好过让所有行都为一个罕见的上限让出空白。截掉金额的位数不可接受。
  *
  * `tabular-nums` 一起给死：数字不等宽就对不齐，这不该由每个调用方各记一次。
  * 货币符号在最左，不影响右缘对齐。
  */
 const MONEY_CELL =
-  "inline-block min-w-[16ch] text-right tabular-nums whitespace-nowrap";
+  "inline-block min-w-[12ch] text-right tabular-nums whitespace-nowrap";
 
 /** 首列是标题列,居左;其余居中。`align` 显式给了就以显式的为准。 */
 const defaultAlign = (columnIndex: number): DataTableAlign =>
