@@ -5,6 +5,17 @@
 
 ---
 
+## 11.0.0 — 2026-09-07
+
+跟随 `@vxture/design-ui@8.0.0`（**major**）。
+
+- 表格列对齐规范重订。破坏性的一条：`DataTableColumn.align` 默认值从一律 `left`
+  改为随位置（首列 `left`、其余 `center`），没有显式写 `align` 的非首列会变成居中。
+  另有新增的 `align:"numeric"`、操作列改右对齐、`TableTitleCell` 字号提到 16/14。
+  逐条见 ui 的 8.0.0 条目。
+
+---
+
 ## 10.2.0 — 2026-09-07
 
 跟随 `@vxture/design-ui@7.2.0`（minor）。
