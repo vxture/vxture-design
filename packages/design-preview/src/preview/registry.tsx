@@ -2696,6 +2696,8 @@ interface DemoRow {
   readonly name: string;
   readonly owner: string;
   readonly calls: number;
+  /** 金额：位数与 calls 差得远，好看出「最长的居中、短的向它右对齐」。 */
+  readonly amount: number;
   readonly tone: (typeof TONES)[number];
   readonly status: string;
 }
@@ -2706,6 +2708,7 @@ const DEMO_ROWS: readonly DemoRow[] = [
     name: "主力推理通道",
     owner: "平台运维",
     calls: 128493,
+    amount: 1284930.5,
     tone: "success",
     status: "运行中",
   },
@@ -2714,6 +2717,7 @@ const DEMO_ROWS: readonly DemoRow[] = [
     name: "批处理通道",
     owner: "数据组",
     calls: 20418,
+    amount: 2041.8,
     tone: "warning",
     status: "配额将满",
   },
@@ -2722,6 +2726,7 @@ const DEMO_ROWS: readonly DemoRow[] = [
     name: "灰度通道",
     owner: "模型组",
     calls: 912,
+    amount: 9.12,
     tone: "neutral",
     status: "已暂停",
   },
@@ -2737,11 +2742,14 @@ function DataTableDemo() {
     "data",
   );
 
+  // 按**当前排序列**排，不是写死 calls：标了 sortable 的列点下去必须真的排，
+  // 否则就是一个点了变样子、数据不动的控件。
   const rows =
     state === "data"
-      ? [...DEMO_ROWS].sort((a, b) =>
-          sort.direction === "asc" ? a.calls - b.calls : b.calls - a.calls,
-        )
+      ? [...DEMO_ROWS].sort((a, b) => {
+          const key = sort.columnId === "amount" ? "amount" : "calls";
+          return sort.direction === "asc" ? a[key] - b[key] : b[key] - a[key];
+        })
       : [];
 
   return (
@@ -2780,6 +2788,16 @@ function DataTableDemo() {
         rows={rows}
         rowKey={(row) => row.id}
         loading={state === "loading"}
+        /* 件自带的四处文案是**英文托底**（DS 零语言假设），不传就会在这张中文表里
+           冒出一个英文的「Actions」表头——中英混排不是件的缺陷，是调用方漏传。
+           本演示因此把它们一并传上，既让预览页自洽，也把 i18n 接缝演示出来。 */
+        labels={{
+          rowActions: "操作",
+          expand: "展开",
+          selectAll: "全选本页",
+          deselectAll: "取消本页全选",
+          selectRow: "选择本行",
+        }}
         empty={
           <EmptyState
             title="还没有任何通道"
@@ -2844,9 +2862,25 @@ function DataTableDemo() {
           {
             id: "calls",
             header: "调用量",
-            align: "right",
+            // 纯计数：走默认的居中，不套金额块（owner 2026-09-07）。
             sortable: true,
             cell: (row) => row.calls.toLocaleString("zh-CN"),
+          },
+          {
+            // 金额：走 `money` 档。示例里故意给了位数差很多的值，好看出
+            // 「块居中、短值向最长的那个右对齐」。货币符号一律带上。
+            // 也标 sortable：金额是最典型的可排序列，之前漏了标，于是这一列没有
+            // 方向标——排序控件是**逐列开关**（column.sortable + onSortChange），
+            // 不是 DS 的默认行为。
+            id: "amount",
+            header: "本期金额",
+            align: "money",
+            sortable: true,
+            cell: (row) =>
+              row.amount.toLocaleString("zh-CN", {
+                style: "currency",
+                currency: "CNY",
+              }),
           },
           {
             id: "status",

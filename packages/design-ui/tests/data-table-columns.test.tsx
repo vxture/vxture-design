@@ -233,18 +233,20 @@ describe("DataTable · 排序只出控件与方向，排序本身归调用方", 
   });
 
   /**
-   * 方向指示得**看得出来**。图标是内联 SVG、`aria-hidden`，没有可查询的名字——
-   * 拿渲染出来的 SVG 内容当指纹比对：升序与降序必须不同，否则用户只能靠记忆
-   * 判断当前是哪个方向。
+   * 方向指示得**看得出来**。
+   *
+   * 判据在 9.0.0 换过一次：此前是**单个**箭头、升降各一个字形，于是拿两个方向渲染的
+   * SVG 内容当指纹比对「必须不同」。现在是**上下一对**箭头、按方向高亮其中一支——两个
+   * 方向渲染的是同样两个字形，区别在**哪一支亮**，比字形永远相同。
+   * 不变式没变（两个方向必须看得出区别），判据跟着表达方式换，而且比原来更强：
+   * 不只是「不同」，而是精确到哪一支亮。
    */
-  it("升序与降序的箭头必须不同", () => {
-    const svgOf = () =>
-      (
-        screen
-          .getByRole("button", { name: /名称/ })
-          .querySelector("svg") as SVGElement
-      ).innerHTML;
+  const highlights = (name: RegExp) =>
+    Array.from(
+      screen.getByRole("button", { name }).querySelectorAll("svg"),
+    ).map((el) => !(el.getAttribute("class") ?? "").includes("opacity-muted"));
 
+  it("升序高亮上箭头，降序高亮下箭头", () => {
     const asc = render(
       <DataTable
         columns={sortable}
@@ -254,7 +256,7 @@ describe("DataTable · 排序只出控件与方向，排序本身归调用方", 
         onSortChange={() => {}}
       />,
     );
-    const ascIcon = svgOf();
+    expect(highlights(/名称/)).toEqual([true, false]);
     asc.unmount();
 
     render(
@@ -266,11 +268,15 @@ describe("DataTable · 排序只出控件与方向，排序本身归调用方", 
         onSortChange={() => {}}
       />,
     );
-    expect(svgOf()).not.toBe(ascIcon);
+    expect(highlights(/名称/)).toEqual([false, true]);
   });
 
-  /** 未排序的列用升序箭头 + 弱化——同当前是 asc 的那一列长得一样但更淡。 */
-  it("未排序的列箭头是弱化的", () => {
+  /**
+   * 未排序的列：**两支都在**（说明这一列可排序）、**都不亮**（说明当前没按它排）。
+   * 一对箭头把「可排序」与「当前方向」拆成两件事，正是为了这个状态不再含混——
+   * 单箭头时它画的是一个淡的向上箭头，看着像「现在是升序」。
+   */
+  it("未排序的列两支箭头都弱化", () => {
     render(
       <DataTable
         columns={sortable}
@@ -280,14 +286,8 @@ describe("DataTable · 排序只出控件与方向，排序本身归调用方", 
         onSortChange={() => {}}
       />,
     );
-    const idle = screen
-      .getByRole("button", { name: /数量/ })
-      .querySelector("svg") as SVGElement;
-    const active = screen
-      .getByRole("button", { name: /名称/ })
-      .querySelector("svg") as SVGElement;
-    expect(idle.getAttribute("class")).toContain("opacity-muted");
-    expect(active.getAttribute("class") ?? "").not.toContain("opacity-muted");
+    expect(highlights(/数量/)).toEqual([false, false]);
+    expect(highlights(/名称/)).toEqual([true, false]);
   });
 });
 
