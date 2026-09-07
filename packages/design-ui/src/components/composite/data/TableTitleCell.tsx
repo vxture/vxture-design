@@ -14,8 +14,15 @@
  *   的信号，一列全蓝等于没信号，只剩刺眼。
  * - 主信息与辅助行**左缘齐平**：`Button` 自带 `px-md`，标题因此比它下面那行
  *   缩进 16px，两行读起来像不属于同一格。这里主信息不带横向内边距。
- * - 辅助行走 `text-body-sm` 常规字重——admin 用了 720+，与主信息几乎同重，
- *   抢了主信息的位置；层次由字号与前景色表达，不靠字重打架。
+ * - 辅助行常规字重——admin 用了 720+，与主信息几乎同重，抢了主信息的位置；
+ *   层次由字号与前景色表达，不靠字重打架。
+ *
+ * 字号（owner 2026-09-07 重订）：缺省档 `size="lg"` = 主 `label-lg` / 辅 `body-md`，
+ * 在默认全局字号下是 **16px / 14px**。此前是 `label-md` / `body-sm`（14/12）。
+ * 全部按 token 走，于是三档全局字号（`vx-font-small` / 默认 / `vx-font-large`）
+ * 自动跟随——写死 px 会让本件从那套设定里掉出去。顺带修掉一个缺陷：小号档下
+ * `label-md` 与 `body-sm` 都解析成 12px，主副标题同号、层次整个塌掉；换档后
+ * 小号档是 14/12，层次还在。密集表要老尺寸传 `size="md"`。
  * - 图标与主信息是**一体**：`gap-sm` 贴住标题（admin 的 16px 让图标看起来更靠近
  *   左边的序号列而不是它要标注的标题）。左侧留白归容器——`DataTable` 的业务列
  *   自带 `px-md`。
@@ -44,6 +51,18 @@ export interface TableTitleCellProps {
   readonly titleSuffix?: React.ReactNode;
   /** 辅助信息行：编码、区域、时间一类的补充事实。 */
   readonly description?: React.ReactNode;
+  /**
+   * 两行的字号档（owner 2026-09-07）。缺省 `"lg"` = 主 `label-lg` / 辅 `body-md`,
+   * 在默认字号档下正好是 16px / 14px。
+   *
+   * 是**受控词表**不是 className：本件不开自由 CSS 逃生口（见 `DataTable` 文件头
+   * 「删三个列级逃生口」那条同理）。两档已经够用——密集表要更紧凑给 `"md"`
+   * （14px / 12px，即 2026-09-07 之前的老尺寸）。
+   *
+   * 三档全局字号（`vx-font-small` / 默认 / `vx-font-large`）由 token 自己跟随，
+   * 本件不参与：写死 px 会让这一件从三档设定里掉出去。
+   */
+  readonly size?: "md" | "lg";
   readonly icon?: IconName;
   /** 给了主信息就渲染成可点的标题（进详情），不给就是纯文本。 */
   readonly onTitleClick?: () => void;
@@ -55,15 +74,23 @@ export interface TableTitleCellProps {
   readonly className?: string;
 }
 
+/** 两行的字号取自同一档，避免主副各自被调成不成比例的组合。 */
+const SIZE: Record<"md" | "lg", { title: string; description: string }> = {
+  md: { title: "text-label-md", description: "text-body-sm" },
+  lg: { title: "text-label-lg", description: "text-body-md" },
+};
+
 function TableTitleCell({
   title,
   titleSuffix,
   description,
+  size = "lg",
   icon,
   onTitleClick,
   tooltip,
   className,
 }: TableTitleCellProps) {
+  const type = SIZE[size];
   return (
     <span
       className={cn("flex min-w-0 items-center gap-sm", className)}
@@ -90,7 +117,8 @@ function TableTitleCell({
                  也没有改字重：`font-medium` 会让文字变宽、把同一行后面的内容挤动，
                  悬停时整行发生位移比没有反馈更糟。颜色变化本身已经够指示可点。 */
               className={cn(
-                "min-w-0 truncate rounded-sm text-label-md text-foreground",
+                "min-w-0 truncate rounded-sm text-foreground",
+                type.title,
                 interactive,
                 "hover:text-primary-text",
               )}
@@ -98,14 +126,21 @@ function TableTitleCell({
               {title}
             </button>
           ) : (
-            <span className="min-w-0 truncate text-label-md text-foreground">
+            <span
+              className={cn("min-w-0 truncate text-foreground", type.title)}
+            >
               {title}
             </span>
           )}
           {titleSuffix}
         </span>
         {description ? (
-          <span className="flex min-h-control-3xs items-center truncate text-body-sm text-muted-foreground">
+          <span
+            className={cn(
+              "flex min-h-control-3xs items-center truncate text-muted-foreground",
+              type.description,
+            )}
+          >
             {description}
           </span>
         ) : null}

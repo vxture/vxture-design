@@ -21,23 +21,28 @@
  * 透明模式（workplan §1 V5）：表格不套容器卡。它直接浮在页面底色上，结构由
  * 三条线定义——顶边实线开区块，表头下实线，行间虚线。首末列内边距归零，
  * 让表格文字与上下文的左右缘对齐（admin 的表格就是靠这个嵌进页面的）。
- * 表头与数据行共用同一个 `align` 轴——admin 表头居中、行左对齐的轴冲突（X1）
- * 在这里从结构上不可能发生。
  *
- * 列的对齐是一条**约定**，不是每张表各自决定（2026-08-05 owner 定）：
+ * 列的对齐是一条**约定**，不是每张表各自决定（2026-08-05 owner 定，
+ * 2026-09-07 owner 重订为下表）：
  *
- * | 列          | 宽              | 内容                          |
- * | ----------- | --------------- | ----------------------------- |
- * | 选择框      | 64px            | 居中                          |
- * | 序号        | 64px            | 居中，表头写 `#`              |
- * | 主列（图标+标题+辅助信息） | 自适应 | 居左           |
- * | 状态        | 自适应          | 居中（`align:"center"`）      |
- * | 信息列      | 自适应          | 数值右、文本左                |
- * | 操作        | min 64px        | 居中；单图标或主按钮+⋯ 菜单   |
+ * | 列                        | 宽       | 数据格                              |
+ * | ------------------------- | -------- | ----------------------------------- |
+ * | 选择 / 展开 / 占位        | 64px     | 居中（三者同轴，同时只出现一个）    |
+ * | 序号                      | 64px     | 居中，表头写 `#`                    |
+ * | 首列（标题列）            | 自适应   | 居左——`TableTitleCell` 两行主副     |
+ * | 金额 / 数值               | 自适应   | 右对齐 + 右内边距（`align:"numeric"`）|
+ * | 其余列                    | 自适应   | 居中（**默认值**，不必写）          |
+ * | 操作                      | min 64px | 右对齐；见 `ACTION_COL`             |
+ *
+ * **默认值随位置**（2026-09-07）：首列 `left`、其余 `center`。规范因此由本件结构性
+ * 保证，调用方一行 `align` 都不必写；首列不是标题的表自己写 `align:"center"` 覆盖。
+ * 此前默认是 `left`，等于把"其余列居中"这条规范摊派给每一个调用点去记。
  *
  * **表头一律居中，且是常规字重的正文字号**，与该列数据的 `align` 无关：列名是
  * 框架信息，不是展示重点，不该比它标注的数据更重、也不必跟着数据摆。序号列的
  * 列名写 `#`——"序号"三个字比它下面的数字还长。
+ * （这一条 2026-08 起就已经是代码的实际行为，但上面曾同时写着"表头与数据行共用
+ * 同一个 align 轴"——两句互相矛盾，读注释的人会以为表头跟着 `align` 走。删掉那句。）
  *
  * 三根固定列（选择 / 序号 / 操作）都是 `w-control-3xl`+居中，两端等宽，表格
  * 不会因为最右侧靠右对齐而在视觉上偏出去。
@@ -69,7 +74,14 @@ import { Checkbox } from "../../base/form/Checkbox";
 import { Skeleton } from "../../base/display/Skeleton";
 import { EmptyState } from "../../base/display/EmptyState";
 
-export type DataTableAlign = "left" | "center" | "right";
+/**
+ * 单元格对齐。`numeric` 是金额/计数一类的专档,不是 `right` 的别名——见 `ALIGN`。
+ *
+ * **默认值随列的位置**（owner 2026-09-07）:首列 `left`,其余 `center`。对齐规范
+ * 因此由本件结构性地保证,调用方一行 `align` 都不必写;首列不是标题的表自己写
+ * `align: "center"` 覆盖即可。
+ */
+export type DataTableAlign = "left" | "center" | "right" | "numeric";
 
 export type DataTableSortDirection = "asc" | "desc";
 
@@ -89,11 +101,25 @@ export type DataTableSortDirection = "asc" | "desc";
  */
 export type DataTableColumnWidth = "auto" | "xs" | "sm" | "md" | "lg";
 
+/**
+ * `numeric` 与 `right` 的差别（owner 2026-09-07 定的金额列口径）:金额要右对齐,
+ * 但**不能贴着列的右缘**——贴边时数字与相邻列/表格外沿之间没有喘息,一列金额读起来
+ * 像被挤到边上。加一档右内边距把它拉回来,整列看上去大致居中,而值仍然右对齐。
+ *
+ * 「整列一致宽度」由表格布局本身保证:同一列所有单元格的内容盒右缘是同一条线,
+ * 右对齐即天然对齐,不需要给块指定宽度(给了反而会在某行内容更长时被撑破)。
+ * `tabular-nums` 一起给死:金额列不等宽数字就对不齐,这不该由每个调用方各记一次。
+ */
 const ALIGN: Record<DataTableAlign, string> = {
   left: "text-left",
   center: "text-center",
   right: "text-right",
+  numeric: "text-right tabular-nums pr-2xl",
 };
+
+/** 首列是标题列,居左;其余居中。`align` 显式给了就以显式的为准。 */
+const defaultAlign = (columnIndex: number): DataTableAlign =>
+  columnIndex === 0 ? "left" : "center";
 
 const WIDTH: Record<Exclude<DataTableColumnWidth, "auto">, string> = {
   xs: "min-w-[120px]", // 短徽标：状态、类型这类二选几枚举
@@ -109,8 +135,18 @@ const EDGE_COL = "w-control-3xl px-md text-center";
  * 操作列单独一档：`min-w` 而不是定宽（2026-08-21 owner 修订：操作列 min=64px）。
  * 选择/序号仍是定宽 64——它们的内容天然定宽；操作列允许"主操作按钮 + ⋯ 菜单"
  * 并排（订单表先例），窄场景仍收敛回 64px 单图标，两端视觉不失衡。
+ *
+ * **右对齐而不是居中**（owner 2026-09-07）。操作列有两种形态:只有汇聚菜单的,
+ * 和外放一两个常用按钮再跟汇聚菜单的。要求是两种形态下**汇聚按钮落在同一个 x**,
+ * 否则一屏里既有单按钮行又有多按钮行时,最右那个菜单在各行之间左右跳。
+ *
+ * 居中做不到这一点:多按钮时整组居中,汇聚按钮被前面的按钮推着往右。右对齐做得到
+ * ——最后一个元素永远贴同一条右内缘,不论前面有几个。而只有一个按钮时,64px 的列宽
+ * 减去两侧 `px-md`(16px)正好把它留在列中央,**看起来仍是居中的**:两个要求由
+ * 同一条规则同时满足,不需要调用方声明自己是哪种形态。
+ * 前提是调用方把汇聚菜单放在最后——这本就是既有惯例。
  */
-const ACTION_COL = "min-w-control-3xl px-md text-center";
+const ACTION_COL = "min-w-control-3xl px-md text-right";
 
 /**
  * `Checkbox` 自己的命中区外扩默认给的是 `after:-inset-x-lg`（表单场景够宽，
@@ -441,6 +477,9 @@ function DataTable<TRow>({
                   scope="col"
                   className={cn(
                     ACTION_COL,
+                    // 表头一律居中(与全表同规则),数据格才右对齐——ACTION_COL 带的是
+                    // 数据格要的 text-right,这里覆盖回来。
+                    "text-center",
                     "sticky right-0 whitespace-nowrap py-sm font-normal",
                     // 与下方数据格同一个可覆写遮罩色。表头当初写死 `bg-background`，
                     // 于是二级表的「操作」表头在浅色展开区里单独白一格——数据格改对了
@@ -584,13 +623,13 @@ function DataTable<TRow>({
                           {indexStart + rowIndex}
                         </td>
                       ) : null}
-                      {columns.map((column) => (
+                      {columns.map((column, columnIndex) => (
                         <td
                           key={column.id}
                           className={cn(
                             "px-md py-md align-middle text-foreground",
                             "first:pl-0 last:pr-0",
-                            ALIGN[column.align ?? "left"],
+                            ALIGN[column.align ?? defaultAlign(columnIndex)],
                             column.width && column.width !== "auto"
                               ? WIDTH[column.width]
                               : undefined,
@@ -610,9 +649,11 @@ function DataTable<TRow>({
                          （如两行主列），背景条矮一截，上下露出容器底色
                          （2026-08-03 owner 实测抓到，h-full 那版没修对）。
                          垂直居中交给 `align-middle`（对真实 td 有效，不受
-                         百分比高度限制）；水平居中交给 EDGE_COL 的 `text-center`
-                         （ActionMenu 触发按钮是 inline-flex，服从文本对齐），
-                         与选择列 / 序号列同宽同轴。 */
+                         百分比高度限制）；水平位置交给 ACTION_COL 的 `text-right`
+                         （ActionMenu 触发按钮是 inline-flex，服从文本对齐）——
+                         见 ACTION_COL 的注释：右对齐让汇聚按钮在"单按钮"与
+                         "外放按钮 + 汇聚"两种形态下落在同一个 x，而单按钮时
+                         64px 列宽减去 px-md 后它仍在列中央。 */
                         <td
                           className={cn(
                             ACTION_COL,
