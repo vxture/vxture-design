@@ -1,6 +1,6 @@
 # Design Token 构建规范
 
-适用版本：**DS 12.0.1**
+适用版本：**DS 12.1.0**
 更新：2026-08-27
 范围：`@vxture/design-tokens` 的 T1/T2 两层、`scripts/design-tokens/*` 生成器
 
