@@ -14,18 +14,30 @@
  *   的信号，一列全蓝等于没信号，只剩刺眼。
  * - 主信息与辅助行**左缘齐平**：`Button` 自带 `px-md`，标题因此比它下面那行
  *   缩进 16px，两行读起来像不属于同一格。这里主信息不带横向内边距。
- * - 辅助行常规字重——admin 用了 720+，与主信息几乎同重，抢了主信息的位置；
- *   层次由字号与前景色表达，不靠字重打架。
- *
- * 字号（owner 2026-09-07 重订）：缺省档 `size="lg"` = 主 `label-lg` / 辅 `body-md`，
- * 在默认全局字号下是 **16px / 14px**。此前是 `label-md` / `body-sm`（14/12）。
- * 全部按 token 走，于是三档全局字号（`vx-font-small` / 默认 / `vx-font-large`）
- * 自动跟随——写死 px 会让本件从那套设定里掉出去。顺带修掉一个缺陷：小号档下
- * `label-md` 与 `body-sm` 都解析成 12px，主副标题同号、层次整个塌掉；换档后
- * 小号档是 14/12，层次还在。密集表要老尺寸传 `size="md"`。
+ * - 辅助行常规字重——admin 用了 720+，与主信息几乎同重，抢了主信息的位置。
  * - 图标与主信息是**一体**：`gap-sm` 贴住标题（admin 的 16px 让图标看起来更靠近
  *   左边的序号列而不是它要标注的标题）。左侧留白归容器——`DataTable` 的业务列
  *   自带 `px-md`。
+ *
+ * 字号与字重（owner 2026-09-07，当天两次实测后定稿）：缺省档 `size="md"` =
+ * 主 `label-md` **加粗**（`font-semibold`）/ 辅 `body-sm`，默认全局字号下是
+ * **14px 加粗 / 12px 常规**。
+ *
+ * 中途试过 16/14（`size="lg"`，即 DS 11.0.0 那一版），**实测失败并撤回**：本件的
+ * 两行行高是钉死的（见下），字号一大就顶开行高，整张表的行距被撑得过分。行距原本
+ * 是合理的，问题出在字号。`lg` 档保留但不再是缺省——需要更大字的场合（低密度、
+ * 大屏看板）仍可显式传。
+ *
+ * 层次因此由**字号 + 字重 + 前景色**三者一起给，而不是只靠字号：`label-md` 自带的
+ * `medium`(500) 与辅助行的 `normal`(400) 只差一档，在 14/12 这种小字号上几乎读不出
+ * 主次。字重加在**主信息**上是拉开层次，与上面那条「辅助行不要加重」不矛盾——那条
+ * 说的是别让辅助行去抢主信息的位置。
+ *
+ * 全部按 token 走，三档全局字号（`vx-font-small` / 默认 / `vx-font-large`）自动
+ * 跟随——写死 px 会让本件从那套设定里掉出去。**小号档下两行同为 12px，这是预期的**
+ * （owner 2026-09-07）：`label-md` 与 `body-sm` 在 `vx-font-small` 下都解析到
+ * `--vx-text-xs`，此时层次全部由字重承担（主加粗 / 辅常规）。字号不是唯一的层次
+ * 手段，同号不等于没层次。
  *
  * 图标带 `fallback="placeholder"`：这里的图标名多半由业务数据映射而来，取不到
  * 时要出占位而不是留一个塌掉的空位。
@@ -52,12 +64,14 @@ export interface TableTitleCellProps {
   /** 辅助信息行：编码、区域、时间一类的补充事实。 */
   readonly description?: React.ReactNode;
   /**
-   * 两行的字号档（owner 2026-09-07）。缺省 `"lg"` = 主 `label-lg` / 辅 `body-md`,
-   * 在默认字号档下正好是 16px / 14px。
+   * 两行的字号档。缺省 `"md"` = 主 `label-md` 加粗 / 辅 `body-sm`，默认全局字号下
+   * 是 14px 加粗 / 12px 常规——**表格用这一档**，见文件头（`lg` 实测顶开行高）。
+   *
+   * `"lg"` = 主 `label-lg` / 辅 `body-md`（默认档 16/14）留给低密度、大屏看板一类
+   * 行高本就宽松的场合。
    *
    * 是**受控词表**不是 className：本件不开自由 CSS 逃生口（见 `DataTable` 文件头
-   * 「删三个列级逃生口」那条同理）。两档已经够用——密集表要更紧凑给 `"md"`
-   * （14px / 12px，即 2026-09-07 之前的老尺寸）。
+   * 「删三个列级逃生口」那条同理）。
    *
    * 三档全局字号（`vx-font-small` / 默认 / `vx-font-large`）由 token 自己跟随，
    * 本件不参与：写死 px 会让这一件从三档设定里掉出去。
@@ -74,17 +88,23 @@ export interface TableTitleCellProps {
   readonly className?: string;
 }
 
-/** 两行的字号取自同一档，避免主副各自被调成不成比例的组合。 */
+/**
+ * 两行的字号取自同一档，避免主副各自被调成不成比例的组合。
+ *
+ * 主信息一律 `font-semibold`：层次由**字号 + 字重 + 前景色**三者一起给。`label-md`
+ * 自带的 `medium`(500) 与辅助行的 `normal`(400) 只差一档，在 14/12 这种小字号上
+ * 几乎读不出主次（owner 2026-09-07 实测）。
+ */
 const SIZE: Record<"md" | "lg", { title: string; description: string }> = {
-  md: { title: "text-label-md", description: "text-body-sm" },
-  lg: { title: "text-label-lg", description: "text-body-md" },
+  md: { title: "text-label-md font-semibold", description: "text-body-sm" },
+  lg: { title: "text-label-lg font-semibold", description: "text-body-md" },
 };
 
 function TableTitleCell({
   title,
   titleSuffix,
   description,
-  size = "lg",
+  size = "md",
   icon,
   onTitleClick,
   tooltip,
