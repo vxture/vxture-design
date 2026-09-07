@@ -31,7 +31,8 @@
  * | 序号                      | 64px     | 居中，表头写 `#`                    |
  * | 首列（标题列）            | 自适应   | 居左——`TableTitleCell` 两行主副     |
  * | 金额                      | 自适应   | 居中的定宽块，块内右对齐（`align:"money"`）|
- * | 其余列（含纯数字）        | 自适应   | 居中（**默认值**，不必写）          |
+ * | 纯数值（计数/用量/大小）  | 自适应   | 同上一档，不带货币符号（`align:"numeric"`）|
+ * | 其余列（含短数字）        | 自适应   | 居中（**默认值**，不必写）          |
  * | 操作                      | 64px     | 右对齐；见 `ACTION_COL`             |
  *
  * **默认值随位置**（2026-09-07）：首列 `left`、其余 `center`。规范因此由本件结构性
@@ -75,17 +76,26 @@ import { Skeleton } from "../../base/display/Skeleton";
 import { EmptyState } from "../../base/display/EmptyState";
 
 /**
- * 单元格对齐。`money` 是**金额专档**，不是 `right` 的别名——见 `ALIGN`。
+ * 单元格对齐。
  *
  * **默认值随列的位置**（owner 2026-09-07）:首列 `left`,其余 `center`。对齐规范
  * 因此由本件结构性地保证,调用方一行 `align` 都不必写;首列不是标题的表自己写
  * `align: "center"` 覆盖即可。
  *
- * **纯数字（计数、时长、比率）走默认的居中，不用 `money`**（owner 2026-09-07）。
- * 档位叫 `money` 而不是 `numeric`，就是为了让这条规则长在 API 上：名字叫「数值」
- * 时，计数列会被顺手标上，而它们并不需要那个定宽块。
+ * **数值列分三种，别混**（owner 2026-09-07 逐轮定稿）：
+ *
+ * | 值的形态                       | 档位        | 为什么 |
+ * | ------------------------------ | ----------- | ------ |
+ * | 金额（带货币符号）             | `"money"`   | 个位要对齐；符号由调用方给 |
+ * | 纯数值（计数、用量、大小）     | `"numeric"` | 个位要对齐；不带符号 |
+ * | 短数字（枚举、单位数、百分比） | 默认居中    | 不需要对齐；套定宽块只会让左边空一大截 |
+ *
+ * `money` 与 `numeric` **当前渲染完全相同**（同一个定宽块，见 `ALIGN` / `NUMBER_CELL`），
+ * 但它们不是同一件事：分开命名是为了「这一列是钱」这个事实在代码里可见，也让两者日后
+ * 能各自演进（比如金额将来可能由件统一补符号或按币种排版）。**不要因为渲染一样就把
+ * 它们合成一个**——合了以后再想分开，就得回头翻每一个调用点判断它是不是钱。
  */
-export type DataTableAlign = "left" | "center" | "right" | "money";
+export type DataTableAlign = "left" | "center" | "right" | "numeric" | "money";
 
 export type DataTableSortDirection = "asc" | "desc";
 
@@ -106,10 +116,10 @@ export type DataTableSortDirection = "asc" | "desc";
 export type DataTableColumnWidth = "auto" | "xs" | "sm" | "md" | "lg";
 
 /**
- * `money` 要的是「别贴着列的右缘」（owner 2026-09-07，让步后的口径：可以不严格居中，
- * 但不能挤在右边），同时一列金额之间个位对个位。
+ * `money` / `numeric` 要的是「别贴着列的右缘」（owner 2026-09-07，让步后的口径：可以
+ * 不严格居中，但不能挤在右边），同时一列数值之间个位对个位。两者用同一个块。
  *
- * **做法：列宽不动，列内放一个居中的定宽块，金额在块内右对齐**（见 `MONEY_CELL`）。
+ * **做法：列宽不动，列内放一个居中的定宽块，值在块内右对齐**（见 `NUMBER_CELL`）。
  * 单元格本身 `text-center`，块因此在列内居中、永远碰不到右缘；块内 `text-right`
  * 让各行的个位落在同一条线上；块定宽保证各行的块等宽、右缘同线。
  *
@@ -119,18 +129,24 @@ export type DataTableColumnWidth = "auto" | "xs" | "sm" | "md" | "lg";
  *   其它列，等于用别的列的宽度换这一列的观感，整表的列比例被这一列绑架。列宽该由
  *   内容与布局决定，观感问题在**列内**解决。
  *
- * 纯数字（计数、时长、比率）**不走本档**，走默认的居中：它们不需要个位对齐，套上
- * 定宽块只会让短值左边空一大截。
+ * **短数字**（枚举、单位数、百分比）不走这两档，走默认的居中：它们不需要个位对齐，
+ * 套上定宽块只会让左边空出一大截。要不要对齐看的是「这一列的值会不会差出量级」，
+ * 不是「它是不是数字」。
  */
 const ALIGN: Record<DataTableAlign, string> = {
   left: "text-left",
   center: "text-center",
   right: "text-right",
+  // 两档同轴：居中的是块，值在块内右对齐（见 NUMBER_CELL）。
+  numeric: "text-center",
   money: "text-center",
 };
 
+/** 走定宽块的两个档。加档位时改这里，渲染分支不必跟着散开。 */
+const BLOCK_ALIGNS = new Set<DataTableAlign>(["numeric", "money"]);
+
 /**
- * `money` 列的内层块。宽度按 `ch`：`tabular-nums` 下一个 `ch` 正好是一位数字，
+ * `money` / `numeric` 列的内层块。宽度按 `ch`：`tabular-nums` 下一个 `ch` 正好是一位数字，
  * 12 位放得下「¥1,234,567.89」这类带符号、带千分位、两位小数的百万级金额
  * （owner 2026-09-07 在预览页实测后由 16 调到 12——16 位在真实表格里明显偏宽，
  * 短值左边空出一大截）。
@@ -143,7 +159,7 @@ const ALIGN: Record<DataTableAlign, string> = {
  * `tabular-nums` 一起给死：数字不等宽就对不齐，这不该由每个调用方各记一次。
  * 货币符号在最左，不影响右缘对齐。
  */
-const MONEY_CELL =
+const NUMBER_CELL =
   "inline-block min-w-[12ch] text-right tabular-nums whitespace-nowrap";
 
 /** 首列是标题列,居左;其余居中。`align` 显式给了就以显式的为准。 */
@@ -697,12 +713,14 @@ function DataTable<TRow>({
                             cellSurface,
                           )}
                         >
-                          {/* money 列由本件包一层定宽块（见 MONEY_CELL）：块在居中的
-                              单元格里居中、碰不到右缘，金额在块内右对齐。包在件里而
-                              不是让每个调用方自己写，是因为这条是**规范**——散在几十个
-                              调用点上写，迟早各写各的。 */}
-                          {column.align === "money" ? (
-                            <span className={MONEY_CELL}>
+                          {/* money / numeric 列由本件包一层定宽块（见 NUMBER_CELL）：
+                              块在居中的单元格里居中、碰不到右缘，值在块内右对齐。包在
+                              件里而不是让每个调用方自己写，是因为这条是**规范**——散在
+                              几十个调用点上写，迟早各写各的。 */}
+                          {BLOCK_ALIGNS.has(
+                            column.align ?? defaultAlign(columnIndex),
+                          ) ? (
+                            <span className={NUMBER_CELL}>
                               {column.cell(row, rowIndex)}
                             </span>
                           ) : (
