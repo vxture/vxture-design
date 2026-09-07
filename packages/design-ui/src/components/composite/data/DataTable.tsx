@@ -75,13 +75,17 @@ import { Skeleton } from "../../base/display/Skeleton";
 import { EmptyState } from "../../base/display/EmptyState";
 
 /**
- * 单元格对齐。`numeric` 是金额/计数一类的专档,不是 `right` 的别名——见 `ALIGN`。
+ * 单元格对齐。`money` 是**金额专档**，不是 `right` 的别名——见 `ALIGN`。
  *
  * **默认值随列的位置**（owner 2026-09-07）:首列 `left`,其余 `center`。对齐规范
  * 因此由本件结构性地保证,调用方一行 `align` 都不必写;首列不是标题的表自己写
  * `align: "center"` 覆盖即可。
+ *
+ * **纯数字（计数、时长、比率）走默认的居中，不用 `money`**（owner 2026-09-07）。
+ * 档位叫 `money` 而不是 `numeric`，就是为了让这条规则长在 API 上：名字叫「数值」
+ * 时，计数列会被顺手标上，而它们并不需要那个定宽块。
  */
-export type DataTableAlign = "left" | "center" | "right" | "numeric";
+export type DataTableAlign = "left" | "center" | "right" | "money";
 
 export type DataTableSortDirection = "asc" | "desc";
 
@@ -102,24 +106,88 @@ export type DataTableSortDirection = "asc" | "desc";
 export type DataTableColumnWidth = "auto" | "xs" | "sm" | "md" | "lg";
 
 /**
- * `numeric` 与 `right` 的差别（owner 2026-09-07 定的金额列口径）:金额要右对齐,
- * 但**不能贴着列的右缘**——贴边时数字与相邻列/表格外沿之间没有喘息,一列金额读起来
- * 像被挤到边上。加一档右内边距把它拉回来,整列看上去大致居中,而值仍然右对齐。
+ * `numeric`：金额 / 计数列（owner 2026-09-07 口径）。
  *
- * 「整列一致宽度」由表格布局本身保证:同一列所有单元格的内容盒右缘是同一条线,
- * 右对齐即天然对齐,不需要给块指定宽度(给了反而会在某行内容更长时被撑破)。
- * `tabular-nums` 一起给死:金额列不等宽数字就对不齐,这不该由每个调用方各记一次。
+ * 要的是**「居中为先，文字靠右」**：一列数字里最长的那个看上去是居中的，其余的向它
+ * 右对齐。不是「贴着列右缘」——贴边时数字与相邻列挤在一起，一列金额读起来像被推到
+ * 边上；也不是逐格居中——那样个位数对不上。
+ *
+ * `money` 要的是「别贴着列的右缘」（owner 2026-09-07，让步后的口径：可以不严格居中，
+ * 但不能挤在右边），同时一列金额之间个位对个位。
+ *
+ * **做法：列宽不动，列内放一个居中的定宽块，金额在块内右对齐**（见 `MONEY_CELL`）。
+ * 单元格本身 `text-center`，块因此在列内居中、永远碰不到右缘；块内 `text-right`
+ * 让各行的个位落在同一条线上；块定宽保证各行的块等宽、右缘同线。
+ *
+ * 走过两条弯路，都记在这里免得再走：
+ * - `pr-2xl`（只加右内边距）：左 16 右 40 的不对称把数字整体推向右侧，更靠右了。
+ * - `px-2xl` + `w-px`（让列收缩到内容宽）：**方向错了**——`w-px` 是把富余宽度推给
+ *   其它列，等于用别的列的宽度换这一列的观感，整表的列比例被这一列绑架。列宽该由
+ *   内容与布局决定，观感问题在**列内**解决。
+ *
+ * 纯数字（计数、时长、比率）**不走本档**，走默认的居中：它们不需要个位对齐，套上
+ * 定宽块只会让短值左边空一大截。
  */
 const ALIGN: Record<DataTableAlign, string> = {
   left: "text-left",
   center: "text-center",
   right: "text-right",
-  numeric: "text-right tabular-nums pr-2xl",
+  money: "text-center",
 };
+
+/**
+ * `money` 列的内层块。宽度按 `ch`：`tabular-nums` 下一个 `ch` 正好是一位数字，
+ * 16 位放得下「¥1,234,567,890.12」这类带符号、带千分位、两位小数的金额
+ * （owner 2026-09-07 定的档）。
+ *
+ * 是 `min-w` 不是 `w`：真有更长的值时**让它左右延伸**，不截断也不换行（owner 认可
+ * 这个退化）。代价是那一行的块比别行宽，居中之下左右各外移超出量的一半，个位与别行
+ * 错开——所以这个数要按业务的金额上限取，宁可宽一点。截掉金额的位数不可接受。
+ *
+ * `tabular-nums` 一起给死：数字不等宽就对不齐，这不该由每个调用方各记一次。
+ * 货币符号在最左，不影响右缘对齐。
+ */
+const MONEY_CELL =
+  "inline-block min-w-[16ch] text-right tabular-nums whitespace-nowrap";
 
 /** 首列是标题列,居左;其余居中。`align` 显式给了就以显式的为准。 */
 const defaultAlign = (columnIndex: number): DataTableAlign =>
   columnIndex === 0 ? "left" : "center";
+
+/**
+ * 可排序表头的方向标：**上下一对箭头，按当前方向高亮其中一支**（owner 2026-09-07）。
+ *
+ * 此前是**单个** `arrow-up` / `arrow-down`：未排序时画一个淡的向上箭头——那是在说
+ * 「点了会升序」，可它看起来更像「现在是升序」。一个箭头没法同时表达「可排序」与
+ * 「当前按哪个方向」，于是两件事挤在一个字形上，读起来含混（owner：箭头太丑）。
+ *
+ * 一对箭头把两件事分开：**两支都在** = 这一列可排序；**哪支亮** = 当前是哪个方向；
+ * 都不亮 = 可排序但当前没按它排。用 `chevron` 而不是 `arrow`：箭杆在 10px 上糊成
+ * 一团，只留箭头更干净。合体的 `caret-up-down` 是一个字形，分不开着色，做不到按需高亮。
+ *
+ * 整块 `aria-hidden`：方向已由 `<th aria-sort>` 报给读屏器（就在上面），这里再报一遍
+ * 是重复信息。
+ */
+function SortMarker({
+  direction,
+}: {
+  readonly direction: DataTableSortDirection | null;
+}) {
+  return (
+    <span className="inline-flex flex-col leading-none" aria-hidden="true">
+      <Icon
+        name="chevron-up"
+        size={10}
+        className={direction === "asc" ? "text-foreground" : "opacity-muted"}
+      />
+      <Icon
+        name="chevron-down"
+        size={10}
+        className={direction === "desc" ? "text-foreground" : "opacity-muted"}
+      />
+    </span>
+  );
+}
 
 const WIDTH: Record<Exclude<DataTableColumnWidth, "auto">, string> = {
   xs: "min-w-[120px]", // 短徽标：状态、类型这类二选几枚举
@@ -132,21 +200,25 @@ const WIDTH: Record<Exclude<DataTableColumnWidth, "auto">, string> = {
 const EDGE_COL = "w-control-3xl px-md text-center";
 
 /**
- * 操作列单独一档：`min-w` 而不是定宽（2026-08-21 owner 修订：操作列 min=64px）。
- * 选择/序号仍是定宽 64——它们的内容天然定宽；操作列允许"主操作按钮 + ⋯ 菜单"
- * 并排（订单表先例），窄场景仍收敛回 64px 单图标，两端视觉不失衡。
+ * 操作列：与选择列 / 序号列**同一个定宽** `w-control-3xl`，三根固定列两端等宽。
  *
- * **右对齐而不是居中**（owner 2026-09-07）。操作列有两种形态:只有汇聚菜单的,
- * 和外放一两个常用按钮再跟汇聚菜单的。要求是两种形态下**汇聚按钮落在同一个 x**,
- * 否则一屏里既有单按钮行又有多按钮行时,最右那个菜单在各行之间左右跳。
+ * 2026-08-21 曾改成 `min-w-`，本意是让「主操作按钮 + ⋯ 菜单」并排的形态能撑开。
+ * 但 `min-w` 在 `w-full` 的自动布局里还有一个没预料到的后果：**这一列会去分表格的
+ * 富余宽度**，于是只有一个汇聚菜单时列宽也远不止 64px，钉在右侧的锁定列显得又宽又空
+ * （owner 2026-09-07 在预览页看出来）。
  *
- * 居中做不到这一点:多按钮时整组居中,汇聚按钮被前面的按钮推着往右。右对齐做得到
- * ——最后一个元素永远贴同一条右内缘,不论前面有几个。而只有一个按钮时,64px 的列宽
- * 减去两侧 `px-md`(16px)正好把它留在列中央,**看起来仍是居中的**:两个要求由
- * 同一条规则同时满足,不需要调用方声明自己是哪种形态。
- * 前提是调用方把汇聚菜单放在最后——这本就是既有惯例。
+ * 回到定宽同时保住并排形态：自动布局里 `width` 是**建议值**，内容的 min-content 更宽
+ * 时列照样撑开。所以单个图标 → 正好 64px；两三个按钮 → 按需撑开。定宽的真正作用是
+ * **不再参与富余分配**。
+ *
+ * **右对齐而不是居中**（owner 2026-09-07）。两种形态下要求**汇聚按钮落在同一个 x**，
+ * 否则一屏里既有单按钮行又有多按钮行时，最右那个菜单在各行之间左右跳。居中做不到
+ * ——多按钮时整组居中，汇聚按钮被前面的按钮推着往右；右对齐做得到：最后一个元素永远
+ * 贴同一条右内缘。而只有一个按钮时，64px 减去两侧 `px-md` 后它正好填满内容盒，
+ * **看起来仍是居中的**。两个要求由同一条规则满足，调用方不必声明自己是哪种形态；
+ * 前提是把汇聚菜单放在最后——这本就是既有惯例。
  */
-const ACTION_COL = "min-w-control-3xl px-md text-right";
+const ACTION_COL = "w-control-3xl px-md text-right";
 
 /**
  * `Checkbox` 自己的命中区外扩默认给的是 `after:-inset-x-lg`（表单场景够宽，
@@ -455,15 +527,8 @@ function DataTable<TRow>({
                         )}
                       >
                         {column.header}
-                        <Icon
-                          name={
-                            active && sort.direction === "desc"
-                              ? "arrow-down"
-                              : "arrow-up"
-                          }
-                          size={16}
-                          aria-hidden="true"
-                          className={active ? undefined : "opacity-muted"}
+                        <SortMarker
+                          direction={active ? sort.direction : null}
                         />
                       </button>
                     ) : (
@@ -636,7 +701,17 @@ function DataTable<TRow>({
                             cellSurface,
                           )}
                         >
-                          {column.cell(row, rowIndex)}
+                          {/* money 列由本件包一层定宽块（见 MONEY_CELL）：块在居中的
+                              单元格里居中、碰不到右缘，金额在块内右对齐。包在件里而
+                              不是让每个调用方自己写，是因为这条是**规范**——散在几十个
+                              调用点上写，迟早各写各的。 */}
+                          {column.align === "money" ? (
+                            <span className={MONEY_CELL}>
+                              {column.cell(row, rowIndex)}
+                            </span>
+                          ) : (
+                            column.cell(row, rowIndex)
+                          )}
                         </td>
                       ))}
                       {rowActions ? (
