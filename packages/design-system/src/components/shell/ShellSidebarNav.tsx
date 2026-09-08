@@ -135,6 +135,22 @@ export interface ShellNavItem {
    * 概念"用的，不是标识，挤进 tooltip 只会让那一行变长。
    */
   subLabel?: string;
+  /**
+   * 行尾外链。给了才渲染一个小外链图标，**独立于主链接**：点图标去这个地址
+   * （新标签页），点行本身仍走 `href`。可选，不传即原行为。
+   *
+   * 用途是把「读物」引到它该在的渠道而不占掉导航位：console 的
+   * 「模型服务 / 技能工具」在工作台只答「你有什么」，能力说明与用法在文档站
+   * （owner 2026-09-08）。图标而不是整行跳转，是因为两个目的地都要保留——
+   * 整行跳走的话，「你有什么」就没地方看了。
+   *
+   * 收起态不渲染（只剩图标，没有位置放第二个可点区）。
+   */
+  external?: {
+    href: string;
+    /** 图标的可访问名，如「查看模型文档」。必给——纯图标按钮没有可读名等于对读屏隐身。 */
+    label: string;
+  };
 }
 
 /**
@@ -284,6 +300,8 @@ function NavItemRow({
            时内容仍是一行，min-h 与原来的 h-control-xl 等值——单行项的高度、
            图标位置、间距全部不变，这是"纯增量"的具体含义。 */
         "flex min-h-control-xl items-center gap-xs rounded-md",
+        /* 有外链图标时右侧留位，否则长标签会钻到图标底下。 */
+        item.external ? "pr-2xl" : undefined,
         "text-label-md transition-colors duration-fast ease-standard",
         active
           ? "bg-surface-selected text-primary-text"
@@ -312,7 +330,39 @@ function NavItemRow({
     </LinkComponent>
   );
 
-  if (!collapsed) return link;
+  /* 行尾外链（可选）。**必须在主链接之外**——嵌进 <LinkComponent> 里就成了
+     「链接里的链接」：HTML 不允许，浏览器会把它拆开，点击落到外层，图标等于失效。
+     所以外面套一层 relative 容器，图标绝对定位压在右侧。
+     主链接右侧留出 pr 让文字不钻到图标底下。 */
+  const withExternal =
+    !collapsed && item.external ? (
+      <div className="relative">
+        {link}
+        <a
+          href={item.external.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={item.external.label}
+          title={item.external.label}
+          className={cn(
+            "absolute right-2xs top-1/2 -translate-y-1/2",
+            "inline-flex size-icon-lg items-center justify-center rounded-sm",
+            "text-muted-foreground transition-colors duration-fast ease-standard",
+            "hover:bg-accent hover:text-foreground",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring",
+          )}
+        >
+          <Icon name="external-link" size="xs" />
+        </a>
+      </div>
+    ) : null;
+
+  /* 收起态**只回主链接**（下面那条 return）——只剩图标，没有位置放第二个可点区。
+     所以 withExternal 里那个 `!collapsed &&` 现在是双保险：把它去掉也不改变
+     收起态行为，因为收起态压根走不到这里（2026-09-08 变异测试实测）。
+     两道都留着：哪天有人把下面那条 return 也改成用 withExternal，
+     少了这个条件就会在 rail 宽度里挤出一个够不着的图标。 */
+  if (!collapsed) return withExternal ?? link;
   return (
     <Tooltip>
       <TooltipTrigger asChild>{link}</TooltipTrigger>
