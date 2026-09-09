@@ -146,6 +146,21 @@ export interface ShellNavItem {
    *
    * 收起态不渲染（只剩图标，没有位置放第二个可点区）。
    */
+  /**
+   * 行尾的**纯指示图标**——只渲染，不可点。
+   *
+   * 用途是标出这一项的**去向语义**：整行本身就是那个跳转（`href` 指向站外），
+   * 需要一个记号让人在点之前知道会离开当前站点。与 `PanelItem.trailingIcon`
+   * 同名同义，不发明新概念。
+   *
+   * ── 与 `external` 的区别，别混用 ──
+   * `external` 是**第二个目的地**：点行去 A，点图标去 B，两个都能点。
+   * `trailingIcon` 只有一个目的地，图标是它的标记。
+   * 两个都传时以 `external` 为准——它是可交互的那个，把可点的东西挤掉更糟。
+   *
+   * 收起态不渲染：只剩主图标，没有位置放第二个。
+   */
+  trailingIcon?: IconName;
   external?: {
     href: string;
     /** 图标的可访问名，如「查看模型文档」。必给——纯图标按钮没有可读名等于对读屏隐身。 */
@@ -327,6 +342,18 @@ function NavItemRow({
           )}
         </NavLabel>
       )}
+      {/* 纯指示图标：**放在主链接内部**是对的——它不可点，不构成「链接里的链接」。
+          （行尾外链 `external` 那个不同：它是第二个可点区，必须在外面。）
+          `external` 在场时不渲染本图标：那时右侧位置归可交互的那个。
+          `ml-auto` 把它推到右端；收起态整块不渲染。 */}
+      {!collapsed && item.trailingIcon && !item.external ? (
+        <Icon
+          name={item.trailingIcon}
+          size="xs"
+          className="ml-auto shrink-0 text-muted-foreground"
+          aria-hidden
+        />
+      ) : null}
     </LinkComponent>
   );
 
