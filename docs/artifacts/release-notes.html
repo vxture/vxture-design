@@ -210,26 +210,46 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking">必须改的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">升到 <strong>design-system 10.0.0</strong> 要做什么、不用做什么。<strong>这一版是 major：三个包同时升，且必须一起升。</strong>要改的只有一类——写着 <span class="mono">-none</span> 的间距工具类。§02 是清单，§03 是那些不用改但行为变了的。</p>
+    <p class="lede">升到 <strong>design-system 12.2.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
   </div>
 
-<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-08-28 · major</span></h2><div class="rule"></div>
+<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-08 · minor</span></h2><div class="rule"></div>
 <p><strong>应用只装伞包。</strong>直接装 <span class="mono">design-ui</span> 拿不到运行时接线（主题 / 密度 / 字号 provider），且版本约束不再由伞包保证。</p>
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">10.0.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">7.0.0</td><td><span class="tag t-bad">major</span> 由伞包精确钉版，不要直接装</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.0.0</td><td><span class="tag t-bad">major</span> 删了一个 token 档——见 §02</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.2.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.1.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.0.0</td><td><span class="tag t-ok">未动</span> 上次改动在 10.0.0</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 10.0.0 就会带上 ui 7.0.0 与 tokens 3.0.0；<strong>不要单独升其中一个</strong>。<br><br><strong>为什么 tokens 也是 major：</strong>删掉一个 CSS 变量<strong>不会报错，只会静默失效</strong>——没有编译器会告诉你 <span class="mono">var(--space-none)</span> 现在解析不到。所以 token 的删改一律按 major，不做「应该没人用」的推定。<br><br>⚠ <strong>registry 上没有 6.0.5 与 6.0.6</strong>：这两批合并后未单独打标签，随 6.0.7 一并发出。CHANGELOG 里各自留有条目。</div></section>
+<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.2.0 就会带上 ui 9.1.0 与 tokens 3.0.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
-<section id="breaking"><h2><span class="num">02</span>必须改的<span class="h2-meta">10.0.0 major</span></h2><div class="rule"></div>
+<section id="breaking12"><h2><span class="num">02</span>必须改的<span class="h2-meta">11.0.0 / 12.0.0 两次 major</span></h2><div class="rule"></div>
+<div class="note danger" style="font-size:1rem">两条都在 <span class="mono">DataTable</span> 的列对齐上，<strong>都不报错</strong>。一条静默改变已有表格的观感，另一条会让代码<strong>编译通过但含义变了</strong>——后者更隐蔽。</div>
+
+<h3>① 列对齐的默认值随位置了（11.0.0）</h3>
+<p><span class="mono">DataTableColumn.align</span> 的缺省从<strong>一律 <span class="mono">left</span></strong> 改为<strong>随位置</strong>：首列 <span class="mono">left</span>、其余 <span class="mono">center</span>。</p>
+<div class="note warn"><strong>影响面是「所有没显式写 align 的非首列」。</strong>它们从左对齐变成居中，<strong>没有任何编译期信号</strong>——表格照常渲染，只是看起来不一样了。文本列尤其明显：一列居中的中文描述读起来比左对齐费劲得多。<br><br><strong>怎么处理：</strong>不是全部加回 <span class="mono">align:"left"</span>。新缺省对多数表是对的（短枚举、状态、数量居中更整齐），值得逐表看一眼；<strong>只有承载长文本的列需要显式写回 <span class="mono">left</span></strong>。</div>
+
+<h3>② <span class="mono">"numeric"</span> 这个名字换了含义（12.0.0 + 12.1.0）</h3>
+<p>这一条要连着两个版本一起读，单看任何一个都会得出错误结论：</p>
+<div class="tw"><table>
+<thead><tr><th>版本</th><th><span class="mono">align:"numeric"</span> 的含义</th></tr></thead>
+<tbody>
+<tr><td class="mono">11.x</td><td>金额档（定宽块）</td></tr>
+<tr><td class="mono">12.0.0</td><td><span class="tag t-bad">不存在</span> 改名为 <span class="mono">"money"</span>，写 <span class="mono">"numeric"</span> 编译失败</td></tr>
+<tr><td class="mono">12.1.0+</td><td><span class="tag t-warn">回来了，但换了意思</span> 纯数值档，与 <span class="mono">"money"</span> 并列</td></tr>
+</tbody></table></div>
+<div class="note danger"><strong>直接从 11.x 跳到 12.1.0+ 的，编译器帮不了你。</strong>12.0.0 那一步会报错（名字没了），所以只要中途在 12.0.0 停一下就一定会被发现；<strong>但一步跨到 12.1.0+，<span class="mono">"numeric"</span> 又是个合法值了</strong>——代码编过，金额列却按纯数值渲染。<br><br><strong>怎么找：</strong><br><span class="mono">grep -rn 'align: *"numeric"' src/</span><br>逐个判断它当初想表达的是<strong>金额</strong>还是<strong>数值</strong>：是金额就改成 <span class="mono">"money"</span>，是纯数值就原样留着。这一步只能人读，没有机械判据——两种意图在旧代码里长得一模一样。</div>
+<p>另外 12.0.0 同批定稿了金额档的呈现（定宽块、居中不贴右缘）、操作列回定宽、排序标换成上下一对箭头；这些不需要调用方改动。</p>
+</section>
+
+<section id="breaking10"><h2><span class="num">03</span>还没迁完 10.0.0 的看这里<span class="h2-meta">间距档</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem"><strong><span class="mono">--space-none</span> 不再注册进 <span class="mono">@theme</span>，凡是写 <span class="mono">p-none</span> / <span class="mono">gap-none</span> / <span class="mono">pt-none</span> 这类的地方，类名从此不产出任何规则。</strong>不报错，只是那处内边距静默变回浏览器默认。</div>
 
 <p><span class="mono">none</span> 是 CSS 全局关键字，<strong>在不同属性上含义不同</strong>：<span class="mono">padding</span> 上我们想表达 0，而 <span class="mono">max-width: none</span> 是「无上限」、<span class="mono">line-height</span> 的 Tailwind 原义是 1。把字面词 <span class="mono">none</span> 登记进 spacing 命名空间之后，<strong>凡是读 spacing 档的工具类族都会把 <span class="mono">X-none</span> 解析成 0</strong>——Tailwind 不区分「这个族的 none 是不是 0」。</p>
@@ -256,7 +276,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note"><strong>为什么不补一个 <span class="mono">--leading-none</span> 了事。</strong>那不是设计令牌，是为了在名字解析上抢赢 spacing 档而造的影子值——一个叫「none」的行高不表达任何设计决策。而且它只管一族：<span class="mono">max-w-none</span> 要再造 <span class="mono">--container-none</span>，<span class="mono">min-w-none</span>、<span class="mono">max-h-none</span> 各自还要一个，<strong>每个「CSS 里 none ≠ 0」的属性族都得再补一次</strong>。根因只有一个：<span class="mono">none</span> 不该是间距档的键名。</div>
 </section>
 
-<section id="breaking9"><h2><span class="num">03</span>还没迁完 9.0.0 的看这里<span class="h2-meta">上一次 major</span></h2><div class="rule"></div>
+<section id="breaking9"><h2><span class="num">04</span>还没迁完 9.0.0 的看这里<span class="h2-meta">红色按钮</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem"><strong><span class="mono">variant="destructive"</span> 的 <span class="mono">Button</span> / <span class="mono">ActionButton</span> 现在会编译失败</strong>，除非写明为什么不设防。这是「红」与「拦」变成同一个决定的最后一块。</div>
 <p>此前判别联合只管 <span class="mono">ActionMenuItem</span> 与 <span class="mono">BulkActionBarItem</span>，够不到裸的红按钮——于是 <span class="mono">grep confirmExempt</span> 会把只有裸红按钮的产品报成「干净」。<strong>清单不完整就不能当清单用。</strong></p>
 <div class="grid g2">
@@ -288,7 +308,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="kv"><div class="kv-k hi">DestructiveButton 的限制</div><div class="kv-v txt">不开 <span class="mono">variant</span>（按定义就是 destructive 入口档），也不开 <span class="mono">asChild</span>（它渲染「按钮 + 对话框」两个节点，塞不进 <span class="mono">Slot</span> 的单子元素约束）。<span class="mono">AlertDialogTrigger asChild</span> 这类场合用 <span class="mono">Button</span> + <span class="mono">confirmExempt</span></div></div>
 <div class="kv"><div class="kv-k hi">variant 是运行时值时</div><div class="kv-v txt">遍历全部挡位的画廊选不出分支，需要回收一次类型——预览面的 <span class="mono">galleryVariant</span> 是这个写法的样板</div></div></section>
 
-<section id="patches"><h2><span class="num">04</span>不用改，但行为变了<span class="h2-meta">八个 patch</span></h2><div class="rule"></div>
+<section id="patches"><h2><span class="num">05</span>不用改，但行为变了<span class="h2-meta">八个 patch</span></h2><div class="rule"></div>
 <p>下面八条<strong>不需要你动任何代码</strong>，但它们改的是「本来就该这样、此前一直不是」的行为。如果你为这些症状做过绕法，<strong>绕法现在可以撤了</strong>。</p>
 <div class="tw"><table>
 <thead><tr><th>版本</th><th>症状（你可能见过的样子）</th><th>绕法可以撤吗</th></tr></thead>
@@ -305,7 +325,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note warn"><strong>6.0.1 那条值得单独看一眼。</strong>挡位失效期间，任何需要窄抽屉的地方只能靠外部盖宽度。现在挡位活了——<span class="mono">cn</span> 把 <span class="mono">--container-*</span> 登记进了宽度组，你外部再传一个宽度类，<strong>谁赢取决于书写顺序</strong>，而不是你的意图。升级后请检查所有传了 <span class="mono">width</span> 又同时盖过宽度的 <span class="mono">Drawer</span>。</div>
 <div class="kv"><div class="kv-k">6.0.2 文档更正</div><div class="kv-v txt"><span class="mono">AlertDialog</span> 的 <strong>Esc 是关得掉的</strong>。头注此前写「Esc 与点遮罩也不关」，错了一半：Esc 触发 <span class="mono">onOpenChange</span>，外点不触发。Esc 能关是<strong>对的</strong>——没有键盘出路的模态是键盘陷阱。「要求表态」靠的是拿掉随手可点的出口（无 X 钮、外点不关），不是堵死所有出口</div></div></section>
 
-<section id="check"><h2><span class="num">05</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
+<section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
 <div class="grid g2">
@@ -315,7 +335,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p style="margin:0">读<strong>理由本身</strong>。<span class="mono">confirmExempt</span> 收的是散文不是布尔，就是为了让这份清单可以被人评审：「确认在流程第二步」是个理由，<span class="mono">"ok"</span> 不是。清单比错误有用——<strong>但前提是清单完整</strong>，不完整的清单比没有清单更坏。</p></div>
 </div></section>
 
-<section id="notmine"><h2><span class="num">06</span>报错查到 DS 头上时<span class="h2-meta">先做对照组</span></h2><div class="rule"></div>
+<section id="notmine"><h2><span class="num">07</span>报错查到 DS 头上时<span class="h2-meta">先做对照组</span></h2><div class="rule"></div>
 <p>这一节是 2026-08-26 一次真实误判的产物，写在这里是因为<strong>它会再发生</strong>。</p>
 <div class="note danger" style="font-size:1rem">消费端报来一条 React key 警告，追进 DS 的构建产物，看到 <span class="mono">Section</span> 用的是 <span class="mono">jsx</span> 而不是 <span class="mono">jsxs</span>，结论是「根因在 DS，改一个字符就行」，并登记了技术债等 DS 修。<strong>结论是错的，而链条讲得通——这正是它值得记下来的原因。</strong></div>
 <div class="tw"><table>

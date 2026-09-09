@@ -86,6 +86,60 @@ for (const name of (await readdir(ART)).filter(
   }
 }
 
+/**
+ * 发版说明的**安装表**：它叫人装的必须就是当前版本。
+ *
+ * ── 补的是哪个盲区 ──
+ * 上面那段只看页脚。2026-09-09 核对时 release-notes.html 的页脚已经是 12.2.0
+ * （守卫逼着改的），而正文的大标题、§01 安装表整个还停在 10.0.0 那次迁移——
+ * **照 §01 装的人会装一个落后两个 major 的版本**。页脚对、正文错，守卫全程报绿。
+ *
+ * 教训与本文件开头那条同构：盯住的是**代号**（页脚那一行），不是**性质**
+ * （这份文档告诉你装的是不是当前版本）。代号会被单独维护到对为止，
+ * 而它周围的内容照旧漂。
+ *
+ * ── 为什么三包都盯，与上面的取舍不同 ──
+ * 上面刻意不盯页脚里的 tokens / ui 明细，理由是「每次单包 patch 都要改六份文档」。
+ * 这里不一样：安装表**只有这一处**，且它的全部作用就是告诉人装哪三个版本——
+ * 写错任何一个，照做的人就装错。一处的维护成本换不出「装错版本」的代价。
+ */
+const RN = path.join(ART, "release-notes.html");
+try {
+  const text = await readFile(RN, "utf8");
+  const sec = text.match(/<section id="install">([\s\S]*?)<\/section>/);
+  if (!sec) {
+    problems.push(
+      "docs/artifacts/release-notes.html：没有 §01 安装区段（id=install）",
+    );
+  } else {
+    for (const pkg of ["design-system", "design-ui", "design-tokens"]) {
+      const actual = JSON.parse(
+        await readFile(path.join(ROOT, `packages/${pkg}/package.json`), "utf8"),
+      ).version;
+      // 安装表里该包那一行：<td class="mono">@vxture/<pkg></td><td class="mono">x.y.z</td>
+      const row = sec[1].match(
+        // 反斜杠要双写：这是**模板字符串**，`\s` 在其中会被求值成字面 `s`
+        // （非法转义序列丢掉反斜杠），正则拿到的就不是空白类了。初稿三条全报
+        // 「找不到版本格」，看着像标记变了，其实是这一层转义。
+        new RegExp(`@vxture/${pkg}</td>\\s*<td[^>]*>(\\d+\\.\\d+\\.\\d+)</td>`),
+      );
+      if (!row) {
+        problems.push(
+          `docs/artifacts/release-notes.html：§01 安装表里找不到 @vxture/${pkg} 的版本格`,
+        );
+      } else if (row[1] !== actual) {
+        problems.push(
+          `docs/artifacts/release-notes.html：§01 叫人装 ${pkg} ${row[1]}，实际是 ${actual}`,
+        );
+      }
+    }
+  }
+} catch (err) {
+  if (err.code !== "ENOENT") throw err;
+  // 文件不在就是不在——但它一直在，删掉了该有人知道。
+  problems.push("docs/artifacts/release-notes.html：文件不存在");
+}
+
 if (problems.length > 0) {
   console.error(`文档版本与伞包不一致（伞包 ${version}）：`);
   for (const p of problems) console.error(`  · ${p}`);
