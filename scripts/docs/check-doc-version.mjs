@@ -108,7 +108,9 @@ try {
   const text = await readFile(RN, "utf8");
   const sec = text.match(/<section id="install">([\s\S]*?)<\/section>/);
   if (!sec) {
-    problems.push("docs/artifacts/release-notes.html：没有 §01 安装区段（id=install）");
+    problems.push(
+      "docs/artifacts/release-notes.html：没有 §01 安装区段（id=install）",
+    );
   } else {
     for (const pkg of ["design-system", "design-ui", "design-tokens"]) {
       const actual = JSON.parse(
