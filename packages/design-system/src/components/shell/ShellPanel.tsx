@@ -121,8 +121,13 @@ export const ShellPanelContent = React.forwardRef<
         onOpenAutoFocus?.(event);
       }}
       className={cn(
-        // w-80(320px) 是**组件尺寸**，不进 T2 刻度（01-usage.md §3，
-        // PopoverContent 自己的 w-72 同理）。
+        /* w-80(320px) 是**组件尺寸**，不进 T2 刻度（01-usage.md §3，
+           PopoverContent 自己的 w-72 同理）。
+
+           **必须写成字面量**，不能抽成常量再模板拼接：类名由消费方的 Tailwind
+           扫描本包源码生成，扫描器只认源码里出现过的完整串——拼出来的 `w-80`
+           它看不见，于是那条规则根本不会被 emit，运行时表现为"宽度设了没生效"。
+           ShellScopeButton 的 `w-80` 同理，两处刻意重复。 */
         "flex w-80 flex-col gap-md p-md",
         className,
       )}
@@ -611,7 +616,18 @@ export const ShellScopeButton = React.forwardRef<
         // media 刻度前几档是**图标级**尺寸（xs=32px），拿来当宽度上限会把
         // 整个按钮压成只剩图标。
         "max-w-media-3xl justify-start gap-2xs text-muted-foreground hover:text-foreground",
-        active && "bg-accent text-foreground",
+        /* 悬停 / 展开时撑到**与弹出面板同宽**（owner 2026-09-10）。
+           常态维持 192px 上限——header 上还有搜索、通知、头像，
+           让它长期占 320px 是拿别人的空间换一个多数时候用不上的完整名字。
+           想看全名的那一刻恰恰就是要展开面板的那一刻，所以两件事绑在一起。
+
+           `w-80` 与 ShellPanelContent 那处**刻意重复**、不抽常量：类名由消费方的
+           Tailwind 扫描源码生成，模板拼接出来的串扫描器看不见，规则不会被 emit，
+           症状是"设了宽度没生效"。
+
+           过渡加在 max-width 上：宽度突变会把右边那几个图标一格一格弹开。 */
+        "transition-[max-width] duration-150 hover:w-80 hover:max-w-none",
+        active && "w-80 max-w-none bg-accent text-foreground",
         className,
       )}
       {...passthrough}
