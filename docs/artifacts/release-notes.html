@@ -215,19 +215,19 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">升到 <strong>design-system 12.2.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
+    <p class="lede">升到 <strong>design-system 12.3.1</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
   </div>
 
-<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-08 · minor</span></h2><div class="rule"></div>
+<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-09 · minor</span></h2><div class="rule"></div>
 <p><strong>应用只装伞包。</strong>直接装 <span class="mono">design-ui</span> 拿不到运行时接线（主题 / 密度 / 字号 provider），且版本约束不再由伞包保证。</p>
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.2.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.3.1</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
 <tr><td class="mono">@vxture/design-ui</td><td class="mono">9.1.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.0.0</td><td><span class="tag t-ok">未动</span> 上次改动在 10.0.0</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.2.0 就会带上 ui 9.1.0 与 tokens 3.0.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
+<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.3.1 就会带上 ui 9.1.0 与 tokens 3.0.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
 <section id="breaking12"><h2><span class="num">02</span>必须改的<span class="h2-meta">11.0.0 / 12.0.0 两次 major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">两条都在 <span class="mono">DataTable</span> 的列对齐上，<strong>都不报错</strong>。一条静默改变已有表格的观感，另一条会让代码<strong>编译通过但含义变了</strong>——后者更隐蔽。</div>
@@ -366,7 +366,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.2.0 · design-tokens 3.0.0 / design-ui 9.1.0 / design-system 12.2.0 · 2026-09-02</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.3.1 · design-tokens 3.0.0 / design-ui 9.1.0 / design-system 12.3.1 · 2026-09-02</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

@@ -19,7 +19,10 @@ import { describe, expect, it } from "vitest";
 import { ShellSidebarNav } from "../src/components/shell/ShellSidebarNav";
 import type { ShellNavSection } from "../src/components/shell/ShellSidebarNav";
 
-const sections = (external?: { href: string; label: string }) =>
+const sections = (
+  external?: { href: string; label: string },
+  trailingIcon?: "external-link",
+) =>
   [
     {
       title: "模型与能力",
@@ -30,6 +33,7 @@ const sections = (external?: { href: string; label: string }) =>
           subLabel: "Atlas",
           icon: "database" as const,
           ...(external ? { external } : {}),
+          ...(trailingIcon ? { trailingIcon } : {}),
         },
       ],
     },
@@ -38,11 +42,12 @@ const sections = (external?: { href: string; label: string }) =>
 function renderNav(
   external?: { href: string; label: string },
   collapsed = false,
+  trailingIcon?: "external-link",
 ) {
   return render(
     <ShellSidebarNav
       domainName=""
-      sections={sections(external)}
+      sections={sections(external, trailingIcon)}
       collapsed={collapsed}
       onToggleCollapsed={() => {}}
       isActive={() => false}
@@ -108,5 +113,49 @@ describe("收起态", () => {
   it("不渲染外链——只剩图标，没有位置放第二个可点区", () => {
     renderNav(DOCS, true);
     expect(screen.queryByRole("link", { name: DOCS.label })).toBeNull();
+  });
+});
+
+/**
+ * `trailingIcon` —— 行尾的**纯指示图标**（2026-09-09 新增）。
+ *
+ * 它与 `external` 长得像，但意思相反：`external` 是第二个可点的目的地，
+ * 本件只有一个目的地、图标是它的标记。做错的方式是把它也做成可点的——
+ * 那样一行里就有两个指向同一处的链接，读屏器报两遍、Tab 多停一次。
+ */
+describe("trailingIcon —— 只渲染，不可点", () => {
+  it("不新增第二个链接", () => {
+    renderNav(undefined, false, "external-link");
+    const links = screen.getAllByRole("link");
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute("href", "/atlas");
+  });
+
+  it("图标画在主链接**内部**（它不可点，不构成嵌套链接）", () => {
+    renderNav(undefined, false, "external-link");
+    const main = screen.getByRole("link", { name: /模型服务/ });
+    expect(main.querySelector("svg")).not.toBeNull();
+  });
+
+  it("external 在场时不渲染它 —— 右侧位置归可交互的那个", () => {
+    /* 初版这条断言的是「仍是两个链接」——**判据不动**：指示图标本来就不是链接，
+       渲不渲染它链接数都是 2，变异（去掉 `!item.external` 这个条件）全过。
+       改成数主链接里的 svg：主图标 1 个，多渲染一个指示图标就会变成 2。 */
+    renderNav(DOCS, false, "external-link");
+    const main = screen.getByRole("link", { name: /模型服务/ });
+    expect(main.querySelectorAll("svg")).toHaveLength(1);
+  });
+
+  it("收起态不渲染", () => {
+    renderNav(undefined, true, "external-link");
+    const main = screen.getByRole("link");
+    // 收起态只剩主图标一个 svg；多出来的那个就是没被挡住。
+    expect(main.querySelectorAll("svg")).toHaveLength(1);
+  });
+
+  it("不传就是原行为", () => {
+    renderNav();
+    const main = screen.getByRole("link", { name: /模型服务/ });
+    expect(main.querySelectorAll("svg")).toHaveLength(1);
   });
 });
