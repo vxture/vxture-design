@@ -350,6 +350,28 @@ export const SIDEBAR_WIDTHS = [
 ];
 
 /**
+ * 横排表单行的**标签轨道宽**三档（6 / 9 / 12rem）。
+ *
+ * 用在 `Field orientation="labeled"`：标签左、控件右，两者是网格的兄弟轨道。
+ *
+ * 为什么是**固定轨道**而不是 `max-content`：对话框铺两栏字段时，左右两栏的标签
+ * 各自宽窄不同，`max-content` 会让两栏的控件左边缘错开一截；固定轨道让同一个
+ * 对话框里所有控件对齐一条竖线，这正是「布局松散友好」的前提。
+ *
+ * 也不能把控件塞进 DS `Label`（那是 `flex items-center`）——控件 `w-full` 一撑，
+ * 中文标签被收缩到 min-content，一字宽竖排（2026-09-05 owner 追根因那次，
+ * 三个门户 86 处就是这个病）。网格轨道不会塌，因为轨道宽由 token 定，不由内容定。
+ *
+ * md 为默认：放得下「Product Code」这类英文键名，也放得下四到六字中文标签。
+ * 与 sidebar / header 同类同级：版面结构、spacing 命名空间、不随密度轴变化。
+ */
+export const FIELD_LABEL_WIDTHS = [
+  ["sm", 24],
+  ["md", 36],
+  ["lg", 48],
+];
+
+/**
  * 整页 header 高度四档（owner 拍板 2026-08-02：64 / 56 / 48 / 40）。
  *
  * 与 sidebar 同类同级：版面结构、spacing 命名空间（`h-*` 只从 `--spacing-*` 派生）、

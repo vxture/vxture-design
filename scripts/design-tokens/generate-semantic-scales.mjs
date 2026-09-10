@@ -45,6 +45,7 @@ import {
   MEDIA_SIZES,
   SIDEBAR_WIDTHS,
   HEADER_HEIGHTS,
+  FIELD_LABEL_WIDTHS,
   CONTENT_WIDTHS,
   PANEL_WIDTHS,
   OVERLAY_WIDTHS,
@@ -449,6 +450,7 @@ function buildLayout() {
   for (const [kind, list] of [
     ["sidebar", SIDEBAR_WIDTHS],
     ["header", HEADER_HEIGHTS],
+    ["field-label", FIELD_LABEL_WIDTHS],
   ]) {
     for (const [name, mult] of list) {
       rows.push([

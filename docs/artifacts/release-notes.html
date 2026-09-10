@@ -215,19 +215,19 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">升到 <strong>design-system 12.3.1</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
+    <p class="lede">升到 <strong>design-system 12.4.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
   </div>
 
-<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-09 · minor</span></h2><div class="rule"></div>
+<section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-10 · minor</span></h2><div class="rule"></div>
 <p><strong>应用只装伞包。</strong>直接装 <span class="mono">design-ui</span> 拿不到运行时接线（主题 / 密度 / 字号 provider），且版本约束不再由伞包保证。</p>
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.3.1</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.1.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.0.0</td><td><span class="tag t-ok">未动</span> 上次改动在 10.0.0</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.4.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.2.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.1.0</td><td><span class="tag t-ok">minor</span> 新增 <span class="mono">--spacing-field-label-*</span> 三档，见 §05</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.3.1 就会带上 ui 9.1.0 与 tokens 3.0.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
+<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.4.0 就会带上 ui 9.2.0 与 tokens 3.1.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
 <section id="breaking12"><h2><span class="num">02</span>必须改的<span class="h2-meta">11.0.0 / 12.0.0 两次 major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">两条都在 <span class="mono">DataTable</span> 的列对齐上，<strong>都不报错</strong>。一条静默改变已有表格的观感，另一条会让代码<strong>编译通过但含义变了</strong>——后者更隐蔽。</div>
@@ -325,6 +325,13 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note warn"><strong>6.0.1 那条值得单独看一眼。</strong>挡位失效期间，任何需要窄抽屉的地方只能靠外部盖宽度。现在挡位活了——<span class="mono">cn</span> 把 <span class="mono">--container-*</span> 登记进了宽度组，你外部再传一个宽度类，<strong>谁赢取决于书写顺序</strong>，而不是你的意图。升级后请检查所有传了 <span class="mono">width</span> 又同时盖过宽度的 <span class="mono">Drawer</span>。</div>
 <div class="kv"><div class="kv-k">6.0.2 文档更正</div><div class="kv-v txt"><span class="mono">AlertDialog</span> 的 <strong>Esc 是关得掉的</strong>。头注此前写「Esc 与点遮罩也不关」，错了一半：Esc 触发 <span class="mono">onOpenChange</span>，外点不触发。Esc 能关是<strong>对的</strong>——没有键盘出路的模态是键盘陷阱。「要求表态」靠的是拿掉随手可点的出口（无 X 钮、外点不关），不是堵死所有出口</div></div></section>
 
+<section id="labeled"><h2><span class="num">05b</span>新增：横排标签的表单行<span class="h2-meta">12.4.0 · 只增不改</span></h2><div class="rule"></div>
+<p><span class="mono">Field</span> 多了一个方向档 <span class="mono">orientation="labeled"</span>：<strong>标签左、控件右</strong>，两者是 CSS 网格的兄弟轨道。轨道宽走新 token <span class="mono">--spacing-field-label-{sm,md,lg}</span>（6 / 9 / 12rem），组件上用 <span class="mono">labelWidth</span> 选档，默认 <span class="mono">md</span>。</p>
+<div class="note"><strong>它和已有的 <span class="mono">horizontal</span> 不是一回事，别混用。</strong><br><br><span class="mono">horizontal</span> 是 <span class="mono">flex-row</span>，给<strong>开关行 / 复选行</strong>用——控件很窄，标签不会被挤。把 <span class="mono">w-full</span> 的输入框放进去，中文标签会被 flex 收缩到 min-content，<strong>一字宽竖排</strong>（2026-09-05 三个门户 86 处就是这个病，那次的结论是「对话框字段一律标签在上」）。<br><br><span class="mono">labeled</span> 用的是<strong>网格轨道</strong>：轨道宽由 token 定、不由内容定，所以标签塌不了。这才是「标签与控件同行」能成立的做法。</div>
+<h3>什么时候用它</h3>
+<p>对话框铺<strong>双栏字段</strong>时（<span class="mono">DialogForm size="xl"</span> + <span class="mono">grid-cols-2</span>）：标签在上会让每个字段占两行，八个字段就是八行；标签在左则是四行，<strong>整表可见、不出滚动条</strong>。单栏窄浮层仍用默认的 <span class="mono">vertical</span>。</p>
+<div class="note"><strong>为什么轨道宽是固定值而不是 <span class="mono">max-content</span>：</strong>两栏并排时左右两侧的标签各自宽窄不同，<span class="mono">max-content</span> 会让两栏的控件左边缘错开一截。固定轨道让同一个对话框里所有控件对齐一条竖线。</div></section>
+
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -366,7 +373,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.3.1 · design-tokens 3.0.0 / design-ui 9.1.0 / design-system 12.3.1 · 2026-09-02</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.4.0 · design-tokens 3.1.0 / design-ui 9.2.0 / design-system 12.4.0 · 2026-09-02</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

@@ -62,4 +62,9 @@
   --spacing-header-lg: calc(var(--vx-spacing) * 14);
   --spacing-header-md: calc(var(--vx-spacing) * 12);
   --spacing-header-sm: calc(var(--vx-spacing) * 10);
+
+  /* field-label */
+  --spacing-field-label-sm: calc(var(--vx-spacing) * 24);
+  --spacing-field-label-md: calc(var(--vx-spacing) * 36);
+  --spacing-field-label-lg: calc(var(--vx-spacing) * 48);
 }
