@@ -161,6 +161,7 @@
       "EditableRow",
       "EmptyState",
       "EntryCard",
+      "FIELD_LABEL_WIDTHS",
       "FIELD_ORIENTATIONS",
       "FONT_SIZES",
       "FactList",
