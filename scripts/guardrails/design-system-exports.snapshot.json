@@ -171,6 +171,7 @@
       "FieldGroup",
       "FieldLabel",
       "FieldTier",
+      "FileTrigger",
       "FilterBar",
       "FormPageTemplate",
       "FullscreenProvider",

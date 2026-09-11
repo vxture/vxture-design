@@ -170,6 +170,7 @@ import {
   SelectValue,
   Separator,
   Skeleton,
+  FileTrigger,
   Switch,
   Tabs,
   TabsContent,
@@ -426,6 +427,29 @@ export const ENTRIES: readonly Entry[] = [
           <Checkbox id="r-cb3" disabled defaultChecked />
           <Label htmlFor="r-cb3">禁用</Label>
         </span>
+      </Row>
+    ),
+  },
+  {
+    name: "FileTrigger",
+    layer: "atom",
+    group: "表单",
+    /* origin = 本仓自造(上游 shadcn 没有对应件);component = 它是一个可直接消费的件。 */
+    tags: ["origin", "component"],
+    render: () => (
+      <Row>
+        <FileTrigger accept="image/*" onSelect={() => undefined}>
+          选择图片
+        </FileTrigger>
+        <FileTrigger variant="default" onSelect={() => undefined}>
+          主按钮档
+        </FileTrigger>
+        <FileTrigger multiple size="sm" onSelect={() => undefined}>
+          多选 · 小档
+        </FileTrigger>
+        <FileTrigger disabled onSelect={() => undefined}>
+          禁用
+        </FileTrigger>
       </Row>
     ),
   },
