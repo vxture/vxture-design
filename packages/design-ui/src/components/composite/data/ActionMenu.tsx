@@ -57,7 +57,13 @@ interface ActionMenuItemBase {
    * 禁用项不说理由，用户只能猜，而这一层信息在菜单里没有别的地方可放。
    */
   readonly hint?: string | undefined;
-  /** 在本项之前插一条分隔线，用于把危险动作与常规动作分开。 */
+  /**
+   * 在本项之前插一条分隔线。**三态**：
+   *   - 不写（`undefined`）= 交给本件判断，见下方「尾部危险段自动分隔」；
+   *   - `true` = 强制画一条（用于常规动作内部的分组，如「增删改 / 上移下移」，
+   *     这种分组 DS 推断不出来，只有调用方知道）；
+   *   - `false` = 压制自动判断（危险项紧跟在一个语义上同组的动作后面时）。
+   */
   readonly separatorBefore?: boolean;
 }
 
@@ -123,6 +129,42 @@ function ActionMenu({
    * 焦点找回；只在"这次开关是鼠标发起的"时跳过它，键盘发起的仍走默认。
    */
   const lastInputRef = React.useRef<"pointer" | "keyboard">("pointer");
+
+  /**
+   * 图标槽位：只要本菜单**有任何一项**带图标，所有项都占一格。
+   *
+   * 原实现是 `item.icon ? <Icon/> : null`——没图标的项不占位，它的标签就直接
+   * 顶到最左边，和上下带图标的项**差一整个图标宽**。平台上 74 个内联菜单里
+   * 有 11 个是混着写的（arche 用户页 7 项里 6 项有图标，剩下那一项独自左移），
+   * 落在使用者眼里是「这一行没对齐」，而调用方多半以为漏了图标。
+   *
+   * 修在 DS 不修在调用方：让每个混用菜单去补图标，等于要求 767 个条目各自
+   * 找一个语义合适的图标，而有些动作本来就没有；留空位是这件事的正解，
+   * 空位该由渲染的一方留。
+   *
+   * 反过来，**整菜单都没图标时不留空位**——那是一份纯文字菜单，凭空缩进一格
+   * 只是浪费宽度。
+   */
+  const reserveIconSlot = items.some((item) => item.icon !== undefined);
+
+  /**
+   * 尾部危险段自动分隔。
+   *
+   * `separatorBefore` 的原注释写着它是「用于把危险动作与常规动作分开」，但默认
+   * 不做——于是全站 767 个条目里只有 31 处真画了线，而含危险项的菜单有 18 个、
+   * 其中 16 个的危险项**已经排在末尾**。也就是说：判据一直在数据里摆着，DS 却
+   * 要求每个调用方手写一遍，绝大多数就没写，「删除」和「编辑」之间没有任何断点。
+   *
+   * 能推断的事不该外包。这里找的是**末尾那一段连续的危险项**的起点：
+   *   - 危险项散在中间不自动分隔——那是调用方的排序问题，逐项加线只会把菜单
+   *     切得七零八落；
+   *   - 整个菜单都是危险项（起点为 0）也不分隔——没有「常规段」可分。
+   */
+  const autoSeparatorIndex = React.useMemo(() => {
+    let start = items.length;
+    while (start > 0 && items[start - 1]?.danger === true) start -= 1;
+    return start > 0 && start < items.length ? start : -1;
+  }, [items]);
 
   /** 当前正在确认哪一项（null = 没有确认框开着）。 */
   const [confirmingId, setConfirmingId] = React.useState<string | null>(null);
@@ -191,9 +233,13 @@ function ActionMenu({
             if (lastInputRef.current === "pointer") event.preventDefault();
           }}
         >
-          {items.map((item) => (
+          {items.map((item, index) => (
             <React.Fragment key={item.id}>
-              {item.separatorBefore ? <DropdownMenuSeparator /> : null}
+              {/* 三态：显式值优先，不写才走自动判断。既有调用方写的
+                  `separatorBefore: true` 与自动判断落在同一处时只画一条。 */}
+              {(item.separatorBefore ?? index === autoSeparatorIndex) ? (
+                <DropdownMenuSeparator />
+              ) : null}
               <DropdownMenuItem
                 {...(item.disabled !== undefined
                   ? { disabled: item.disabled }
@@ -217,8 +263,16 @@ function ActionMenu({
                     "text-destructive-text focus:bg-destructive-muted focus:text-destructive-muted-foreground",
                 )}
               >
-                {item.icon ? (
-                  <Icon name={item.icon} size={16} aria-hidden="true" />
+                {/* 图标与占位符走**同一个盒子**，而不是各自定尺寸——两支只要有一支
+                    的宽度算法不同（图标是固定 px，占位符是 rem），根字号一变就又错开。
+                    同一个 `size-4` 容器把这件事关死。 */}
+                {reserveIconSlot ? (
+                  <span
+                    aria-hidden="true"
+                    className="flex size-4 shrink-0 items-center justify-center"
+                  >
+                    {item.icon ? <Icon name={item.icon} size={16} /> : null}
+                  </span>
                 ) : null}
                 <span className="min-w-0 truncate">{item.label}</span>
               </DropdownMenuItem>

@@ -142,3 +142,124 @@ describe("ActionMenu · 契约行为", () => {
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
   });
 });
+
+/**
+ * 下面两组测的是 9.3.0 的两项改动。两者都**没有 layout 可量**——jsdom 不排版，
+ * 断言「对齐了」是做不到的。所以这里断言的是产生对齐的那个**结构**：槽位节点
+ * 在不在。谁把 `reserveIconSlot` 摘掉，子节点数会从 2 掉回 1。
+ */
+describe("ActionMenu · 图标槽位", () => {
+  async function openMenu() {
+    const user = open();
+    await user.click(screen.getByRole("button", { name: "Open actions menu" }));
+  }
+
+  it("菜单里只要有一项带图标，没图标的项也占一格", async () => {
+    render(
+      <ActionMenu
+        items={[
+          { id: "edit", label: "编辑", icon: "edit" },
+          { id: "dup", label: "复制一份" },
+        ]}
+      />,
+    );
+    await openMenu();
+
+    // 两项都是「槽位 + 标签」两个子节点。没有槽位时这里是 1，标签直接贴左边。
+    expect(
+      (await screen.findByRole("menuitem", { name: "编辑" })).children,
+    ).toHaveLength(2);
+    expect(
+      screen.getByRole("menuitem", { name: "复制一份" }).children,
+    ).toHaveLength(2);
+  });
+
+  it("整菜单都没图标时不留空位——纯文字菜单不该凭空缩进", async () => {
+    render(
+      <ActionMenu
+        items={[
+          { id: "a", label: "上移" },
+          { id: "b", label: "下移" },
+        ]}
+      />,
+    );
+    await openMenu();
+
+    expect(
+      (await screen.findByRole("menuitem", { name: "上移" })).children,
+    ).toHaveLength(1);
+  });
+});
+
+describe("ActionMenu · 分组分隔线", () => {
+  async function openWith(
+    items: React.ComponentProps<typeof ActionMenu>["items"],
+  ) {
+    const user = open();
+    render(<ActionMenu items={items} />);
+    await user.click(screen.getByRole("button", { name: "Open actions menu" }));
+    await screen.findByRole("menu");
+    return screen.queryAllByRole("separator");
+  }
+
+  const del = {
+    id: "del",
+    label: "删除",
+    danger: true,
+    confirmExempt: "测试用",
+  } as const;
+
+  it("尾部的危险段自动与常规动作分开——调用方不必手写", async () => {
+    expect(await openWith([{ id: "edit", label: "编辑" }, del])).toHaveLength(
+      1,
+    );
+  });
+
+  it("危险项散在中间不自动分隔——那是排序问题，逐项加线只会把菜单切碎", async () => {
+    expect(
+      await openWith([
+        { id: "edit", label: "编辑" },
+        { ...del, id: "d1" },
+        { id: "view", label: "查看" },
+      ]),
+    ).toHaveLength(0);
+  });
+
+  it("整个菜单都是危险项时不分隔——没有常规段可分", async () => {
+    expect(
+      await openWith([
+        { ...del, id: "d1" },
+        { ...del, id: "d2" },
+      ]),
+    ).toHaveLength(0);
+  });
+
+  it("separatorBefore: false 压得住自动判断", async () => {
+    expect(
+      await openWith([
+        { id: "edit", label: "编辑" },
+        { ...del, separatorBefore: false },
+      ]),
+    ).toHaveLength(0);
+  });
+
+  it("既有调用方写的 true 与自动判断撞在一处时，只画一条", async () => {
+    expect(
+      await openWith([
+        { id: "edit", label: "编辑" },
+        { ...del, separatorBefore: true },
+      ]),
+    ).toHaveLength(1);
+  });
+
+  it("常规动作内部的分组仍归调用方——DS 推断不出「上移/下移」是一组", async () => {
+    expect(
+      await openWith([
+        { id: "edit", label: "编辑" },
+        { id: "up", label: "上移", separatorBefore: true },
+        { id: "down", label: "下移" },
+        del,
+      ]),
+    ).toHaveLength(2);
+  });
+});
