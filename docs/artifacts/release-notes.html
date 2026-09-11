@@ -210,12 +210,12 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">升到 <strong>design-system 12.6.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
+    <p class="lede">升到 <strong>design-system 12.7.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
   </div>
 
 <section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-11 · minor</span></h2><div class="rule"></div>
@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.6.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.3.0</td><td><span class="tag t-dim">未动</span> 由伞包精确钉版，不要直接装</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.2.0</td><td><span class="tag t-ok">minor</span> 新增间距档 <span class="mono">7xl</span>，见 §05d</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.7.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.4.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.2.0</td><td><span class="tag t-dim">未动</span> 本次无 token 变更</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.6.0 就会带上 ui 9.3.0 与 tokens 3.2.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
+<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.7.0 就会带上 ui 9.4.0 与 tokens 3.2.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
 <section id="breaking12"><h2><span class="num">02</span>必须改的<span class="h2-meta">11.0.0 / 12.0.0 两次 major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">两条都在 <span class="mono">DataTable</span> 的列对齐上，<strong>都不报错</strong>。一条静默改变已有表格的观感，另一条会让代码<strong>编译通过但含义变了</strong>——后者更隐蔽。</div>
@@ -351,6 +351,14 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p><span class="mono">--space-7xl</span> = 紧凑 96px / 默认 <strong>128px</strong>。跨度比前面几档大是<strong>刻意的</strong>：它不是这一梯的下一格，是另一个用途的第一格；放在同一族里只因为它仍由密度轴驱动。</p>
 <div class="note"><strong>用它，不要写 <span class="mono">gap-x-[128px]</span>。</strong>arbitrary 值绕过密度轴——紧凑模式下它不会跟着收窄，而那正是密度存在的意义。消费方仓的 <span class="mono">ds/no-app-tailwind-arbitrary-scale</span> 也会拦。</div></section>
 
+<section id="filetrigger"><h2><span class="num">05e</span>新增：选文件 <span class="mono">FileTrigger</span><span class="h2-meta">12.7.0 · 只增不改</span></h2><div class="rule"></div>
+<p><span class="mono">&lt;input type="file"&gt;</span> 是浏览器<strong>唯一</strong>的文件入口，而它的原生外观无法跟随设计系统。于是每个需要上传的页面都会做同一件事：把原生 input 藏起来、用一个自家按钮触发它——也就是每个应用仓里都会出现一个裸的 <span class="mono">&lt;input&gt;</span>。</p>
+<div class="note"><strong>这件的诞生原因就是被守卫拦了一次。</strong><span class="mono">ds/no-app-native-primitive</span> 拦下了 opera 里一个上传图标用的原生 file input，而它的提示写着「DS 不足时先补 DS」。守卫是对的：这不是某个应用的特殊需求，是所有上传场景共有的形状。</div>
+<h3>两处不显眼但要紧的</h3>
+<p><strong>藏法用 <span class="mono">sr-only</span> 不用 <span class="mono">display:none</span></strong>：后者在部分浏览器里让表单控件<strong>拿不到键盘焦点</strong>，"用键盘打开文件选择器"这条路就断了。触发按钮用 <span class="mono">&lt;label htmlFor&gt;</span> 关联——那是不靠 JS 就能让别的元素触发 input 的唯一方式。</p>
+<p><strong>每次选完清空 <span class="mono">value</span></strong>：同一个文件连选两次时 <span class="mono">change</span> 不会再触发（值没变），用户看到的是"第二次点了没反应"——而这恰恰发生在"上传失败了再试一次"的时候。</p>
+<div class="note"><strong>变体刻意不收 destructive 两档。</strong>选一个文件永远不是破坏性动作，而那两档在 <span class="mono">ButtonProps</span> 的判别联合里要求同时给出确认或豁免理由。从类型上排掉，本件就不可能成为绕开那条契约的入口——<span class="mono">ActionButton</span> 当年是靠换 <span class="mono">DistributiveOmit</span> 才堵上同一个洞。</div></section>
+
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -392,7 +400,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.6.0 · design-tokens 3.2.0 / design-ui 9.3.0 / design-system 12.6.0 · 2026-09-11</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.7.0 · design-tokens 3.2.0 / design-ui 9.4.0 / design-system 12.7.0 · 2026-09-11</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

@@ -34,6 +34,7 @@ export * from "./overlay/Drawer";
 export * from "./overlay/DropdownMenu";
 export * from "./form/Field";
 export * from "./overlay/HoverCard";
+export * from "./form/FileTrigger";
 export * from "./form/Input";
 export * from "./form/InputGroup";
 export * from "./form/InputOTP";
