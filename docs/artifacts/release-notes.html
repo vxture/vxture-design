@@ -210,12 +210,12 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">升到 <strong>design-system 12.5.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
+    <p class="lede">升到 <strong>design-system 12.6.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
   </div>
 
 <section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-11 · minor</span></h2><div class="rule"></div>
@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.5.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.3.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.1.0</td><td><span class="tag t-dim">未动</span> 本次无 token 变更</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.6.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.3.0</td><td><span class="tag t-dim">未动</span> 由伞包精确钉版，不要直接装</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.2.0</td><td><span class="tag t-ok">minor</span> 新增间距档 <span class="mono">7xl</span>，见 §05d</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.5.0 就会带上 ui 9.3.0 与 tokens 3.1.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
+<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.6.0 就会带上 ui 9.3.0 与 tokens 3.2.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
 <section id="breaking12"><h2><span class="num">02</span>必须改的<span class="h2-meta">11.0.0 / 12.0.0 两次 major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">两条都在 <span class="mono">DataTable</span> 的列对齐上，<strong>都不报错</strong>。一条静默改变已有表格的观感，另一条会让代码<strong>编译通过但含义变了</strong>——后者更隐蔽。</div>
@@ -345,6 +345,12 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note"><strong><span class="mono">separatorBefore</span> 成了三态</strong>（既有写法全部照旧）：<br>· 不写 = 自动判断；<br>· <span class="mono">true</span> = 强制画一条，用于<strong>常规动作内部</strong>的分组（「增删改」与「上移下移」分两组这种，DS 推断不出来，只有调用方知道）；<br>· <span class="mono">false</span> = 压制自动判断。<br><br>已经写了 <span class="mono">true</span> 的调用方不受影响：显式值优先，与自动判断落在同一处时<strong>只画一条</strong>，不会变成两条。</div>
 <div class="note warn"><strong>两种情况不自动分隔，是有意的：</strong>危险项<strong>散在中间</strong>时不分——那是调用方的排序问题，逐项加线只会把菜单切碎；<strong>整菜单都是危险项</strong>时也不分——没有「常规段」可分。</div></section>
 
+<section id="gutter"><h2><span class="num">05d</span>新增间距档：栏间沟 <span class="mono">7xl</span><span class="h2-meta">12.6.0 · 只增不改</span></h2><div class="rule"></div>
+<p>间距梯此前到 <span class="mono">6xl</span> 为止，默认密度最大 <strong>64px</strong>。那是「两个相邻元素之间」的量级；<strong>多栏表单要的是另一件事</strong>——把两栏分开到视线不会串行。</p>
+<div class="note"><strong>症状很具体：</strong>opera 产品详情页两栏字段在 64px 下，第一栏的输入框看起来仍然贴着第二栏的标签，读者分不清哪个标签管哪个框（2026-09-11 owner 实页走查）。</div>
+<p><span class="mono">--space-7xl</span> = 紧凑 96px / 默认 <strong>128px</strong>。跨度比前面几档大是<strong>刻意的</strong>：它不是这一梯的下一格，是另一个用途的第一格；放在同一族里只因为它仍由密度轴驱动。</p>
+<div class="note"><strong>用它，不要写 <span class="mono">gap-x-[128px]</span>。</strong>arbitrary 值绕过密度轴——紧凑模式下它不会跟着收窄，而那正是密度存在的意义。消费方仓的 <span class="mono">ds/no-app-tailwind-arbitrary-scale</span> 也会拦。</div></section>
+
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -386,7 +392,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.5.0 · design-tokens 3.1.0 / design-ui 9.3.0 / design-system 12.5.0 · 2026-09-11</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.6.0 · design-tokens 3.2.0 / design-ui 9.3.0 / design-system 12.6.0 · 2026-09-11</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

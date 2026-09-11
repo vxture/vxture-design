@@ -37,6 +37,7 @@
   --space-4xl: calc(var(--vx-spacing) * 14);
   --space-5xl: calc(var(--vx-spacing) * 16);
   --space-6xl: calc(var(--vx-spacing) * 20);
+  --space-7xl: calc(var(--vx-spacing) * 32);
 
   /* row */
   --space-row-sm: calc(var(--vx-spacing) * 12);
@@ -76,6 +77,7 @@
   --space-4xl: calc(var(--vx-spacing) * 10);
   --space-5xl: calc(var(--vx-spacing) * 12);
   --space-6xl: calc(var(--vx-spacing) * 14);
+  --space-7xl: calc(var(--vx-spacing) * 24);
 
   /* row */
   --space-row-sm: calc(var(--vx-spacing) * 8);
@@ -115,6 +117,7 @@
   --space-4xl: calc(var(--vx-spacing) * 14);
   --space-5xl: calc(var(--vx-spacing) * 16);
   --space-6xl: calc(var(--vx-spacing) * 20);
+  --space-7xl: calc(var(--vx-spacing) * 32);
 
   /* row */
   --space-row-sm: calc(var(--vx-spacing) * 12);
