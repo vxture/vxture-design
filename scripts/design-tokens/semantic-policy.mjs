@@ -372,6 +372,18 @@ export const FIELD_LABEL_WIDTHS = [
 ];
 
 /**
+ * 表格固定列宽：选择 / 序号 / 操作三根列统一 64px，**不随密度轴变化**
+ * （owner 2026-09-15：「三者统一固定宽度 64px，按 DS token」）。
+ *
+ * 此前三根列借的是 `control-3xl`——那是控件高度族，按密度平移（紧凑 48 / 默认 56 /
+ * 宽松 64）。默认密度下实测选择列、序号列 56px，操作列被 ActionMenu 按钮的
+ * min-content 撑到 64px，三根「同宽」的列实际是 56 / 56 / 64；DataTable 文件头写着
+ * 64px，只有宽松密度才对得上。列宽不是控件尺寸，是版面结构，与 sidebar / header
+ * 同类：spacing 命名空间、不随密度变化。
+ */
+export const TABLE_COLUMN_WIDTHS = [["fixed", 16]];
+
+/**
  * 整页 header 高度四档（owner 拍板 2026-08-02：64 / 56 / 48 / 40）。
  *
  * 与 sidebar 同类同级：版面结构、spacing 命名空间（`h-*` 只从 `--spacing-*` 派生）、

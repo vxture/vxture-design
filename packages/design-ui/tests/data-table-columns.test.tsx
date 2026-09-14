@@ -36,6 +36,55 @@ const key = (r: Row) => r.id;
 
 const header = (name: string) => screen.getByRole("columnheader", { name });
 
+/* ── 固定列宽 ──────────────────────────────────────────────────────────────── */
+
+/**
+ * 选择 / 序号 / 操作三根列**同一个定宽 token**，而且是不随密度变化的那一族。
+ *
+ * 2026-09-15 实测：三根列借的是控件高度族 `w-control-3xl`，默认密度下选择列、序号列
+ * 56px，操作列被按钮撑到 64px——「同宽」只在代码里成立。反向验证：把任一根改回
+ * `w-control-3xl`，本用例变红。
+ */
+describe("DataTable · 三根固定列同一个定宽", () => {
+  it("选择列、序号列、操作列的表头都用 w-table-col-fixed", () => {
+    const { container } = render(
+      <DataTable
+        columns={COLUMNS}
+        rows={ROWS}
+        rowKey={key}
+        selectedKeys={[]}
+        onSelectionChange={() => {}}
+        indexStart={1}
+        rowActions={() => <button type="button">更多</button>}
+      />,
+    );
+    const ths = [...container.querySelectorAll("thead th")];
+    const fixed = [ths[0]!, ths[1]!, ths[ths.length - 1]!];
+    for (const th of fixed) {
+      expect(th.className).toContain("w-table-col-fixed");
+      expect(th.className).not.toContain("w-control-3xl");
+    }
+  });
+
+  it("数据格与表头同宽档（选择、序号、操作）", () => {
+    const { container } = render(
+      <DataTable
+        columns={COLUMNS}
+        rows={ROWS}
+        rowKey={key}
+        selectedKeys={[]}
+        onSelectionChange={() => {}}
+        indexStart={1}
+        rowActions={() => <button type="button">更多</button>}
+      />,
+    );
+    const tds = [...container.querySelectorAll("tbody tr:first-child td")];
+    for (const td of [tds[0]!, tds[1]!, tds[tds.length - 1]!]) {
+      expect(td.className).toContain("w-table-col-fixed");
+    }
+  });
+});
+
 /* ── 排序 ─────────────────────────────────────────────────────────────────── */
 
 describe("DataTable · 排序只出控件与方向，排序本身归调用方", () => {
