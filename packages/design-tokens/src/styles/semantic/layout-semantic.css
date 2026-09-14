@@ -67,4 +67,7 @@
   --spacing-field-label-sm: calc(var(--vx-spacing) * 24);
   --spacing-field-label-md: calc(var(--vx-spacing) * 36);
   --spacing-field-label-lg: calc(var(--vx-spacing) * 48);
+
+  /* table-col */
+  --spacing-table-col-fixed: calc(var(--vx-spacing) * 16);
 }
