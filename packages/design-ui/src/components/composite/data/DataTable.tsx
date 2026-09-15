@@ -48,6 +48,12 @@
  * 三根固定列（选择 / 序号 / 操作）都是 `w-table-col-fixed`（64px，三档密度一致）+
  * 居中，两端等宽，表格不会因为最右侧靠右对齐而在视觉上偏出去。
  *
+ * **宽度与下限一起给**（`w-` + `min-w-`，12.8.1）。自动表格布局里 `width` 只是建议值：
+ * 列多、内容宽的表放不下时，浏览器按各列 min-content 回收宽度，只有一个复选框或一个
+ * 序号的固定列最先被压扁。2026-09-15 opera 线上实测：接入凭据（9 列）序号列 40px、
+ * 选择列 48px，能力注册、任务调度、Atlas 请求日志同样被压到 44～48px。下限钉住 64px，
+ * 挤不下时由表格自己的横向滚动兜住，而不是牺牲这三根列。
+ *
  * （2026-09-15 以前借的是 `w-control-3xl`：控件高度族，随密度 48 / 56 / 64。默认密度
  * 下选择列、序号列实测 56px，操作列被按钮撑到 64px——三根「同宽」的列并不同宽，
  * 上表的 64px 只在宽松密度成立。列宽是版面结构，不是控件尺寸，故另立一档。）
@@ -213,7 +219,7 @@ const WIDTH: Record<Exclude<DataTableColumnWidth, "auto">, string> = {
 };
 
 /** 选择列 / 序号列 / 操作列共用：固定 64px（不随密度）、居中，不吃首末列零边距。 */
-const EDGE_COL = "w-table-col-fixed px-md text-center";
+const EDGE_COL = "w-table-col-fixed min-w-table-col-fixed px-md text-center";
 
 /**
  * 操作列：与选择列 / 序号列**同一个定宽** `w-table-col-fixed`，三根固定列两端等宽。
@@ -224,7 +230,7 @@ const EDGE_COL = "w-table-col-fixed px-md text-center";
  * （owner 2026-09-07 在预览页看出来）。
  *
  * 回到定宽同时保住并排形态：自动布局里 `width` 是**建议值**，内容的 min-content 更宽
- * 时列照样撑开。所以单个图标 → 正好 64px；两三个按钮 → 按需撑开。定宽的真正作用是
+ * 时列照样撑开（`min-w-table-col-fixed` 只管下限，不挡撑开）。所以单个图标 → 正好 64px；两三个按钮 → 按需撑开。定宽的真正作用是
  * **不再参与富余分配**。
  *
  * **右对齐而不是居中**（owner 2026-09-07）。两种形态下要求**汇聚按钮落在同一个 x**，
@@ -234,7 +240,7 @@ const EDGE_COL = "w-table-col-fixed px-md text-center";
  * **看起来仍是居中的**。两个要求由同一条规则满足，调用方不必声明自己是哪种形态；
  * 前提是把汇聚菜单放在最后——这本就是既有惯例。
  */
-const ACTION_COL = "w-table-col-fixed px-md text-right";
+const ACTION_COL = "w-table-col-fixed min-w-table-col-fixed px-md text-right";
 
 /**
  * `Checkbox` 自己的命中区外扩默认给的是 `after:-inset-x-lg`（表单场景够宽，
