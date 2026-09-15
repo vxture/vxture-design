@@ -2,6 +2,11 @@
 
 /**
  * FilterPanel.tsx - 勾选式筛选面板 + 工具行上的触发钮。
+ *
+ * **@deprecated（12.10.0）改用 `FilterPopover`。** owner 2026-09-15 看过线上后否掉这一
+ * 形态：「太丑了，不能当作模板，会导致大面积降级」——左侧抽屉遮住半个页面、要点「应用」
+ * 才看得到结果、选项一行一个。新件贴着按钮弹出、勾一下就生效、选项网格排。
+ * 本件按 050 §2 删组件是 major，所以先标弃用、下一个 major 删除；不要再新用。
  * @package @vxture/design-ui
  * @layer Presentation
  * @category Components - Pattern
@@ -93,6 +98,7 @@ function toggle(
   return { ...draft, [facetId]: next };
 }
 
+/** @deprecated 12.10.0 起改用 `FilterPopover`，下一个 major 删除。 */
 export function FilterPanel({
   open,
   onClose,
@@ -231,6 +237,7 @@ export type FilterPanelTriggerProps = Omit<ButtonProps, "children"> & {
  * 工具行上的「筛选」钮。放进 `FilterBar` 的筛选组槽（`children`），位置随契约排在
  * 重置之后、操作区之前。
  */
+/** @deprecated 12.10.0 起改用 `FilterPopover`（自带触发钮），下一个 major 删除。 */
 export const FilterPanelTrigger = React.forwardRef<
   HTMLButtonElement,
   FilterPanelTriggerProps
