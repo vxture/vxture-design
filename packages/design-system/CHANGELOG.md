@@ -5,6 +5,13 @@
 
 ---
 
+## 12.10.1 — 2026-09-15
+
+伞包跟随 design-ui 9.7.1（patch）：`DialogForm` 打开时焦点落到第一个字段控件，不再落到
+`FieldLabel` 的帮助 icon 上把说明气泡弹开。明细见 design-ui 9.7.1。
+
+---
+
 ## 12.10.0 — 2026-09-15
 
 伞包跟随 design-ui 9.7.0（minor）：新件 `FilterPopover` / `countFilterValue`；

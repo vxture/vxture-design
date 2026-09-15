@@ -5,6 +5,20 @@
 
 ---
 
+## 9.7.1 — 2026-09-15
+
+修 `DialogForm` 打开时的焦点（patch）。
+
+`FieldLabel` 带 `hint` 后，标签里的帮助 icon 是个按钮，排在输入框前面；Radix 默认把焦点
+交给第一个可 Tab 元素，Tooltip 随焦点弹开——对话框一打开就挂着一条说明气泡（opera
+v0.26.174 线上实测，签发 API Key 弹窗）。
+
+- `DialogForm` 接管 `onOpenAutoFocus`：焦点落到字段区里第一个未禁用的
+  input / select / textarea / combobox。
+- 字段区没有控件（确认、结果展示）时不干预，照旧走 Radix 默认。
+
+---
+
 ## 9.7.0 — 2026-09-15
 
 新件 `FilterPopover` / `countFilterValue`；`FilterPanel` / `FilterPanelTrigger` 标

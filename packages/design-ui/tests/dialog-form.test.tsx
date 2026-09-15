@@ -12,6 +12,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { DialogForm } from "../src/components/composite/form/DialogForm";
+import { Field, FieldLabel } from "../src/components/base/form/Field";
 
 describe("DialogForm · 骨架", () => {
   /**
@@ -96,5 +97,43 @@ describe("DialogForm · 提交中", () => {
     render(<DialogForm open title="t" submitDisabled />);
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Cancel" })).toBeEnabled();
+  });
+});
+
+describe("DialogForm · 打开时的焦点", () => {
+  /**
+   * 9.7.1 的回归。FieldLabel 带 hint 后，帮助 icon 是排在输入框前面的按钮；Radix 默认
+   * 把焦点给第一个可 Tab 元素，Tooltip 随焦点弹开——对话框一打开就挂着一条说明气泡
+   * （opera v0.26.174 线上实测）。
+   */
+  it("焦点落到第一个字段控件，不落到帮助 icon", () => {
+    render(
+      <DialogForm open title="t">
+        <Field>
+          <FieldLabel htmlFor="name" hint="说明文字" hintLabel="说明">
+            名称
+          </FieldLabel>
+          <input id="name" />
+        </Field>
+      </DialogForm>,
+    );
+    expect(document.activeElement).toBe(screen.getByLabelText("名称"));
+  });
+
+  it("跳过禁用的控件", () => {
+    render(
+      <DialogForm open title="t">
+        <input aria-label="locked" disabled />
+        <select aria-label="kind">
+          <option>a</option>
+        </select>
+      </DialogForm>,
+    );
+    expect(document.activeElement).toBe(screen.getByLabelText("kind"));
+  });
+
+  it("没有字段的对话框照旧走默认聚焦，不抢焦点", () => {
+    render(<DialogForm open title="t" description="d" />);
+    expect(document.activeElement).not.toBe(document.body);
   });
 });
