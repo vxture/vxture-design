@@ -126,6 +126,10 @@ import {
   EmptyState,
   EntryCard,
   FilterBar,
+  FilterPanel,
+  FilterPanelTrigger,
+  countFilterPanelValue,
+  type FilterPanelValue,
   ListCard,
   ListCardGrid,
   MetricGrid,
@@ -1642,6 +1646,16 @@ export const ENTRIES: readonly Entry[] = [
     ),
   },
   {
+    name: "FilterPanel",
+    layer: "pattern",
+    group: "图案",
+    tags: ["vxture", "patterns"],
+    covers: ["FilterPanelTrigger"],
+    deviation:
+      "形态定死：左侧抽屉 sm 挡，不开 side / width。勾选落草稿，应用才交出、关闭即丢弃——每勾一下就重查会让服务端分页的表来回跳。维度内任一、维度间都要",
+    render: () => <FilterPanelDemo />,
+  },
+  {
     name: "ActionMenu",
     layer: "pattern",
     group: "图案",
@@ -2279,22 +2293,64 @@ export const ENTRIES: readonly Entry[] = [
       "取上游核心子集（Set/Legend/responsive 等无实据未收）；刻意不引 react-hook-form——UI 层零表单框架绑定，错误经 FieldError 或 aria-invalid 进来",
     axes: [{ name: "orientation", values: FIELD_ORIENTATIONS }],
     render: () => (
-      <FieldGroup className="max-w-panel-md">
-        <Field>
-          <FieldLabel htmlFor="fld-name">显示名</FieldLabel>
-          <Input id="fld-name" placeholder="输入显示名" />
-          <FieldDescription>对外展示的名称，可随时修改。</FieldDescription>
-        </Field>
-        <Field data-invalid>
-          <FieldLabel htmlFor="fld-email">邮箱</FieldLabel>
-          <Input id="fld-email" aria-invalid defaultValue="not-an-email" />
-          <FieldError>邮箱格式不正确</FieldError>
-        </Field>
-        <Field orientation="horizontal">
-          <Switch id="fld-notify" />
-          <FieldLabel htmlFor="fld-notify">接收通知</FieldLabel>
-        </Field>
-      </FieldGroup>
+      <div className="flex flex-col gap-xl">
+        <Row
+          label="两列（lg / xl 面板的常态）：必填星号、说明收进帮助图标、长文本 span=full"
+          stack
+        >
+          <FieldGroup columns={2} className="max-w-panel-lg">
+            <Field>
+              <FieldLabel
+                htmlFor="fld2-id"
+                required
+                hint="全局唯一，创建后不可修改。"
+              >
+                标识
+              </FieldLabel>
+              <Input id="fld2-id" placeholder="例如 github.repo-reader" />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="fld2-provider" required>
+                Provider
+              </FieldLabel>
+              <Input id="fld2-provider" placeholder="github" />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="fld2-title">标题</FieldLabel>
+              <Input id="fld2-title" />
+            </Field>
+            <Field>
+              <FieldLabel
+                htmlFor="fld2-owner"
+                hint="负责这条记录的团队或产品码。"
+              >
+                Owner
+              </FieldLabel>
+              <Input id="fld2-owner" />
+            </Field>
+            <Field span="full">
+              <FieldLabel htmlFor="fld2-note">备注</FieldLabel>
+              <Textarea id="fld2-note" rows={3} />
+            </Field>
+          </FieldGroup>
+        </Row>
+        <FieldGroup className="max-w-panel-md">
+          <Field>
+            <FieldLabel htmlFor="fld-name">显示名</FieldLabel>
+            <Input id="fld-name" placeholder="输入显示名" />
+            <FieldDescription>对外展示的名称，可随时修改。</FieldDescription>
+          </Field>
+          <Field data-invalid>
+            <FieldLabel htmlFor="fld-email">邮箱</FieldLabel>
+            <Input id="fld-email" aria-invalid defaultValue="not-an-email" />
+            <FieldError>邮箱格式不正确</FieldError>
+          </Field>
+          <Field orientation="horizontal">
+            <Switch id="fld-notify" />
+            <FieldLabel htmlFor="fld-notify">接收通知</FieldLabel>
+          </Field>
+        </FieldGroup>
+      </div>
     ),
   },
   {
@@ -3320,6 +3376,60 @@ function PaginationDemo() {
       pageSize={20}
       onPageChange={setPage}
     />
+  );
+}
+
+function FilterPanelDemo() {
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState<FilterPanelValue>({
+    providerId: ["github"],
+  });
+  return (
+    <Row label="工具行：搜索 + 筛选钮（带已选数）；面板在左">
+      <FilterBar
+        className="w-full"
+        search={<Input className="w-56" placeholder="搜索能力…" />}
+        onReset={() => setValue({})}
+      >
+        <FilterPanelTrigger
+          label="筛选"
+          activeCount={countFilterPanelValue(value)}
+          onClick={() => setOpen(true)}
+        />
+      </FilterBar>
+      <FilterPanel
+        open={open}
+        onClose={() => setOpen(false)}
+        title="筛选能力"
+        applyLabel="应用"
+        clearLabel="清空"
+        closeLabel="关闭"
+        emptyLabel="暂无可选值"
+        value={value}
+        onApply={setValue}
+        facets={[
+          {
+            id: "primitiveType",
+            label: "类型",
+            options: [
+              { value: "connector", label: "连接器", count: 612 },
+              { value: "executor", label: "执行器", count: 41 },
+              { value: "skill", label: "技能", count: 233 },
+            ],
+          },
+          {
+            id: "providerId",
+            label: "来源",
+            options: [
+              { value: "github", label: "github", count: 88 },
+              { value: "slack", label: "slack", count: 31 },
+              { value: "notion", label: "notion", count: 17 },
+            ],
+          },
+          { id: "ownerRef", label: "Owner", options: [] },
+        ]}
+      />
+    </Row>
   );
 }
 

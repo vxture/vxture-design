@@ -5,6 +5,43 @@
 
 ---
 
+## 9.6.0 — 2026-09-15
+
+表单的必填 / 帮助、两列字段编组、勾选式筛选面板（minor，纯增量：不传即原行为）。
+owner 2026-09-15：「新增页面太窄……按一行两条、保持足够的 gap，把提示信息收进帮助
+icon，同时体现必填项」「最后的筛选输入，能否左侧弹出面板勾选模式」「弹出面板、抽屉
+面板需要系统化一致性」。
+
+### `FieldLabel`：`required` / `hint`
+
+- `required` → 标签后一个星号（`aria-hidden`），读屏念 `requiredLabel`（默认
+  `Required`）。此前各表单把「（必填）」写进标签文字，有的写有的不写。只标必填。
+- `hint` → 标签后一个帮助图标，悬停或聚焦出现说明（Tooltip，**件内自带
+  TooltipProvider**——不是每个消费方都在根上挂了一个）。常驻的 `FieldDescription`
+  会把表单拉高一倍，对话框常态就要滚。会随输入变化的提示仍用
+  `FieldDescription` / `FieldError`。
+- 帮助钮**不在 `<label>` 里**：点它会把焦点交给控件，读屏也会把钮名念进标签。
+  给了 `hint` 时外层 span 接过 `field-label` 槽（labeled 方向的网格定位认它），
+  标签文字改挂 `field-label-text`，失效态变色两个槽都覆盖。不给 `hint` 时 DOM 不变。
+
+### `FieldGroup columns={2}` / `Field span="full"`
+
+- 一行两个字段，行距列距同为 `lg`；只在 `DialogForm` 的 `lg` / `xl` 里用。
+- 长文本、JSON 这类字段给 `span="full"` 占满整行。
+
+### `FilterPanel` / `FilterPanelTrigger` / `countFilterPanelValue`
+
+- 左侧抽屉、`sm` 挡，形态定死（平台面板预设：详情抽屉在右、筛选面板在左）。
+- 勾选落**草稿**，「应用」才交出，关闭即丢弃——每勾一下就重查会让服务端分页的表
+  来回跳。维度内任一、维度间都要；读法不同的维度（如标签的「全部命中」）给
+  `facet.description`。
+- 触发钮带已选数角标，放进 `FilterBar` 的筛选组槽。
+
+测试：`form-family` 增 6 条（星号与读屏、无 hint 时 DOM 不变、帮助钮在 label 外、
+聚焦出说明、两列与 span、默认单列），`filter-panel` 8 条。
+
+---
+
 ## 9.3.0 — 2026-09-11
 
 `ActionMenu` 两件：图标列对齐、尾部危险段自动分隔（owner 2026-09-11）。

@@ -223,8 +223,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.8.1</td><td><span class="tag t-ok">patch</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.5.1</td><td><span class="tag t-ok">patch</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.9.0</td><td><span class="tag t-ok">patch</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.6.0</td><td><span class="tag t-ok">patch</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.3.0</td><td><span class="tag t-dim">未动</span> 12.8.0 新增的 <span class="mono">table-col-fixed</span> 沿用</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
@@ -406,7 +406,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.8.1 · design-tokens 3.3.0 / design-ui 9.5.1 / design-system 12.8.1 · 2026-09-15</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.9.0 · design-tokens 3.3.0 / design-ui 9.5.1 / design-system 12.9.0 · 2026-09-15</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

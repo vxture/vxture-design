@@ -480,3 +480,73 @@ describe("SegmentedControl · 槽与滑块", () => {
     expect(cls(screen.getByRole("radiogroup"))).toContain("h-control-md");
   });
 });
+
+describe("FieldLabel · 必填与帮助", () => {
+  it("必填：星号只给眼睛看，读屏念 requiredLabel", () => {
+    render(
+      <FieldLabel htmlFor="x" required requiredLabel="必填">
+        名称
+      </FieldLabel>,
+    );
+    const label = screen.getByText("名称").closest("label")!;
+    const star = label.querySelector('[aria-hidden="true"]');
+    expect(star?.textContent).toBe("*");
+    expect(label).toHaveTextContent("必填");
+  });
+
+  it("不给 hint：DOM 与此前一致，标签自己就是 field-label 槽", () => {
+    render(<FieldLabel htmlFor="x">名称</FieldLabel>);
+    const label = screen.getByText("名称").closest("label")!;
+    expect(label).toHaveAttribute("data-slot", "field-label");
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
+  it("给 hint：帮助钮在 label 外面，外层接过 field-label 槽", () => {
+    render(
+      <FieldLabel htmlFor="x" hint="唯一，创建后不可改" hintLabel="说明">
+        ID
+      </FieldLabel>,
+    );
+    const button = screen.getByRole("button", { name: "说明" });
+    expect(button.closest("label")).toBeNull();
+    expect(button.closest('[data-slot="field-label"]')).not.toBeNull();
+    expect(screen.getByText("ID").closest("label")).toHaveAttribute(
+      "data-slot",
+      "field-label-text",
+    );
+  });
+
+  it("聚焦帮助钮时出现说明", async () => {
+    const user = userEvent.setup();
+    render(
+      <FieldLabel htmlFor="x" hint="唯一，创建后不可改">
+        ID
+      </FieldLabel>,
+    );
+    await user.tab();
+    expect(
+      (await screen.findAllByText("唯一，创建后不可改")).length,
+    ).toBeGreaterThan(0);
+  });
+});
+
+describe("FieldGroup · 两列", () => {
+  it("columns=2 走两列网格；Field span=full 占满整行", () => {
+    render(
+      <FieldGroup columns={2} data-testid="g">
+        <Field data-testid="half" />
+        <Field span="full" data-testid="full" />
+      </FieldGroup>,
+    );
+    const group = screen.getByTestId("g");
+    expect(group.className).toContain("grid-cols-2");
+    expect(group).toHaveAttribute("data-columns", "2");
+    expect(screen.getByTestId("full").className).toContain("col-span-full");
+    expect(screen.getByTestId("half").className).not.toContain("col-span-full");
+  });
+
+  it("不给 columns 仍是单列纵排", () => {
+    render(<FieldGroup data-testid="g" />);
+    expect(screen.getByTestId("g").className).toContain("flex-col");
+  });
+});

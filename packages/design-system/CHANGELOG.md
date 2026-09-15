@@ -5,6 +5,18 @@
 
 ---
 
+## 12.9.0 — 2026-09-15
+
+伞包跟随 design-ui 9.6.0（minor，纯增量）：`FieldLabel` 的 `required` / `hint`、
+`FieldGroup columns={2}` 与 `Field span="full"`、新件 `FilterPanel` /
+`FilterPanelTrigger` / `countFilterPanelValue`。明细见 design-ui 的 9.6.0。
+
+消费方要点：opera 能力管理四页是第一批（弹窗收敛到 `DialogForm size="sm" | "lg" | "xl"`、
+详情抽屉 `width="lg"`、筛选收进左侧面板），平台侧由 `ds/overlay-panel-preset` 守卫
+锁住新增。
+
+---
+
 ## 12.3.0 — 2026-09-09
 
 `ShellSidebarNav` 的导航项新增可选 `trailingIcon`（minor，纯增量：不传即原行为）。
