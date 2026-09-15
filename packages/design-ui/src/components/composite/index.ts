@@ -26,6 +26,7 @@ export * from "./overlay/ConfirmDestructive";
 export * from "./form/FieldTier";
 export * from "./data/BarChart";
 export * from "./data/FilterBar";
+export * from "./data/FilterPanel";
 export * from "./data/ViewModeSwitch";
 export * from "./data/EntryCard";
 export * from "./data/MetricCard";

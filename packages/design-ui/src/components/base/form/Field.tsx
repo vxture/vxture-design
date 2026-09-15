@@ -17,6 +17,14 @@
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
+import { Icon } from "../../../icons";
+import { interactive } from "../../../styles/recipes";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../overlay/Tooltip";
 import { Label } from "./Label";
 
 /** 方向档的**运行时数组**，类型由它推导。 */
@@ -59,11 +67,17 @@ export interface FieldProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly orientation?: FieldOrientation;
   /** 仅 `labeled` 有意义：标签轨道宽。默认 md（9rem）。 */
   readonly labelWidth?: FieldLabelWidth;
+  /**
+   * 在两列的 `FieldGroup` 里占满整行。给长文本、JSON、说明性长控件用——它们塞进半列
+   * 只会换行换到读不下去。单列编组里无效果。
+   */
+  readonly span?: "full";
 }
 
 export function Field({
   orientation = "vertical",
   labelWidth = "md",
+  span,
   className,
   ...props
 }: FieldProps) {
@@ -85,6 +99,9 @@ export function Field({
         // 失效态经 data-invalid 从 Field 下发：标签随控件一起变色，
         // 只红输入框会让用户找不到是哪一行错了。
         "data-[invalid=true]:[&_[data-slot=field-label]]:text-destructive-text",
+        // 带帮助图标时标签文字在内层（外层 span 才是 field-label），颜色要落到文字上。
+        "data-[invalid=true]:[&_[data-slot=field-label-text]]:text-destructive-text",
+        span === "full" && "col-span-full",
         className,
       )}
       {...props}
@@ -92,30 +109,115 @@ export function Field({
   );
 }
 
+export interface FieldGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * 一行几个字段。默认 1。
+   *
+   * `2` 是注册 / 编辑类表单的常态（owner 2026-09-15：「一行两条，保持足够的 gap」），
+   * 只在 `DialogForm` 的 `lg` / `xl` 挡里用——`sm` 面板半列放不下一个输入框。
+   * 行距与列距同为 `lg`：两列之间比一列之内的行距更窄，眼睛会把左右两个字段读成一个。
+   * 需要占满整行的字段给 `<Field span="full">`。
+   */
+  readonly columns?: 1 | 2;
+}
+
 /** 多行表单的编组：行距一次定齐（表单密度只在这里调，不散落在行间）。 */
 export function FieldGroup({
+  columns = 1,
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: FieldGroupProps) {
   return (
     <div
       data-slot="field-group"
-      className={cn("flex w-full flex-col gap-lg", className)}
+      data-columns={columns}
+      className={cn(
+        columns === 2
+          ? "grid w-full grid-cols-2 gap-x-lg gap-y-lg"
+          : "flex w-full flex-col gap-lg",
+        className,
+      )}
       {...props}
     />
   );
 }
 
+export interface FieldLabelProps extends React.ComponentProps<typeof Label> {
+  /**
+   * 必填：标签后一个星号，读屏念 `requiredLabel`。
+   *
+   * 此前各表单把「（必填）」写进标签文字里——有的写有的不写，而且看不出哪些是选填
+   * （owner 2026-09-15：「同时体现必填项」）。只标必填、不标选填：必填是少数时标出少数。
+   */
+  readonly required?: boolean;
+  /** 星号的读屏文案。默认 `Required`。 */
+  readonly requiredLabel?: string;
+  /**
+   * 字段说明，收进标签后的帮助图标，悬停或聚焦时出现。
+   *
+   * 常驻在控件下方的 `FieldDescription` 会把一张表单拉高一倍，于是对话框常态就要滚
+   * （owner 2026-09-15：「把提示信息收进帮助 icon」）。**会随输入变化的提示**（剩余
+   * 字数、校验结果）不属于这里，仍用 `FieldDescription` / `FieldError`。
+   */
+  readonly hint?: React.ReactNode;
+  /** 帮助图标的可访问名。默认 `More information`。 */
+  readonly hintLabel?: string;
+}
+
 export function FieldLabel({
   className,
+  required = false,
+  requiredLabel = "Required",
+  hint,
+  hintLabel = "More information",
+  children,
   ...props
-}: React.ComponentProps<typeof Label>) {
-  return (
+}: FieldLabelProps) {
+  const text = (
     <Label
-      data-slot="field-label"
+      data-slot={hint ? "field-label-text" : "field-label"}
       className={cn("w-fit", className)}
       {...props}
-    />
+    >
+      {children}
+      {required ? (
+        <>
+          <span aria-hidden="true" className="text-destructive-text">
+            *
+          </span>
+          <span className="sr-only">{requiredLabel}</span>
+        </>
+      ) : null}
+    </Label>
+  );
+
+  if (!hint) return text;
+
+  /* 帮助钮不能放进 <label> 里：点它会把焦点交给控件，而读屏会把钮的名字念进标签。
+     所以外层 span 接过 `field-label` 这个槽（labeled 方向的网格定位认的是它）。
+     自带 TooltipProvider：不是每个消费方都在根上挂了一个，缺了它 Tooltip 直接抛。 */
+  return (
+    <span data-slot="field-label" className="flex w-fit items-center gap-2xs">
+      {text}
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              aria-label={hintLabel}
+              data-slot="field-hint"
+              className={cn(
+                interactive,
+                "inline-flex size-control-2xs shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icon name="help" size="sm" aria-hidden="true" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>{hint}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </span>
   );
 }
 
