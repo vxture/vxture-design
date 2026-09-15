@@ -128,8 +128,10 @@ import {
   FilterBar,
   FilterPanel,
   FilterPanelTrigger,
+  FilterPopover,
   countFilterPanelValue,
   type FilterPanelValue,
+  type FilterValue,
   ListCard,
   ListCardGrid,
   MetricGrid,
@@ -1646,11 +1648,21 @@ export const ENTRIES: readonly Entry[] = [
     ),
   },
   {
+    name: "FilterPopover",
+    layer: "pattern",
+    group: "图案",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "替代 FilterPanel（owner 2026-09-15 否掉抽屉形态）：贴着按钮弹出、非模态不遮挡；勾一下就生效，「确定」只收起；选项网格排、数字在名称后。常用维度留在工具行做下拉框，气泡只收剩下的",
+    render: () => <FilterPopoverDemo />,
+  },
+  {
     name: "FilterPanel",
     layer: "pattern",
     group: "图案",
     tags: ["vxture", "patterns"],
     covers: ["FilterPanelTrigger"],
+    pending: true,
     deviation:
       "形态定死：左侧抽屉 sm 挡，不开 side / width。勾选落草稿，应用才交出、关闭即丢弃——每勾一下就重查会让服务端分页的表来回跳。维度内任一、维度间都要",
     render: () => <FilterPanelDemo />,
@@ -3376,6 +3388,125 @@ function PaginationDemo() {
       pageSize={20}
       onPageChange={setPage}
     />
+  );
+}
+
+function FilterPopoverDemo() {
+  const [value, setValue] = React.useState<FilterValue>({
+    providerId: ["github"],
+  });
+  return (
+    <Row label="常用维度留在工具行做下拉框；取值多的维度收进贴着按钮的气泡，勾一下就生效">
+      <FilterBar
+        className="w-full"
+        search={<Input className="w-56" placeholder="搜索能力…" />}
+        onReset={() => setValue({})}
+      >
+        <Select defaultValue="all">
+          <SelectTrigger className="w-32" aria-label="类型">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全部类型</SelectItem>
+            <SelectItem value="skill">技能</SelectItem>
+            <SelectItem value="connector">连接器</SelectItem>
+          </SelectContent>
+        </Select>
+        <FilterPopover
+          label="更多筛选"
+          confirmLabel="确定"
+          clearLabel="清空"
+          emptyLabel="暂无可选值"
+          value={value}
+          onChange={setValue}
+          facets={[
+            {
+              id: "providerId",
+              label: "来源",
+              /* 线上同形数据（runos capability-facets，2026-09-15）：31 个来源里取前 31。 */
+              options: [
+                { value: "github", label: "github", count: 432 },
+                { value: "sandbaseai", label: "sandbaseai", count: 99 },
+                { value: "k-dense-ai", label: "k-dense-ai", count: 86 },
+                { value: "opensensenova", label: "opensensenova", count: 76 },
+                { value: "mattpocock", label: "mattpocock", count: 37 },
+                { value: "yusufkaraaslan", label: "yusufkaraaslan", count: 26 },
+                { value: "addyosmani", label: "addyosmani", count: 25 },
+                { value: "sanjay3290", label: "sanjay3290", count: 24 },
+                { value: "anthropics", label: "anthropics", count: 13 },
+                { value: "iofficeai", label: "iofficeai", count: 11 },
+                { value: "openai", label: "openai", count: 8 },
+                { value: "nexu-io", label: "nexu-io", count: 7 },
+                { value: "kepano", label: "kepano", count: 6 },
+                { value: "testdino-hq", label: "testdino-hq", count: 6 },
+                { value: "bodycheck", label: "bodycheck", count: 2 },
+                { value: "failover", label: "failover", count: 2 },
+                { value: "fokkyp", label: "fokkyp", count: 2 },
+                { value: "lambdatest", label: "lambdatest", count: 2 },
+                { value: "microsoft", label: "microsoft", count: 2 },
+                { value: "obra", label: "obra", count: 2 },
+                { value: "runos", label: "runos", count: 2 },
+                { value: "serpapi", label: "serpapi", count: 2 },
+                { value: "browser-act", label: "browser-act", count: 1 },
+                { value: "cathrynlavery", label: "cathrynlavery", count: 1 },
+                { value: "credcheck", label: "credcheck", count: 1 },
+                { value: "deusyu", label: "deusyu", count: 1 },
+                { value: "drift", label: "drift", count: 1 },
+                { value: "joeseesun", label: "joeseesun", count: 1 },
+                { value: "johell1ns", label: "johell1ns", count: 1 },
+                { value: "lackeyjb", label: "lackeyjb", count: 1 },
+                { value: "markitdown", label: "markitdown", count: 1 },
+              ],
+            },
+            {
+              id: "tag",
+              label: "标签",
+              description: "全部命中",
+              options: [
+                { value: "preset", label: "preset", count: 879 },
+                {
+                  value: "preset-default",
+                  label: "preset-default",
+                  count: 571,
+                },
+                {
+                  value: "preset-optional",
+                  label: "preset-optional",
+                  count: 307,
+                },
+                { value: "analysis", label: "analysis", count: 172 },
+                { value: "research", label: "research", count: 132 },
+                { value: "testing", label: "testing", count: 112 },
+                { value: "search", label: "search", count: 92 },
+                { value: "writing", label: "writing", count: 92 },
+                { value: "chinese", label: "chinese", count: 73 },
+                { value: "excel", label: "excel", count: 59 },
+                { value: "social", label: "social", count: 55 },
+                { value: "report", label: "report", count: 45 },
+                { value: "data", label: "data", count: 37 },
+                { value: "chart", label: "chart", count: 35 },
+                { value: "browser", label: "browser", count: 32 },
+                { value: "pdf", label: "pdf", count: 26 },
+                { value: "academic", label: "academic", count: 25 },
+                { value: "golden", label: "golden", count: 24 },
+                { value: "phase2", label: "phase2", count: 24 },
+                { value: "tests", label: "tests", count: 24 },
+                { value: "qdrant", label: "qdrant", count: 23 },
+                { value: "audio", label: "audio", count: 22 },
+                { value: "engineering", label: "engineering", count: 22 },
+                { value: "mcp", label: "mcp", count: 22 },
+                { value: "generator", label: "generator", count: 20 },
+                { value: "pptx", label: "pptx", count: 20 },
+                { value: "create", label: "create", count: 19 },
+                { value: "review", label: "review", count: 18 },
+                { value: "docx", label: "docx", count: 17 },
+                { value: "template", label: "template", count: 17 },
+              ],
+            },
+          ]}
+        />
+      </FilterBar>
+    </Row>
   );
 }
 

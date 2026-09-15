@@ -5,6 +5,16 @@
 
 ---
 
+## 12.10.0 — 2026-09-15
+
+伞包跟随 design-ui 9.7.0（minor）：新件 `FilterPopover` / `countFilterValue`；
+`FilterPanel` / `FilterPanelTrigger` 弃用（下一个 major 删除）。明细见 design-ui 9.7.0。
+
+消费方：opera 能力管理页面把左侧抽屉换成「工具行下拉框 + 更多筛选气泡」；平台侧守卫禁止
+新用 `FilterPanel`。
+
+---
+
 ## 12.9.0 — 2026-09-15
 
 伞包跟随 design-ui 9.6.0（minor，纯增量）：`FieldLabel` 的 `required` / `hint`、
