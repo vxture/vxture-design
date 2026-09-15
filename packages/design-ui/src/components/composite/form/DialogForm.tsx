@@ -28,6 +28,17 @@ import {
 
 export type DialogFormSize = "sm" | "md" | "lg" | "xl";
 
+/* 打开时焦点落到第一个**字段控件**，不交给 Radix 的「第一个可 Tab 元素」。
+   FieldLabel 带 hint 后，标签里的帮助 icon 是个按钮，排在输入框前面——默认行为
+   会把焦点给它，Tooltip 随焦点弹开，对话框一打开就挂着一条说明气泡（opera
+   v0.26.174 线上实测）。没有字段的对话框（确认 / 结果）照旧走默认。 */
+const FIRST_FIELD = [
+  'input:not([type="hidden"]):not([disabled])',
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[role="combobox"]:not([aria-disabled="true"])',
+].join(", ");
+
 /* 浮层面板宽走 panel 族（448 / 512 / 672 / 928）——裸 `max-w-md/lg` 会命中
    同名 spacing 档（见 Dialog 的塌宽事故注释）。xl 是 panel 梯的超宽档，
    为的就是双栏表单：字段多的注册表单铺两列，内容不超过滚动阈值，
@@ -73,12 +84,22 @@ function DialogForm({
   onOpenChange,
   ...props
 }: DialogFormProps) {
+  const bodyRef = React.useRef<HTMLDivElement>(null);
+  const focusFirstField = React.useCallback((event: Event) => {
+    const field = bodyRef.current?.querySelector<HTMLElement>(FIRST_FIELD);
+    if (!field) return;
+    event.preventDefault();
+    field.focus();
+  }, []);
   return (
     <Dialog
       {...(onOpenChange !== undefined ? { onOpenChange } : {})}
       {...props}
     >
-      <DialogContent className={cn("w-full", BY_SIZE[size])}>
+      <DialogContent
+        className={cn("w-full", BY_SIZE[size])}
+        onOpenAutoFocus={focusFirstField}
+      >
         <form className="flex flex-col gap-lg" onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -96,7 +117,10 @@ function DialogForm({
                648px，紧凑密度排完（实测 617px）几乎贴顶，笔记本高度必滚。70vh 让
                「整表可见、滚动只是兜底」在常见视口成立；整体高度（内容 + 标题页脚
                ≈ +180px）在 800px 视口内仍放得下。 */
-            <div className="flex max-h-[70vh] flex-col gap-md overflow-y-auto pr-2xs">
+            <div
+              ref={bodyRef}
+              className="flex max-h-[70vh] flex-col gap-md overflow-y-auto pr-2xs"
+            >
               {children}
             </div>
           ) : null}
