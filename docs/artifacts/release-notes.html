@@ -215,7 +215,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">升到 <strong>design-system 12.8.0</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
+    <p class="lede">升到 <strong>design-system 12.8.1</strong> 要做什么、不用做什么。从 10.x 上来会跨两次 major（11.0.0、12.0.0），<strong>要改的都在表格列对齐这一族</strong>——§02 是清单。还停在更早版本的，§03（10.0.0 的间距档）与 §04（9.0.0 的红色按钮）按顺序补。</p>
   </div>
 
 <section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-09-15 · minor</span></h2><div class="rule"></div>
@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.8.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.5.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.3.0</td><td><span class="tag t-ok">minor</span> 新增版面尺寸 <span class="mono">table-col-fixed</span>，见 §05f</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.8.1</td><td><span class="tag t-ok">patch</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.5.1</td><td><span class="tag t-ok">patch</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.3.0</td><td><span class="tag t-dim">未动</span> 12.8.0 新增的 <span class="mono">table-col-fixed</span> 沿用</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.0 就会带上 ui 9.5.0 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
+<div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
 <section id="breaking12"><h2><span class="num">02</span>必须改的<span class="h2-meta">11.0.0 / 12.0.0 两次 major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">两条都在 <span class="mono">DataTable</span> 的列对齐上，<strong>都不报错</strong>。一条静默改变已有表格的观感，另一条会让代码<strong>编译通过但含义变了</strong>——后者更隐蔽。</div>
@@ -362,7 +362,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <section id="fixedcol"><h2><span class="num">05f</span>表格三根固定列统一 64px<span class="h2-meta">12.8.0 · 不用改，观感变了</span></h2><div class="rule"></div>
 <p><span class="mono">DataTable</span> 的选择列、序号列、操作列此前借的是控件高度族 <span class="mono">w-control-3xl</span>，它随密度平移（紧凑 48 / 默认 56 / 宽松 64）。<strong>默认密度下实测选择列与序号列是 56px，操作列被按钮撑到 64px</strong>——文件头写着三根同宽 64px，只在宽松密度成立。</p>
 <div class="note"><strong>12.8.0 起三根列改用新档 <span class="mono">w-table-col-fixed</span>：固定 64px，不随密度变化</strong>（owner 2026-09-15）。列宽是版面结构，与 sidebar / header 同类，不是控件尺寸。</div>
-<div class="note warn"><strong>调用方一行不用改</strong>，这三根列由 <span class="mono">selectedKeys</span> / <span class="mono">indexStart</span> / <span class="mono">rowActions</span> 给出、宽度由件决定。可见差异：默认密度下选择列、序号列各宽 8px；紧凑密度下三根列各宽 16px。</div></section>
+<div class="note warn"><strong>调用方一行不用改</strong>，这三根列由 <span class="mono">selectedKeys</span> / <span class="mono">indexStart</span> / <span class="mono">rowActions</span> 给出、宽度由件决定。可见差异：默认密度下选择列、序号列各宽 8px；紧凑密度下三根列各宽 16px。</div>
+<div class="note warn"><strong>12.8.1 补下限：<span class="mono">w-table-col-fixed</span> 之外再给 <span class="mono">min-w-table-col-fixed</span>。</strong>自动表格布局里宽度只是建议值，列多的表放不下时浏览器先回收只有一个复选框或一个序号的列——opera 线上实测 9 列的表序号列 40px、选择列 48px。下限钉住 64px，放不下交给表格横向滚动。调用方同样不用改。</div></section>
 
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
@@ -405,7 +406,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.8.0 · design-tokens 3.3.0 / design-ui 9.5.0 / design-system 12.8.0 · 2026-09-15</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.8.1 · design-tokens 3.3.0 / design-ui 9.5.1 / design-system 12.8.1 · 2026-09-15</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

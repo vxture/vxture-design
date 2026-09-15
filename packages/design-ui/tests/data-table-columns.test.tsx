@@ -44,6 +44,9 @@ const header = (name: string) => screen.getByRole("columnheader", { name });
  * 2026-09-15 实测：三根列借的是控件高度族 `w-control-3xl`，默认密度下选择列、序号列
  * 56px，操作列被按钮撑到 64px——「同宽」只在代码里成立。反向验证：把任一根改回
  * `w-control-3xl`，本用例变红。
+ *
+ * 12.8.1：另要求 `min-w-table-col-fixed`——只给宽度时，列多的表会把这三根列压到 40～48px
+ * （opera 线上实测）。反向验证：删掉 EDGE_COL 里的 min-w，两条用例变红。
  */
 describe("DataTable · 三根固定列同一个定宽", () => {
   it("选择列、序号列、操作列的表头都用 w-table-col-fixed", () => {
@@ -62,6 +65,7 @@ describe("DataTable · 三根固定列同一个定宽", () => {
     const fixed = [ths[0]!, ths[1]!, ths[ths.length - 1]!];
     for (const th of fixed) {
       expect(th.className).toContain("w-table-col-fixed");
+      expect(th.className).toContain("min-w-table-col-fixed");
       expect(th.className).not.toContain("w-control-3xl");
     }
   });
@@ -81,6 +85,7 @@ describe("DataTable · 三根固定列同一个定宽", () => {
     const tds = [...container.querySelectorAll("tbody tr:first-child td")];
     for (const td of [tds[0]!, tds[1]!, tds[tds.length - 1]!]) {
       expect(td.className).toContain("w-table-col-fixed");
+      expect(td.className).toContain("min-w-table-col-fixed");
     }
   });
 });

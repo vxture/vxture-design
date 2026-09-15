@@ -49,6 +49,7 @@ const EXPECTED = [
   ["gap-x-7xl", "T2 间距 · 栏间沟"],
   // 表格固定列宽（2026-09-15 新加，理由同上一条：取样清单不进样就没人验过它出不出类）。
   ["w-table-col-fixed", "T2 版面 · 表格固定列"],
+  ["min-w-table-col-fixed", "T2 版面 · 表格固定列下限"],
   ["h-control-md", "T2 控件高度"],
   ["h-row-lg", "T2 行高度"],
   ["md:p-xl", "T2 间距 · 断点变体"],
