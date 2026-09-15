@@ -36,7 +36,10 @@ const FIRST_FIELD = [
   'input:not([type="hidden"]):not([disabled])',
   "select:not([disabled])",
   "textarea:not([disabled])",
-  '[role="combobox"]:not([aria-disabled="true"])',
+  /* 组合框的触发钮是 <button role="combobox">，禁用时用的是 disabled 属性而不是
+     aria-disabled——只排除后者会选中它，focus() 对禁用按钮无效，焦点就停在对话框
+     容器上（opera 编辑产品授权：产品/入口编辑时锁定，9.7.2 线上实测）。 */
+  '[role="combobox"]:not([disabled]):not([aria-disabled="true"])',
 ].join(", ");
 
 /* 浮层面板宽走 panel 族（448 / 512 / 672 / 928）——裸 `max-w-md/lg` 会命中

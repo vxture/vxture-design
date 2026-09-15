@@ -132,6 +132,20 @@ describe("DialogForm · 打开时的焦点", () => {
     expect(document.activeElement).toBe(screen.getByLabelText("kind"));
   });
 
+  /**
+   * 9.7.2 的回归。编辑态锁住的组合框是 `<button role="combobox" disabled>`；只排除
+   * aria-disabled 时它被选中，focus() 对禁用按钮无效，焦点停在对话框容器上。
+   */
+  it("跳过用 disabled 属性禁用的组合框", () => {
+    render(
+      <DialogForm open title="t">
+        <button type="button" role="combobox" aria-label="product" disabled />
+        <input aria-label="appId" />
+      </DialogForm>,
+    );
+    expect(document.activeElement).toBe(screen.getByLabelText("appId"));
+  });
+
   it("没有字段的对话框照旧走默认聚焦，不抢焦点", () => {
     render(<DialogForm open title="t" description="d" />);
     expect(document.activeElement).not.toBe(document.body);
