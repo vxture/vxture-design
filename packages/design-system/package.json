@@ -1,6 +1,6 @@
 {
   "name": "@vxture/design-system",
-  "version": "12.11.0",
+  "version": "12.12.0",
   "description": "Vxture platform — design tokens, UI components, theme, icons",
   "private": false,
   "type": "module",
@@ -15,6 +15,7 @@
       "import": "./dist/server.mjs",
       "require": "./dist/server.cjs"
     },
+    "./assets/*": "./assets/*",
     "./styles/brand.css": "./src/styles/brand.css",
     "./styles/brands/vxture.css": "./src/styles/brands/vxture.css",
     "./styles/fonts.css": "./src/styles/fonts.css",
