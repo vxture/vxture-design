@@ -19,7 +19,7 @@
  * 报 duplicate export——冲突应当是构建错误，不是静默遮蔽。
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import { argv, exit, stdout } from "node:process";
+import { argv, exit, stderr, stdout } from "node:process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -80,14 +80,14 @@ if (argv.includes("--check")) {
     /* 缺文件即视为不同步 */
   }
   if (current !== out) {
-    console.error(
-      "仓内 src/generated-reexports.ts 与当前构建产物的导出面不一致。",
+    stderr.write(
+      "仓内 src/generated-reexports.ts 与当前构建产物的导出面不一致。\n",
     );
-    console.error(
-      `当前产物：design-ui ${ui.length} + design-tokens ${tokens.length} 个具名再导出。`,
+    stderr.write(
+      `当前产物：design-ui ${ui.length} + design-tokens ${tokens.length} 个具名再导出。\n`,
     );
-    console.error(
-      "运行：pnpm --filter @vxture/design-system exec node scripts/generate-reexports.mjs",
+    stderr.write(
+      "运行：pnpm --filter @vxture/design-system exec node scripts/generate-reexports.mjs\n",
     );
     exit(1);
   }
