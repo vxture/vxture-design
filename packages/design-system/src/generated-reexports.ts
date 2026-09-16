@@ -1,7 +1,7 @@
 // 本文件由 scripts/generate-reexports.mjs 生成——不得手工编辑（改动会在下一次
 // pnpm build 时被覆盖）。背景与规则见生成脚本头注释。
 
-// ---- @vxture/design-ui 的全部运行时导出（249 个） ----
+// ---- @vxture/design-ui 的全部运行时导出（254 个） ----
 export {
   Accordion,
   AccordionContent,
@@ -131,6 +131,9 @@ export {
   FieldTier,
   FileTrigger,
   FilterBar,
+  FilterPanel,
+  FilterPanelTrigger,
+  FilterPopover,
   FormPageTemplate,
   FullscreenProvider,
   Grid,
@@ -237,6 +240,8 @@ export {
   badgeVariants,
   buttonVariants,
   cn,
+  countFilterPanelValue,
+  countFilterValue,
   iconDictionary,
   overlayMinWidthClass,
   overlayWidthClass,
