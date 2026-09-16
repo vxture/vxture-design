@@ -207,6 +207,8 @@ export const ICON_GROUPS = [
       "user-plus", // 邀请/添加成员
       "user-circle",
       "building", // 单一场所（buildings=企业/多主体，building=单一建筑）
+      "building-office", // 带门脸的办公楼（个人租户主体标识）
+      "building-apartment", // 多层公寓楼
     ],
   },
   {
@@ -237,6 +239,9 @@ export const ICON_GROUPS = [
       "clock",
       "clock-counter-clockwise",
       "map-pin", // 地图标记（原 map-marker 已合并）
+      "city", // 城市天际线
+      "hospital", // 医疗机构
+      "house-line", // 住宅（线性轮廓，与 home=首页入口分形）
     ],
   },
   {

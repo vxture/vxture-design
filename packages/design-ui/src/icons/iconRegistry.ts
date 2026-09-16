@@ -191,6 +191,8 @@ import {
   UserIcon,
   UserSwitchIcon,
   BuildingsIcon,
+  BuildingOfficeIcon,
+  BuildingApartmentIcon,
   UsersIcon,
   MedalIcon,
   StarIcon,
@@ -228,6 +230,9 @@ import {
   // 地图/位置
   // ==========================================================================
   MapPinIcon,
+  CityIcon,
+  HospitalIcon,
+  HouseLineIcon,
 
   // ==========================================================================
   // 主题/显示
@@ -463,6 +468,9 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   "user-plus": UserPlusIcon,
   "user-circle": UserCircleIcon,
   building: BuildingIcon,
+  // 带门脸的办公楼＝个人租户的主体标识，与 building（朴素单体楼）分形。
+  "building-office": BuildingOfficeIcon,
+  "building-apartment": BuildingApartmentIcon,
 
   // ==========================================================================
   // 通讯/联系
@@ -495,6 +503,9 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   // 地图/位置
   // ==========================================================================
   "map-pin": MapPinIcon,
+  city: CityIcon,
+  hospital: HospitalIcon,
+  "house-line": HouseLineIcon,
 
   // ==========================================================================
   // 主题/显示
