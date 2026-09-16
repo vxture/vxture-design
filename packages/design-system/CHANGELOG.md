@@ -5,6 +5,24 @@
 
 ---
 
+## 12.12.0 — 2026-09-16
+
+默认标识资产对消费方开放（minor：纯增量）。
+
+- `exports` 新增 `./assets/*` 子路径。`files` 里一直有 `assets`，但 `exports` 没列它
+  ——Node 的 exports 一旦声明，未列出的子路径就被封死。实测过：改之前
+  `require.resolve("@vxture/design-system/assets/icons/tenant-default.png")` 是
+  `MODULE_NOT_FOUND`，改之后解析得到。**资产随包发出去不等于消费方取得到**，
+  monorepo 里读文件系统看得见，装完就断。
+- `assets/icons/tenant-default.png` 换成 512×512（原 128×128）。详情页要按原图看——
+  运营得看清用户传的到底是什么（违规图片审核），128 在那个位置会糊。
+
+默认标识由 DS 统一供图（owner 2026-09-16）：全平台与智能体用同一份，不各门户
+各放一张。个人租户与组织租户**共用**这一张（图标那边仍是 `building-office` /
+`buildings` 两档分形，默认标识不跟着分）；用户默认用 `avatar-default.png`（256×256）。
+
+---
+
 ## 12.11.0 — 2026-09-16
 
 伞包跟随 design-ui 9.8.0（minor）：图标字典新增 `building-office`、`building-apartment`、

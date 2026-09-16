@@ -7,6 +7,7 @@
         "require": "./dist/index.cjs",
         "types": "./dist/index.d.ts"
       },
+      "./assets/*": "./assets/*",
       "./server": {
         "import": "./dist/server.mjs",
         "require": "./dist/server.cjs",
