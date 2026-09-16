@@ -5,6 +5,27 @@
 
 ---
 
+## 9.8.0 — 2026-09-16
+
+图标字典新增 5 个名字（minor：纯增量，现有名字与形状不变）。
+
+「主体/场所」族（Users & organizations）：
+
+- `building-office` → `BuildingOffice`：带门脸的办公楼。个人租户的主体标识用它；原用的
+  `building`（素面窄高单体）在小尺寸下轮廓过于墓碑化，不适合做列表里反复出现的身份图标。
+- `building-apartment` → `BuildingApartment`：多层公寓楼。
+
+「地点」族（Time & location，与 `map-pin` 同组）：
+
+- `city` → `City`：城市天际线。
+- `hospital` → `Hospital`：医疗机构。
+- `house-line` → `HouseLine`：住宅。与已有的 `home`（`House`，导航首页入口）分形：
+  一个是入口，一个是居住场所，不是同义别名。
+
+图标总数与分组都由 `ICON_GROUPS` 推导，预览面与 `IconName` 自动跟上，无第二份清单要改。
+
+---
+
 ## 9.7.3 — 2026-09-16
 
 `TableTitleCell` 新增 `layout` 一档（minor：纯增量，默认行为不变）。

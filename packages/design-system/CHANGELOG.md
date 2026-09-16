@@ -5,6 +5,13 @@
 
 ---
 
+## 12.11.0 — 2026-09-16
+
+伞包跟随 design-ui 9.8.0（minor）：图标字典新增 `building-office`、`building-apartment`、
+`city`、`hospital`、`house-line` 五个名字。明细见 design-ui 9.8.0。
+
+---
+
 ## 12.10.3 — 2026-09-16
 
 伞包跟随 design-ui 9.7.3（minor）：`TableTitleCell` 新增 `layout="stacked"` 一档，
