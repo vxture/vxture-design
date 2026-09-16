@@ -77,6 +77,15 @@ export interface TableTitleCellProps {
    * 本件不参与：写死 px 会让这一件从三档设定里掉出去。
    */
   readonly size?: "md" | "lg";
+  /**
+   * 排布。默认 `inline`：图标在左、标题与副文在右，两行左起并各自截断——详情可点、
+   * 一屏几十行也不跳动，是列表首列的形态。
+   *
+   * `stacked`：整格**纵向居中**，主行在上、辅行在下，都不截断。用在「两条并列信息」
+   * 的列上（租户名 / 租户码、方案数 / 套餐数），那里主行不是标题，所以**不加字重**
+   * ——套上 semibold 会让它读起来像标题，与同一行里真正的标题列抢重量。
+   */
+  readonly layout?: "inline" | "stacked";
   readonly icon?: IconName;
   /** 给了主信息就渲染成可点的标题（进详情），不给就是纯文本。 */
   readonly onTitleClick?: () => void;
@@ -106,11 +115,58 @@ function TableTitleCell({
   description,
   size = "md",
   icon,
+  layout = "inline",
   onTitleClick,
   tooltip,
   className,
 }: TableTitleCellProps) {
   const type = SIZE[size];
+  if (layout === "stacked") {
+    return (
+      <span
+        className={cn(
+          "inline-flex min-w-0 flex-col items-center gap-2xs",
+          className,
+        )}
+        {...(tooltip ? { title: tooltip } : {})}
+      >
+        {icon ? (
+          <Icon
+            name={icon}
+            size="sm"
+            fallback="placeholder"
+            aria-hidden="true"
+            className="shrink-0 text-muted-foreground"
+          />
+        ) : null}
+        {/* 主行不加字重也不截断：这一档装的是并列信息不是标题，截断会把
+            「A · B」这种成对的值切掉一半，而纵向居中的格子本就允许换行。 */}
+        <span className="min-w-0 text-foreground">
+          {onTitleClick ? (
+            <button
+              type="button"
+              onClick={onTitleClick}
+              className={cn(
+                "rounded-sm",
+                interactive,
+                "hover:text-primary-text",
+              )}
+            >
+              {title}
+            </button>
+          ) : (
+            title
+          )}
+          {titleSuffix}
+        </span>
+        {description ? (
+          <span className={cn("text-muted-foreground", type.description)}>
+            {description}
+          </span>
+        ) : null}
+      </span>
+    );
+  }
   return (
     <span
       className={cn("flex min-w-0 items-center gap-sm", className)}

@@ -1729,7 +1729,7 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["vxture", "patterns"],
     covers: ["TableTitleCell"],
     deviation:
-      "三态一次定齐：加载出骨架行（撑住高度不让页面跳）、空态出 EmptyState、有数据出行。选择态受控于 selectedKeys，与 BulkActionBar 对接；表头半选走 indeterminate。透明模式：无容器卡，顶边实线/表头实线/行间虚线，首末列内边距归零与上下文对齐；footer 槽位承分页。列语法（admin 列表惯例）：选择框-序号(indexStart)-两行主列(TableTitleCell)-信息列-锁定操作列(rowActions，横向滚动钉右)",
+      '三态一次定齐：加载出骨架行（撑住高度不让页面跳）、空态出 EmptyState、有数据出行。选择态受控于 selectedKeys，与 BulkActionBar 对接；表头半选走 indeterminate。透明模式：无容器卡，顶边实线/表头实线/行间虚线，首末列内边距归零与上下文对齐；footer 槽位承分页。列语法（admin 列表惯例）：选择框-序号(indexStart)-两行主列(TableTitleCell)-信息列-锁定操作列(rowActions，横向滚动钉右)。两行主列有两档排布：默认 inline（图标在左、标题加粗并截断，列表首列用它）；layout="stacked" 纵向居中、主行不加字重也不截断，用在「两条并列信息」的列上（租户名/租户码、方案数/套餐数），那里主行不是标题',
     render: () => <DataTableDemo />,
   },
   {

@@ -5,6 +5,13 @@
 
 ---
 
+## 12.10.3 — 2026-09-16
+
+伞包跟随 design-ui 9.7.3（minor）：`TableTitleCell` 新增 `layout="stacked"` 一档，
+纵向居中、主行不加字重，收编各门户手写的「两条并列信息」格子。明细见 design-ui 9.7.3。
+
+---
+
 ## 12.10.2 — 2026-09-16
 
 伞包跟随 design-ui 9.7.2（patch）：`DialogForm` 打开时跳过用 `disabled` 禁用的组合框，焦点

@@ -15,6 +15,7 @@ import {
 import { FactList } from "../src/components/composite/data/FactList";
 import { LabeledValue } from "../src/components/composite/data/LabeledValue";
 import { ListCard } from "../src/components/composite/data/ListCard";
+import { TableTitleCell } from "../src/components/composite/data/TableTitleCell";
 
 describe("DetailList · 名与值必须是一对", () => {
   /**
@@ -166,5 +167,41 @@ describe("ListCard · 行卡的语法是固定的", () => {
     expect(
       screen.queryByRole("button", { name: /主力推理通道/ }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("TableTitleCell · stacked 布局", () => {
+  /**
+   * admin 的列表体例是居中，「两条并列信息」的格子在 14 个文件里各手写了一遍
+   * （2026-09-16 勘查：21 处）。收进本件时必须做到零观感变化，否则收敛就成了改版面。
+   * 这三条钉的正是那几点差异。
+   */
+  it("纵向排布且居中", () => {
+    const { container } = render(
+      <TableTitleCell layout="stacked" title="租户名" description="T-001" />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.className).toContain("flex-col");
+    expect(root.className).toContain("items-center");
+  });
+
+  it("主行不加字重、不截断——它是并列信息不是标题", () => {
+    const { getByText } = render(
+      <TableTitleCell layout="stacked" title="租户名" description="T-001" />,
+    );
+    const main = getByText("租户名");
+    expect(main.className).not.toContain("font-semibold");
+    expect(main.className).not.toContain("truncate");
+  });
+
+  /* 反向对照：默认 inline 仍是标题形态（加粗 + 截断）。少了这条，
+     一个「两种布局长得一样」的实现也能过上面两条。 */
+  it("默认 inline 仍加粗并截断", () => {
+    const { getByText } = render(
+      <TableTitleCell title="订单号" description="B-001" />,
+    );
+    const main = getByText("订单号");
+    expect(main.className).toContain("font-semibold");
+    expect(main.className).toContain("truncate");
   });
 });
