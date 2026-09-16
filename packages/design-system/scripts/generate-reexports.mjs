@@ -18,8 +18,8 @@
  * 层（./components ./theme ./density）与两包的值名冲突会在 tsup 构建时直接
  * 报 duplicate export——冲突应当是构建错误，不是静默遮蔽。
  */
-import { writeFileSync } from "node:fs";
-import { stdout } from "node:process";
+import { readFileSync, writeFileSync } from "node:fs";
+import { argv, exit, stdout } from "node:process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -57,6 +57,46 @@ ${list(tokens)}
 } from "@vxture/design-tokens";
 `;
 
-writeFileSync(join(here, "..", "src", "generated-reexports.ts"), out);
-stdout.write(`[generate-reexports] design-ui ${ui.length} + design-tokens ${tokens.length} named re-exports written
+const target = join(here, "..", "src", "generated-reexports.ts");
+
+/*
+ * --check：只比对，不写盘。补的是这样一个盲区——本文件是生成物，**但它入仓**
+ * （供编辑器与 type-check 直读）。发布产物永远是对的（每次 build 前重新生成），
+ * 所以仓内这份落后了也没有任何东西会红：`check-design-system-exports` 比的是
+ * 已构建 dist 的运行时导出对快照，跟这份 src 无关。
+ *
+ * 代价实测过，同一组五个名字丢了两次：12.9.0 漏提交，#67（12.10.0）补上
+ * 249 → 254，#70（12.10.3）又删回去 254 → 249——那次是在 design-ui 的 dist
+ * 还落后时重跑了 build，把生成结果写回了仓库。两次都没人发现。
+ *
+ * 前提与 build 顺序一致：读的是 tokens / ui 的**已构建产物**，所以本检查要跑在
+ * build 之后（`guardrails` 链本就如此）。
+ */
+if (argv.includes("--check")) {
+  let current = "";
+  try {
+    current = readFileSync(target, "utf8");
+  } catch {
+    /* 缺文件即视为不同步 */
+  }
+  if (current !== out) {
+    console.error(
+      "仓内 src/generated-reexports.ts 与当前构建产物的导出面不一致。",
+    );
+    console.error(
+      `当前产物：design-ui ${ui.length} + design-tokens ${tokens.length} 个具名再导出。`,
+    );
+    console.error(
+      "运行：pnpm --filter @vxture/design-system exec node scripts/generate-reexports.mjs",
+    );
+    exit(1);
+  }
+  stdout.write(
+    `再导出清单一致（design-ui ${ui.length} + design-tokens ${tokens.length}）
+`,
+  );
+} else {
+  writeFileSync(target, out);
+  stdout.write(`[generate-reexports] design-ui ${ui.length} + design-tokens ${tokens.length} named re-exports written
 `);
+}

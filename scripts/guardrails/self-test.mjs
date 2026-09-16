@@ -21,9 +21,13 @@
  * 假仓,只会让自测和真实运行环境分叉。
  *
  * ── 安全 ──
- * · 工作树不干净就拒绝运行(还原靠的是内存里的原文,脏树会掩盖还原失败)
  * · 每个变异在 finally 里还原
- * · 全部跑完后再验一次 `git status --porcelain` 为空,不为空就报错退出
+ * · 全部跑完后**逐文件比对字节**确认还原（不问 git：能指出是哪一个没还原，
+ *   也不被无关的 WIP 干扰）
+ * · 不拒绝脏树——改到一半想跑一次自测是正当需求
+ *
+ * （前两条原写的是“脏树就拒绝运行”与“收尾查 git status”，两条早就换掉了，
+ *   注释却原样留着——正是本文件在讲的那件事。2026-09-16 订正。）
  *
  * ── 覆盖 ──
  * 未覆盖的守卫在末尾**逐条列出并说明原因**。静默少测和静默少扫是同一类病。
@@ -172,6 +176,26 @@ const CASES = [
       'import * as React from "react";\nReact.createContext(void 0);\n' + s,
   },
   {
+    /*
+     * 这条守卫不在 scripts/guardrails/ 下——它就是生成器本人的 `--check` 档。
+     * 分开写一份检查脚本就会有两份生成逻辑，而「一份事实只留一份推导」。
+     * 因此它需要 args：不带 --check 跑它是**生成模式**，不但不报错，还会把
+     * 变异当场写盘覆盖掉。
+     */
+    guard: "packages/design-system/scripts/generate-reexports.mjs",
+    args: ["--check"],
+    requires: [
+      "packages/design-ui/dist/index.mjs",
+      "packages/design-tokens/dist/index.mjs",
+    ],
+    name: "伞包再导出清单少一个名字（入库生成物与产物漂移）",
+    file: "packages/design-system/src/generated-reexports.ts",
+    mutate: (s) =>
+      s.includes("  FilterPopover,\n")
+        ? s.replace("  FilterPopover,\n", "")
+        : null,
+  },
+  {
     guard: "scripts/guardrails/check-packed-consumability.mjs",
     name: "@source 指回 src/（那个目录不在 files 里）",
     /* 复刻的是真实付出过代价的那一版：@source 指向 src，而两个包的 files 都只
@@ -199,9 +223,9 @@ const CASES = [
  * 差 18 秒撑不起一条会让人漏跑的分支。
  */
 
-function runGuard(script) {
+function runGuard(script, args = []) {
   try {
-    execFileSync(process.execPath, [script], { stdio: "pipe" });
+    execFileSync(process.execPath, [script, ...args], { stdio: "pipe" });
     return 0;
   } catch (error) {
     return error.status ?? 1;
@@ -216,6 +240,17 @@ for (const c of CASES) {
     skipped.push({ ...c, why: `缺 ${c.file}——先跑 pnpm build` });
     continue;
   }
+  /*
+   * 有的守卫不读被变异的那份文件，而是读**别处的构建产物**（如再导出清单那条：
+   * 它 import 两包的 dist 拿运行时导出面）。产物缺失时脚本会抛，runGuard 捕到
+   * 非零退出——那是**假阳性**：看着像“守卫抓到了”，实际上它压根没跑到判据。
+   * 所以依赖产物的用例要先查产物在不在，不在就出声跳过。
+   */
+  const missing = (c.requires ?? []).filter((f) => !existsSync(f));
+  if (missing.length > 0) {
+    skipped.push({ ...c, why: `缺 ${missing.join("、")}——先跑 pnpm build` });
+    continue;
+  }
   const original = readFileSync(c.file, "utf8");
   const mutated = c.mutate(original);
   if (mutated === null || mutated === original) {
@@ -224,7 +259,7 @@ for (const c of CASES) {
   }
   try {
     writeFileSync(c.file, mutated);
-    const code = runGuard(c.guard);
+    const code = runGuard(c.guard, c.args ?? []);
     results.push({
       ...c,
       originalContent: original,
