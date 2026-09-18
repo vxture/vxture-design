@@ -35,12 +35,19 @@
  *     四周)，块总高 40+4+4=48。用 padding 包一层"外壳"而不是直接在 40 行
  *     上加 padding——40 行本身零内边距，图标盒 40×40 不会被压。
  *     叠加：aside pt-xs(8) + title 自己的 pt-2xs(4) = 12。
- *   - content：flex-1 可滚动，py-2xs(4)（只在纵向；横向缩进交给每个
+ *   - content：flex-1 可滚动，pt-2xs(4) + pb-6xl（只在纵向；横向缩进交给每个
  *     group 自己去对齐 title，content 自己不再重复缩进，否则会跟 group
  *     的缩进叠两次，图标列对不齐）。title→content 靠 title 的 pb-2xs(4)
  *     + content 的 pt-2xs(4) 叠成 8，不用额外的 gap 工具类。
- *   - footer：64px 块（h-header-xl），底部安全区。内容由 `footer` 槽位注入，
- *     不传就是空占位——**高度恒定**，传不传都不改间距契约。
+ *   - footer：64px 块（h-header-xl），**只在传了 `footer` 时才存在**。
+ *
+ *     它原先是常驻空占位，理由写在测试里：「传不传都占同一格，否则导航项会
+ *     因为底部有没有东西而上下跳」。那个理由成立，但它真正承担的是**底部安全
+ *     区**——滚到底时最后一行不该贴着容器边缘，与内容区 `pb-6xl` 同一件事。
+ *
+ *     安全区改由 content 自己的 `pb-6xl` 提供之后，空 footer 就只剩 64px 空白
+ *     了：既占掉可视高度，又让侧栏底部与内容区底部对不齐。于是不传就不渲染。
+ *     间距契约没有破——它换了个更该负责的承担者（owner 2026-09-18）。
  * L3 group：p-2xs(4，四周——纵向是 py，横向缩进对齐 title)。组间距不用
  *   显式 gap，靠相邻两个 group 自己的 pt/pb(4+4) 叠成 8。
  * L4 group 内部：title→items 用 gap-xs(8)。
@@ -195,8 +202,18 @@ export interface ShellNavSection {
 }
 
 export interface ShellSidebarNavProps {
-  /** 侧栏顶部的域名称（title 行的文字）。 */
-  domainName: string;
+  /**
+   * 侧栏顶部的域名称（title 行的文字）。**可选**——不传就不渲染那行文字，
+   * 只剩两个按钮。
+   *
+   * 三个运营门户（admin / opera / arche）此前各传各的「运营平台」「Opera」
+   * 「Arche」：三处措辞不一致，且与 header 第 4 槽的当前域名重复显示
+   * （owner 2026-09-18）。域身份由 header 负责，侧栏不必再说一遍。
+   *
+   * 保留这个 prop 而不是删掉：它对**只有侧栏、没有 header** 的消费方仍然
+   * 有意义（design-preview 的独立演示就是这种）。
+   */
+  readonly domainName?: string;
   sections: ShellNavSection[];
   collapsed: boolean;
   onToggleCollapsed: () => void;
@@ -207,7 +224,10 @@ export interface ShellSidebarNavProps {
    *  自己的 Link（opera 传 next/link，console 传 next-intl 的 locale 感知
    *  Link），组件因此不依赖任何路由实现。 */
   readonly linkComponent?: React.ElementType;
-  /** 底部固定块（h-header-xl=64）的内容；不传则是空占位，高度不变。 */
+  /**
+   * 底部固定块（h-header-xl=64）的内容。**不传就整块不渲染**——底部安全区
+   * 已由 content 自己的 `pb-6xl` 提供，不再需要一个空块去占位。
+   */
   readonly footer?: React.ReactNode;
   /**
    * 两个控件的无障碍名。默认值是英文——本件从产品里提炼出来时把默认值一并
@@ -589,11 +609,18 @@ export function ShellSidebarNav({
                 <Icon name="sidebar" size="md" />
               </ShellIconButton>
             </NavRail>
-            {!collapsed && (
-              <NavLabel className="text-label-md font-medium text-foreground">
-                {domainName}
-              </NavLabel>
-            )}
+            {!collapsed &&
+              (domainName ? (
+                <NavLabel className="text-label-md font-medium text-foreground">
+                  {domainName}
+                </NavLabel>
+              ) : (
+                /* 没有域名文字时仍然占住中间这一格。NavLabel 自带 min-w-0
+                   flex-1，右侧的「全部展开/收起」按钮一直是**靠它撑开**才居右
+                   的；直接不渲染会让两个按钮贴到一起缩在左边。居右是这一行的
+                   版面契约，不该因为少了一段文字就变。 */
+                <span className="min-w-0 flex-1" aria-hidden="true" />
+              ))}
             {!collapsed && (
               <NavRail size="control-md">
                 <ShellIconButton
@@ -615,7 +642,11 @@ export function ShellSidebarNav({
         {/* content */}
         <div
           className={cn(
-            "min-h-0 flex-1 overflow-y-auto py-2xs",
+            /* pb-6xl 与内容区（design-ui ShellLayout 的
+               `px-page-inset pt-page-inset pb-6xl`）同一个档：滚到底时最后一个
+               导航项不该贴着容器边缘，而侧栏与内容区是并排的两列，底部留白对
+               不齐会看得很清楚。原先这段留白由常驻的空 footer 块兼任。 */
+            "min-h-0 flex-1 overflow-y-auto pt-2xs pb-6xl",
             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
           )}
         >
@@ -669,13 +700,9 @@ export function ShellSidebarNav({
           </nav>
         </div>
 
-        {/* footer — 底部安全区，高度恒定；内容由产品侧经 footer 槽位注入 */}
-        <div
-          className="h-header-xl shrink-0"
-          aria-hidden={footer ? undefined : true}
-        >
-          {footer}
-        </div>
+        {/* footer — 只在产品侧真的注入了内容时才存在；底部安全区由 content
+            自己的 pb-6xl 负责，不再用一个空块去占 */}
+        {footer ? <div className="h-header-xl shrink-0">{footer}</div> : null}
       </div>
     </TooltipProvider>
   );
