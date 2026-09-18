@@ -112,6 +112,24 @@ describe("收起态", () => {
     expect(screen.getByText("首页")).toBeInTheDocument();
   });
 
+  /**
+   * domainName 可选：三个运营门户把域身份交给 header 的第 4 槽，侧栏不再重复说
+   * 一遍（owner 2026-09-18）。这里**整个不传**而不是传 undefined——本仓开着
+   * exactOptionalPropertyTypes，两者是两件事，而调用方摘掉的是那一行属性。
+   */
+  it("不传 domainName 时不渲染那行文字，但两个按钮都还在", () => {
+    const { domainName: _omitted, ...noDomain } = base;
+    render(<ShellSidebarNav {...noDomain} />);
+    expect(screen.queryByText("某某控制台")).not.toBeInTheDocument();
+    // 侧栏开合 + 全部展开/收起，一个都不能少
+    expect(
+      screen.getByRole("button", { name: "Collapse navigation" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Collapse all groups" }),
+    ).toBeInTheDocument();
+  });
+
   /** 侧栏开合按钮的无障碍名要跟着状态翻——名字不翻，读屏器永远只听见一种。 */
   it("侧栏开合按钮的名字跟着状态翻", () => {
     const a = renderNav();
@@ -496,19 +514,29 @@ describe("分组分隔线", () => {
 });
 
 describe("底部块", () => {
-  /** 高度恒定：传不传 footer 都占同一格，否则导航项会因为底部有没有东西而上下跳。 */
-  it("不传 footer 时是空占位并对读屏器隐藏", () => {
+  /**
+   * 原先这里断言的是相反的事：「传不传 footer 都占同一格」。那条的理由是怕导航项
+   * 因为底部有没有东西而上下跳，成立；但它真正承担的是**底部安全区**——而安全区
+   * 现在由 content 自己的 pb-6xl 提供（与内容区同档），空块就只剩 64px 空白，
+   * 既占掉可视高度，又让侧栏底部与内容区底部对不齐（owner 2026-09-18）。
+   */
+  it("不传 footer 时整块不渲染", () => {
     const { container } = renderNav();
-    const foot = container.querySelector(".h-header-xl") as HTMLElement;
-    expect(foot).not.toBeNull();
-    expect(foot).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector(".h-header-xl")).toBeNull();
   });
 
-  it("传了 footer 就不再 aria-hidden", () => {
+  it("传了 footer 才渲染，且内容可达", () => {
     const { container } = renderNav({ footer: <button>退出</button> });
-    const foot = container.querySelector(".h-header-xl") as HTMLElement;
-    expect(foot).not.toHaveAttribute("aria-hidden");
+    expect(container.querySelector(".h-header-xl")).not.toBeNull();
     expect(screen.getByRole("button", { name: "退出" })).toBeInTheDocument();
+  });
+
+  /** 安全区换了承担者，就得有人盯着新的承担者还在——否则这次改动等于净删留白。 */
+  it("滚动区自带底部安全留白（pb-6xl），与内容区同档", () => {
+    const { container } = renderNav();
+    const scroll = container.querySelector(".overflow-y-auto") as HTMLElement;
+    expect(scroll).not.toBeNull();
+    expect(scroll.className).toContain("pb-6xl");
   });
 });
 
