@@ -221,6 +221,7 @@
       "Progress",
       "RadioGroup",
       "RadioGroupItem",
+      "Rating",
       "ResizableHandle",
       "ResizablePanel",
       "ResizablePanelGroup",
