@@ -1383,6 +1383,27 @@ export const ENTRIES: readonly Entry[] = [
     ),
   },
   {
+    name: "Section tone",
+    layer: "pattern",
+    group: "图案",
+    tags: ["vxture", "component"],
+    deviation:
+      "三档表达「这块要不要从背景里托起来」,不是重要程度:default 靠留白分层;raised 描边+卡片底色,用于要明确切开的块(危险操作区);glass 同形状但底色换成浅色渐变+半透明,用于信息陈列的长页面——一页叠四五张 raised 就是一块接一块的死白",
+    render: () => (
+      <div className="flex w-full flex-col gap-md">
+        <Section title="default" description="不托起,靠留白与标题分层">
+          <span className="text-body-sm text-muted-foreground">板块内容</span>
+        </Section>
+        <Section tone="raised" title="raised" description="描边 + 卡片底色">
+          <span className="text-body-sm text-muted-foreground">板块内容</span>
+        </Section>
+        <Section tone="glass" title="glass" description="浅色渐变 + 半透明">
+          <span className="text-body-sm text-muted-foreground">板块内容</span>
+        </Section>
+      </div>
+    ),
+  },
+  {
     name: "EditableRow",
     layer: "pattern",
     group: "图案",
