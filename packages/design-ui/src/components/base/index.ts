@@ -45,6 +45,7 @@ export * from "./navigation/Pagination";
 export * from "./overlay/Popover";
 export * from "./feedback/Progress";
 export * from "./form/RadioGroup";
+export * from "./form/Rating";
 export * from "./display/Resizable";
 export * from "./display/ScrollArea";
 export * from "./form/SegmentedControl";

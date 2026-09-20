@@ -70,6 +70,7 @@ import {
   Progress,
   RadioGroup,
   RadioGroupItem,
+  Rating,
   ScrollArea,
   Slider,
   Table,
@@ -458,6 +459,15 @@ export const ENTRIES: readonly Entry[] = [
         </FileTrigger>
       </Row>
     ),
+  },
+  {
+    name: "Rating",
+    layer: "atom",
+    group: "表单",
+    tags: ["vxture", "component"],
+    deviation:
+      "上游无此件。一个件管两态(readOnly 切只读呈现/可交互输入);语义走 radiogroup 而非一排按钮;整组只占一个 Tab 位;再点当前分即清空(调用方的分数常常可空);不做半星——半星要么把量表变成 10 档,要么在写入时悄悄取整",
+    render: () => <RatingDemo />,
   },
   {
     name: "Switch",
@@ -2602,6 +2612,48 @@ function CommandDemo() {
           </CommandGroup>
         </CommandList>
       </CommandDialog>
+    </Row>
+  );
+}
+
+/** 件内文案的中文覆盖。应用侧应当收在共享常量里,而不是逐个调用点手写(05 §3.1)。 */
+const RATING_LABELS = {
+  optionTemplate: "{score} 分，共 {max} 分",
+  roleDescription: "评分",
+  valueTemplate: "{value} 分，共 {max} 分",
+  emptyLabel: "未评分",
+};
+
+function RatingDemo() {
+  const [product, setProduct] = React.useState<number | null>(4);
+  const [price, setPrice] = React.useState<number | null>(null);
+  return (
+    <Row label="可交互/未评/只读/禁用；再点当前分即清空">
+      <span className="flex items-center gap-xs">
+        <Rating
+          aria-label="产品评分"
+          value={product}
+          onValueChange={setProduct}
+          labels={RATING_LABELS}
+          optionLabels={["很差", "较差", "一般", "满意", "很满意"]}
+        />
+        <span className="text-body-sm text-muted-foreground">
+          {product === null ? "未评" : `${product} 分`}
+        </span>
+      </span>
+      <Rating
+        aria-label="价格评分"
+        value={price}
+        onValueChange={setPrice}
+        labels={RATING_LABELS}
+      />
+      <Rating
+        aria-label="服务评分（只读）"
+        value={3}
+        readOnly
+        labels={RATING_LABELS}
+      />
+      <Rating aria-label="禁用" value={2} disabled labels={RATING_LABELS} />
     </Row>
   );
 }
