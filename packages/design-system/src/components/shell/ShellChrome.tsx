@@ -237,6 +237,16 @@ export interface ShellUserMenuProps {
 export interface ShellLegalFooterLink {
   href: string;
   label: ReactNode;
+  /**
+   * 站外链接:新标签页打开,并带 `rel="noopener noreferrer"`。
+   *
+   * **可选,缺省 false**——不传时行为与加这个字段之前完全一致(当前窗口跳转),
+   * 五个门户共用本件,不能因为新增一个能力就改掉既有链接的去向。
+   *
+   * 用途是把**离开本站**的链接与站内法律页区分开:备案号指向工信部/公安部的
+   * 查询系统,登录页上点它不该把正在登录的人带走(owner 2026-09-20)。
+   */
+  external?: boolean;
 }
 
 export interface ShellLegalFooterProps {
@@ -980,6 +990,9 @@ export function ShellLegalFooter({
               key={link.href}
               href={link.href}
               className="transition-colors duration-fast hover:text-foreground hover:underline"
+              {...(link.external
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
             >
               {link.label}
             </a>
