@@ -633,7 +633,14 @@ export const ShellScopeButton = React.forwardRef<
       {...passthrough}
     >
       {icon ? <Icon name={icon} size="sm" className="shrink-0" /> : null}
-      <span className="min-w-0 truncate text-label-md">{label}</span>
+      {/* `flex-1`：撑满图标与角标之间的余量，**把角标顶到右端**。
+          只写 `min-w-0 truncate` 时,名称只占自身宽度,而按钮在 hover/展开态被
+          撑到 320px——三个元素全挤在左端(justify-start),右边空出百来像素,
+          下拉角标落在控件中部(owner 2026-09-20 实看)。
+          常态 192px 上限下行为不变:那时余量为 0,truncate 照旧生效。 */}
+      <span className="min-w-0 flex-1 truncate text-left text-label-md">
+        {label}
+      </span>
       {caret ? (
         <Icon name="chevron-down" size="xs" className="shrink-0" />
       ) : null}
