@@ -613,6 +613,38 @@ describe("ShellDock · 三种宽度形态", () => {
 });
 
 describe("ShellLegalFooter · 法务链接", () => {
+  /**
+   * 新增 `external` 之后,**缺省行为不能变**——五个门户都在用这个件,既有的法律
+   * 链接必须仍在当前窗口打开。这条盯的是"没被改掉",比盯新能力本身更要紧。
+   */
+  it("不传 external 的链接没有 target,仍在当前窗口打开", () => {
+    render(
+      <ShellLegalFooter
+        links={[{ href: "/legal/terms", label: "服务条款" }]}
+      />,
+    );
+    const link = screen.getByRole("link", { name: "服务条款" });
+    expect(link).not.toHaveAttribute("target");
+    expect(link).not.toHaveAttribute("rel");
+  });
+
+  it("external 链接新标签页打开,并带 noopener noreferrer", () => {
+    render(
+      <ShellLegalFooter
+        links={[
+          {
+            href: "https://beian.miit.gov.cn",
+            label: "备案号",
+            external: true,
+          },
+        ]}
+      />,
+    );
+    const link = screen.getByRole("link", { name: "备案号" });
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("缺省三条链接都在，且导航有名", () => {
     render(<ShellLegalFooter />);
     const nav = screen.getByRole("navigation", { name: "Legal links" });
