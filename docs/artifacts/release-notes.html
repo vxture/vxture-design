@@ -223,8 +223,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.16.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.10.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.16.1</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.10.1</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.3.0</td><td><span class="tag t-dim">未动</span> 12.8.0 新增的 <span class="mono">table-col-fixed</span> 沿用</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
@@ -370,7 +370,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note"><strong>那个理由成立，但它真正承担的是底部安全区</strong>——滚到底时最后一行不该贴着容器边缘，与内容区 <span class="mono">ShellLayout</span> 的 <span class="mono">pb-6xl</span> 是同一件事。<strong>12.13.0 起安全区改由滚动区自己的 <span class="mono">pb-6xl</span> 提供，空 footer 不再渲染</strong>（owner 2026-09-18）。间距契约没有破，只是换了个更该负责的承担者。</div>
 <div class="note warn"><strong>调用方一行不用改。</strong>传了 <span class="mono">footer</span> 的消费方观感不变。不传的消费方可见差异：侧栏底部少了 64px 空白，滚动区末尾多出一段与内容区同档的留白——<strong>侧栏与内容区是并排两列，此前底部留白对不齐，现在对齐了。</strong></div>
 <div class="note"><strong>同版 <span class="mono">domainName</span> 转可选</strong>：不传就不渲染 title 行那段文字，只剩两个按钮（收合按钮仍然居右——它原先靠标签的 <span class="mono">flex-1</span> 撑开，现在由等效占位接手）。prop 保留：只有侧栏、没有 header 的消费方仍用得着。三个运营门户此前各传各的「运营平台」「Opera」「Arche」，三处措辞不一致且与 header 第 4 槽重复，改由 header 独任域身份。</div></section>
-<section id="legalexternal"><h2><span class="num">05h</span>法务页脚支持站外链接<span class="h2-meta">12.16.0 · 只增不改</span></h2><div class="rule"></div>
+<section id="legalexternal"><h2><span class="num">05h</span>法务页脚支持站外链接<span class="h2-meta">12.16.1 · 只增不改</span></h2><div class="rule"></div>
 <p><span class="mono">ShellLegalFooter</span> 的 <span class="mono">ShellLegalFooterLink</span> 新增可选字段 <span class="mono">external</span>。给了 <span class="mono">true</span> 就在新标签页打开，并带 <span class="mono">rel="noopener noreferrer"</span>。</p>
 <div class="note warn"><strong>缺省行为一字未变</strong>：不传 <span class="mono">external</span> 的链接仍在当前窗口跳转。五个门户共用本件，不能因为新增一个能力就改掉既有链接的去向——测试里专门有一条盯着这件事（「不传 external 的链接没有 target」），它比盯新能力本身更要紧。</div>
 <div class="note"><strong>用途是把「离开本站」的链接与站内法律页区分开</strong>：备案号指向工信部 / 公安部的查询系统，登录页上点它不该把正在登录的人带走（owner 2026-09-20）。站内的服务条款 / 隐私政策 / Cookie 政策仍然当前窗口打开。</div></section>
@@ -415,7 +415,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.16.0 · design-tokens 3.3.0 / design-ui 9.10.0 / design-system 12.16.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.16.1 · design-tokens 3.3.0 / design-ui 9.10.1 / design-system 12.16.1 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>
