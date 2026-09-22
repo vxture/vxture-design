@@ -23,6 +23,7 @@ export * from "./components/templates";
 export * from "./components/layout";
 export * from "./components/tone";
 export * from "./components/overlayWidth";
+export * from "./components/overlayPosition";
 // ai-elements 已迁出（2026-08-18，owner 判：DS 只收通用、无业务含义的件）——
 // 那五件说的是模型部署 / AI 会话 / token 用量，归 vxture-varda 独立仓。
 export * from "./icons";

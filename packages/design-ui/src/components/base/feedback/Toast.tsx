@@ -27,6 +27,7 @@ import { cn } from "../../../utils/cn";
 import { interactive } from "../../../styles/recipes";
 import { Icon } from "../../../icons";
 import { toneIcons, type Tone } from "../../tone";
+import { overlayStackClass, type OverlayPosition } from "../../overlayPosition";
 
 export type ToastTone = Tone;
 
@@ -103,12 +104,22 @@ export interface ToastProviderProps {
   readonly regionLabel?: string;
   /** 单条通知关闭钮的可访问名。默认「关闭通知」。 */
   readonly dismissLabel?: string;
+  /**
+   * 通知堆钉在视口的哪个位置。默认右上角（owner 2026-09-22）。
+   *
+   * 原先写死右下角，而右下角是**操作动线的终点**：主按钮、分页器、抽屉的确认键
+   * 都在那一带，通知弹出来正好盖住人刚要点的东西。右上角离视线落点近、离手远。
+   *
+   * 业务平台可以传参改——落点归使用它的那个平台定，不归 DS 定。
+   */
+  readonly position?: OverlayPosition;
 }
 
 export function ToastProvider({
   children,
   regionLabel = "Notifications",
   dismissLabel = "Dismiss notification",
+  position = "top-right",
 }: ToastProviderProps) {
   const [toasts, setToasts] = React.useState<ToastRecord[]>([]);
 
@@ -145,7 +156,11 @@ export function ToastProvider({
     <ToastContext.Provider value={value}>
       {children}
       <div
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-toast flex flex-col items-center gap-sm p-lg sm:items-end"
+        className={cn(
+          "pointer-events-none fixed z-toast flex gap-sm p-lg",
+          /* 落点与堆叠方向都由挡位给，件里不再有写死的边。 */
+          overlayStackClass[position],
+        )}
         role="region"
         aria-label={regionLabel}
       >

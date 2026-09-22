@@ -12,6 +12,11 @@ import { describe, expect, it } from "vitest";
 import { ToastProvider, useToast } from "../src/components/base/feedback/Toast";
 import { Button } from "../src/components/base/form/Button";
 import type { Tone } from "../src/components/tone";
+import {
+  OVERLAY_POSITIONS,
+  overlayStackClass,
+  type OverlayPosition,
+} from "../src/components/overlayPosition";
 
 function Trigger({ tone, title }: { tone?: Tone; title: string }) {
   const { toast } = useToast();
@@ -186,5 +191,55 @@ describe("Toast · id 的唯一性", () => {
     );
     await user.click(screen.getByRole("button", { name: "发一条" }));
     expect(captured[0]).toBe("my-own");
+  });
+});
+
+/**
+ * 落点（owner 2026-09-22：「位置不能 DS 写死，应该可配置，默认右上角，支持业务
+ * 平台传参定位」）。
+ *
+ * 原先写死 `inset-x-0 bottom-0 ... sm:items-end`。右下角是**操作动线的终点**——
+ * 主按钮、分页器、抽屉确认键都在那一带，通知弹出来正好盖住人刚要点的东西。
+ *
+ * 位置是看不见摸不着的类名组合：改坏了页面照常渲染、测试照常绿，只有人眼在某个
+ * 分辨率下才发现提示跑到了奇怪的地方。所以逐档断言。
+ */
+describe("ToastProvider 的落点", () => {
+  function regionOf(position?: OverlayPosition) {
+    render(
+      <ToastProvider {...(position ? { position } : {})}>
+        <span>x</span>
+      </ToastProvider>,
+    );
+    return screen.getByRole("region", { name: "Notifications" });
+  }
+
+  it("默认右上角", () => {
+    const cls = regionOf().className;
+    expect(cls).toContain("top-0");
+    expect(cls).toContain("items-end");
+    expect(cls).not.toContain("bottom-0");
+  });
+
+  it.each(OVERLAY_POSITIONS)("%s 档产出成套的落点类", (position) => {
+    const cls = regionOf(position).className;
+    expect(cls).toContain(overlayStackClass[position]);
+    // 视口本身的固定与层级不随挡位变
+    expect(cls).toContain("fixed");
+    expect(cls).toContain("z-toast");
+
+    /*
+     * 堆叠方向跟着落点走：贴顶时新的在下，贴底时新的在上——两种都让新的那条离
+     * 屏幕边最远。贴底却用 flex-col，会让已有的提示被新的顶着往上跳。
+     *
+     * 注意 `flex-col-reverse` 里含有 `flex-col` 这个子串，所以贴顶那几档要用
+     * 「不含 reverse」来判，不能只判「含 flex-col」——后者对两边都成立。
+     */
+    if (position.startsWith("bottom-")) {
+      expect(cls).toContain("flex-col-reverse");
+    } else {
+      expect(cls).toContain("flex-col");
+      expect(cls).not.toContain("flex-col-reverse");
+    }
   });
 });

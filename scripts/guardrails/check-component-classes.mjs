@@ -173,6 +173,21 @@ for (const root of COMPONENT_ROOTS)
  * 因为一处错会静默扩散到所有引用方。
  */
 discovered.push(path.join(ROOT, "packages/design-ui/src/styles/recipes.ts"));
+
+/**
+ * 共用挡位表也要扫（2026-09-22 补）。
+ *
+ * 同上一条的理由，第二次踩：`overlayWidth.ts` / `tone.ts` / `overlayPosition.ts`
+ * 都不是 `.tsx`，于是一直在检查视野之外——而它们存放的正是被多个件共用的类名，
+ * 一处写错会静默扩散到所有引用方，比组件自己写错更难发现。
+ *
+ * 加进来当天就有了实据：新加的 `overlayPosition.ts` 里 `top-lg` / `right-lg`
+ * 这类边距类是否真能产出工具类，此前没有任何一条检查回答得了（本仓有过
+ * `min-w-control-xs` 命中高度档、`max-w-none` 解析成 0 的先例——都不报错）。
+ */
+for (const shared of ["overlayWidth.ts", "tone.ts", "overlayPosition.ts"]) {
+  discovered.push(path.join(ROOT, "packages/design-ui/src/components", shared));
+}
 const files = discovered.filter((f) => !PENDING.has(path.basename(f)));
 
 /**
