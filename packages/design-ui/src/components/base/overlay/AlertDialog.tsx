@@ -27,6 +27,10 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { cn } from "../../../utils/cn";
 import { overlayMotion, panel } from "../../../styles/recipes";
 import { buttonVariants } from "../form/Button";
+import {
+  overlayAnchorClass,
+  type OverlayPosition,
+} from "../../overlayPosition";
 
 export interface AlertDialogProps extends React.ComponentPropsWithoutRef<
   typeof AlertDialogPrimitive.Root
@@ -46,7 +50,16 @@ export interface AlertDialogOverlayProps extends React.ComponentPropsWithoutRef<
 
 export interface AlertDialogContentProps extends React.ComponentPropsWithoutRef<
   typeof AlertDialogPrimitive.Content
-> {}
+> {
+  /**
+   * 面板钉在视口的哪个位置。默认居中——这是既有行为，不动。
+   *
+   * 开这个口子是因为落点该由使用它的平台定，不该由 DS 定死
+   * （owner 2026-09-22）。`center` 那一档逐字保留原来的
+   * `left-[50%] top-[50%] + translate`。
+   */
+  readonly position?: OverlayPosition;
+}
 
 export interface AlertDialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -97,7 +110,10 @@ const AlertDialogOverlay = React.forwardRef<
 const AlertDialogContent = React.forwardRef<
   HTMLDivElement,
   AlertDialogContentProps
->(function AlertDialogContent({ className, ...props }, ref) {
+>(function AlertDialogContent(
+  { className, position = "center", ...props },
+  ref,
+) {
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
@@ -105,8 +121,10 @@ const AlertDialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           // 同 Dialog：`max-w-lg` 会命中 --spacing-lg 而非面板宽，必须走 panel 族。
-          "fixed left-[50%] top-[50%] z-modal grid w-full max-w-panel-md",
-          "translate-x-[-50%] translate-y-[-50%] gap-lg p-xl outline-none",
+          "fixed z-modal grid w-full max-w-panel-md",
+          /* 落点由挡位给；center 档就是原来那串 left/top + translate。 */
+          overlayAnchorClass[position],
+          "gap-lg p-xl outline-none",
           panel.base,
           panel.dialog,
           overlayMotion,

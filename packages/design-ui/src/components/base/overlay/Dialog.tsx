@@ -12,6 +12,10 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "../../../utils/cn";
 import { Icon } from "../../../icons";
 import { overlayMotion, panel } from "../../../styles/recipes";
+import {
+  overlayAnchorClass,
+  type OverlayPosition,
+} from "../../overlayPosition";
 
 export interface DialogProps extends React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Root
@@ -34,6 +38,14 @@ export interface DialogContentProps extends React.ComponentPropsWithoutRef<
 > {
   /** 宽度档 = T2 panel 族（sm 28 / md 32 / lg 42 / xl 58rem）。缺省 md。 */
   readonly width?: "sm" | "md" | "lg" | "xl";
+  /**
+   * 面板钉在视口的哪个位置。默认居中——这是既有行为，不动。
+   *
+   * 开这个口子是因为落点该由使用它的平台定，不该由 DS 定死
+   * （owner 2026-09-22）。`center` 那一档逐字保留原来的
+   * `left-[50%] top-[50%] + translate`，换写法等于拿全站对话框冒无谓的险。
+   */
+  readonly position?: OverlayPosition;
 }
 
 export interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -97,7 +109,10 @@ const dialogWidthClass: Record<DialogWidth, string> = {
 };
 
 const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
-  function DialogContent({ className, width = "md", children, ...props }, ref) {
+  function DialogContent(
+    { className, width = "md", position = "center", children, ...props },
+    ref,
+  ) {
     return (
       <DialogPortal>
         <DialogOverlay />
@@ -107,9 +122,11 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
             // ⚠ 不能写上游的 `max-w-lg`：本仓 spacing 命名空间有同名 `--spacing-lg`，
             //   v4 宽度工具类优先吃 spacing 档——类名照常生成，对话框塌成 24px 宽。
             //   浮层面板宽走 panel 族（md = 512px，即上游 max-w-lg 的意图值）。
-            "fixed left-[50%] top-[50%] z-modal grid w-full",
+            "fixed z-modal grid w-full",
             dialogWidthClass[width],
-            "translate-x-[-50%] translate-y-[-50%] gap-lg p-xl outline-none",
+            /* 落点由挡位给；center 档就是原来那串 left/top + translate。 */
+            overlayAnchorClass[position],
+            "gap-lg p-xl outline-none",
             panel.base,
             panel.dialog,
             overlayMotion,
