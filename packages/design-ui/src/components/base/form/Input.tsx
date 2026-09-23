@@ -26,7 +26,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         type={type}
         data-slot="input"
         className={cn(
-          "flex h-control-md w-full min-w-0 rounded-md border border-input px-sm py-2xs",
+          "flex h-control-md w-full min-w-0 rounded-md border border-control-border px-sm py-2xs",
           // 底色透明：输入框要贴着所在表面（卡片上是卡片色，页面上是页面色）。
           // 暗色下给一层浅填充，否则纯描边框在深底上几乎看不见。
           "bg-transparent shadow-raised dark:bg-input/30",

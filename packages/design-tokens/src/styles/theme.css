@@ -141,6 +141,7 @@
   --color-primary-muted-strong: var(--primary-muted-strong);
   --color-primary-border-soft: var(--primary-border-soft);
   --color-muted: var(--muted);
+  --color-control-border: var(--control-border);
   --color-gradient-brand-from: var(--gradient-brand-from);
   --color-gradient-brand-to: var(--gradient-brand-to);
   --color-gradient-ai-from: var(--gradient-ai-from);

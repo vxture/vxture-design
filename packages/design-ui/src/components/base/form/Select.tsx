@@ -64,7 +64,7 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
         className={cn(
           // 高度与 Input 对齐到 control-lg：同一表单行里 40 配 36 是肉眼可见的不齐。
           "flex h-control-md w-full items-center justify-between gap-xs",
-          "rounded-md border border-input px-sm py-2xs",
+          "rounded-md border border-control-border px-sm py-2xs",
           "bg-transparent shadow-raised dark:bg-input/30",
           "text-body-lg md:text-body-md placeholder:text-muted-foreground",
           interactive,

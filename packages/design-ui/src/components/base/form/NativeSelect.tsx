@@ -51,7 +51,7 @@ export const NativeSelect = React.forwardRef<
           // 曾短暂加到 pr-2xl(40px)想治 arche /admins 的「箭头压字」,方向错了:那其实是字号偏大
           // (body-md)把值撑长、在 basis-media-xl(96px)窄框里溢出——已由 FilterBar 压字号根治。
           // pr-2xl 反倒白吃 8px 文字宽,把刚好放得下的值又挤出界(owner 2026-09-02 实测)。回 pr-xl。
-          "flex h-control-md w-full min-w-0 appearance-none rounded-md border border-input pl-sm pr-xl py-2xs",
+          "flex h-control-md w-full min-w-0 appearance-none rounded-md border border-control-border pl-sm pr-xl py-2xs",
           "bg-transparent shadow-raised dark:bg-input/30",
           "text-body-lg md:text-body-md text-foreground",
           interactive,

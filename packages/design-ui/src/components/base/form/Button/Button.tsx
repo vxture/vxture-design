@@ -69,9 +69,9 @@ const buttonVariants = cva(
           "focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
         ),
         outline: cn(
-          // 边取 input 而非 border：outline 按钮总是与输入框、下拉排在同一行，
-          // 结构线（border）比控件边（input）淡一档，混排时深浅不齐。
-          "border-input bg-background text-foreground",
+          // 边取 control-border 而非 border：outline 按钮总是与输入框、
+          // 下拉排在同一行，结构线（border）比交互控件边淡一档。
+          "border-control-border bg-background text-foreground",
           "hover:bg-accent hover:text-foreground",
           expandable,
         ),

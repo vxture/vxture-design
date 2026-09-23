@@ -10,6 +10,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Banner } from "../src/components/base/feedback/Banner";
+import { Badge } from "../src/components/base/display/Badge";
 import { StatusBadge } from "../src/components/base/display/StatusBadge";
 import { TONES, toneIcons } from "../src/components/tone";
 import { Icon, type IconName } from "../src/icons";
@@ -61,6 +62,14 @@ describe("语气六档 · 图标由语气决定", () => {
 });
 
 describe("StatusBadge · 三件一体", () => {
+  it("Badge 以控制高度为下限，文字行盒可把组件撑高", () => {
+    const { container } = render(<Badge>标签</Badge>);
+    const badge = container.firstElementChild;
+    expect(badge?.className).toContain("min-h-control-2xs");
+    expect(badge?.className).not.toMatch(/(?:^|\s)h-control-2xs(?:\s|$)/);
+    expect(badge?.className).not.toContain("py-2xs");
+  });
+
   /**
    * 表意图标 + 语气底色 + 文字，少哪一件都退化：只有底色 = 得靠记颜色；
    * 只有文字 = 一屏扫不出来；只有图标 = 同一张图在不同业务里含义不同。

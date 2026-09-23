@@ -347,6 +347,47 @@ describe("SegmentedControl · 槽与滑块", () => {
     }
   });
 
+  it("使用 roving tabindex，并用方向键跳过停用档", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <SegmentedControl items={[...ITEMS]} value="all" onChange={onChange} />,
+    );
+    const radios = screen.getAllByRole("radio");
+    expect(radios[0]).toHaveAttribute("tabindex", "0");
+    expect(radios[1]).toHaveAttribute("tabindex", "-1");
+    expect(radios[2]).toHaveAttribute("tabindex", "-1");
+
+    radios[0]?.focus();
+    await user.keyboard("{ArrowRight}");
+    expect(onChange).toHaveBeenCalledWith("active");
+    expect(radios[1]).toHaveFocus();
+  });
+
+  it("Home 和 End 定位到首尾可用档", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <SegmentedControl
+        items={[
+          { value: "first", label: "第一项" },
+          { value: "middle", label: "中间", disabled: true },
+          { value: "last", label: "最后一项" },
+        ]}
+        value="first"
+        onChange={onChange}
+      />,
+    );
+    const radios = screen.getAllByRole("radio");
+    radios[0]?.focus();
+    await user.keyboard("{End}");
+    expect(onChange).toHaveBeenCalledWith("last");
+    expect(radios[2]).toHaveFocus();
+    await user.keyboard("{Home}");
+    expect(onChange).toHaveBeenCalledWith("first");
+    expect(radios[0]).toHaveFocus();
+  });
+
   it("count 给了才出徽标", () => {
     render(
       <SegmentedControl items={[...ITEMS]} value="all" onChange={() => {}} />,

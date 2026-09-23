@@ -31,7 +31,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         ref={ref}
         className={cn(
           "peer group relative flex size-icon-sm shrink-0 items-center justify-center",
-          "rounded-sm border border-input bg-transparent shadow-raised dark:bg-input/30",
+          "rounded-sm border border-control-border bg-transparent shadow-raised dark:bg-input/30",
           // 命中区外扩到 40×32，但不占布局（绝对定位的伪元素）。16px 的方框
           // 达不到任何平台的最小点击目标，而把方框本身放大会破坏与文字的比例。
           "after:absolute after:-inset-x-lg after:-inset-y-sm",

@@ -45,7 +45,7 @@ const RadioGroupItem = React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(
         ref={ref}
         className={cn(
           "peer relative aspect-square size-icon-sm shrink-0",
-          "rounded-full border border-input bg-transparent text-primary shadow-raised dark:bg-input/30",
+          "rounded-full border border-control-border bg-transparent text-primary shadow-raised dark:bg-input/30",
           // 同 Checkbox：命中区外扩，不占布局。
           "after:absolute after:-inset-x-lg after:-inset-y-sm",
           interactive,
