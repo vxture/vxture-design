@@ -18,16 +18,47 @@
  * 做法：用 `--conditions react-server` 真的 import 一次产物。这与实际复现命令
  * 逐字同源——复现命令即验收命令，不另造一套近似物。
  *
- * 用法：node scripts/guardrails/check-server-entry-safety.mjs
+ * 用法：
+ *   node scripts/guardrails/check-server-entry-safety.mjs
+ *   node scripts/guardrails/check-server-entry-safety.mjs --require-artifacts
+ *
+ * 默认：产物缺失就跳过并提示先 build（本地还没 build 时不该拦人）。
+ * `--require-artifacts`：产物缺失视为失败。CI 在 build 之后跑，"没东西可验"
+ * 本身就是故障——这道守卫不该因为无事可做而报绿。
  */
 
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const ROOT = process.cwd();
+// ROOT 由脚本自身位置派生，不用 process.cwd()。这条守卫的 miss 路径是"跳过"
+// 而非报错，一旦 ROOT 跟着 cwd 跑偏，它会一个入口都没验却报 EXIT=0——比报错
+// 危险得多。与 check-mode-blocks.mjs 同一惯用法。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
+
+function parseArgs(argv) {
+  let requireArtifacts = false;
+  for (const arg of argv) {
+    if (arg === "--require-artifacts") requireArtifacts = true;
+    else
+      throw new Error(`无法识别的参数：${arg}（只支持 --require-artifacts）`);
+  }
+  return { requireArtifacts };
+}
+
+let args;
+try {
+  args = parseArgs(process.argv.slice(2));
+} catch (error) {
+  console.error(`check-server-entry-safety: ${error.message}`);
+  process.exit(1);
+}
 
 /** 每个条目 = 一个声明了 server-safe 子集的包及其产物入口。 */
 const TARGETS = [
@@ -49,10 +80,18 @@ let skipped = 0;
 for (const target of TARGETS) {
   const abs = path.join(ROOT, target.dir, target.entry);
   if (!existsSync(abs)) {
-    console.log(
-      `⚠ 跳过 ${target.pkg}：产物缺失（${target.entry}）—— 请先 build 再跑本检查。`,
-    );
-    skipped += 1;
+    if (args.requireArtifacts) {
+      failed += 1;
+      console.error(
+        `✗ ${target.pkg} 的产物缺失（${target.entry}）—— --require-artifacts 下这是失败：` +
+          "无产物即无从求值，不能当作通过。",
+      );
+    } else {
+      console.log(
+        `⚠ 跳过 ${target.pkg}：产物缺失（${target.entry}）—— 请先 build 再跑本检查。`,
+      );
+      skipped += 1;
+    }
     continue;
   }
 
@@ -89,5 +128,8 @@ for (const target of TARGETS) {
 }
 
 console.log("\n── 汇总 ──");
-console.log(`error: ${failed}   skipped: ${skipped}`);
+console.log(
+  `error: ${failed}   skipped: ${skipped}` +
+    (args.requireArtifacts ? "   (--require-artifacts)" : ""),
+);
 process.exit(failed > 0 ? 1 : 0);
