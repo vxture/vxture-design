@@ -172,6 +172,10 @@ export const STANDALONE_COLORS = [
   /* stroke */
   ["border", "neutral-200", "neutral-600"],
   ["input", "neutral-400", "neutral-500"],
+  // Interactive control boundaries must remain identifiable in both themes.
+  // Keep `input` as the intentionally softer legacy / surface stroke; use this
+  // semantic token for controls whose boundary is the primary affordance.
+  ["control-border", "neutral-600", "neutral-400"],
   ["stroke-emphasis", "neutral-600", "neutral-400"],
   ["ring", "brand-600", "brand-400"],
   ["stroke-disabled", "neutral-200", "neutral-800"],

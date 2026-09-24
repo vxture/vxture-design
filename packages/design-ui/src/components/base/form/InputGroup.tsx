@@ -30,7 +30,7 @@ export function InputGroup({
       data-slot="input-group"
       className={cn(
         "relative flex h-control-md w-full min-w-0 items-center",
-        "rounded-md border border-input bg-transparent shadow-raised dark:bg-input/30",
+        "rounded-md border border-control-border bg-transparent shadow-raised dark:bg-input/30",
         "transition-all duration-fast ease-standard",
         // interactive / invalid 配方挂在 :focus-visible / aria-invalid 本体上，
         // 组的框身在容器：用 has-[] 把内部控件的状态上浮成同一套视觉。

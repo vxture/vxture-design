@@ -71,6 +71,44 @@ function SegmentedControl<TValue extends string | number>({
   ariaLabel,
   className,
 }: SegmentedControlProps<TValue>) {
+  const itemRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
+  const firstEnabledIndex = items.findIndex((item) => !item.disabled);
+  const selectedEnabledIndex = items.findIndex(
+    (item) => !item.disabled && item.value === value,
+  );
+  const rovingIndex =
+    selectedEnabledIndex >= 0 ? selectedEnabledIndex : firstEnabledIndex;
+
+  const moveWithKeyboard = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    currentIndex: number,
+  ) => {
+    const key = event.key;
+    const isForward = key === "ArrowRight" || key === "ArrowDown";
+    const isBackward = key === "ArrowLeft" || key === "ArrowUp";
+    if (!isForward && !isBackward && key !== "Home" && key !== "End") return;
+
+    const enabled = items
+      .map((item, index) => (item.disabled ? -1 : index))
+      .filter((index) => index >= 0);
+    if (enabled.length === 0) return;
+
+    const currentPosition = Math.max(0, enabled.indexOf(currentIndex));
+    const nextPosition =
+      key === "Home"
+        ? 0
+        : key === "End"
+          ? enabled.length - 1
+          : (currentPosition + (isForward ? 1 : -1) + enabled.length) %
+            enabled.length;
+    const nextIndex = enabled[nextPosition];
+    if (nextIndex === undefined) return;
+
+    event.preventDefault();
+    itemRefs.current[nextIndex]?.focus();
+    onChange(items[nextIndex]!.value);
+  };
+
   return (
     <div
       role="radiogroup"
@@ -90,13 +128,13 @@ function SegmentedControl<TValue extends string | number>({
         // 槽只需要"这里是个凹处"的一点点暗示，muted 那一档在白卡片上已经是
         // 一块明确的灰色面，比它承载的滑块还抢眼。暗色档 surface-3 比 card
         // 亮一级，凹陷感在两个模式下都成立。
-        "flex items-stretch rounded-lg border border-input bg-surface-3 p-2xs",
+        "flex items-stretch rounded-lg border border-control-border bg-surface-3 p-2xs",
         fill ? "w-full" : "inline-flex",
         BY_SIZE[size].root,
         className,
       )}
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
         const active = item.value === value;
         return (
           <button
@@ -104,9 +142,14 @@ function SegmentedControl<TValue extends string | number>({
             type="button"
             role="radio"
             aria-checked={active}
+            tabIndex={item.disabled ? -1 : index === rovingIndex ? 0 : -1}
             {...(item.ariaLabel ? { "aria-label": item.ariaLabel } : {})}
             disabled={item.disabled}
             onClick={() => onChange(item.value)}
+            onKeyDown={(event) => moveWithKeyboard(event, index)}
+            ref={(node) => {
+              itemRefs.current[index] = node;
+            }}
             className={cn(
               "inline-flex h-full items-center justify-center gap-2xs rounded-sm",
               fill && "flex-1",

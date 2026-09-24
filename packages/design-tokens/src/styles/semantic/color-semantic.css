@@ -156,6 +156,7 @@
   --primary-muted-strong: var(--vx-color-brand-100);
   --primary-border-soft: var(--vx-color-brand-200);
   --muted: var(--vx-color-neutral-200);
+  --control-border: var(--vx-color-neutral-600);
   --gradient-brand-from: var(--vx-color-brand-600);
   --gradient-brand-to: var(--vx-color-brand-800);
   --gradient-ai-from: var(--vx-color-purple-600);
@@ -305,6 +306,7 @@
   --primary-muted-strong: var(--vx-color-brand-900);
   --primary-border-soft: var(--vx-color-brand-800);
   --muted: var(--vx-color-neutral-800);
+  --control-border: var(--vx-color-neutral-400);
   --gradient-brand-from: var(--vx-color-brand-500);
   --gradient-brand-to: var(--vx-color-brand-800);
   --gradient-ai-from: var(--vx-color-purple-500);

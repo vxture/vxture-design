@@ -62,7 +62,7 @@ const toggleVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        outline: "border border-input bg-transparent shadow-raised",
+        outline: "border border-control-border bg-transparent shadow-raised",
       },
       // 档位表与 Button 逐档相同，理由见那边的注释。
       size: {

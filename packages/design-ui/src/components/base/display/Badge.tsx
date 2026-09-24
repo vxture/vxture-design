@@ -8,7 +8,7 @@
  * - 增 `asChild`，使 Badge 能直接渲染成 <a>（上游 2024 后的版本已有此能力）。
  * - 保留 `forwardRef`：上游新版把它去掉是因为面向 React 19（ref 作为普通 prop
  *   传递），本包的 peer 范围仍含 React 18，去掉会让 StatusBadge 这类包装件拿不到 ref。
- * - 尺度走 T2（px-sm / py-2xs / text-label-sm），跟随密度与字号三档；
+ * - 尺度走 T2（min-h-control-2xs / px-sm / text-label-sm），跟随密度与字号三档；
  *   上游的裸数值 px-2.5 / py-0.5 / text-xs 不跟随，故不用。
  * - **缺省是 `outline` 而非 `default`**（2026-08-05 owner 定，理由见下）。
  *
@@ -39,9 +39,11 @@ import { iconInset, interactive, invalid } from "../../../styles/recipes";
 
 const badgeVariants = cva(
   cn(
-    // 定高：徽章常成簇出现（状态列里"正常 + 未认证"并排），高度不定就对不齐。
-    "inline-flex h-control-2xs w-fit shrink-0 items-center justify-center gap-2xs",
-    "overflow-hidden rounded-4xl border border-transparent px-sm py-2xs",
+    // control-2xs 是下限，不是裁切框：密度与字号是独立轴，文字行盒更高时徽章
+    // 必须随字体长高。无垂直 padding，实际高度由 max(control-2xs, line box + border)
+    // 决定；同一字号下仍然等高，Large 字体档也不会被 Compact 密度裁掉。
+    "inline-flex min-h-control-2xs w-fit shrink-0 items-center justify-center gap-2xs",
+    "overflow-hidden rounded-4xl border border-transparent px-sm",
     "text-label-sm whitespace-nowrap",
     interactive,
     invalid,
