@@ -32,6 +32,7 @@ import {
   Icon,
   PopoverContent,
   Progress,
+  Separator,
   cn,
 } from "@vxture/design-ui";
 import type { IconName } from "@vxture/design-ui";
@@ -194,6 +195,15 @@ export interface ShellPanelHeaderProps {
   avatarAlt?: string | undefined;
   /** 头像加载失败/未设置时的占位内容；不传则回落到 `icon`。 */
   avatarFallback?: ReactNode | undefined;
+  /**
+   * 标识块的画法：
+   * - `"avatar"`（默认）——圆形头像位，**主体是人**时用（用户面板）。
+   * - `"icon"`——不画圆、只放一个图标，**主体是组织/项目**时用（租户、工作区）。
+   *   给一个组织画头像圈会让它看起来像个人。
+   *
+   * 两档占同一列宽，所以同一面板里混用也不会错行。
+   */
+  lead?: "avatar" | "icon" | undefined;
   title: ReactNode;
   /** 标题右侧的贴标（认证状态之类），由调用方直接给节点——DS 不判断"什么算已认证"。 */
   titleAside?: ReactNode | undefined;
@@ -201,6 +211,11 @@ export interface ShellPanelHeaderProps {
    * 标题下的若干 meta 行。每行可带自己的前置图标；行内容是节点，产品侧爱放
    * 什么放什么。传空数组或不传则没有 meta 区。
    */
+  /**
+   * 语气。`"muted"` 把标题降到副文级——用在「这一组不是你当前所在的那一组」
+   * 的场合（范围切换面板里的非当前租户）。meta 行本来就是副文级，不受影响。
+   */
+  tone?: "default" | "muted" | undefined;
   metaRows?: ReadonlyArray<{
     key: string;
     icon?: IconName | undefined;
@@ -214,16 +229,31 @@ export function ShellPanelHeader({
   avatarSrc,
   avatarAlt,
   avatarFallback,
+  lead = "avatar",
   title,
   titleAside,
+  tone = "default",
   metaRows = [],
   className,
 }: Readonly<ShellPanelHeaderProps>) {
+  /* 只放图标时也占满标识列宽——否则同一面板里两种头部会错开一格。 */
+  const bareIcon =
+    lead === "icon" && icon ? (
+      <span
+        className={cn(
+          IDENTITY_WIDTH,
+          "flex shrink-0 justify-center text-muted-foreground",
+        )}
+      >
+        <Icon name={icon} size="lg" />
+      </span>
+    ) : null;
   return (
     // items-center：标识块 48px 比它右侧的两三行文字高，items-start 会让头像
     // 顶着第一行、下方留一截空白，看起来像掉了一行内容。
     <div className={cn("flex items-center", ROW_INSET, ROW_GAP, className)}>
-      {avatarSrc || icon || avatarFallback ? (
+      {bareIcon}
+      {lead === "avatar" && (avatarSrc || icon || avatarFallback) ? (
         <Avatar
           // key on src：头像换/清空时强制重挂，否则 Radix 会留着上一次的
           // "已加载"状态，占位内容再也不显示。
@@ -242,7 +272,14 @@ export function ShellPanelHeader({
 
       <div className="flex min-w-0 flex-1 flex-col gap-2xs">
         <div className="flex items-center justify-between gap-sm">
-          <p className="truncate text-label-lg text-foreground">{title}</p>
+          <p
+            className={cn(
+              "truncate text-label-lg",
+              tone === "muted" ? "text-muted-foreground" : "text-foreground",
+            )}
+          >
+            {title}
+          </p>
           {titleAside}
         </div>
         {metaRows.map((row) => (
@@ -639,6 +676,157 @@ export function ShellPanelSlots({
 }
 
 /* ─────────────────────────── 范围触发器 ─────────────────────────── */
+
+/* ─────────────────────────── 范围切换面板 ─────────────────────────── */
+
+export interface ShellScopeOption {
+  key: string;
+  icon?: IconName | undefined;
+  label: ReactNode;
+  /** 副行小字（说明、用途…）。 */
+  description?: ReactNode | undefined;
+  disabled?: boolean | undefined;
+}
+
+export interface ShellScopeGroup {
+  key: string;
+  /** 组标识图标（组织、项目…）。 */
+  icon?: IconName | undefined;
+  title: ReactNode;
+  /** 标题右侧的附加块，通常是一枚类型标记（`<Badge>`）。 */
+  titleAside?: ReactNode | undefined;
+  /** 标题下一行的小字，通常是编号或标识码。 */
+  meta?: ReactNode | undefined;
+  options: ReadonlyArray<ShellScopeOption>;
+}
+
+export interface ShellScopePanelProps {
+  groups: ReadonlyArray<ShellScopeGroup>;
+  /**
+   * 当前所在项的 key。**跨组唯一**——人一次只在一个范围里，所以选中态由这一个
+   * 值决定，而不是每个 option 自带一个 `active`。后者允许"两个组各自选中一项"
+   * 这种画得出来但讲不通的状态。
+   */
+  value?: string | undefined;
+  onSelect?: ((key: string) => void) | undefined;
+  /** 整个菜单的无障碍名（"切换租户与工作区"）。 */
+  ariaLabel: string;
+  className?: string | undefined;
+}
+
+/**
+ * 范围切换面板：`ShellScopeButton` 点开后的那一层。
+ *
+ * 两级——**组**与**项**。DS 不认识"租户"和"工作区"，只认识"若干组、每组若干项、
+ * 全局选中其中一项"（与 `ShellScopeButton` 同一句话：范围是什么由调用方定）。
+ *
+ * 语义照本仓既有的两处单选面板（`ShellLauncher` / `LocaleSelectPanel`）：
+ * `role="menu"` + `menuitemradio` + `aria-checked`，选中项尾部补一个对勾。
+ * 没有改用 `listbox`——那套要求方向键在选项间移动，而这里每一项都是原生按钮、
+ * 靠 Tab 走；只把角色名换成 listbox 而不实现方向键，读屏器会承诺一个不存在的
+ * 操作方式。
+ *
+ * **非当前组整体降调**（组标题走 `tone="muted"`）：面板里同时列着好几个组，
+ * 不降调的话「我在哪」要靠找那个对勾，而对勾在一屏之外。
+ */
+export function ShellScopePanel({
+  groups,
+  value,
+  onSelect,
+  ariaLabel,
+  className,
+}: Readonly<ShellScopePanelProps>) {
+  return (
+    <div
+      role="menu"
+      aria-label={ariaLabel}
+      className={cn("flex flex-col gap-md", className)}
+    >
+      {groups.map((group, index) => {
+        const current = group.options.some((o) => o.key === value);
+        return (
+          <React.Fragment key={group.key}>
+            {index > 0 ? <Separator /> : null}
+            {/*
+             * 组用 role="group" 而不是靠视觉分隔表达：读屏器线性念下来时，
+             * 分隔线与缩进都不存在，没有 group 就是一长串选项。
+             */}
+            <div role="group" className="flex flex-col">
+              <ShellPanelHeader
+                lead="icon"
+                {...(group.icon ? { icon: group.icon } : {})}
+                title={group.title}
+                {...(group.titleAside ? { titleAside: group.titleAside } : {})}
+                tone={current ? "default" : "muted"}
+                metaRows={
+                  group.meta
+                    ? [{ key: `${group.key}-meta`, content: group.meta }]
+                    : []
+                }
+              />
+              {/* 项比组标题往左靠一档：它们从属于上面那个组，不与组名同列。 */}
+              <div className="flex flex-col gap-2xs pl-md">
+                {group.options.map((option) => {
+                  const selected = option.key === value;
+                  return (
+                    <Button
+                      key={option.key}
+                      variant="ghost"
+                      role="menuitemradio"
+                      aria-checked={selected}
+                      disabled={option.disabled ?? false}
+                      onClick={
+                        onSelect ? () => onSelect(option.key) : undefined
+                      }
+                      className={cn(
+                        "h-auto w-full justify-start gap-sm px-sm py-xs text-left",
+                        /*
+                         * 选中走 accent 而不是 secondary：与 ShellScopeButton
+                         * 展开态同一个底色，点开前点开后是同一件事的两头。
+                         * hover 也钉住，否则划过选中项时它会先变灰再变回来。
+                         */
+                        selected &&
+                          "bg-accent text-primary-text hover:bg-accent",
+                      )}
+                    >
+                      {option.icon ? (
+                        <Icon
+                          name={option.icon}
+                          size="md"
+                          className="shrink-0"
+                        />
+                      ) : null}
+                      <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
+                        <span className="w-full truncate text-label-md">
+                          {option.label}
+                        </span>
+                        {option.description ? (
+                          <span
+                            className={cn(
+                              "w-full truncate text-body-sm",
+                              selected
+                                ? "opacity-subtle"
+                                : "text-muted-foreground",
+                            )}
+                          >
+                            {option.description}
+                          </span>
+                        ) : null}
+                      </span>
+                      {selected ? (
+                        <Icon name="check" size="sm" className="shrink-0" />
+                      ) : null}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
 
 export interface ShellScopeButtonProps {
   icon?: IconName | undefined;
