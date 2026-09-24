@@ -489,6 +489,113 @@ describe("ShellPanelMeterRow · 百分比要夹紧", () => {
     const spans = [...container.querySelectorAll("span")];
     expect(spans.some((s) => hasClass(s, "tabular-nums"))).toBe(true);
   });
+
+  /**
+   * `value` 与 `valueLabel` 是**两个槽位**：前者是一眼要看到的读数（条上方、
+   * 大一号），后者是把这个数讲清楚的话（条下方）。合成一个槽位就只能同字号，
+   * 而「300」和「已用 30% · 共 1000 分」本来就不该一样重。
+   */
+  it("value 与 valueLabel 各有位置，读数用 label-xl", () => {
+    const { container } = render(
+      <ShellPanelMeterRow
+        label="AI Credits"
+        percent={30}
+        value="300"
+        unit="分"
+        valueLabel="已用 30% · 共 1000 分"
+      />,
+    );
+    const read = screen.getByText("300");
+    expect(hasClass(read, "text-label-xl")).toBe(true);
+    expect(screen.getByText("分")).toBeInTheDocument();
+    expect(screen.getByText("已用 30% · 共 1000 分")).toBeInTheDocument();
+
+    /* 读数排在进度条**前面**，用量文案排在**后面**——顺序本身是判据。 */
+    const bar = container.querySelector('[role="progressbar"]') as HTMLElement;
+    expect(
+      read.compareDocumentPosition(bar) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.getByText("已用 30% · 共 1000 分").compareDocumentPosition(bar) &
+        Node.DOCUMENT_POSITION_PRECEDING,
+    ).toBeTruthy();
+  });
+
+  /** 副行是可选的；不给就不渲染那一层——数元素不数文字（070 §4.3）。 */
+  it("description 不给就不渲染那一层", () => {
+    const a = render(
+      <ShellPanelMeterRow label="存储" percent={10} description="workspace" />,
+    );
+    expect(screen.getByText("workspace")).toBeInTheDocument();
+    a.unmount();
+
+    render(<ShellPanelMeterRow label="存储" percent={10} />);
+    expect(screen.queryByText("workspace")).not.toBeInTheDocument();
+  });
+
+  /**
+   * 进度条在**右栏**而不是横跨整行：相邻几条的右缘要对齐、长度可比。
+   * 变异「右栏改回 w-full 横跨」时这条挂。
+   */
+  it("进度条落在右栏里，不横跨整行", () => {
+    const { container } = render(
+      <ShellPanelMeterRow label="存储" percent={50} value="1" />,
+    );
+    const bar = container.querySelector('[role="progressbar"]') as HTMLElement;
+    const col = bar.parentElement as HTMLElement;
+    expect(hasClass(col, "w-1/2")).toBe(true);
+    expect(hasClass(col, "items-end")).toBe(true);
+  });
+});
+
+/* ── ShellPanelRow · 值的单位与强调档 ─────────────────────────────────────── */
+
+describe("ShellPanelRow · 值的单位与语气", () => {
+  /** 默认语气是小灰字——原有调用点一个字不改也该是这个样子。 */
+  it("默认 muted：小灰字，不套底色块", () => {
+    render(<ShellPanelRow label="语言" value="简体中文" />);
+    const v = screen.getByText("简体中文");
+    expect(hasClass(v, "text-body-sm")).toBe(true);
+    expect(hasClass(v, "bg-primary-muted")).toBe(false);
+  });
+
+  /**
+   * `strong` 是给「这一行就是为了让人看这个数」的行用的（账户余额、本月账单）。
+   * 变异「strong 也走 muted 那支」时这条挂。
+   */
+  it("strong：primary-muted 底色块 + label-lg", () => {
+    render(
+      <ShellPanelRow label="账户余额" value="200.00" valueTone="strong" />,
+    );
+    const v = screen.getByText("200.00");
+    expect(hasClass(v, "bg-primary-muted")).toBe(true);
+    expect(hasClass(v, "text-primary-muted-foreground")).toBe(true);
+    expect(hasClass(v, "text-label-lg")).toBe(true);
+  });
+
+  /**
+   * 单位是**独立槽位**而不是让调用方拼进 value：拼成一个字符串就只能同色同
+   * 字重，而单位本来该比数值轻一档。判据落在「单位不在数值块里」。
+   */
+  it("unit 单独成块，不落在数值块内", () => {
+    render(
+      <ShellPanelRow
+        label="账户余额"
+        value="200.00"
+        unit="RMB"
+        valueTone="strong"
+      />,
+    );
+    const v = screen.getByText("200.00");
+    const u = screen.getByText("RMB");
+    expect(v.contains(u)).toBe(false);
+    expect(hasClass(u, "text-label-sm")).toBe(true);
+  });
+
+  it("不给 unit 就不渲染那一层", () => {
+    render(<ShellPanelRow label="账户余额" value="200.00" />);
+    expect(screen.queryByText("RMB")).not.toBeInTheDocument();
+  });
 });
 
 /* ── ShellPanelSlots ──────────────────────────────────────────────────────── */

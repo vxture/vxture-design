@@ -4048,14 +4048,44 @@ function ShellPanelDemo() {
             { key: "mail", icon: "mail", content: "ops@example.test" },
           ]}
         />
-        <ShellPanelSection divided={false}>
-          <ShellPanelRow icon="gauge" label="配额" value="82%" />
+        <ShellPanelSection title="资源">
+          <ShellPanelMeterRow
+            icon="sparkles"
+            label="AI Credits"
+            description="workspace"
+            value="300"
+            unit="分"
+            valueLabel="已用 30% · 共 1000 分"
+            percent={30}
+          />
           <ShellPanelMeterRow
             icon="database"
-            label="存储"
-            valueLabel="41.2 GB / 50 GB"
-            percent={82}
+            label="Storage"
+            description="workspace"
+            value="300"
+            unit="MB"
+            valueLabel="已用 30% · 共 1000 MB"
+            percent={30}
           />
+        </ShellPanelSection>
+        <ShellPanelSection title="账单">
+          <ShellPanelRow
+            icon="wallet"
+            label="账户余额"
+            description="不含平台卡券"
+            value="200.00"
+            unit="RMB"
+            valueTone="strong"
+          />
+          <ShellPanelRow
+            icon="receipt"
+            label="本月账单"
+            description="2026/09"
+            value="100.00"
+            unit="RMB"
+            valueTone="strong"
+          />
+          <ShellPanelRow icon="gauge" label="配额" value="82%" />
         </ShellPanelSection>
         <ShellPanelSection title="偏好">
           <ShellPanelControlRow icon="translate" label="语言">

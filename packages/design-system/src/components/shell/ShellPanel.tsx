@@ -270,6 +270,22 @@ export interface ShellPanelRowProps {
   description?: ReactNode | undefined;
   /** 右侧值（数量、金额、当前选中项…）。 */
   value?: ReactNode | undefined;
+  /**
+   * 值的单位（RMB、分、MB…）。单独一个槽位而不是让调用方拼进 `value`：
+   * 单位要比数值轻一档，拼成一个字符串就只能同色同字重。
+   */
+  unit?: ReactNode | undefined;
+  /**
+   * 值的语气：
+   * - `"muted"`（默认）——小一号的灰字，用在「顺带说一下」的值上（当前语言、
+   *   已选项）。
+   * - `"strong"`——primary-muted 底色的数值块，用在「这一行就是为了让人看这个数」
+   *   的行上（账户余额、本月账单）。
+   *
+   * 不做成 `danger` 那样的语义色档：这里区分的是**轻重**不是吉凶，余额为负该由
+   * 调用方换文案或换行，不是把块染红。
+   */
+  valueTone?: "muted" | "strong" | undefined;
   /** 右端是否画一个"可进入"的角标。有 onClick/href 时默认为 true。 */
   chevron?: boolean | undefined;
   /**
@@ -306,6 +322,8 @@ export function ShellPanelRow({
   label,
   description,
   value,
+  unit,
+  valueTone = "muted",
   chevron,
   trailingIcon,
   newTab = false,
@@ -334,8 +352,21 @@ export function ShellPanelRow({
         ) : null}
       </span>
       {value !== undefined && value !== null ? (
-        <span className="shrink-0 text-body-sm text-muted-foreground tabular-nums">
-          {value}
+        /* 底对齐：数值块比单位高一截，顶对齐会让单位浮在半空。 */
+        <span className="flex shrink-0 items-end gap-2xs">
+          <span
+            className={cn(
+              "tabular-nums",
+              valueTone === "strong"
+                ? "flex h-control-xs items-center rounded-md bg-primary-muted px-2xs text-label-lg text-primary-muted-foreground"
+                : "text-body-sm text-muted-foreground",
+            )}
+          >
+            {value}
+          </span>
+          {unit !== undefined && unit !== null ? (
+            <span className="text-label-sm text-muted-foreground">{unit}</span>
+          ) : null}
         </span>
       ) : null}
       {trailing ? (
@@ -452,9 +483,18 @@ export function ShellPanelControlRow({
 export interface ShellPanelMeterRowProps {
   icon?: IconName | undefined;
   label: ReactNode;
+  /** 副行文案（label 下方一行小字），与 `ShellPanelRow.description` 同义。 */
+  description?: ReactNode | undefined;
   /**
-   * 右上角的用量文案，**成品字符串**由调用方给——单位、进制、小数位、货币
-   * 全是业务判断（字节按 1024、额度按千分位、金额按币种），DS 不做这些决定。
+   * 当前读数（`300`）。与 `valueLabel` 分工不同：这个是**一眼要看到的数**，
+   * 排在进度条上方、大一号；`valueLabel` 是条下方那句把数讲清楚的话。
+   */
+  value?: ReactNode | undefined;
+  /** 读数的单位（分、MB…）。比读数轻一档，见 `ShellPanelRow.unit`。 */
+  unit?: ReactNode | undefined;
+  /**
+   * 进度条**下方**的用量文案，**成品字符串**由调用方给——单位、进制、小数位、
+   * 货币全是业务判断（字节按 1024、额度按千分位、金额按币种），DS 不做这些决定。
    */
   valueLabel?: ReactNode | undefined;
   /** 0–100。超出范围会被夹紧，避免进度条溢出容器。 */
@@ -465,6 +505,9 @@ export interface ShellPanelMeterRowProps {
 export function ShellPanelMeterRow({
   icon,
   label,
+  description,
+  value,
+  unit,
   valueLabel,
   percent,
   className,
@@ -473,22 +516,46 @@ export function ShellPanelMeterRow({
     ? Math.max(0, Math.min(100, percent))
     : 0;
   return (
-    // 图标在导引列，标签行与进度条同在内容列——进度条若挂在外层，它会从图标
-    // 左缘起画，比自己的标签更靠左一格。
+    /*
+     * 两栏：左边是「这是什么」，右边是「现在多少」。
+     *
+     * 进度条排在**右栏**而不是横跨整行：同一段里相邻的几条（额度、存储）右缘
+     * 对齐、长度可比，读的人扫一眼就知道哪个更满。横跨整行时每条的起点被各自
+     * 标签的长度推着走，比不了。
+     *
+     * 右栏取一半宽而不是定死像素：面板宽度本身有 sm/md/lg 三档，写死的块在窄档
+     * 里会把标签挤没。
+     */
     <div
       className={cn("flex items-center py-xs", ROW_INSET, ROW_GAP, className)}
     >
       <RowLead icon={icon} />
-      <div className="flex min-w-0 flex-1 flex-col gap-2xs">
-        <div className={cn("flex items-center", ROW_GAP)}>
-          <span className="min-w-0 flex-1 truncate text-label-sm">{label}</span>
-          {valueLabel !== undefined && valueLabel !== null ? (
-            <span className="shrink-0 text-body-sm text-muted-foreground tabular-nums">
-              {valueLabel}
-            </span>
-          ) : null}
-        </div>
-        <Progress value={safe} />
+      <div className="flex min-w-0 flex-1 flex-col items-start">
+        <span className="w-full truncate text-label-md">{label}</span>
+        {description ? (
+          <span className="w-full truncate text-body-sm text-muted-foreground">
+            {description}
+          </span>
+        ) : null}
+      </div>
+      <div className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
+        {value !== undefined && value !== null ? (
+          /* 底对齐：读数比单位高一截，顶对齐会让单位浮在半空。 */
+          <span className="flex items-end gap-2xs">
+            <span className="text-label-xl tabular-nums">{value}</span>
+            {unit !== undefined && unit !== null ? (
+              <span className="text-label-sm text-muted-foreground">
+                {unit}
+              </span>
+            ) : null}
+          </span>
+        ) : null}
+        <Progress value={safe} className="w-full" />
+        {valueLabel !== undefined && valueLabel !== null ? (
+          <span className="text-body-sm text-muted-foreground tabular-nums">
+            {valueLabel}
+          </span>
+        ) : null}
       </div>
     </div>
   );
