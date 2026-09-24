@@ -24,9 +24,16 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 import { collectFiles, isTsx } from "../guardrails/lib/collect-files.mjs";
 
-const ROOT = process.cwd();
+// ROOT 由脚本自身位置派生，不跟 process.cwd() 跑。与 check-mode-blocks.mjs
+// 同一惯用法：守卫认的是仓库里的固定位置，不该受调用目录影响。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 const OUT_DIR = path.join(ROOT, "docs/audit");
 const WRITE = process.argv.includes("--write");
 

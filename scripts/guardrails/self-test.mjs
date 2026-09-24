@@ -17,8 +17,8 @@
  *
  * ── 方法 ──
  * 变异测试。对真实文件做一处外科式改动 → 跑那条守卫 → 断言它**非零退出** → 还原。
- * 不用 fixture 目录,因为守卫读的是 `process.cwd()` 下的真实路径;造一份平行的
- * 假仓,只会让自测和真实运行环境分叉。
+ * 不用 fixture 目录,因为守卫读的是本仓固定位置上的真实路径(由各自的
+ * `import.meta.url` 派生);造一份平行的假仓,只会让自测和真实运行环境分叉。
  *
  * ── 安全 ──
  * · 每个变异在 finally 里还原
@@ -37,7 +37,19 @@
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
+import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
+
+// 用例里的路径全是仓库相对的，锚到脚本自身位置而不是 cwd。这个脚本会**写入
+// 仓内源码**，让它的路径跟着调用目录跑没有任何好处：最好的情况是 ENOENT 崩掉，
+// 最坏的情况是写到别处去。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
+const abs = (p) => path.join(ROOT, p);
 
 const BS = String.fromCodePoint(8);
 const WB = String.fromCodePoint(92) + "b";
@@ -236,7 +248,7 @@ const results = [];
 const skipped = [];
 for (const c of CASES) {
   /* 断言对象是构建产物的用例：没 build 就明说跳过，不假装通过。 */
-  if (c.needsBuild && !existsSync(c.file)) {
+  if (c.needsBuild && !existsSync(abs(c.file))) {
     skipped.push({ ...c, why: `缺 ${c.file}——先跑 pnpm build` });
     continue;
   }
@@ -246,20 +258,20 @@ for (const c of CASES) {
    * 非零退出——那是**假阳性**：看着像“守卫抓到了”，实际上它压根没跑到判据。
    * 所以依赖产物的用例要先查产物在不在，不在就出声跳过。
    */
-  const missing = (c.requires ?? []).filter((f) => !existsSync(f));
+  const missing = (c.requires ?? []).filter((f) => !existsSync(abs(f)));
   if (missing.length > 0) {
     skipped.push({ ...c, why: `缺 ${missing.join("、")}——先跑 pnpm build` });
     continue;
   }
-  const original = readFileSync(c.file, "utf8");
+  const original = readFileSync(abs(c.file), "utf8");
   const mutated = c.mutate(original);
   if (mutated === null || mutated === original) {
     results.push({ ...c, verdict: "锚点失效", ok: false });
     continue;
   }
   try {
-    writeFileSync(c.file, mutated);
-    const code = runGuard(c.guard, c.args ?? []);
+    writeFileSync(abs(c.file), mutated);
+    const code = runGuard(abs(c.guard), c.args ?? []);
     results.push({
       ...c,
       originalContent: original,
@@ -267,7 +279,7 @@ for (const c of CASES) {
       ok: code !== 0,
     });
   } finally {
-    writeFileSync(c.file, original);
+    writeFileSync(abs(c.file), original);
   }
 }
 
@@ -303,7 +315,7 @@ if (skipped.length > 0) {
  * （070 §1.1 与 §5.1.4 是同一条：写下来没人验的话，坏起来和从没生效过的守卫
  * 一模一样）。现在两边都从事实取：链条读 package.json，用例读本文件的 CASES。
  */
-const chain = JSON.parse(readFileSync("package.json", "utf8"))
+const chain = JSON.parse(readFileSync(abs("package.json"), "utf8"))
   .scripts.guardrails.split("&&")
   .map((s) => s.trim())
   .filter(Boolean);
@@ -333,7 +345,7 @@ if (covered.size === chain.length) {
  */
 const notRestored = results
   .filter((r) => r.originalContent !== undefined)
-  .filter((r) => readFileSync(r.file, "utf8") !== r.originalContent)
+  .filter((r) => readFileSync(abs(r.file), "utf8") !== r.originalContent)
   .map((r) => r.file);
 if (notRestored.length > 0) {
   console.error("");

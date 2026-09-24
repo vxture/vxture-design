@@ -30,6 +30,7 @@
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
 import {
   Z_LADDER,
@@ -67,7 +68,13 @@ import {
   CJK_LEADING_ADD,
 } from "./typography-policy.mjs";
 
-const ROOT = process.cwd();
+// ROOT 由脚本自身位置派生，不跟 process.cwd() 跑。与 check-mode-blocks.mjs
+// 同一惯用法：守卫认的是仓库里的固定位置，不该受调用目录影响。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 const CHECK = process.argv.includes("--check");
 
 const PKG = path.join(ROOT, "packages/design-tokens");

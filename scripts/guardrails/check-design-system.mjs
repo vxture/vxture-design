@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
 /** admin token 桥里定义过的全部 `--vx-admin-*`。读一次，供 ds/no-undefined-admin-token 用。 */
 let ADMIN_TOKEN_CACHE = null;
@@ -31,7 +32,13 @@ function adminTokenDefinitions() {
   return names;
 }
 
-const ROOT = process.cwd();
+// ROOT 由脚本自身位置派生，不跟 process.cwd() 跑。与 check-mode-blocks.mjs
+// 同一惯用法：守卫认的是仓库里的固定位置，不该受调用目录影响。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 // 本守卫是**双管辖**的:一半管 DS 自身(packages/**),一半管消费方
 // 怎么用 DS(portals 的 globals.css、admin 的 style entry、legacy-tokens 目录)。
 // 本仓没有 portals/business,只跑得到 DS 自身那一半,所以**跳过本仓不存在的

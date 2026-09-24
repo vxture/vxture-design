@@ -22,6 +22,7 @@ import { collectFiles, isTsx } from "./lib/collect-files.mjs";
 import { loadTailwind } from "./lib/load-tailwind.mjs";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 import { PENDING_COMPONENTS } from "./pending-components.mjs";
 import { RECIPE_PATTERNS } from "./pending-recipes.mjs";
 
@@ -31,7 +32,13 @@ import { RECIPE_PATTERNS } from "./pending-recipes.mjs";
  */
 const PENDING_RECIPES_SET = new Set();
 
-const ROOT = process.cwd();
+// ROOT 由脚本自身位置派生，不跟 process.cwd() 跑。与 check-mode-blocks.mjs
+// 同一惯用法：守卫认的是仓库里的固定位置，不该受调用目录影响。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 const { compile, dir: TW, pnpmDir: PNPM } = await loadTailwind("组件类名实测");
 
 const PKG = path.join(ROOT, "packages/design-system");

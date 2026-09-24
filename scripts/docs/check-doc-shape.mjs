@@ -22,8 +22,16 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
-const DIR = path.join(process.cwd(), "docs/artifacts");
+// ROOT 由脚本自身位置派生，不跟 process.cwd() 跑。与 check-mode-blocks.mjs
+// 同一惯用法：守卫认的是仓库里的固定位置，不该受调用目录影响。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
+const DIR = path.join(ROOT, "docs/artifacts");
 const REFERENCE = "_reference-karda-audit.html";
 
 /** 参照物固有的导轨组，顺序即判据。DS 文档可在其后追加，不可插队或改名。 */
