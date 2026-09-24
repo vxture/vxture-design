@@ -51,6 +51,37 @@ const ROOT = path.resolve(
 );
 const abs = (p) => path.join(ROOT, p);
 
+/*
+ * 用法：
+ *   node scripts/guardrails/self-test.mjs
+ *   node scripts/guardrails/self-test.mjs --require-artifacts
+ *
+ * 默认：依赖构建产物的用例，产物缺失就出声跳过（本地还没 build 时不该拦人）。
+ *
+ * `--require-artifacts`：任何跳过都判为失败。这条补的是本脚本自己的盲区——
+ * 用例全被跳过时 `results` 为空，`failed` 也为空，于是它会打印「自测通过
+ * （0 条守卫…）」并 EXIT=0。**一个测不到任何东西的自测报绿，正是这个脚本
+ * 存在的理由所反对的那件事**：安全网破了不会有声音。CI 在 build 之后跑，
+ * 那里「没东西可测」本身就是故障。
+ */
+function parseArgs(argv) {
+  let requireArtifacts = false;
+  for (const arg of argv) {
+    if (arg === "--require-artifacts") requireArtifacts = true;
+    else
+      throw new Error(`无法识别的参数：${arg}（只支持 --require-artifacts）`);
+  }
+  return { requireArtifacts };
+}
+
+let args;
+try {
+  args = parseArgs(process.argv.slice(2));
+} catch (error) {
+  console.error(`self-test: ${error.message}`);
+  process.exit(1);
+}
+
 const BS = String.fromCodePoint(8);
 const WB = String.fromCodePoint(92) + "b";
 
@@ -305,6 +336,15 @@ if (skipped.length > 0) {
       `  · ${s.guard.split("/").pop().replace(".mjs", "")} —— ${s.why}`,
     );
   }
+}
+
+if (args.requireArtifacts && skipped.length > 0) {
+  console.error("");
+  console.error(
+    `--require-artifacts 下这是失败：${skipped.length} 条用例被跳过，` +
+      `只实测到 ${results.length} 条守卫。先跑 pnpm build。`,
+  );
+  process.exit(1);
 }
 
 /*
