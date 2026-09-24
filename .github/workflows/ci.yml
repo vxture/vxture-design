@@ -30,6 +30,13 @@ jobs:
       - name: Build design packages (tokens → ui → system)
         run: pnpm build
 
+      # 紧跟 build：断言 /server 产物真的在，且在 react-server 下可求值。
+      # 默认档（guardrails 链条里那次）产物缺失只是 skip + EXIT=0——本地还没
+      # build 时不拦人是对的，但 CI 里"没东西可验"本身就是故障。这一步用
+      # --require-artifacts 把它变成红灯，且放在这里能直接归因到 build。
+      - name: Server entry safety (artifacts required)
+        run: pnpm lint:server-entry:strict
+
       - name: Type check
         run: pnpm type-check
 

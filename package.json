@@ -25,6 +25,7 @@
     "lint:design-exports": "node scripts/guardrails/check-design-system-exports.mjs",
     "lint:design-tokens": "node scripts/design-tokens/generate-primitive.mjs --check && node scripts/design-tokens/generate-semantic.mjs --check && node scripts/design-tokens/generate-semantic-scales.mjs --check && node scripts/design-tokens/generate-theme.mjs --check && node scripts/design-tokens/generate-token-ts.mjs --check && node scripts/design-tokens/check-utilities.mjs && node scripts/guardrails/check-mode-blocks.mjs",
     "lint:server-entry": "node scripts/guardrails/check-server-entry-safety.mjs",
+    "lint:server-entry:strict": "node scripts/guardrails/check-server-entry-safety.mjs --require-artifacts",
     "lint:packed-consumability": "node scripts/guardrails/check-packed-consumability.mjs",
     "lint:reexports": "node packages/design-system/scripts/generate-reexports.mjs --check",
     "guardrails": "pnpm lint:design-tokens && pnpm lint:design && pnpm lint:design-classes && pnpm lint:design-exports && pnpm lint:design-preview && pnpm lint:design-i18n && pnpm lint:control-chars && pnpm lint:doc-shape && pnpm lint:doc-version && pnpm lint:server-entry && pnpm lint:packed-consumability && pnpm lint:reexports",
