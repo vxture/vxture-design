@@ -2,6 +2,40 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
+
+const DEFAULT_OUT = "figma-token-manifest.json";
+
+// 输出路径由调用方定，不再焊死在仓库根目录。相对路径按 cwd 解析，
+// 父目录不存在就建出来。
+function parseArgs(argv) {
+  let out = DEFAULT_OUT;
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === "--out") {
+      const value = argv[i + 1];
+      if (value === undefined || value.startsWith("--"))
+        throw new Error("--out 需要一个路径参数");
+      out = value;
+      i += 1;
+    } else if (arg.startsWith("--out=")) {
+      const value = arg.slice("--out=".length);
+      if (!value) throw new Error("--out= 后面是空的");
+      out = value;
+    } else {
+      throw new Error(`无法识别的参数：${arg}（只支持 --out <path>）`);
+    }
+  }
+  return { out };
+}
+
+let args;
+try {
+  args = parseArgs(process.argv.slice(2));
+} catch (error) {
+  console.error(`generate-figma-token-manifest: ${error.message}`);
+  process.exit(1);
+}
+
 const stylesRoot = path.join(
   root,
   "packages",
@@ -158,11 +192,16 @@ const manifest = {
   },
   tokens,
 };
-const out = path.join(root, "figma-token-manifest-vxture-20260919.json");
+const out = path.resolve(root, args.out);
+fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(
   JSON.stringify(
-    { out, count: manifest.count, counts: manifest.counts },
+    {
+      out: path.relative(root, out).replaceAll("\\", "/") || out,
+      count: manifest.count,
+      counts: manifest.counts,
+    },
     null,
     2,
   ),
