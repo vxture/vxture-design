@@ -46,7 +46,8 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      # 十一道守卫（数量随 package.json 的 guardrails 链条走，别在这里手抄）。
+      # 守卫成链（数量随 package.json 的 guardrails 链条走——所以这里不写数字，
+      # 上一次写了「十一道」，链条涨到 12 条后它就成了假话）。
       # lint:design 会跳过本仓不存在的扫描根（portals/business）——
       # 那部分管辖消费方怎么用 DS，不在本仓职责内。
       - name: Design guardrails
