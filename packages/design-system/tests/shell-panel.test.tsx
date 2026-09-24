@@ -18,6 +18,7 @@ import {
   ShellPanelControlRow,
   ShellPanelHeader,
   ShellPanelMeterRow,
+  ShellScopePanel,
   ShellPanelRow,
   ShellPanelSection,
   ShellPanelSectionTitle,
@@ -700,5 +701,153 @@ describe("ShellScopeButton · 当前范围", () => {
     render(<ShellScopeButton label="x" ariaLabel="切换" onClick={onClick} />);
     await user.click(screen.getByRole("button"));
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+});
+
+/* ── ShellScopePanel ──────────────────────────────────────────────────────── */
+
+describe("ShellScopePanel · 两级范围切换", () => {
+  const GROUPS = [
+    {
+      key: "t1",
+      icon: "buildings" as const,
+      title: "租户甲",
+      meta: "T-001",
+      options: [
+        {
+          key: "w1",
+          icon: "folder" as const,
+          label: "工作区一",
+          description: "默认",
+        },
+        { key: "w2", icon: "folder" as const, label: "工作区二" },
+      ],
+    },
+    {
+      key: "t2",
+      icon: "buildings" as const,
+      title: "租户乙",
+      meta: "T-002",
+      options: [{ key: "w3", icon: "folder" as const, label: "工作区三" }],
+    },
+  ];
+
+  const render1 = (value?: string, onSelect?: (k: string) => void) =>
+    render(
+      <ShellScopePanel
+        ariaLabel="切换范围"
+        groups={GROUPS}
+        {...(value ? { value } : {})}
+        {...(onSelect ? { onSelect } : {})}
+      />,
+    );
+
+  /**
+   * 语义照 ShellLauncher / LocaleSelectPanel：menu + menuitemradio。
+   * 单选语义写错不报错，只是读屏器把它念成一串互不相干的按钮。
+   */
+  it("是 menu，每项是 menuitemradio", () => {
+    render1("w1");
+    expect(screen.getByRole("menu", { name: "切换范围" })).toBeInTheDocument();
+    expect(screen.getAllByRole("menuitemradio")).toHaveLength(3);
+  });
+
+  /**
+   * **选中态跨组唯一**——人一次只在一个范围里。变异「aria-checked 恒 true」或
+   * 「每组各自算选中」时这条挂。
+   */
+  it("aria-checked 全局只有一个为真，且认的是 key 不是位置", () => {
+    /*
+     * 刻意选**组内第二项**：选第一项时，「全局按 key 取」与「取所在组的第一项」
+     * 两种实现画出来一模一样——夹具本身分辨不了它们。这条初版用的就是第一项，
+     * 于是「按组取第一项」那个变异全过（070 §4.2）。
+     */
+    render1("w2");
+    const items = screen.getAllByRole("menuitemradio");
+    const checked = items.filter(
+      (el) => el.getAttribute("aria-checked") === "true",
+    );
+    expect(checked).toHaveLength(1);
+    expect(checked[0]).toHaveTextContent("工作区二");
+  });
+
+  /** 另一组里的项被选中时，前一组一个都不亮。 */
+  it("选中项在后一组时，前一组无选中", () => {
+    render1("w3");
+    const checked = screen
+      .getAllByRole("menuitemradio")
+      .filter((el) => el.getAttribute("aria-checked") === "true");
+    expect(checked).toHaveLength(1);
+    expect(checked[0]).toHaveTextContent("工作区三");
+  });
+
+  /** 不给 value 时一个都不选中——别默认点亮第一项。 */
+  it("不给 value 时没有选中项", () => {
+    render1();
+    const items = screen.getAllByRole("menuitemradio");
+    expect(
+      items.every((el) => el.getAttribute("aria-checked") === "false"),
+    ).toBe(true);
+  });
+
+  it("点某一项把它的 key 回给调用方", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render1("w1", onSelect);
+    await user.click(screen.getByText("工作区二"));
+    expect(onSelect).toHaveBeenCalledWith("w2");
+  });
+
+  /**
+   * 组要有 role=group：读屏器线性念下来时分隔线与缩进都不存在，
+   * 没有 group 就是一长串选项。
+   */
+  it("每个组是一个 role=group", () => {
+    render1("w1");
+    expect(screen.getAllByRole("group")).toHaveLength(2);
+  });
+
+  /**
+   * **非当前组整体降调**：面板里同时列着好几个组，不降调的话「我在哪」要靠
+   * 找那个可能在一屏之外的对勾。变异「tone 恒 default」时这条挂。
+   */
+  it("非当前组的标题降调，当前组不降", () => {
+    render1("w1");
+    expect(hasClass(screen.getByText("租户甲"), "text-foreground")).toBe(true);
+    expect(hasClass(screen.getByText("租户乙"), "text-muted-foreground")).toBe(
+      true,
+    );
+  });
+
+  /** 组间画分隔线，且首组之前不画——否则面板顶部会多出一条线。 */
+  it("两组之间一条分隔线，首组之前没有", () => {
+    const { container } = render1("w1");
+    expect(
+      container.querySelectorAll('[data-orientation="horizontal"]'),
+    ).toHaveLength(1);
+  });
+
+  it("disabled 的项不可点", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <ShellScopePanel
+        ariaLabel="切换范围"
+        value="w1"
+        onSelect={onSelect}
+        groups={[
+          {
+            key: "t1",
+            title: "租户甲",
+            options: [
+              { key: "w1", label: "工作区一" },
+              { key: "w9", label: "停用的", disabled: true },
+            ],
+          },
+        ]}
+      />,
+    );
+    await user.click(screen.getByText("停用的"));
+    expect(onSelect).not.toHaveBeenCalled();
   });
 });

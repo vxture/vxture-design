@@ -5,6 +5,39 @@
 
 ---
 
+## 12.20.0 — 2026-09-24
+
+新增 `ShellScopePanel`——`ShellScopeButton` 点开后的那一层（minor：新增件 +
+`ShellPanelHeader` 两个新槽位，无删改）。
+
+### `ShellScopePanel`
+
+两级：**组**与**项**。DS 不认识"租户"和"工作区"，只认识"若干组、每组若干项、
+全局选中其中一项"——与 `ShellScopeButton` 同一句话：范围是什么由调用方定。
+
+- 选中态由**一个** `value` 决定，而不是每个 option 自带 `active`。后者允许
+  "两个组各自选中一项"这种画得出来但讲不通的状态。
+- 语义照本仓既有的两处单选面板（`ShellLauncher` / `LocaleSelectPanel`）：
+  `role="menu"` + `menuitemradio` + `aria-checked`，选中项尾部补对勾。
+  **没有改用 `listbox`**——那套要求方向键在选项间移动，而这里每项都是原生
+  按钮靠 Tab 走；只换角色名不实现方向键，等于向读屏器承诺一个不存在的操作方式。
+- 非当前组标题整体降调：面板里同时列着好几个组，不降调的话"我在哪"要靠找那个
+  可能在一屏之外的对勾。
+- 组之间用 `Separator`，首组之前不画。
+
+### `ShellPanelHeader`
+
+- 新增 `lead`：`"avatar"`（默认，即原行为）/ `"icon"`（不画圆、只放图标）。
+  主体是组织/项目时用后者——给一个组织画头像圈会让它看起来像个人。两档占同一
+  列宽，同面板混用不错行。
+- 新增 `tone`：`"default"`（默认）/ `"muted"`（标题降到副文级）。
+
+### 与设计稿的偏差
+
+选中标记用字典里的 `check`，稿子是 CheckCircle——图标字典没有 `check-circle`
+这个名字，且本仓另两处单选面板用的也是 `check`。要加这个名字属图标字典的
+改动，另开 PR。
+
 ## 12.19.0 — 2026-09-24
 
 面板行补齐 Figma 的资源与账单版面（minor：新增槽位，无删改；`ShellPanelMeterRow`

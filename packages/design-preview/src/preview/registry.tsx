@@ -248,6 +248,7 @@ import {
   ShellPanelRow,
   ShellPanelSection,
   ShellPanelSectionTitle,
+  ShellScopePanel,
   ShellSearchBox,
   ShellSidebarFrame,
   ShellSidebarNav,
@@ -2550,6 +2551,15 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ShellLauncherDemo />,
   },
   {
+    name: "ShellScopePanel",
+    layer: "pattern",
+    group: "外壳与登录",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "ShellScopeButton 点开后的那一层：两级（组 / 项），DS 只认识「若干组、每组若干项、全局选中其中一项」，不认识租户与工作区。语义照 ShellLauncher / LocaleSelectPanel：role=menu + menuitemradio + aria-checked，选中项尾部补对勾——没改用 listbox，那套要求方向键在选项间移动，而这里每项都是原生按钮靠 Tab 走。非当前组标题整体降调（tone=muted），否则「我在哪」只能靠找那个可能在一屏之外的对勾",
+    render: () => <ShellScopePanelDemo />,
+  },
+  {
     name: "ShellPanel",
     layer: "pattern",
     group: "外壳与登录",
@@ -4032,6 +4042,54 @@ function ShellLauncherDemo() {
         onSelect={setCurrent}
       />
     </Row>
+  );
+}
+
+function ShellScopePanelDemo() {
+  const [scope, setScope] = React.useState("ws-default");
+  return (
+    <div className="w-fit rounded-md border border-border bg-popover p-md">
+      <div className="w-80">
+        <ShellScopePanel
+          ariaLabel="切换租户与工作区"
+          value={scope}
+          onSelect={setScope}
+          groups={[
+            {
+              key: "t-1",
+              icon: "buildings",
+              title: "Tenant Name",
+              titleAside: <Badge>组织租户</Badge>,
+              meta: "T-2222888885",
+              options: [
+                {
+                  key: "ws-default",
+                  icon: "folder",
+                  label: "Default Workspace",
+                  description: "默认工作空间",
+                },
+                { key: "ws-2", icon: "folder", label: "Another Workspace" },
+              ],
+            },
+            {
+              key: "t-2",
+              icon: "buildings",
+              title: "Tenant Name",
+              titleAside: <Badge>个人租户</Badge>,
+              meta: "T-2222888885",
+              options: [
+                {
+                  key: "ws-3",
+                  icon: "folder",
+                  label: "Default Workspace",
+                  description: "默认工作空间",
+                },
+              ],
+            },
+          ]}
+        />
+      </div>
+    </div>
   );
 }
 
