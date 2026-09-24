@@ -1,7 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = process.cwd();
+// 仓库根：输入的 CSS 与 manifest 里记的 sourceFiles 都以它为基准，由脚本
+// 自身位置派生，从任何目录跑都读得到同一批文件、记下同一批相对路径。
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+// --out 不一样：命令行给的相对路径按**调用者的 cwd**解析，这是 CLI 的常规
+// 预期。把它也锚到仓库根会让 `--out out.json` 落在意料之外的地方。
+const outBase = process.cwd();
 
 const DEFAULT_OUT = "figma-token-manifest.json";
 
@@ -192,13 +199,13 @@ const manifest = {
   },
   tokens,
 };
-const out = path.resolve(root, args.out);
+const out = path.resolve(outBase, args.out);
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(
   JSON.stringify(
     {
-      out: path.relative(root, out).replaceAll("\\", "/") || out,
+      out: path.relative(outBase, out).replaceAll("\\", "/") || out,
       count: manifest.count,
       counts: manifest.counts,
     },

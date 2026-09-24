@@ -24,9 +24,18 @@
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
+
+// pnpm 的虚拟存储只在工作区根，位置固定——由脚本自身位置派生，不跟 cwd 跑。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "..",
+);
 
 export async function loadTailwind(what) {
-  const pnpmDir = path.join(process.cwd(), "node_modules/.pnpm");
+  const pnpmDir = path.join(ROOT, "node_modules/.pnpm");
   const twDir = (await readdir(pnpmDir)).find((d) => /^tailwindcss@\d/.test(d));
   if (!twDir) {
     console.error(`未找到 tailwindcss 安装目录，跳过${what}。`);

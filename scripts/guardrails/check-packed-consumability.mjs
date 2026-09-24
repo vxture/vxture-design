@@ -42,10 +42,16 @@ import {
 import { tmpdir } from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import ts from "typescript";
 
-const ROOT = process.cwd();
+// ROOT 由脚本自身位置派生，不跟 process.cwd() 跑。与 check-mode-blocks.mjs
+// 同一惯用法：守卫认的是仓库里的固定位置，不该受调用目录影响。
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 
 /** 设计三包。顺序即解包顺序,伞包最后(它的 CSS 引另外两包)。 */
 const PACKAGES = [
