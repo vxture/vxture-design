@@ -5,6 +5,31 @@
 
 ---
 
+## 9.12.0 — 2026-09-24
+
+`InputOTP` 新增 `size` 档（minor：纯增量，默认形态与取值行为一个字不变）。
+
+- **`size="lg"`** —— control-3xl 见方的**独立方格**：每格自带四边框与
+  `rounded-xl`，格间留白。用在「整屏只干这一件事」的验证弹窗里。默认档
+  `md` 仍是 control-md 的**连体**格子，表单行里与其他控件同高。
+- 档位定在 `InputOTP` 根件上、经 context 下发给 `InputOTPGroup` 与
+  `InputOTPSlot`（与 `ToggleGroup` 同一机制）——一组格子里混搭两种形态没有
+  正当场景，所以不做成每格各传。
+- 两档尺寸都走控件刻度（`h-control-md` / `h-control-3xl`），跟随密度三档，
+  不写裸像素。
+- 新增导出类型 `InputOTPSize`。
+
+**为什么不是改默认**：Figma 里 `InputOTPSlot` **组件本体**是 32px
+（`--space-control-md`）、`radius-md`、`position` 编码 first/last 连体语义
+——与改动前的 DS 逐项一致。56px 独立方格只出现在两个验证弹窗的**实例覆盖**
+上，且那里的尺寸是裸数字（实例只绑了 `--radius-xl`，没有任何尺寸变量）。
+按稿改默认等于推翻组件本体去对齐无 token 的覆盖，所以做成新档。
+
+**遗留**：设计稿里格内数字是 Inter Regular **24px**，而 DS 排版角色里 24px 只有
+`heading-3`（品牌字 + semibold），没有 sans-regular 的 24px 档。本次取同族最大的
+`body-xl`（18px）——与 md 档用 `body-md` 保持同一角色族。要不要补一档 24px 的
+body 角色，留给设计侧定。
+
 ## 9.8.0 — 2026-09-16
 
 图标字典新增 5 个名字（minor：纯增量，现有名字与形状不变）。

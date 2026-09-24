@@ -290,6 +290,83 @@ describe("InputOTP · 活动格由上下文下发", () => {
   });
 });
 
+/* ── InputOTP 尺寸档 ──────────────────────────────────────────────────────── */
+
+describe("InputOTP · 尺寸档经上下文下发", () => {
+  function Otp({ size }: { size?: "md" | "lg" }) {
+    return (
+      <InputOTP maxLength={2} aria-label="验证码" {...(size ? { size } : {})}>
+        <InputOTPGroup data-testid="group">
+          <InputOTPSlot index={0} data-testid="slot-0" />
+          <InputOTPSlot index={1} data-testid="slot-1" />
+        </InputOTPGroup>
+      </InputOTP>
+    );
+  }
+
+  /**
+   * 档位**不是**由调用方在每个格子上重复传的——它定在根件上经 context 下发。
+   * 变异「Slot 不读 context、恒取 md」时这条挂：两档的类名会一模一样。
+   */
+  it("根件不传时是 md，且档位标在每一层的 data-size 上", () => {
+    render(<Otp />);
+    expect(screen.getByTestId("group")).toHaveAttribute("data-size", "md");
+    expect(screen.getByTestId("slot-0")).toHaveAttribute("data-size", "md");
+  });
+
+  it("根件传 lg 时，Group 与 Slot 都收到 lg", () => {
+    render(<Otp size="lg" />);
+    expect(screen.getByTestId("group")).toHaveAttribute("data-size", "lg");
+    expect(screen.getByTestId("slot-0")).toHaveAttribute("data-size", "lg");
+    expect(screen.getByTestId("slot-1")).toHaveAttribute("data-size", "lg");
+  });
+
+  /**
+   * 两档是**形态**之别而不只是大小之别，判据落在类名上而不是 data-size 上
+   * ——data-size 只证明"档位传到了"，不证明"传到之后真的画得不一样"。
+   *
+   * md 连体：只画 border-y/border-r，靠 first/last 收圆角。
+   * lg 独立：四边框 + 自带 rounded-xl，且**不能**带 first/last 的连体收边。
+   */
+  it("md 是连体格子：半边框 + first/last 收圆角", () => {
+    render(<Otp />);
+    const c = cls(screen.getByTestId("slot-0")).split(" ");
+    expect(c).toContain("border-y");
+    expect(c).toContain("border-r");
+    expect(c).toContain("first:rounded-l-md");
+    expect(c).toContain("h-control-md");
+    expect(c).not.toContain("rounded-xl");
+  });
+
+  it("lg 是独立方格：四边框 + 自带圆角，且不带连体收边", () => {
+    render(<Otp size="lg" />);
+    const c = cls(screen.getByTestId("slot-0")).split(" ");
+    expect(c).toContain("border");
+    expect(c).toContain("rounded-xl");
+    expect(c).toContain("h-control-3xl");
+    expect(c).not.toContain("border-y");
+    expect(c).not.toContain("first:rounded-l-md");
+  });
+
+  /** lg 档格子之间要留白，否则"独立方格"会挤成一条。 */
+  it("lg 档 Group 内留白，md 档不留", () => {
+    const { unmount } = render(<Otp size="lg" />);
+    expect(cls(screen.getByTestId("group")).split(" ")).toContain("gap-md");
+    unmount();
+    render(<Otp />);
+    expect(cls(screen.getByTestId("group")).split(" ")).not.toContain("gap-md");
+  });
+
+  /** 尺寸走控件刻度，不写裸数值——密度三档要跟着变。 */
+  it("两档尺寸都落在控件刻度上，没有裸像素", () => {
+    const { unmount } = render(<Otp />);
+    expect(cls(screen.getByTestId("slot-0"))).not.toMatch(/\[\d+px\]/);
+    unmount();
+    render(<Otp size="lg" />);
+    expect(cls(screen.getByTestId("slot-0"))).not.toMatch(/\[\d+px\]/);
+  });
+});
+
 /* ── SegmentedControl ─────────────────────────────────────────────────────── */
 
 describe("SegmentedControl · 槽与滑块", () => {
