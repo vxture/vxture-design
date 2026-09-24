@@ -51,23 +51,55 @@ const { version } = JSON.parse(await readFile(PKG, "utf8"));
 
 const problems = [];
 
-/** 仓内文档：头部的「适用版本：**DS x.y.z**」。 */
-const DOCS = path.join(ROOT, "docs");
-for (const name of (await readdir(DOCS)).filter((f) => /^\d.*\.md$/.test(f))) {
-  const text = await readFile(path.join(DOCS, name), "utf8");
-  const m = text.match(/适用版本：\*\*DS (\d+\.\d+\.\d+)\*\*/);
-  if (!m) {
-    problems.push(`docs/${name}：头部没有「适用版本：**DS x.y.z**」`);
-  } else if (m[1] !== version) {
-    problems.push(`docs/${name}：写的是 DS ${m[1]}，伞包实际是 ${version}`);
+/*
+ * 查过的份数**算出来**，不写死。这一行原本是「12 份文档一致声明 DS x.y.z」，
+ * 而 2026-09-24 把随包规范那八份纳进来之后它一个字都没变，照样声称 12 份
+ * ——与 self-test.mjs 里那句「全部 N 条守卫」同一个病（070 §1.1）。
+ */
+let checked = 0;
+
+/**
+ * markdown 文档：头部的「适用版本：**DS x.y.z**」。
+ *
+ * 两处都要查、判据一样，所以抽成一个函数而不是复制一份循环——复制的那份以后
+ * 改规则时会漏改，而漏改的那处不报错，只是少查一批文件（070 §1.1）。
+ */
+async function checkMarkdownDir(dir, accept) {
+  for (const name of (await readdir(path.join(ROOT, dir))).filter(accept)) {
+    checked += 1;
+    const text = await readFile(path.join(ROOT, dir, name), "utf8");
+    const m = text.match(/适用版本：\*\*DS (\d+\.\d+\.\d+)\*\*/);
+    if (!m) {
+      problems.push(`${dir}/${name}：头部没有「适用版本：**DS x.y.z**」`);
+    } else if (m[1] !== version) {
+      problems.push(`${dir}/${name}：写的是 DS ${m[1]}，伞包实际是 ${version}`);
+    }
   }
 }
+
+/** 仓内流程与架构文档。 */
+await checkMarkdownDir("docs", (f) => /^\d.*\.md$/.test(f));
+
+/**
+ * **随包发布的对外规范**（`packages/design-system/docs`，在伞包的 `files` 里）。
+ *
+ * 纳入本守卫是 2026-09-24 的决定：这八份是消费方直接读的契约，过期的危害比仓内
+ * 文档更大——读的人不在本仓，看不到 git 历史，只能信头部那一行。
+ *
+ * 在此之前它们各自带着一个 `版本：1.0.0`，从写下那天起没动过，而
+ * `03-patterns-guide.md` 已经改了七次。那正是本文件开头记载的病：**一个不指向
+ * 任何可核对事实的号码，因此也没人能发现它不对。** 现在它们只带伞包这一个号。
+ *
+ * 这一处收 `README.md`，所以不能沿用上面「文件名以数字开头」的过滤。
+ */
+await checkMarkdownDir("packages/design-system/docs", (f) => f.endsWith(".md"));
 
 /** Artifact 底本：页脚的「· DS x.y.z ·」。参照物不算，它是别人的页面。 */
 const ART = path.join(ROOT, "docs/artifacts");
 for (const name of (await readdir(ART)).filter(
   (f) => f.endsWith(".html") && !f.startsWith("_"),
 )) {
+  checked += 1;
   const text = await readFile(path.join(ART, name), "utf8");
   const foot = text.match(/<div class="foot">([^<]*)<\/div>/);
   if (!foot) {
@@ -152,10 +184,13 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  · ${p}`);
   console.error("");
   console.error(
-    "发版时文档要跟着走：改完 package.json 就把六份仓内文档的头部与六份",
+    "发版时文档要跟着走：改完 package.json 就把仓内文档与随包规范的头部、",
   );
-  console.error("Artifact 底本的页脚一起改，然后重新发布 Artifact。");
+  console.error(
+    "以及 Artifact 底本的页脚一起改，然后重新发布 Artifact。上面逐条列出了",
+  );
+  console.error("对不上的是哪一份——按那个清单改，不要凭记忆数份数。");
   process.exit(1);
 }
 
-console.log(`文档版本守卫通过（12 份文档一致声明 DS ${version}）。`);
+console.log(`文档版本守卫通过（${checked} 份文档一致声明 DS ${version}）。`);
