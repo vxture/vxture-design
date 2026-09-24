@@ -2407,10 +2407,10 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["shadcn", "vxture"],
     covers: ["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"],
     deviation:
-      "槽位绑控件刻度（h-control-md/w-control-md）随密度三档；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring",
+      "槽位绑控件刻度（md 档 control-md、lg 档 control-3xl）随密度三档；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。两个尺寸档是形态之别：md 连体（半边框 + first/last 收圆角），lg 独立方格（四边框 + radius-xl + 格间留白），档位定在根件经 context 下发",
     render: () => (
-      <div className="flex flex-col gap-md">
-        <Row label="6 位，3+3 分组" stack>
+      <div className="flex flex-col gap-lg">
+        <Row label="md（默认）· 6 位，3+3 分组" stack>
           <InputOTP maxLength={6}>
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -2422,6 +2422,15 @@ export const ENTRIES: readonly Entry[] = [
               <InputOTPSlot index={3} />
               <InputOTPSlot index={4} />
               <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
+        </Row>
+        <Row label="lg · 独立方格，不分组（验证弹窗用）" stack>
+          <InputOTP maxLength={6} size="lg">
+            <InputOTPGroup>
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <InputOTPSlot key={i} index={i} />
+              ))}
             </InputOTPGroup>
           </InputOTP>
         </Row>

@@ -5,6 +5,14 @@
 
 ---
 
+## 12.18.0 — 2026-09-24
+
+跟随 design-ui 9.12.0：`InputOTP` 新增 `size="lg"` 档（minor：纯增量）。
+
+伞包自身无改动，再导出面不变（design-ui 258 + design-tokens 7）。新增的
+`InputOTPSize` 是类型导出，与既有的 `ToggleSize` / `ButtonSize` 一样走
+`export *`，不进再导出清单。
+
 ## 12.12.0 — 2026-09-16
 
 默认标识资产对消费方开放（minor：纯增量）。
