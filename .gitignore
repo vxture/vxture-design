@@ -33,6 +33,12 @@ build/
 dist/
 **/dist/
 
+# Figma 同步的过程产物——可重生成或会过期的运行期文件，不入仓：
+# token manifest 由 scripts/generate-figma-token-manifest.mjs 写到仓库根目录；
+# state 文件是同步流程的状态机，带 sourceRevision，换个版本就作废。
+figma-token-manifest-*.json
+design-system-state-*.json
+
 # Environment variables — deny-by-default: every .env* at any level is ignored
 # except *.example templates (real values live in runtime/ locally or
 # /srv/vxture/runtime on hosts).
