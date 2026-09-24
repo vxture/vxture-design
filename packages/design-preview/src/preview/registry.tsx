@@ -248,6 +248,7 @@ import {
   ShellPanelRow,
   ShellPanelSection,
   ShellPanelSectionTitle,
+  ShellPanelSlots,
   ShellScopePanel,
   ShellSearchBox,
   ShellSidebarFrame,
@@ -2565,7 +2566,7 @@ export const ENTRIES: readonly Entry[] = [
     group: "外壳与登录",
     tags: ["vxture", "patterns"],
     deviation:
-      "header 各类浮层面板的公共骨架：Content（定宽/留白/打开时不抢焦点）+ Header + Section + 四种行（信息行 / 控件行 / 计量行 / 可进入行）。四种行共用同一套列与行高，所以图标严格同列——这件事由组件保证，不靠调用方拼 flex 时自觉对齐",
+      "header 各类浮层面板的公共骨架：Content（定宽/留白/打开时不抢焦点）+ Header + Section + 四种行（信息行 / 控件行 / 计量行 / 可进入行）。四种行共用同一套列与行高，所以图标严格同列——这件事由组件保证，不靠调用方拼 flex 时自觉对齐。左侧那块是照 Figma 的 TenantPanel（194:428）**整块搭出来的**，作为原语的验收面：搭不出来就是零件缺了一块。面板本身没做成组件——额度/存储/余额/账单是产品信息架构，DS 收了它，每个门户改一次账单口径就要发一次 DS 版本",
     render: () => <ShellPanelDemo />,
   },
   {
@@ -2800,16 +2801,45 @@ function ShellChromeDemo() {
           onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
         />
       </Row>
-      <Row label="ShellUserMenu" stack>
+      {/*
+       * 照 Figma 的 UserPanel（190:603）整块搭出来——**没有另做 ShellUserPanel**：
+       * 这件本身就是用户面板，槽位（extras / settings / links / actions）正是
+       * 留给产品填内容的。再建一个同名同义的件就是第二个轮子。
+       */}
+      <Row label="ShellUserMenu · 照 Figma UserPanel 整块搭" stack>
         <ShellUserMenu
           user={{
-            displayName: "郭衍浩",
-            uniqueLine: "@yanhao",
-            avatarFallback: "郭",
-            statusTag: { label: "已认证", verified: true },
-            badges: [{ key: "lv", label: "Lv.4" }],
+            displayName: "User Name",
+            uniqueLine: "18022228888",
+            meta: "abcdefg@gmail.com",
+            avatarFallback: "U",
+            statusTag: { label: "个人认证", verified: true },
           }}
-          links={[{ key: "profile", label: "个人信息", href: "#profile" }]}
+          extras={
+            <ShellPanelSlots
+              label="账户标识"
+              lead="identity"
+              leadIcon="seal-check"
+              slots={[
+                { key: "s1", icon: "seal-check", label: "实名", earned: true },
+                { key: "s2", icon: "shield", label: "安全", earned: true },
+                { key: "s3", icon: "star", label: "会员" },
+                { key: "s4", icon: "medal", label: "贡献" },
+                { key: "s5", icon: "gift", label: "权益" },
+              ]}
+            />
+          }
+          settings={
+            <ShellPreferencePanel
+              locale={locale}
+              theme={theme}
+              density="default"
+              fontSize="default"
+              onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
+              onThemeChange={(next) => setTheme(next)}
+            />
+          }
+          links={[{ key: "profile", label: "个人中心", href: "#profile" }]}
           actions={[
             {
               key: "switch",
@@ -4094,69 +4124,103 @@ function ShellScopePanelDemo() {
 }
 
 function ShellPanelDemo() {
+  /*
+   * 这不是零件抽样，是**照 Figma 的 TenantPanel（194:428）整块搭出来的**——
+   * 面板原语的验收面：搭不出来就说明零件还缺一块，而不是"示例写得简单些"。
+   *
+   * 面板本身没有做成组件：额度、存储、余额、账单是产品信息架构，DS 收了它，
+   * 每个门户改一次账单口径就要发一次 DS 版本（分工见 ShellUserMenu 的头注释）。
+   */
   return (
-    <div className="w-fit rounded-md border border-border bg-popover">
-      <div className="flex w-80 flex-col gap-md p-md">
-        <ShellPanelHeader
-          icon="user"
-          title="示例用户"
-          titleAside={<StatusBadge tone="success">已认证</StatusBadge>}
-          metaRows={[
-            { key: "org", icon: "buildings", content: "平台运维" },
-            { key: "mail", icon: "mail", content: "ops@example.test" },
-          ]}
-        />
-        <ShellPanelSection title="资源">
-          <ShellPanelMeterRow
-            icon="sparkles"
-            label="AI Credits"
-            description="workspace"
-            value="300"
-            unit="分"
-            valueLabel="已用 30% · 共 1000 分"
-            percent={30}
+    <div className="flex flex-wrap items-start gap-lg">
+      <div className="w-fit rounded-md border border-border bg-popover">
+        <div className="flex w-80 flex-col gap-md p-md">
+          {/* 主体是组织，所以 lead="icon" 不画头像圈 */}
+          <ShellPanelHeader
+            lead="icon"
+            icon="buildings"
+            title="Tenant Name"
+            titleAside={<Badge>个人租户</Badge>}
+            metaRows={[
+              { key: "ws", content: "default workspace" },
+              { key: "code", content: "T-2222888885" },
+            ]}
           />
-          <ShellPanelMeterRow
-            icon="database"
-            label="Storage"
-            description="workspace"
-            value="300"
-            unit="MB"
-            valueLabel="已用 30% · 共 1000 MB"
-            percent={30}
-          />
-        </ShellPanelSection>
-        <ShellPanelSection title="账单">
-          <ShellPanelRow
-            icon="wallet"
-            label="账户余额"
-            description="不含平台卡券"
-            value="200.00"
-            unit="RMB"
-            valueTone="strong"
-          />
-          <ShellPanelRow
-            icon="receipt"
-            label="本月账单"
-            description="2026/09"
-            value="100.00"
-            unit="RMB"
-            valueTone="strong"
-          />
-          <ShellPanelRow icon="gauge" label="配额" value="82%" />
-        </ShellPanelSection>
-        <ShellPanelSection title="偏好">
-          <ShellPanelControlRow icon="translate" label="语言">
-            <NativeSelect defaultValue="zh-CN" aria-label="语言">
-              <option value="zh-CN">简体中文</option>
-            </NativeSelect>
-          </ShellPanelControlRow>
-        </ShellPanelSection>
-        <ShellPanelSection>
-          <ShellPanelSectionTitle>入口</ShellPanelSectionTitle>
-          <ShellPanelRow icon="settings" label="设置" onClick={() => {}} />
-          <ShellPanelRow icon="lock" label="安全中心" disabled />
-        </ShellPanelSection>
+          <ShellPanelSection title="资源">
+            <ShellPanelMeterRow
+              icon="sparkles"
+              label="AI Credits"
+              description="workspace"
+              value="300"
+              unit="分"
+              valueLabel="已用 30% · 共 1000 分"
+              percent={30}
+            />
+            <ShellPanelMeterRow
+              icon="database"
+              label="Storage"
+              description="workspace"
+              value="300"
+              unit="MB"
+              valueLabel="已用 30% · 共 1000 MB"
+              percent={30}
+            />
+          </ShellPanelSection>
+          <ShellPanelSection title="账单">
+            <ShellPanelRow
+              icon="wallet"
+              label="账户余额"
+              description="不含平台卡券"
+              value="200.00"
+              unit="RMB"
+              valueTone="strong"
+            />
+            <ShellPanelRow
+              icon="receipt"
+              label="本月账单"
+              description="2026/09"
+              value="100.00"
+              unit="RMB"
+              valueTone="strong"
+            />
+          </ShellPanelSection>
+          <ShellPanelSection>
+            <ShellPanelRow
+              icon="buildings"
+              label="租户信息"
+              description="说明信息"
+              onClick={() => {}}
+            />
+            <ShellPanelRow
+              icon="arrow-left-right"
+              label="切换租户"
+              description="切换租户、工作空间"
+              onClick={() => {}}
+            />
+          </ShellPanelSection>
+        </div>
+      </div>
+
+      {/*
+       * 上面那块没用到的两个原语单独摆一次——它们是公开导出，预览面是这套系统
+       * 唯一的验收面，从展示里掉出去等于没人再看得见它们。
+       * （check-preview-coverage 是**按文件**覆盖的，同文件里少展示一个导出它不报。）
+       */}
+      <div className="w-fit rounded-md border border-border bg-popover">
+        <div className="flex w-80 flex-col gap-md p-md">
+          <ShellPanelSection title="偏好">
+            <ShellPanelControlRow icon="translate" label="语言">
+              <NativeSelect defaultValue="zh-CN" aria-label="语言">
+                <option value="zh-CN">简体中文</option>
+              </NativeSelect>
+            </ShellPanelControlRow>
+          </ShellPanelSection>
+          <ShellPanelSection>
+            <ShellPanelSectionTitle>入口</ShellPanelSectionTitle>
+            <ShellPanelRow icon="settings" label="设置" onClick={() => {}} />
+            <ShellPanelRow icon="lock" label="安全中心" disabled />
+          </ShellPanelSection>
+        </div>
       </div>
     </div>
   );
