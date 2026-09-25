@@ -36,6 +36,16 @@
   ShellUserPanel 并排，两块外壳都走 `ShellPanelSurface`。内容照 Figma UserPanel
   （190:603）配，偏好设置用中文档名。
 
+### `ShellPanelRow` 的 `strong` 档：纯数字，与 `ShellPanelMeterRow` 读数同款
+
+**不用改代码，观感变了**：`valueTone="strong"`（账户余额、本月账单）不再套浅蓝
+底色块，改为与 `ShellPanelMeterRow`（额度、存储）的读数**同一份渲染**：数字
+label-xl（18px）、单位 label-sm（12px、弱化色）、间距 `gap-2xs`、底对齐。
+
+此前两者各写一份：余额 16px 数字套 24px 高的底块，存储 18px 纯数字。同一块面板
+里数字高度、单位位置对不上（owner 2026-09-25）。`valueTone` 的 API 不变，
+`"muted"`（小灰字）不受影响。
+
 ## 12.22.0 — 2026-09-25
 
 跟随 `@vxture/design-tokens@3.4.0`（minor）。详见 design-tokens 3.4.0。

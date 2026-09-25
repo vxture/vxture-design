@@ -562,17 +562,50 @@ describe("ShellPanelRow · 值的单位与语气", () => {
   });
 
   /**
-   * `strong` 是给「这一行就是为了让人看这个数」的行用的（账户余额、本月账单）。
-   * 变异「strong 也走 muted 那支」时这条挂。
+   * `strong` 是给「这一行就是为了让人看这个数」的行用的（账户余额、本月账单）：
+   * 大号纯数字，不套底色块。变异「strong 也走 muted 那支」时这条挂。
    */
-  it("strong：primary-muted 底色块 + label-lg", () => {
+  it("strong：label-xl 纯数字，不套底色块", () => {
     render(
       <ShellPanelRow label="账户余额" value="200.00" valueTone="strong" />,
     );
     const v = screen.getByText("200.00");
-    expect(hasClass(v, "bg-primary-muted")).toBe(true);
-    expect(hasClass(v, "text-primary-muted-foreground")).toBe(true);
-    expect(hasClass(v, "text-label-lg")).toBe(true);
+    expect(hasClass(v, "text-label-xl")).toBe(true);
+    expect(hasClass(v, "bg-primary-muted")).toBe(false);
+  });
+
+  /**
+   * 余额与存储同在一块面板里，数字高度、单位、对齐必须一模一样——两处是
+   * **同一份渲染**。判据：读数、单位、以及包着它们的那一层，类名逐字相同。
+   * 变异「任一处单独改字号 / 间距 / 对齐」时这条挂。
+   */
+  it("strong 的读数与 MeterRow 的读数同款", () => {
+    const a = render(
+      <ShellPanelRow
+        label="账户余额"
+        value="200.00"
+        unit="RMB"
+        valueTone="strong"
+      />,
+    );
+    const rowValue = screen.getByText("200.00");
+    const rowUnit = screen.getByText("RMB");
+    const row = [
+      rowValue.className,
+      rowUnit.className,
+      rowValue.parentElement!.className,
+    ];
+    a.unmount();
+
+    render(
+      <ShellPanelMeterRow label="Storage" percent={30} value="300" unit="MB" />,
+    );
+    const meterValue = screen.getByText("300");
+    expect([
+      meterValue.className,
+      screen.getByText("MB").className,
+      meterValue.parentElement!.className,
+    ]).toEqual(row);
   });
 
   /**

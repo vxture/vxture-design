@@ -400,7 +400,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">ShellUserPanel</td><td>内容：头部、徽章、自定义段、回到来处、链接、偏好设置、动作</td><td>不需要「点头像才出来」的地方：抽屉、移动端账户页、预览面</td></tr>
 </tbody></table></div>
 <div class="note warn"><strong><span class="mono">ShellUserMenu</span> 的 API 一字未变</strong>，弹层里渲染的就是 <span class="mono">ShellUserPanel</span> 的同一份代码，两处不会各自漂移。平铺时外壳带面板表面（底色 / 描边 / 圆角）但不带阴影；选中一项后调用可选的 <span class="mono">onItemSelect</span>，<span class="mono">ShellUserMenu</span> 用它收起弹层。</div>
-<p><strong>新增 <span class="mono">ShellPanelSurface</span></strong>：<span class="mono">ShellPanelContent</span> 的不弹层版本，同宽、同留白、同段间距、同表面，不带阴影。面板平铺时（抽屉、设置页、移动端账户页）<strong>用它做外壳，不要手写 div</strong>——手写的外壳宽度、留白、边线各写各的，业务系统之间就对不上了。<span class="mono">ShellUserPanel</span> 的平铺外壳就是它。</p></section>
+<p><strong>新增 <span class="mono">ShellPanelSurface</span></strong>：<span class="mono">ShellPanelContent</span> 的不弹层版本，同宽、同留白、同段间距、同表面，不带阴影。面板平铺时（抽屉、设置页、移动端账户页）<strong>用它做外壳，不要手写 div</strong>——手写的外壳宽度、留白、边线各写各的，业务系统之间就对不上了。<span class="mono">ShellUserPanel</span> 的平铺外壳就是它。</p>
+<div class="note warn"><strong>不用改代码，观感变了：<span class="mono">ShellPanelRow</span> 的 <span class="mono">valueTone="strong"</span> 不再套浅蓝底块。</strong>账户余额、本月账单这类读数改为与 <span class="mono">ShellPanelMeterRow</span>（额度、存储）同一份渲染：18px 纯数字 + 12px 弱化单位，底对齐。同一块面板里所有读数的数字高度与单位位置从此一致。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>

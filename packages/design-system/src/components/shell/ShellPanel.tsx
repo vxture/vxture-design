@@ -64,6 +64,32 @@ const IDENTITY_SIZE = "size-media-sm";
 const IDENTITY_WIDTH = "w-media-sm";
 
 /**
+ * 读数 + 单位：`ShellPanelMeterRow` 的读数与 `ShellPanelRow` 的 `strong` 档
+ * **共用这一份**——额度、存储、账户余额、本月账单同在一块面板里，数字的高度、
+ * 单位的大小与对齐必须一模一样（owner 2026-09-25）。各写一份就会各自漂移：
+ * 此前余额是 16px 数字套浅蓝底块，存储是 18px 纯数字。
+ *
+ * 纯数字，不套底色块：读数本身就是这一行的重点，字号已经把它拎出来了。
+ */
+function RowReadout({
+  value,
+  unit,
+}: {
+  value: ReactNode;
+  unit?: ReactNode | undefined;
+}) {
+  return (
+    /* 底对齐：读数比单位高一截，顶对齐会让单位浮在半空。 */
+    <span className="flex shrink-0 items-end gap-2xs">
+      <span className="text-label-xl tabular-nums">{value}</span>
+      {unit !== undefined && unit !== null ? (
+        <span className="text-label-sm text-muted-foreground">{unit}</span>
+      ) : null}
+    </span>
+  );
+}
+
+/**
  * 行首图标格。**无图标也渲染**：同一段里有的行带图标、有的不带时，缺格的那
  * 行文字会左窜一格，整段左缘就毛了。
  */
@@ -352,8 +378,10 @@ export interface ShellPanelRowProps {
    * 值的语气：
    * - `"muted"`（默认）——小一号的灰字，用在「顺带说一下」的值上（当前语言、
    *   已选项）。
-   * - `"strong"`——primary-muted 底色的数值块，用在「这一行就是为了让人看这个数」
-   *   的行上（账户余额、本月账单）。
+   * - `"strong"`——大号纯数字读数（label-xl），用在「这一行就是为了让人看这个数」
+   *   的行上（账户余额、本月账单）。与 `ShellPanelMeterRow` 的读数**同一份渲染**，
+   *   同一块面板里余额与存储的数字高度、单位、对齐一模一样。不套底色块
+   *   （owner 2026-09-25）。
    *
    * 不做成 `danger` 那样的语义色档：这里区分的是**轻重**不是吉凶，余额为负该由
    * 调用方换文案或换行，不是把块染红。
@@ -425,22 +453,21 @@ export function ShellPanelRow({
         ) : null}
       </span>
       {value !== undefined && value !== null ? (
-        /* 底对齐：数值块比单位高一截，顶对齐会让单位浮在半空。 */
-        <span className="flex shrink-0 items-end gap-2xs">
-          <span
-            className={cn(
-              "tabular-nums",
-              valueTone === "strong"
-                ? "flex h-control-xs items-center rounded-md bg-primary-muted px-2xs text-label-lg text-primary-muted-foreground"
-                : "text-body-sm text-muted-foreground",
-            )}
-          >
-            {value}
+        valueTone === "strong" ? (
+          <RowReadout value={value} unit={unit} />
+        ) : (
+          /* 底对齐：数值比单位高一截，顶对齐会让单位浮在半空。 */
+          <span className="flex shrink-0 items-end gap-2xs">
+            <span className="text-body-sm text-muted-foreground tabular-nums">
+              {value}
+            </span>
+            {unit !== undefined && unit !== null ? (
+              <span className="text-label-sm text-muted-foreground">
+                {unit}
+              </span>
+            ) : null}
           </span>
-          {unit !== undefined && unit !== null ? (
-            <span className="text-label-sm text-muted-foreground">{unit}</span>
-          ) : null}
-        </span>
+        )
       ) : null}
       {trailing ? (
         <Icon
@@ -613,15 +640,7 @@ export function ShellPanelMeterRow({
       </div>
       <div className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
         {value !== undefined && value !== null ? (
-          /* 底对齐：读数比单位高一截，顶对齐会让单位浮在半空。 */
-          <span className="flex items-end gap-2xs">
-            <span className="text-label-xl tabular-nums">{value}</span>
-            {unit !== undefined && unit !== null ? (
-              <span className="text-label-sm text-muted-foreground">
-                {unit}
-              </span>
-            ) : null}
-          </span>
+          <RowReadout value={value} unit={unit} />
         ) : null}
         <Progress value={safe} className="w-full" />
         {valueLabel !== undefined && valueLabel !== null ? (
