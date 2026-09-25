@@ -243,12 +243,10 @@ import {
   ShellHeader,
   ShellLauncher,
   ShellPageContainer,
-  ShellPanelControlRow,
   ShellPanelHeader,
   ShellPanelMeterRow,
   ShellPanelRow,
   ShellPanelSection,
-  ShellPanelSectionTitle,
   ShellPanelSlots,
   ShellScopePanel,
   ShellSearchBox,
@@ -2777,7 +2775,11 @@ function DatePickerDemo() {
   );
 }
 
-function ShellChromeDemo() {
+/**
+ * 照 Figma 的 UserPanel（190:603）配的整块内容，ShellChrome 与 ShellPanel 两页
+ * 共用同一份——各写一份，两页的用户面板迟早对不上。
+ */
+function useFigmaUserPanel() {
   const [locale, setLocale] = React.useState<"zh-CN" | "en-US">("zh-CN");
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">(
     "light",
@@ -2790,7 +2792,7 @@ function ShellChromeDemo() {
   );
 
   /*
-   * 照 Figma 的 UserPanel（190:603）配的内容。`ShellUserMenu`（头像 + 弹层）与
+   * `ShellUserMenu`（头像 + 弹层）与
    * `ShellUserPanel`（平铺）吃**同一份**——前者弹层里装的就是后者，两处渲染的
    * 是同一份代码。
    */
@@ -2858,6 +2860,11 @@ function ShellChromeDemo() {
       },
     ],
   } satisfies React.ComponentProps<typeof ShellUserPanel>;
+  return { userPanel, locale, setLocale, theme, setTheme };
+}
+
+function ShellChromeDemo() {
+  const { userPanel, locale, setLocale, theme, setTheme } = useFigmaUserPanel();
 
   return (
     <div className="flex w-full flex-col gap-md">
@@ -4156,6 +4163,7 @@ function ShellScopePanelDemo() {
 }
 
 function ShellPanelDemo() {
+  const { userPanel } = useFigmaUserPanel();
   /*
    * 这不是零件抽样，是**照 Figma 的 TenantPanel（194:428）整块搭出来的**——
    * 面板原语的验收面：搭不出来就说明零件还缺一块，而不是"示例写得简单些"。
@@ -4234,26 +4242,11 @@ function ShellPanelDemo() {
       </div>
 
       {/*
-       * 上面那块没用到的两个原语单独摆一次——它们是公开导出，预览面是这套系统
-       * 唯一的验收面，从展示里掉出去等于没人再看得见它们。
-       * （check-preview-coverage 是**按文件**覆盖的，同文件里少展示一个导出它不报。）
+       * 与 TenantPanel 并排的 UserPanel（Figma 190:603）：直接用 DS 的
+       * `ShellUserPanel` 组件，内容与 ShellChrome 页同一份（useFigmaUserPanel）。
+       * 两块对照看，面板原语在两种主体（组织 / 人）上是否一致一眼可见。
        */}
-      <div className="w-fit rounded-md border border-border bg-popover">
-        <div className="flex w-80 flex-col gap-md p-md">
-          <ShellPanelSection title="偏好">
-            <ShellPanelControlRow icon="translate" label="语言">
-              <NativeSelect defaultValue="zh-CN" aria-label="语言">
-                <option value="zh-CN">简体中文</option>
-              </NativeSelect>
-            </ShellPanelControlRow>
-          </ShellPanelSection>
-          <ShellPanelSection>
-            <ShellPanelSectionTitle>入口</ShellPanelSectionTitle>
-            <ShellPanelRow icon="settings" label="设置" onClick={() => {}} />
-            <ShellPanelRow icon="lock" label="安全中心" disabled />
-          </ShellPanelSection>
-        </div>
-      </div>
+      <ShellUserPanel {...userPanel} />
     </div>
   );
 }
