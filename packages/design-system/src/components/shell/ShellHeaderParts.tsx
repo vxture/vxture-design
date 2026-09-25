@@ -92,7 +92,10 @@ export function ShellHeaderTitle({
       data-slot="header-title"
       className={cn("flex min-w-0 items-center gap-xs", className)}
     >
-      <span className="truncate whitespace-nowrap text-heading-3 font-bold text-foreground">
+      {/* font-brand 必须单独写：排版角色的 `text-heading-3` 只带字号 / 行高 / 字距 /
+          字重，**不带字体族**（generate-semantic-scales 的注释）。漏了它标题会落回
+          正文体 Inter，而 Figma 是 Funnel Display（2026-09-26 owner 实页发现）。 */}
+      <span className="truncate whitespace-nowrap font-brand text-heading-3 font-bold text-foreground">
         {children}
       </span>
       {badge ? <span className="shrink-0">{badge}</span> : null}

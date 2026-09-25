@@ -43,9 +43,14 @@ describe("ShellHeaderMark", () => {
 });
 
 describe("ShellHeaderTitle", () => {
-  it("品牌字体 24px 粗体", () => {
+  /**
+   * `text-heading-3` 只带字号 / 行高 / 字距 / 字重，**不带字体族**——品牌字体要
+   * 单独挂 `font-brand`，漏了就落回正文体（2026-09-26 owner 实页发现）。
+   */
+  it("品牌字体 24px 粗体：font-brand 必须单独挂", () => {
     render(<ShellHeaderTitle>Workspace Console</ShellHeaderTitle>);
     const t = tokens(screen.getByText("Workspace Console"));
+    expect(t).toContain("font-brand");
     expect(t).toContain("text-heading-3");
     expect(t).toContain("font-bold");
   });
