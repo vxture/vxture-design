@@ -11,7 +11,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { Popover, PopoverTrigger } from "@vxture/design-ui";
+import { Icon, Popover, PopoverTrigger } from "@vxture/design-ui";
 import {
   SHELL_PANEL_HAIRLINE,
   ShellPanelContent,
@@ -23,6 +23,7 @@ import {
   ShellPanelSection,
   ShellPanelSectionTitle,
   ShellPanelSlots,
+  ShellPanelSurface,
   ShellScopeButton,
 } from "../src/components/shell/ShellPanel";
 
@@ -561,17 +562,50 @@ describe("ShellPanelRow · 值的单位与语气", () => {
   });
 
   /**
-   * `strong` 是给「这一行就是为了让人看这个数」的行用的（账户余额、本月账单）。
-   * 变异「strong 也走 muted 那支」时这条挂。
+   * `strong` 是给「这一行就是为了让人看这个数」的行用的（账户余额、本月账单）：
+   * 大号纯数字，不套底色块。变异「strong 也走 muted 那支」时这条挂。
    */
-  it("strong：primary-muted 底色块 + label-lg", () => {
+  it("strong：label-xl 纯数字，不套底色块", () => {
     render(
       <ShellPanelRow label="账户余额" value="200.00" valueTone="strong" />,
     );
     const v = screen.getByText("200.00");
-    expect(hasClass(v, "bg-primary-muted")).toBe(true);
-    expect(hasClass(v, "text-primary-muted-foreground")).toBe(true);
-    expect(hasClass(v, "text-label-lg")).toBe(true);
+    expect(hasClass(v, "text-label-xl")).toBe(true);
+    expect(hasClass(v, "bg-primary-muted")).toBe(false);
+  });
+
+  /**
+   * 余额与存储同在一块面板里，数字高度、单位、对齐必须一模一样——两处是
+   * **同一份渲染**。判据：读数、单位、以及包着它们的那一层，类名逐字相同。
+   * 变异「任一处单独改字号 / 间距 / 对齐」时这条挂。
+   */
+  it("strong 的读数与 MeterRow 的读数同款", () => {
+    const a = render(
+      <ShellPanelRow
+        label="账户余额"
+        value="200.00"
+        unit="RMB"
+        valueTone="strong"
+      />,
+    );
+    const rowValue = screen.getByText("200.00");
+    const rowUnit = screen.getByText("RMB");
+    const row = [
+      rowValue.className,
+      rowUnit.className,
+      rowValue.parentElement!.className,
+    ];
+    a.unmount();
+
+    render(
+      <ShellPanelMeterRow label="Storage" percent={30} value="300" unit="MB" />,
+    );
+    const meterValue = screen.getByText("300");
+    expect([
+      meterValue.className,
+      screen.getByText("MB").className,
+      meterValue.parentElement!.className,
+    ]).toEqual(row);
   });
 
   /**
@@ -849,5 +883,220 @@ describe("ShellScopePanel · 两级范围切换", () => {
     );
     await user.click(screen.getByText("停用的"));
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  /**
+   * **只有当前所在项突出显示，其余一律浅灰底**——不分是不是当前租户下的
+   * （owner 2026-09-25）。刻意选组内第二项：同组的第一项与另一组的项都要是灰的。
+   */
+  it("只有选中项走 accent，其余（含同组与别组）都是浅灰底", () => {
+    render1("w2");
+    for (const el of screen.getAllByRole("menuitemradio")) {
+      const selected = el.getAttribute("aria-checked") === "true";
+      expect(hasClass(el, "bg-accent")).toBe(selected);
+      expect(hasClass(el, "bg-muted")).toBe(!selected);
+    }
+  });
+
+  /** 有没有副行都占同一档行高，否则同一组里单行项与双行项忽高忽低。 */
+  it("单行项与双行项同一最小行高", () => {
+    render1("w1");
+    for (const el of screen.getAllByRole("menuitemradio")) {
+      expect(hasClass(el, "min-h-control-2xl")).toBe(true);
+    }
+  });
+
+  /** 选中标记是圆形对勾（check-circle），不是细对勾。 */
+  it("选中项尾部是 check-circle", () => {
+    const probe = render(<Icon name="check-circle" size="md" />);
+    const glyph = probe.container.querySelector("svg")!.innerHTML;
+    probe.unmount();
+
+    render1("w1");
+    const checked = screen
+      .getAllByRole("menuitemradio")
+      .find((el) => el.getAttribute("aria-checked") === "true")!;
+    expect([...checked.querySelectorAll("svg")].at(-1)!.innerHTML).toBe(glyph);
+  });
+
+  /**
+   * 组标题用紧凑头部：图标不占 48px 标识列，组名才不会被推到比子项还靠右。
+   * 变异「去掉 compact」时这条挂。
+   */
+  /**
+   * 项文字与组名同列靠一条算术成立：组名起点 px-sm + 24 + gap-md，项文字起点
+   * pl-md + px-sm + 16 + gap-xs，默认密度下两边都是 50px。任一项被改，
+   * 对齐就静默失效——所以把参与算术的每一项都钉住。
+   */
+  it("项图标 16px、图标与文字间距 gap-xs、项容器缩进 pl-md", () => {
+    render1("w1");
+    const item = screen.getAllByRole("menuitemradio")[0]!;
+    expect(hasClass(item, "gap-xs")).toBe(true);
+    expect(hasClass(item, "px-sm")).toBe(true);
+    expect(hasClass(item.parentElement, "pl-md")).toBe(true);
+    expect(
+      item.querySelector("svg")!.getAttribute("class")!.split(" "),
+    ).toContain("size-icon-sm");
+  });
+
+  it("组标题的图标不占标识列", () => {
+    render1("w1");
+    const group = screen.getAllByRole("group")[0]!;
+    const icon = group.querySelector("svg")!;
+    expect(hasClass(icon.parentElement, "w-media-sm")).toBe(false);
+  });
+});
+
+/* ── 平铺外壳 ─────────────────────────────────────────────────────────────── */
+
+/**
+ * `ShellPanelSurface` 是 `ShellPanelContent` 的不弹层版本。两者的布局与表面
+ * 必须一致——业务系统平铺出来的面板要与弹层里的逐像素同款，这是它存在的理由。
+ */
+describe("ShellPanelSurface", () => {
+  const LAYOUT = ["flex", "w-80", "flex-col", "gap-md", "p-md"];
+  const SURFACE = ["bg-popover", "ring-1", "ring-foreground/10", "rounded-md"];
+
+  it("宽度、留白、段间距、表面与弹层外壳一致", () => {
+    render(
+      <Popover open>
+        <PopoverTrigger>t</PopoverTrigger>
+        <ShellPanelContent aria-label="弹层">x</ShellPanelContent>
+      </Popover>,
+    );
+    const popover = screen.getByLabelText("弹层");
+    const { container } = render(<ShellPanelSurface>y</ShellPanelSurface>);
+    const flat = container.firstElementChild;
+    for (const token of [...LAYOUT, ...SURFACE]) {
+      expect(hasClass(flat, token)).toBe(true);
+      expect(hasClass(popover, token)).toBe(true);
+    }
+  });
+
+  /** 阴影是「浮在上面」的信号，平铺的面板没有浮起来。 */
+  it("不带阴影", () => {
+    const { container } = render(<ShellPanelSurface>y</ShellPanelSurface>);
+    expect(container.firstElementChild?.className).not.toMatch(/shadow-/);
+  });
+
+  it("className 合并、其余属性透传", () => {
+    render(
+      <ShellPanelSurface className="EXTRA" aria-label="账户">
+        y
+      </ShellPanelSurface>,
+    );
+    const el = screen.getByLabelText("账户");
+    expect(hasClass(el, "EXTRA")).toBe(true);
+    expect(hasClass(el, "w-80")).toBe(true);
+  });
+});
+
+/* ── ShellPanelMeterRow · 可点 ────────────────────────────────────────────── */
+
+/**
+ * 读数行（额度、存储）与普通行（余额、租户信息…）同在一块面板里，都要能点
+ * 进控制台对应页面（owner 2026-09-25）。两者共用同一个外框，所以这里除了验
+ * 「能点」，还验「点起来与普通行一样」。
+ */
+describe("ShellPanelMeterRow · 可点", () => {
+  it("不给 href / onClick 时不可点，也没有角标", () => {
+    const { container } = render(
+      <ShellPanelMeterRow label="Storage" percent={30} value="300" />,
+    );
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(container.querySelectorAll("svg")).toHaveLength(0);
+  });
+
+  it("给 href 是链接，带角标；newTab 补 rel", () => {
+    render(
+      <ShellPanelMeterRow
+        label="Storage"
+        percent={30}
+        value="300"
+        href="/console/storage"
+        newTab
+      />,
+    );
+    const link = screen.getByRole("link", { name: /Storage/ });
+    expect(link).toHaveAttribute("href", "/console/storage");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noreferrer noopener");
+    expect(link.querySelectorAll("svg").length).toBeGreaterThan(0);
+  });
+
+  it("给 onClick 是按钮，点了回调", async () => {
+    const onClick = vi.fn();
+    render(
+      <ShellPanelMeterRow label="AI Credits" percent={30} onClick={onClick} />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: /AI Credits/ }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("chevron={false} 可关掉角标", () => {
+    render(
+      <ShellPanelMeterRow
+        label="Storage"
+        percent={30}
+        href="/console/storage"
+        chevron={false}
+      />,
+    );
+    expect(
+      screen.getByRole("link", { name: /Storage/ }).querySelectorAll("svg"),
+    ).toHaveLength(0);
+  });
+
+  /**
+   * 与普通行同一个外框：悬停、焦点、圆角来自同一处。判据是两者的链接外框
+   * 除了各自的布局类，交互相关的类名一致。
+   */
+  it("可点时外框的交互样式与 ShellPanelRow 一致", () => {
+    const a = render(
+      <ShellPanelRow label="账户余额" href="/console/billing" value="1" />,
+    );
+    const rowClasses = new Set(
+      screen.getByRole("link").className.split(" ").filter(Boolean),
+    );
+    a.unmount();
+    render(
+      <ShellPanelMeterRow
+        label="Storage"
+        percent={30}
+        href="/console/storage"
+      />,
+    );
+    const meterClasses = new Set(
+      screen.getByRole("link").className.split(" ").filter(Boolean),
+    );
+    const interaction = [...rowClasses].filter((c) =>
+      /^(hover:|focus-visible:|active:|rounded|transition)/.test(c),
+    );
+    expect(interaction.length).toBeGreaterThan(0);
+    for (const c of interaction) expect(meterClasses.has(c)).toBe(true);
+  });
+});
+
+/* ── ShellPanelHeader · 紧凑档 ────────────────────────────────────────────── */
+
+describe("ShellPanelHeader · compact", () => {
+  /** 缺省仍占标识列：面板顶部的头部与各行图标同列，不因新参数改变。 */
+  it("缺省时图标占 48px 标识列", () => {
+    const { container } = render(
+      <ShellPanelHeader lead="icon" icon="buildings" title="租户" />,
+    );
+    expect(
+      hasClass(container.querySelector("svg")!.parentElement, "w-media-sm"),
+    ).toBe(true);
+  });
+
+  it("compact 时图标不占标识列", () => {
+    const { container } = render(
+      <ShellPanelHeader lead="icon" icon="buildings" title="租户" compact />,
+    );
+    expect(
+      hasClass(container.querySelector("svg")!.parentElement, "w-media-sm"),
+    ).toBe(false);
   });
 });

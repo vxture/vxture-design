@@ -67,6 +67,7 @@ export const ICON_GROUPS = [
       "minus", // 减少；复选框半选态的指示符
       "x",
       "check",
+      "check-circle", // 单选面板的选中标记；与 success（状态）同形不同义
       "copy",
       "play",
       "stop",
@@ -201,6 +202,7 @@ export const ICON_GROUPS = [
       "role", // 角色/权限主体
       "user-switch",
       "buildings",
+      "workspace", // 工作空间（租户下的一块工作区域）；与 cube（资源/包）同形不同义
       "users", // 用户组（原 user-group 已合并）
       "medal",
       "star",

@@ -17,9 +17,10 @@
  * 放 design-system 而不是 design-ui：`ShellPanelHeader` 复用同目录 `ShellChrome`
  * 的头像件，依赖方向是单向 design-system → design-ui。
  *
- * 与 `ShellUserMenu` 的关系：那个是**装配好的**账户菜单（带触发器与弹层），
- * 这里是**散件**。ShellUserMenu 的分段语法就是 ShellPanelSection，两处共用同
- * 一组常量，改一处等于改两处。
+ * 与 `ShellUserPanel` / `ShellUserMenu` 的关系：那两个是**装配好的**用户面板
+ * （前者是面板本体，后者是头像按钮 + 弹层，弹层里装前者），这里是**散件**。
+ * 用户面板的分段语法就是 ShellPanelSection，两处共用同一组常量，改一处等于
+ * 改两处。
  */
 
 import * as React from "react";
@@ -35,6 +36,7 @@ import {
   Separator,
   cn,
 } from "@vxture/design-ui";
+import { panel } from "@vxture/design-ui/styles";
 import type { IconName } from "@vxture/design-ui";
 
 /** 面板内的段落分隔：虚线发丝线（02-visual-spec.md §3）。ShellUserMenu 同款。 */
@@ -60,6 +62,32 @@ const ROW_ICON_TONE = "text-muted-foreground";
  */
 const IDENTITY_SIZE = "size-media-sm";
 const IDENTITY_WIDTH = "w-media-sm";
+
+/**
+ * 读数 + 单位：`ShellPanelMeterRow` 的读数与 `ShellPanelRow` 的 `strong` 档
+ * **共用这一份**——额度、存储、账户余额、本月账单同在一块面板里，数字的高度、
+ * 单位的大小与对齐必须一模一样（owner 2026-09-25）。各写一份就会各自漂移：
+ * 此前余额是 16px 数字套浅蓝底块，存储是 18px 纯数字。
+ *
+ * 纯数字，不套底色块：读数本身就是这一行的重点，字号已经把它拎出来了。
+ */
+function RowReadout({
+  value,
+  unit,
+}: {
+  value: ReactNode;
+  unit?: ReactNode | undefined;
+}) {
+  return (
+    /* 底对齐：读数比单位高一截，顶对齐会让单位浮在半空。 */
+    <span className="flex shrink-0 items-end gap-2xs">
+      <span className="text-label-xl tabular-nums">{value}</span>
+      {unit !== undefined && unit !== null ? (
+        <span className="text-label-sm text-muted-foreground">{unit}</span>
+      ) : null}
+    </span>
+  );
+}
 
 /**
  * 行首图标格。**无图标也渲染**：同一段里有的行带图标、有的不带时，缺格的那
@@ -137,6 +165,40 @@ export const ShellPanelContent = React.forwardRef<
   );
 });
 
+export interface ShellPanelSurfaceProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+/**
+ * 面板的**平铺外壳**：`ShellPanelContent` 的不弹层版本。
+ *
+ * 面板不一定装在弹层里——抽屉、设置页、移动端账户页、预览面都会直接平铺。
+ * 此前平铺时没有可用的外壳，调用方只能手写一个 div，宽度、留白、边线各写
+ * 各的（本仓预览就曾把边线写成 `border border-border`，与弹层的
+ * `ring-1 ring-foreground/10` 颜色与画法都不同）。外壳归组件，业务系统拼出来
+ * 的面板才能与弹层里的逐像素一致。
+ *
+ * 与 `ShellPanelContent` 同宽、同留白、同段间距、同表面（`panel.base` +
+ * 圆角）；**不带阴影**——阴影是「浮在上面」的信号，平铺的面板没有浮起来。
+ */
+export function ShellPanelSurface({
+  className,
+  ...props
+}: Readonly<ShellPanelSurfaceProps>) {
+  return (
+    <div
+      className={cn(
+        panel.base,
+        "rounded-md",
+        /* 与 ShellPanelContent 的 `flex w-80 flex-col gap-md p-md` **刻意重复**、
+           不抽常量：类名由消费方的 Tailwind 扫描本包源码生成，拼出来的串它
+           看不见（理由同 ShellPanelContent 的注释）。 */
+        "flex w-80 flex-col gap-md p-md",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 /* ─────────────────────────── 段落 ─────────────────────────── */
 
 export interface ShellPanelSectionProps {
@@ -204,6 +266,15 @@ export interface ShellPanelHeaderProps {
    * 两档占同一列宽，所以同一面板里混用也不会错行。
    */
   lead?: "avatar" | "icon" | undefined;
+  /**
+   * 紧凑档：只对 `lead="icon"` 生效。图标（24px）不再占 48px 的标识列，贴着内距
+   * 排，标题随之左移到与下方列表项的文字大致同列。
+   *
+   * 用在**列表里的组标题**（`ShellScopePanel` 的租户行）：标识列是给面板顶部
+   * 那种大头部用的，放进列表会把组名推得比它下面的子项还靠右，层级读反
+   * （owner 2026-09-25）。缺省 false，面板顶部的头部不受影响。
+   */
+  compact?: boolean | undefined;
   title: ReactNode;
   /** 标题右侧的贴标（认证状态之类），由调用方直接给节点——DS 不判断"什么算已认证"。 */
   titleAside?: ReactNode | undefined;
@@ -230,18 +301,20 @@ export function ShellPanelHeader({
   avatarAlt,
   avatarFallback,
   lead = "avatar",
+  compact = false,
   title,
   titleAside,
   tone = "default",
   metaRows = [],
   className,
 }: Readonly<ShellPanelHeaderProps>) {
-  /* 只放图标时也占满标识列宽——否则同一面板里两种头部会错开一格。 */
+  /* 只放图标时也占满标识列宽——否则同一面板里两种头部会错开一格。
+     紧凑档例外：列表里的组标题不与面板顶部的头部同列，不必占这一列。 */
   const bareIcon =
     lead === "icon" && icon ? (
       <span
         className={cn(
-          IDENTITY_WIDTH,
+          !compact && IDENTITY_WIDTH,
           "flex shrink-0 justify-center text-muted-foreground",
         )}
       >
@@ -316,8 +389,10 @@ export interface ShellPanelRowProps {
    * 值的语气：
    * - `"muted"`（默认）——小一号的灰字，用在「顺带说一下」的值上（当前语言、
    *   已选项）。
-   * - `"strong"`——primary-muted 底色的数值块，用在「这一行就是为了让人看这个数」
-   *   的行上（账户余额、本月账单）。
+   * - `"strong"`——大号纯数字读数（label-xl），用在「这一行就是为了让人看这个数」
+   *   的行上（账户余额、本月账单）。与 `ShellPanelMeterRow` 的读数**同一份渲染**，
+   *   同一块面板里余额与存储的数字高度、单位、对齐一模一样。不套底色块
+   *   （owner 2026-09-25）。
    *
    * 不做成 `danger` 那样的语义色档：这里区分的是**轻重**不是吉凶，余额为负该由
    * 调用方换文案或换行，不是把块染红。
@@ -389,22 +464,21 @@ export function ShellPanelRow({
         ) : null}
       </span>
       {value !== undefined && value !== null ? (
-        /* 底对齐：数值块比单位高一截，顶对齐会让单位浮在半空。 */
-        <span className="flex shrink-0 items-end gap-2xs">
-          <span
-            className={cn(
-              "tabular-nums",
-              valueTone === "strong"
-                ? "flex h-control-xs items-center rounded-md bg-primary-muted px-2xs text-label-lg text-primary-muted-foreground"
-                : "text-body-sm text-muted-foreground",
-            )}
-          >
-            {value}
+        valueTone === "strong" ? (
+          <RowReadout value={value} unit={unit} />
+        ) : (
+          /* 底对齐：数值比单位高一截，顶对齐会让单位浮在半空。 */
+          <span className="flex shrink-0 items-end gap-2xs">
+            <span className="text-body-sm text-muted-foreground tabular-nums">
+              {value}
+            </span>
+            {unit !== undefined && unit !== null ? (
+              <span className="text-label-sm text-muted-foreground">
+                {unit}
+              </span>
+            ) : null}
           </span>
-          {unit !== undefined && unit !== null ? (
-            <span className="text-label-sm text-muted-foreground">{unit}</span>
-          ) : null}
-        </span>
+        )
       ) : null}
       {trailing ? (
         <Icon
@@ -429,17 +503,60 @@ export function ShellPanelRow({
     className,
   );
 
+  return (
+    <RowFrame
+      interactive={interactive}
+      href={href}
+      linkComponent={linkComponent}
+      onClick={onClick}
+      newTab={newTab}
+      active={active}
+      disabled={disabled}
+      className={shared}
+    >
+      {inner}
+    </RowFrame>
+  );
+}
+
+/**
+ * 行的外框：不可点是 `div`，有 `href` 是链接，只有 `onClick` 是按钮。
+ * `ShellPanelRow` 与 `ShellPanelMeterRow` **共用这一份**——同一块面板里的行，
+ * 悬停底色、焦点环、选中态、禁用态必须一样（owner 2026-09-25：TenantPanel 六个
+ * 条目都要能点）。
+ */
+function RowFrame({
+  interactive,
+  href,
+  linkComponent,
+  onClick,
+  newTab,
+  active,
+  disabled,
+  className,
+  children,
+}: {
+  interactive: boolean;
+  href?: string | undefined;
+  linkComponent?: React.ElementType | undefined;
+  onClick?: (() => void) | undefined;
+  newTab: boolean;
+  active: boolean;
+  disabled: boolean;
+  className: string;
+  children: ReactNode;
+}) {
   if (!interactive) {
     return (
       <div
         className={cn(
-          shared,
+          className,
           "rounded-md",
           disabled && "opacity-disabled",
           active && "bg-secondary",
         )}
       >
-        {inner}
+        {children}
       </div>
     );
   }
@@ -451,14 +568,14 @@ export function ShellPanelRow({
         asChild
         variant={active ? "secondary" : "ghost"}
         size="md"
-        className={shared}
+        className={className}
       >
         <Link
           href={href}
           onClick={onClick}
           {...(newTab ? { target: "_blank", rel: "noreferrer noopener" } : {})}
         >
-          {inner}
+          {children}
         </Link>
       </Button>
     );
@@ -468,10 +585,10 @@ export function ShellPanelRow({
     <Button
       variant={active ? "secondary" : "ghost"}
       size="md"
-      className={shared}
+      className={className}
       onClick={onClick}
     >
-      {inner}
+      {children}
     </Button>
   );
 }
@@ -536,6 +653,19 @@ export interface ShellPanelMeterRowProps {
   valueLabel?: ReactNode | undefined;
   /** 0–100。超出范围会被夹紧，避免进度条溢出容器。 */
   percent: number;
+  /**
+   * 可点：与 `ShellPanelRow` 同一套参数、同一个外框（`RowFrame`）——同一块面板里
+   * 读数行与普通行的悬停、焦点、角标一致。去向（控制台里的额度页、存储页…）由
+   * 调用方给，DS 不认识任何控制台地址。
+   */
+  href?: string | undefined;
+  /** 见 `ShellPanelRow.linkComponent`。 */
+  linkComponent?: React.ElementType | undefined;
+  onClick?: (() => void) | undefined;
+  /** 在新标签页打开（仅 href 生效），自动补 rel。 */
+  newTab?: boolean | undefined;
+  /** 右端"可进入"角标。有 onClick/href 时默认为 true，与 `ShellPanelRow` 一致。 */
+  chevron?: boolean | undefined;
   className?: string | undefined;
 }
 
@@ -547,11 +677,18 @@ export function ShellPanelMeterRow({
   unit,
   valueLabel,
   percent,
+  href,
+  linkComponent,
+  onClick,
+  newTab = false,
+  chevron,
   className,
 }: Readonly<ShellPanelMeterRowProps>) {
   const safe = Number.isFinite(percent)
     ? Math.max(0, Math.min(100, percent))
     : 0;
+  const interactive = Boolean(onClick || href);
+  const showChevron = chevron ?? interactive;
   return (
     /*
      * 两栏：左边是「这是什么」，右边是「现在多少」。
@@ -562,30 +699,36 @@ export function ShellPanelMeterRow({
      *
      * 右栏取一半宽而不是定死像素：面板宽度本身有 sm/md/lg 三档，写死的块在窄档
      * 里会把标签挤没。
+     *
+     * 内部一律用 span：可点时外框是 <a> / <button>，里面放 div 不合法。
      */
-    <div
-      className={cn("flex items-center py-xs", ROW_INSET, ROW_GAP, className)}
+    <RowFrame
+      interactive={interactive}
+      href={href}
+      linkComponent={linkComponent}
+      onClick={onClick}
+      newTab={newTab}
+      active={false}
+      disabled={false}
+      className={cn(
+        "flex h-auto w-full items-center justify-start py-xs",
+        ROW_INSET,
+        ROW_GAP,
+        className,
+      )}
     >
       <RowLead icon={icon} />
-      <div className="flex min-w-0 flex-1 flex-col items-start">
+      <span className="flex min-w-0 flex-1 flex-col items-start text-left">
         <span className="w-full truncate text-label-md">{label}</span>
         {description ? (
           <span className="w-full truncate text-body-sm text-muted-foreground">
             {description}
           </span>
         ) : null}
-      </div>
-      <div className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
+      </span>
+      <span className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
         {value !== undefined && value !== null ? (
-          /* 底对齐：读数比单位高一截，顶对齐会让单位浮在半空。 */
-          <span className="flex items-end gap-2xs">
-            <span className="text-label-xl tabular-nums">{value}</span>
-            {unit !== undefined && unit !== null ? (
-              <span className="text-label-sm text-muted-foreground">
-                {unit}
-              </span>
-            ) : null}
-          </span>
+          <RowReadout value={value} unit={unit} />
         ) : null}
         <Progress value={safe} className="w-full" />
         {valueLabel !== undefined && valueLabel !== null ? (
@@ -593,8 +736,15 @@ export function ShellPanelMeterRow({
             {valueLabel}
           </span>
         ) : null}
-      </div>
-    </div>
+      </span>
+      {showChevron ? (
+        <Icon
+          name="chevron-right"
+          size="xs"
+          className={cn("shrink-0", ROW_ICON_TONE)}
+        />
+      ) : null}
+    </RowFrame>
   );
 }
 
@@ -751,9 +901,12 @@ export function ShellScopePanel({
              * 组用 role="group" 而不是靠视觉分隔表达：读屏器线性念下来时，
              * 分隔线与缩进都不存在，没有 group 就是一长串选项。
              */}
-            <div role="group" className="flex flex-col">
+            <div role="group" className="flex flex-col gap-2xs">
+              {/* 紧凑头部：组名与下方项的文字大致同列，项的图标比组图标缩进
+                  一档——层级靠缩进读出来，而不是靠组名被标识列推到最右。 */}
               <ShellPanelHeader
                 lead="icon"
+                compact
                 {...(group.icon ? { icon: group.icon } : {})}
                 title={group.title}
                 {...(group.titleAside ? { titleAside: group.titleAside } : {})}
@@ -764,7 +917,15 @@ export function ShellScopePanel({
                     : []
                 }
               />
-              {/* 项比组标题往左靠一档：它们从属于上面那个组，不与组名同列。 */}
+              {/* 项比组缩进一档（pl-md）：它们从属于上面那个组，项的图标落在
+                  组图标右侧。
+
+                  **项的文字与组名同列**（owner 2026-09-25）。默认密度下：
+                    组名起点 = px-sm 10 + 组图标 24 + gap-md 16          = 50
+                    项文字起点 = pl-md 16 + px-sm 10 + 项图标 16 + gap-xs 8 = 50
+                  所以项图标取 sm（16px）、图标与文字间距取 gap-xs。等式成立的
+                  条件是 24 = 16 + xs，只在默认密度精确；紧凑 / 宽松密度下
+                  xs 为 4 / 10，差 4 / 2px。 */}
               <div className="flex flex-col gap-2xs pl-md">
                 {group.options.map((option) => {
                   const selected = option.key === value;
@@ -779,20 +940,30 @@ export function ShellScopePanel({
                         onSelect ? () => onSelect(option.key) : undefined
                       }
                       className={cn(
-                        "h-auto w-full justify-start gap-sm px-sm py-xs text-left",
                         /*
+                         * 统一行高：有没有副行都占同一档（control-2xl，默认
+                         * 密度 48px）。按内容撑高时，同一组里单行项与双行项
+                         * 忽高忽低。min-h 而非 h：大字号 + 紧凑密度下双行放不
+                         * 进时让它撑开，而不是截掉一行字。
+                         */
+                        "h-auto min-h-control-2xl w-full justify-start gap-xs px-sm py-2xs text-left",
+                        /*
+                         * 只有当前所在项突出显示，其余一律浅灰底（owner
+                         * 2026-09-25）——不分是不是当前租户下的。
+                         *
                          * 选中走 accent 而不是 secondary：与 ShellScopeButton
                          * 展开态同一个底色，点开前点开后是同一件事的两头。
                          * hover 也钉住，否则划过选中项时它会先变灰再变回来。
                          */
-                        selected &&
-                          "bg-accent text-primary-text hover:bg-accent",
+                        selected
+                          ? "bg-accent text-primary-text hover:bg-accent"
+                          : "bg-muted text-muted-foreground",
                       )}
                     >
                       {option.icon ? (
                         <Icon
                           name={option.icon}
-                          size="md"
+                          size="sm"
                           className="shrink-0"
                         />
                       ) : null}
@@ -814,7 +985,11 @@ export function ShellScopePanel({
                         ) : null}
                       </span>
                       {selected ? (
-                        <Icon name="check" size="sm" className="shrink-0" />
+                        <Icon
+                          name="check-circle"
+                          size="md"
+                          className="shrink-0"
+                        />
                       ) : null}
                     </Button>
                   );

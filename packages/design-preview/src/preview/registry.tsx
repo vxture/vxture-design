@@ -201,6 +201,7 @@ import {
   ShellPreferencePanel,
   ShellThemeToggle,
   ShellUserMenu,
+  ShellUserPanel,
 } from "@vxture/design-system";
 import {
   BUTTON_GROUP_ORIENTATIONS,
@@ -242,13 +243,12 @@ import {
   ShellHeader,
   ShellLauncher,
   ShellPageContainer,
-  ShellPanelControlRow,
   ShellPanelHeader,
   ShellPanelMeterRow,
   ShellPanelRow,
   ShellPanelSection,
-  ShellPanelSectionTitle,
   ShellPanelSlots,
+  ShellPanelSurface,
   ShellScopePanel,
   ShellSearchBox,
   ShellSidebarFrame,
@@ -2776,11 +2776,108 @@ function DatePickerDemo() {
   );
 }
 
-function ShellChromeDemo() {
+/**
+ * 预览用的语言目录。DS 不拥有语言目录（`LocaleSelectOption` 的注释：支持哪些
+ * 语言是平台业务事实），`ShellPreferencePanel` / `ShellLocaleSwitcher` 的缺省
+ * 选项是空数组——不传就是一个空下拉，所以预览必须自己给。
+ */
+const PREVIEW_LOCALES = [
+  { locale: "zh-CN", nativeName: "简体中文" },
+  { locale: "en-US", nativeName: "English" },
+];
+
+/**
+ * 照 Figma 的 UserPanel（190:603）配的整块内容，ShellChrome 与 ShellPanel 两页
+ * 共用同一份——各写一份，两页的用户面板迟早对不上。
+ */
+function useFigmaUserPanel() {
   const [locale, setLocale] = React.useState<"zh-CN" | "en-US">("zh-CN");
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">(
     "light",
   );
+  const [density, setDensity] = React.useState<
+    "compact" | "default" | "comfortable"
+  >("default");
+  const [fontSize, setFontSize] = React.useState<"small" | "default" | "large">(
+    "default",
+  );
+
+  /*
+   * `ShellUserMenu`（头像 + 弹层）与
+   * `ShellUserPanel`（平铺）吃**同一份**——前者弹层里装的就是后者，两处渲染的
+   * 是同一份代码。
+   */
+  const userPanel = {
+    user: {
+      displayName: "User Name",
+      uniqueLine: "18022228888",
+      meta: "abcdefg@gmail.com",
+      avatarFallback: "U",
+      statusTag: { label: "个人认证", verified: true },
+    },
+    extras: (
+      <ShellPanelSlots
+        label="账户标识"
+        lead="identity"
+        leadIcon="seal-check"
+        slots={[
+          { key: "s1", icon: "seal-check", label: "实名", earned: true },
+          { key: "s2", icon: "shield", label: "安全", earned: true },
+          { key: "s3", icon: "star", label: "会员" },
+          { key: "s4", icon: "medal", label: "贡献" },
+          { key: "s5", icon: "gift", label: "权益" },
+        ]}
+      />
+    ),
+    settings: (
+      <ShellPreferencePanel
+        localeOptions={PREVIEW_LOCALES}
+        locale={locale}
+        theme={theme}
+        density={density}
+        fontSize={fontSize}
+        labels={{
+          title: "偏好设置",
+          themeOptions: { system: "系统", light: "亮色", dark: "暗色" },
+          densityOptions: {
+            compact: "紧凑",
+            default: "标准",
+            comfortable: "宽松",
+          },
+          fontSizeOptions: { small: "较小", default: "默认", large: "较大" },
+        }}
+        onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
+        onThemeChange={(next) => setTheme(next)}
+        onDensityChange={setDensity}
+        onFontSizeChange={setFontSize}
+      />
+    ),
+    links: [
+      { key: "profile", label: "个人中心", icon: "user", href: "#profile" },
+    ],
+    actions: [
+      {
+        key: "switch",
+        label: "切换账号",
+        icon: "user-switch",
+        onClick: () => {},
+      },
+      // danger 语气（2026-08-18 批 D 补齐）：红字 + hover 淡红底，四端登出同款。
+      {
+        key: "logout",
+        label: "退出登录",
+        icon: "sign-out",
+        danger: true,
+        onClick: () => {},
+      },
+    ],
+  } satisfies React.ComponentProps<typeof ShellUserPanel>;
+  return { userPanel, locale, setLocale, theme, setTheme };
+}
+
+function ShellChromeDemo() {
+  const { userPanel, locale, setLocale, theme, setTheme } = useFigmaUserPanel();
+
   return (
     <div className="flex w-full flex-col gap-md">
       <Row label="ShellBrand">
@@ -2797,69 +2894,25 @@ function ShellChromeDemo() {
           onThemeChange={(next) => setTheme(next)}
         />
         <ShellLocaleSwitcher
+          options={PREVIEW_LOCALES}
           currentLocale={locale}
           onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
         />
       </Row>
       {/*
-       * 照 Figma 的 UserPanel（190:603）整块搭出来——**没有另做 ShellUserPanel**：
-       * 这件本身就是用户面板，槽位（extras / settings / links / actions）正是
-       * 留给产品填内容的。再建一个同名同义的件就是第二个轮子。
+       * 两件组合使用：`ShellUserMenu` 是 header 上的头像按钮 + 弹层，弹层里装的
+       * 就是 `ShellUserPanel`。下面第二行把面板平铺出来，不点头像也能对着设计稿
+       * 逐行看。
        */}
-      <Row label="ShellUserMenu · 照 Figma UserPanel 整块搭" stack>
-        <ShellUserMenu
-          user={{
-            displayName: "User Name",
-            uniqueLine: "18022228888",
-            meta: "abcdefg@gmail.com",
-            avatarFallback: "U",
-            statusTag: { label: "个人认证", verified: true },
-          }}
-          extras={
-            <ShellPanelSlots
-              label="账户标识"
-              lead="identity"
-              leadIcon="seal-check"
-              slots={[
-                { key: "s1", icon: "seal-check", label: "实名", earned: true },
-                { key: "s2", icon: "shield", label: "安全", earned: true },
-                { key: "s3", icon: "star", label: "会员" },
-                { key: "s4", icon: "medal", label: "贡献" },
-                { key: "s5", icon: "gift", label: "权益" },
-              ]}
-            />
-          }
-          settings={
-            <ShellPreferencePanel
-              locale={locale}
-              theme={theme}
-              density="default"
-              fontSize="default"
-              onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
-              onThemeChange={(next) => setTheme(next)}
-            />
-          }
-          links={[{ key: "profile", label: "个人中心", href: "#profile" }]}
-          actions={[
-            {
-              key: "switch",
-              label: "切换用户",
-              icon: "user-switch",
-              onClick: () => {},
-            },
-            // danger 语气（2026-08-18 批 D 补齐）：红字 + hover 淡红底，四端登出同款。
-            {
-              key: "logout",
-              label: "退出登录",
-              icon: "sign-out",
-              danger: true,
-              onClick: () => {},
-            },
-          ]}
-        />
+      <Row label="ShellUserMenu · 头像按钮，点开是下面那块面板">
+        <ShellUserMenu {...userPanel} />
+      </Row>
+      <Row label="ShellUserPanel · 平铺（Figma UserPanel 190:603）" stack>
+        <ShellUserPanel {...userPanel} />
       </Row>
       <Row label="ShellPreferencePanel" stack>
         <ShellPreferencePanel
+          localeOptions={PREVIEW_LOCALES}
           locale={locale}
           theme={theme}
           density="default"
@@ -4078,52 +4131,58 @@ function ShellLauncherDemo() {
 function ShellScopePanelDemo() {
   const [scope, setScope] = React.useState("ws-default");
   return (
-    <div className="w-fit rounded-md border border-border bg-popover p-md">
-      <div className="w-80">
-        <ShellScopePanel
-          ariaLabel="切换租户与工作区"
-          value={scope}
-          onSelect={setScope}
-          groups={[
-            {
-              key: "t-1",
-              icon: "buildings",
-              title: "Tenant Name",
-              titleAside: <Badge>组织租户</Badge>,
-              meta: "T-2222888885",
-              options: [
-                {
-                  key: "ws-default",
-                  icon: "folder",
-                  label: "Default Workspace",
-                  description: "默认工作空间",
-                },
-                { key: "ws-2", icon: "folder", label: "Another Workspace" },
-              ],
-            },
-            {
-              key: "t-2",
-              icon: "buildings",
-              title: "Tenant Name",
-              titleAside: <Badge>个人租户</Badge>,
-              meta: "T-2222888885",
-              options: [
-                {
-                  key: "ws-3",
-                  icon: "folder",
-                  label: "Default Workspace",
-                  description: "默认工作空间",
-                },
-              ],
-            },
-          ]}
-        />
-      </div>
-    </div>
+    <ShellPanelSurface>
+      <ShellScopePanel
+        ariaLabel="切换租户与工作区"
+        value={scope}
+        onSelect={setScope}
+        groups={[
+          {
+            key: "t-1",
+            icon: "buildings",
+            title: "Tenant Name",
+            titleAside: <Badge>组织租户</Badge>,
+            meta: "T-2222888885",
+            options: [
+              {
+                key: "ws-default",
+                icon: "workspace",
+                label: "Default Workspace",
+                description: "默认工作空间",
+              },
+              { key: "ws-2", icon: "workspace", label: "Another Workspace" },
+            ],
+          },
+          {
+            key: "t-2",
+            icon: "building-office",
+            title: "Tenant Name",
+            titleAside: <Badge>个人租户</Badge>,
+            meta: "T-2222888885",
+            options: [
+              {
+                key: "ws-3",
+                icon: "workspace",
+                label: "Default Workspace",
+                description: "默认工作空间",
+              },
+            ],
+          },
+        ]}
+      />
+    </ShellPanelSurface>
   );
 }
 
+/**
+ * TenantPanel 六个条目都能点，去向是租户控制台的对应页面（owner 2026-09-25）。
+ * DS 不认识任何控制台地址，链接由产品侧给；预览用 hash 路径示意，点了不离开
+ * 预览页。产品侧换成各自控制台的真实路由（配合 `linkComponent`）。
+ */
+const TENANT_CONSOLE = "#/console/tenant";
+
 function ShellPanelDemo() {
+  const { userPanel } = useFigmaUserPanel();
   /*
    * 这不是零件抽样，是**照 Figma 的 TenantPanel（194:428）整块搭出来的**——
    * 面板原语的验收面：搭不出来就说明零件还缺一块，而不是"示例写得简单些"。
@@ -4133,95 +4192,89 @@ function ShellPanelDemo() {
    */
   return (
     <div className="flex flex-wrap items-start gap-lg">
-      <div className="w-fit rounded-md border border-border bg-popover">
-        <div className="flex w-80 flex-col gap-md p-md">
-          {/* 主体是组织，所以 lead="icon" 不画头像圈 */}
-          <ShellPanelHeader
-            lead="icon"
-            icon="buildings"
-            title="Tenant Name"
-            titleAside={<Badge>个人租户</Badge>}
-            metaRows={[
-              { key: "ws", content: "default workspace" },
-              { key: "code", content: "T-2222888885" },
-            ]}
+      {/* 外壳走 ShellPanelSurface：与弹层同宽、同留白、同表面，与旁边的
+          ShellUserPanel 同一个外壳组件，不再手写。 */}
+      <ShellPanelSurface>
+        {/* 主体是租户不是人，所以 lead="icon" 不画头像圈。租户图标按类型：
+            个人租户 building-office，组织租户 buildings。 */}
+        <ShellPanelHeader
+          lead="icon"
+          icon="building-office"
+          title="Tenant Name"
+          titleAside={<Badge>个人租户</Badge>}
+          metaRows={[
+            { key: "ws", content: "default workspace" },
+            { key: "code", content: "T-2222888885" },
+          ]}
+        />
+        <ShellPanelSection title="资源">
+          <ShellPanelMeterRow
+            icon="sparkles"
+            label="AI Credits"
+            href={`${TENANT_CONSOLE}/credits`}
+            chevron={false}
+            description="workspace"
+            value="300"
+            unit="分"
+            valueLabel="已用 30% · 共 1000 分"
+            percent={30}
           />
-          <ShellPanelSection title="资源">
-            <ShellPanelMeterRow
-              icon="sparkles"
-              label="AI Credits"
-              description="workspace"
-              value="300"
-              unit="分"
-              valueLabel="已用 30% · 共 1000 分"
-              percent={30}
-            />
-            <ShellPanelMeterRow
-              icon="database"
-              label="Storage"
-              description="workspace"
-              value="300"
-              unit="MB"
-              valueLabel="已用 30% · 共 1000 MB"
-              percent={30}
-            />
-          </ShellPanelSection>
-          <ShellPanelSection title="账单">
-            <ShellPanelRow
-              icon="wallet"
-              label="账户余额"
-              description="不含平台卡券"
-              value="200.00"
-              unit="RMB"
-              valueTone="strong"
-            />
-            <ShellPanelRow
-              icon="receipt"
-              label="本月账单"
-              description="2026/09"
-              value="100.00"
-              unit="RMB"
-              valueTone="strong"
-            />
-          </ShellPanelSection>
-          <ShellPanelSection>
-            <ShellPanelRow
-              icon="buildings"
-              label="租户信息"
-              description="说明信息"
-              onClick={() => {}}
-            />
-            <ShellPanelRow
-              icon="arrow-left-right"
-              label="切换租户"
-              description="切换租户、工作空间"
-              onClick={() => {}}
-            />
-          </ShellPanelSection>
-        </div>
-      </div>
+          <ShellPanelMeterRow
+            icon="database"
+            label="Storage"
+            href={`${TENANT_CONSOLE}/storage`}
+            chevron={false}
+            description="workspace"
+            value="300"
+            unit="MB"
+            valueLabel="已用 30% · 共 1000 MB"
+            percent={30}
+          />
+        </ShellPanelSection>
+        <ShellPanelSection title="账单">
+          <ShellPanelRow
+            icon="wallet"
+            label="账户余额"
+            href={`${TENANT_CONSOLE}/billing/balance`}
+            chevron={false}
+            description="不含平台卡券"
+            value="200.00"
+            unit="RMB"
+            valueTone="strong"
+          />
+          <ShellPanelRow
+            icon="receipt"
+            label="本月账单"
+            href={`${TENANT_CONSOLE}/billing/invoices`}
+            chevron={false}
+            description="2026/09"
+            value="100.00"
+            unit="RMB"
+            valueTone="strong"
+          />
+        </ShellPanelSection>
+        <ShellPanelSection>
+          <ShellPanelRow
+            icon="buildings"
+            label="租户信息"
+            href={`${TENANT_CONSOLE}/profile`}
+            description="说明信息"
+          />
+          <ShellPanelRow
+            icon="arrow-left-right"
+            label="切换租户"
+            href={`${TENANT_CONSOLE}/switch`}
+            description="切换租户、工作空间"
+          />
+        </ShellPanelSection>
+      </ShellPanelSurface>
 
       {/*
-       * 上面那块没用到的两个原语单独摆一次——它们是公开导出，预览面是这套系统
-       * 唯一的验收面，从展示里掉出去等于没人再看得见它们。
-       * （check-preview-coverage 是**按文件**覆盖的，同文件里少展示一个导出它不报。）
+       * 与 TenantPanel 并排的 UserPanel（Figma 190:603）：直接用 DS 的
+       * `ShellUserPanel` 组件，内容与 ShellChrome 页同一份（useFigmaUserPanel）。
+       * 两块对照看，面板原语在两种主体（组织 / 人）上是否一致一眼可见。
        */}
-      <div className="w-fit rounded-md border border-border bg-popover">
-        <div className="flex w-80 flex-col gap-md p-md">
-          <ShellPanelSection title="偏好">
-            <ShellPanelControlRow icon="translate" label="语言">
-              <NativeSelect defaultValue="zh-CN" aria-label="语言">
-                <option value="zh-CN">简体中文</option>
-              </NativeSelect>
-            </ShellPanelControlRow>
-          </ShellPanelSection>
-          <ShellPanelSection>
-            <ShellPanelSectionTitle>入口</ShellPanelSectionTitle>
-            <ShellPanelRow icon="settings" label="设置" onClick={() => {}} />
-            <ShellPanelRow icon="lock" label="安全中心" disabled />
-          </ShellPanelSection>
-        </div>
-      </div>
+      <ShellUserPanel {...userPanel} />
     </div>
   );
 }

@@ -5,6 +5,26 @@
 
 ---
 
+## 9.13.0 — 2026-09-25
+
+新增图标 `check-circle` 与 `workspace`（minor：只增不改）。
+
+### `workspace`
+
+- 工作空间（租户下的一块工作区域），图形是立方体（`CubeIcon`，与 `cube` 同形
+  不同义：`cube` 泛指资源 / 包）。放在租户 `buildings` 同一分组。
+- 此前范围切换面板的工作空间用的是 `folder`，读起来像「点进去是文件列表」
+  （owner 2026-09-25 选定立方体）。各产品统一写 `icon="workspace"`，不再各自挑。
+
+### `check-circle`
+
+- 单选面板的**选中标记**（圆形对勾），首个使用者是 design-system 的
+  `ShellScopePanel`。Figma 上的选中标记一直是 CheckCircle，此前字典里没有这个
+  名字，只能用细对勾 `check` 顶替。
+- 与状态图标 `success` **同形不同义**：`success` 表示「操作成功 / 状态正常」，
+  `check-circle` 表示「这一项是当前选中的」。字典按语义取名，同一个图形可以
+  服务两个语义（先例：`users` / `role`、`help` / `placeholder`）。
+
 ## 9.12.0 — 2026-09-24
 
 `InputOTP` 新增 `size` 档（minor：纯增量，默认形态与取值行为一个字不变）。

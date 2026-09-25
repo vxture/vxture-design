@@ -5,6 +5,75 @@
 
 ---
 
+## 12.23.0 — 2026-09-25
+
+新增 `ShellUserPanel`（用户面板本体）与 `ShellPanelSurface`（面板的平铺外壳）
+（minor：新增件，无删改）。
+
+### `ShellPanelSurface`
+
+`ShellPanelContent` 的不弹层版本：同宽（`w-80`）、同留白（`p-md`）、同段间距
+（`gap-md`）、同表面（`panel.base` + `rounded-md`），不带阴影。
+
+此前面板平铺时没有外壳组件，调用方只能手写一个 div，宽度、留白、边线各写各的
+——本仓预览就曾把边线写成 `border border-border`，与弹层的
+`ring-1 ring-foreground/10` 颜色与画法都不同。外壳归组件之后，各业务系统平铺
+出来的面板与弹层里的逐像素一致。
+
+### `ShellUserPanel`
+
+- **组合使用**：`ShellUserMenu` 管入口（头像按钮、在线小点、弹层开合与落点），
+  弹层里装的就是 `ShellUserPanel`；`ShellUserPanel` 也可以单独平铺，给抽屉、
+  移动端账户页、预览面这类「不用点头像」的场合。两处是同一份代码。
+- `ShellUserPanelProps`：`user` / `extras` / `settings` / `portalReturn` /
+  `links` / `actions`，与 `ShellUserMenu` 的内容字段同一份；另有可选的
+  `onItemSelect`（点了链接、动作、「回到来处」之后调用，叉掉提示不算）与
+  `className`。
+- 平铺时外壳走 `ShellPanelSurface`。
+- `ShellUserMenuProps` 改为由 `ShellUserPanelProps` 派生，字段与此前逐项一致，
+  **调用方无需改动**。
+- preview：外壳页同时摆出头像按钮与平铺面板；ShellPanel 页的 TenantPanel 与
+  ShellUserPanel 并排，两块外壳都走 `ShellPanelSurface`。内容照 Figma UserPanel
+  （190:603）配，偏好设置用中文档名。
+
+### `ShellPanelRow` 的 `strong` 档：纯数字，与 `ShellPanelMeterRow` 读数同款
+
+**不用改代码，观感变了**：`valueTone="strong"`（账户余额、本月账单）不再套浅蓝
+底色块，改为与 `ShellPanelMeterRow`（额度、存储）的读数**同一份渲染**：数字
+label-xl（18px）、单位 label-sm（12px、弱化色）、间距 `gap-2xs`、底对齐。
+
+此前两者各写一份：余额 16px 数字套 24px 高的底块，存储 18px 纯数字。同一块面板
+里数字高度、单位位置对不上（owner 2026-09-25）。`valueTone` 的 API 不变，
+`"muted"`（小灰字）不受影响。
+
+### `ShellPanelMeterRow` 可点
+
+新增 `href` / `linkComponent` / `onClick` / `newTab` / `chevron`，与
+`ShellPanelRow` 同名同义（全部可选，不传即原行为）。两者共用内部的行外框
+`RowFrame`：同一块面板里读数行（额度、存储）与普通行（余额、租户信息…）的
+悬停、焦点、角标一致。去向由调用方给，DS 不认识任何控制台地址。
+
+preview：TenantPanel 六个条目都可点，示意去向为租户控制台的对应页面。
+
+### `ShellScopePanel` 排版优化（不用改代码，观感变了）
+
+跟随 `@vxture/design-ui@9.13.0`（新增图标 `check-circle` 与 `workspace`）。owner 2026-09-25：
+租户条目与工作区条目排列难看。逐项对照 Figma（2252:10089）后改四处：
+
+- **组名不再比子项靠右**：组标题此前借用面板顶部的大头部，24px 图标占着 48px
+  标识列，租户名文字起点 74px，而下面工作区文字起点 56px——子项比父级还靠左。
+  `ShellPanelHeader` 新增 `compact`（仅 `lead="icon"` 生效，缺省 false）：图标
+  不占标识列，组名左移到约 50px，与工作区文字大致同列。
+- **子项缩进、文字与组名同列**：工作区图标缩进一档（`pl-md`）、改为 16px，图标与文字间距 `gap-xs`。默认密度下工作区文字起点 16 + 10 + 16 + 8 = 50px，与组名起点 10 + 24 + 16 = 50px 同列；紧凑 / 宽松密度差 4 / 2px。
+- **统一行高**：工作区项有没有副行都占 `min-h-control-2xl`（默认密度 48px），
+  不再单行项 38px、双行项 56px 忽高忽低。
+- **只有当前所在项突出显示**：选中项 accent 底 + 主色字 + 圆形对勾
+  （`check-circle`，20px，此前是 16px 细对勾）；其余项一律浅灰底
+  （`bg-muted`），不分是否在当前租户下。
+
+内距与间距保持 `sm`（默认密度 10px）：Figma 标的 12px 不在间距刻度上
+（`sm` 10 / `md` 16），不为一处造刻度外的值。
+
 ## 12.22.0 — 2026-09-25
 
 跟随 `@vxture/design-tokens@3.4.0`（minor）。详见 design-tokens 3.4.0。

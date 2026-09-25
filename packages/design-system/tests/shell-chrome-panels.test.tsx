@@ -9,6 +9,8 @@
  * `ShellUserMenu` 另有一条：它整个壳都借 `ShellPanel*`，账户菜单与产品自拼的
  * 面板因此逐像素同款——这一条只能靠「用的是不是同一个件」来验。
  *
+ * 末尾另有 `ShellUserPanel`：`ShellUserMenu` 弹层里装的面板本体，也能单独平铺。
+ *
  * 81 条分支，此前 0%。
  */
 
@@ -19,6 +21,7 @@ import {
   ShellLocaleSwitcher,
   ShellPreferencePanel,
   ShellUserMenu,
+  ShellUserPanel,
 } from "../src/components/shell/ShellChrome";
 import { ShellPanelRow } from "../src/components/shell/ShellPanel";
 
@@ -646,5 +649,100 @@ describe("ShellUserMenu · 回到来处", () => {
     await user.click(within(panel).getByRole("button", { name: "Close" }));
     expect(onDismiss).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+});
+
+/* ── ShellUserPanel ───────────────────────────────────────────────────────── */
+
+/**
+ * 面板本体，可以脱离头像按钮单独平铺。与 `ShellUserMenu` 组合使用时，弹层里
+ * 装的就是它——所以这里只验**平铺**这一形态独有的东西，内容各段的细节上面
+ * `ShellUserMenu · *` 已经逐条验过，两处是同一份代码。
+ */
+describe("ShellUserPanel · 平铺", () => {
+  it("不点任何东西就直接渲染完整面板，没有头像按钮", () => {
+    render(
+      <ShellUserPanel
+        user={USER}
+        extras={<div>产品自定义</div>}
+        links={[{ key: "p", label: "个人中心", href: "/me" }]}
+        settings={<div>偏好设置</div>}
+        actions={[{ key: "out", label: "退出登录", onClick: () => {} }]}
+      />,
+    );
+    expect(screen.getByText("某某")).toBeInTheDocument();
+    expect(screen.getByText("产品自定义")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /个人中心/ })).toBeInTheDocument();
+    expect(screen.getByText("偏好设置")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /退出登录/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "User menu" }),
+    ).not.toBeInTheDocument();
+  });
+
+  /** 平铺没有浮起来，所以带面板表面但不带阴影。宽度与留白与弹层同款。 */
+  it("外壳带面板表面、不带阴影，宽度留白与弹层一致", () => {
+    const { container } = render(
+      <ShellUserPanel user={USER} className="EXTRA" />,
+    );
+    const shell = container.firstElementChild;
+    for (const token of ["bg-popover", "rounded-md", "w-80", "p-md", "EXTRA"]) {
+      expect(hasClass(shell, token)).toBe(true);
+    }
+    expect(hasClass(shell, "shadow-overlay")).toBe(false);
+  });
+
+  it("点链接、点动作、点「回到来处」都报 onItemSelect", async () => {
+    const user = userEvent.setup();
+    const onItemSelect = vi.fn();
+    const onClick = vi.fn();
+    const onReturn = vi.fn();
+    render(
+      <ShellUserPanel
+        user={USER}
+        onItemSelect={onItemSelect}
+        portalReturn={{ label: "返回控制台", onReturn }}
+        links={[{ key: "p", label: "个人中心", href: "#me" }]}
+        actions={[{ key: "out", label: "退出登录", onClick }]}
+      />,
+    );
+    await user.click(screen.getByRole("link", { name: /个人中心/ }));
+    await user.click(screen.getByRole("button", { name: /退出登录/ }));
+    await user.click(screen.getByRole("button", { name: /返回控制台/ }));
+    expect(onItemSelect).toHaveBeenCalledTimes(3);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onReturn).toHaveBeenCalledTimes(1);
+  });
+
+  /** 与弹层里的规则一致：「不再显示这条」不是「我要走了」。 */
+  it("叉掉「回到来处」提示不报 onItemSelect", async () => {
+    const user = userEvent.setup();
+    const onItemSelect = vi.fn();
+    const onDismiss = vi.fn();
+    render(
+      <ShellUserPanel
+        user={USER}
+        onItemSelect={onItemSelect}
+        portalReturn={{ label: "返回控制台", onReturn: () => {}, onDismiss }}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+    expect(onItemSelect).not.toHaveBeenCalled();
+  });
+
+  it("不传 onItemSelect 也能点，不抛", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <ShellUserPanel
+        user={USER}
+        actions={[{ key: "out", label: "退出登录", onClick }]}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /退出登录/ }));
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
