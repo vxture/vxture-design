@@ -9,16 +9,13 @@
  */
 
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { useListPagination } from "../src/hooks/useListPagination";
 import { useControllableState } from "../src/hooks/useControllableState";
 import { useBreakpoint } from "../src/hooks/useBreakpoint";
 import { useMounted } from "../src/hooks/useMounted";
 
 const rows = Array.from({ length: 25 }, (_, i) => "row-" + (i + 1));
-
-const PROBE_HTML =
-  '<main><table><tbody><tr id="probe"><td>x</td></tr></tbody></table></main>';
 
 describe("useListPagination · 切片与序号", () => {
   it("固定档：按档切片，pageCount 向上取整", () => {
@@ -84,103 +81,21 @@ describe("useListPagination · 切片与序号", () => {
     expect(result.current.page).toBe(1);
   });
 
-  /** pageSize 返回的是**选中的档**，不是解析后的行数——它要喂回 Pagination。 */
+  /** pageSize 原样回传，要喂回 Pagination。 */
   it("pageSize 回传的是档本身", () => {
     const { result } = renderHook(() => useListPagination(rows, 20));
     expect(result.current.pageSize).toBe(20);
   });
-});
-
-describe("useListPagination · auto 档的高度探测", () => {
-  /**
-   * 这一节钉的是 2026-08-07 在 opera 维护窗口页实测到的真实故障：
-   *
-   * 探测拿 `main` 里第一个列表行的高度算「一屏放几行」。而**异步取数的清单页
-   * 首帧只有空态那一行**（高度是一屏 EmptyState 的高度），拿它当行高算出来的
-   * 档必然砸到地板 MIN_AUTO_ROWS(3)。945px 视口本可放 6 行，实际只出 3 行；
-   * 同步喂 mock 的页面碰不到，所以一直没露头。
-   *
-   * 修法是把 `hasRows` 放进 effect 依赖：数据从无到有的那一帧重量一次。
-   */
-  const origHeight = window.innerHeight;
-
-  function mountProbe(rowHeight: number, top: number) {
-    document.body.innerHTML = PROBE_HTML;
-    const tr = document.getElementById("probe") as HTMLElement;
-    vi.spyOn(tr, "getBoundingClientRect").mockReturnValue({
-      height: rowHeight,
-      top,
-      bottom: top + rowHeight,
-      left: 0,
-      right: 0,
-      width: 100,
-      x: 0,
-      y: top,
-      toJSON: () => ({}),
-    } as DOMRect);
-    return tr;
-  }
-
-  beforeEach(() => {
-    Object.defineProperty(window, "innerHeight", {
-      value: 945,
-      writable: true,
-      configurable: true,
-    });
-  });
-
-  afterEach(() => {
-    document.body.innerHTML = "";
-    Object.defineProperty(window, "innerHeight", {
-      value: origHeight,
-      writable: true,
-      configurable: true,
-    });
-    vi.restoreAllMocks();
-  });
-
-  it("有真实行时按行高解析：945px 视口 / 56px 行高 → 6 行", () => {
-    mountProbe(56, 500);
-    // (945 - 500 - 104) / 56 = 6.08 → 6
-    const { result } = renderHook(() => useListPagination(rows, "auto"));
-    expect(result.current.pageRows).toHaveLength(6);
-  });
 
   /**
-   * 空态那一行很高，算出来会砸到地板。这条钉的是**探测规则本身**——它必须
-   * 依然砸到地板，因为那是规则的正确结果；真正的修法是数据到了之后重量一次。
+   * 缺省每页 20 条（owner 2026-09-25）。此前缺省是 "auto"（按可视高度量行高），
+   * 已全面删除。
    */
-  it("只有空态行时砸到地板值 3", () => {
-    mountProbe(400, 300);
-    const { result } = renderHook(() => useListPagination(rows, "auto"));
-    expect(result.current.pageRows).toHaveLength(3);
-  });
-
-  /**
-   * **这条是那次修复的核心**：异步页首帧量到空态行（3 行地板），数据到达后
-   * 必须重量一次。谁把 `hasRows` 从 effect 依赖里拿掉，这里会红——而界面上
-   * 只表现为「一屏明明放得下 6 行却只显示 3 行」。
-   */
-  it("数据从无到有时重量一次，不停在地板值上", () => {
-    mountProbe(400, 300);
-    const { result, rerender } = renderHook(
-      ({ data }: { data: readonly string[] }) =>
-        useListPagination(data, "auto"),
-      { initialProps: { data: [] as readonly string[] } },
-    );
-    expect(result.current.pageRows).toHaveLength(0);
-
-    act(() => {
-      mountProbe(56, 500);
-    });
-    rerender({ data: rows });
-    expect(result.current.pageRows).toHaveLength(6);
-  });
-
-  it("探不到任何行时用兜底 10", () => {
-    document.body.innerHTML = "<main></main>";
-    const { result } = renderHook(() => useListPagination(rows, "auto"));
-    expect(result.current.pageRows).toHaveLength(10);
+  it("不传每页条数时缺省 20", () => {
+    const { result } = renderHook(() => useListPagination(rows));
+    expect(result.current.pageSize).toBe(20);
+    expect(result.current.pageRows).toHaveLength(20);
+    expect(result.current.pageCount).toBe(2);
   });
 });
 

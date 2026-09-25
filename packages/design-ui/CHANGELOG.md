@@ -5,9 +5,26 @@
 
 ---
 
+## 10.0.0 — 2026-09-25
+
+**破坏性**：每页条数的 `"auto"` 档全面删除（owner 2026-09-25）。
+
+- `PageSizeChoice` 由 `number | "auto"` 收窄为 `number`。写了 `"auto"` 的
+  `pageSize` / `pageSizeOptions` / `useListPagination(rows, "auto")` 升级后类型报错，
+  改成具体条数即可。
+- `Pagination`：删除 `pageSizeAutoLabel`；缺省档位 `["auto", 10, 20, 50, 100]` →
+  `[10, 20, 50, 100]`。
+- `useListPagination`：删除按可视高度量行高的逻辑；缺省每页条数由 `"auto"` 改为
+  **20**。**不传第二个参数的页面不会报错，但每页从「一屏能放几行」变成固定 20 条。**
+- `ListCard`：不再输出 `data-list-card` 属性（它只给 auto 的行高测量当探针用）。
+
+同时包含未单独发布的 9.13.0 各项（见下）。
+
 ## 9.13.0 — 2026-09-25
 
-新增图标 `check-circle` 与 `workspace`（minor：只增不改）。
+新增图标 `check-circle`、`workspace`、`caret-line-left` / `caret-line-right`；
+`Pagination` 翻页按钮改为图标（minor：
+新增可选 props，无删改）。
 
 ### `workspace`
 
@@ -24,6 +41,24 @@
 - 与状态图标 `success` **同形不同义**：`success` 表示「操作成功 / 状态正常」，
   `check-circle` 表示「这一项是当前选中的」。字典按语义取名，同一个图形可以
   服务两个语义（先例：`users` / `role`、`help` / `placeholder`）。
+
+### `caret-line-left` / `caret-line-right`
+
+`|<` / `>|`：到最前 / 到最后。首个使用者是 `Pagination` 的首页 / 末页按钮。与
+`chevron-left` / `chevron-right`（`‹` `›`）同属 Phosphor Caret 一族，并排放时
+粗细、角度一致。
+
+### `Pagination`：翻页按钮全部改为图标（不用改代码，观感变了）
+
+- 顺序：`|<`（首页）`‹`（上一页）页码 `›`（下一页）`>|`（末页）。图标取字典里
+  同一族（Phosphor Caret）的 `caret-line-left` / `chevron-left` / `chevron-right` /
+  `caret-line-right`；按钮 `icon-md`，与页码同高、正方形等宽。
+- **新增首页 / 末页**两个按钮，以及对应的 `firstLabel` / `lastLabel`（默认
+  `First page` / `Last page`）。首页与上一页、末页与下一页同步禁用。
+- 按钮不再带可见文字：`previousLabel` / `nextLabel` 以及新的两个名字落在
+  `aria-label` 与 `title` 上，读屏器照念、悬停浮出。此前「上一页 / 下一页」
+  的文字在中英文下宽度差一倍，把整排页码推来推去。
+- 调用方原先传的 `previousLabel` / `nextLabel` 继续生效，无需改动。
 
 ## 9.12.0 — 2026-09-24
 

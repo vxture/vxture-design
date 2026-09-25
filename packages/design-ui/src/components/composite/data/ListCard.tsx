@@ -41,8 +41,7 @@ function ListCard({
   className,
 }: ListCardProps) {
   return (
-    /* data-list-card：供"每页条数自适应"一类的行高测量当探针用。 */
-    <Card surface="soft" data-list-card="" className={className}>
+    <Card surface="soft" className={className}>
       <CardContent className="flex flex-col gap-sm">
         <div className="flex items-start justify-between gap-sm">
           <TableTitleCell
