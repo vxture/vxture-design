@@ -2901,14 +2901,11 @@ function ShellChromeDemo() {
       </Row>
       {/*
        * 两件组合使用：`ShellUserMenu` 是 header 上的头像按钮 + 弹层，弹层里装的
-       * 就是 `ShellUserPanel`。下面第二行把面板平铺出来，不点头像也能对着设计稿
-       * 逐行看。
+       * 就是 `ShellUserPanel`。平铺的面板只在 ShellPanel 页摆一次（与 TenantPanel
+       * 并排），这里不再重复，避免看起来像两个不同的件。
        */}
-      <Row label="ShellUserMenu · 头像按钮，点开是下面那块面板">
+      <Row label="ShellUserMenu · 头像按钮，点开是 ShellUserPanel（平铺见 ShellPanel 页）">
         <ShellUserMenu {...userPanel} />
-      </Row>
-      <Row label="ShellUserPanel · 平铺（Figma UserPanel 190:603）" stack>
-        <ShellUserPanel {...userPanel} />
       </Row>
       <Row label="ShellPreferencePanel" stack>
         <ShellPreferencePanel
