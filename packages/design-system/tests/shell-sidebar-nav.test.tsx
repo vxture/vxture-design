@@ -486,6 +486,66 @@ describe("导航项", () => {
   });
 });
 
+/* ── 副名显隐策略 ─────────────────────────────────────────────────────────── */
+
+/**
+ * `subLabelReveal`（#47）。jsdom 不跑 :hover，所以这里盯的是**类与结构**：
+ * 显隐靠 `group/nav-item` 具名 group 驱动，丢了哪一半都是静默失效——
+ * 副名要么永远不出，要么永远常驻。
+ */
+describe("副名显隐策略", () => {
+  /** 可视的那一行：带 font-mono 的那个（sr-only 副本没有）。 */
+  const visibleSub = () =>
+    screen.getAllByText("beta").find((el) => hasClass(el, "font-mono"))!;
+  const srCopy = () =>
+    screen.queryAllByText("beta").find((el) => hasClass(el, "sr-only"));
+
+  it("缺省常驻：不藏、不标 aria-hidden、没有读屏副本，py 照旧", () => {
+    renderNav();
+    const sub = visibleSub();
+    expect(hasClass(sub, "hidden")).toBe(false);
+    expect(sub).not.toHaveAttribute("aria-hidden");
+    expect(srCopy()).toBeUndefined();
+    expect(hasClass(sub.parentElement, "py-2xs")).toBe(true);
+  });
+
+  it("active-hover 下非当前项收起，悬停或键盘聚焦本行时展开", () => {
+    renderNav({ subLabelReveal: "active-hover" });
+    const sub = visibleSub();
+    expect(hasClass(sub, "hidden")).toBe(true);
+    expect(hasClass(sub, "group-hover/nav-item:block")).toBe(true);
+    expect(hasClass(sub, "group-focus-visible/nav-item:block")).toBe(true);
+    expect(
+      hasClass(screen.getByRole("link", { name: /乙/ }), "group/nav-item"),
+    ).toBe(true);
+  });
+
+  /** 可视行收起时 display:none 会掉出可访问名，读屏靠 sr-only 副本。 */
+  it("active-hover 下收起的副名仍在可访问名里", () => {
+    renderNav({ subLabelReveal: "active-hover" });
+    expect(visibleSub()).toHaveAttribute("aria-hidden", "true");
+    expect(srCopy()).toBeDefined();
+    expect(screen.getByRole("link", { name: /乙.*beta/ })).toBeInTheDocument();
+  });
+
+  it("active-hover 下当前项常驻双行，且不多出读屏副本", () => {
+    renderNav({
+      subLabelReveal: "active-hover",
+      isActive: (href: string) => href === "/b",
+    });
+    const sub = visibleSub();
+    expect(hasClass(sub, "hidden")).toBe(false);
+    expect(sub).not.toHaveAttribute("aria-hidden");
+    expect(srCopy()).toBeUndefined();
+  });
+
+  /** 两行要落在 min-h 以内，展开才不挤动下面的项。 */
+  it("active-hover 下双行不加 py", () => {
+    renderNav({ subLabelReveal: "active-hover" });
+    expect(hasClass(visibleSub().parentElement, "py-2xs")).toBe(false);
+  });
+});
+
 /* ── 分隔线与底部块 ───────────────────────────────────────────────────────── */
 
 describe("分组分隔线", () => {

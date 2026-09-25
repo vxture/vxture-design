@@ -5,6 +5,23 @@
 
 ---
 
+## 12.21.0 — 2026-09-25
+
+`ShellSidebarNav` 新增 `subLabelReveal`：副名第二行何时现身（minor：新增可选
+prop，缺省即原行为）。来自 karda（#47）。
+
+- `"always"`（缺省）：副名常驻，与此前完全一致。
+- `"active-hover"`：只在当前项、悬停、键盘聚焦时展开双行，离开恢复单行。导航
+  常态保持安静，英文原词是「停下来对概念」时才需要的。
+- 这一档下双行**不加 `py-2xs`**，三档字号下两行都落在 `min-h-control-xl`
+  以内，展开前后行高不变，不会挤动下面的项。唯一例外是紧凑密度 + 大字号，
+  仍会撑高约 1.5px。
+- 副名对读屏始终可读：收起的可视行标 `aria-hidden`，另放一份 `sr-only` 副本，
+  链接的可访问名与 `"always"` 一致，不会出现「当前项读得到副名、其余项读不到」。
+
+**karda 可以删掉的**：TD-016 那段借内部 DOM 的作用域 CSS
+（`.font-mono` + `aria-current` 选择器），改传 `subLabelReveal="active-hover"`。
+
 ## 12.20.0 — 2026-09-24
 
 新增 `ShellScopePanel`——`ShellScopeButton` 点开后的那一层（minor：新增件 +
