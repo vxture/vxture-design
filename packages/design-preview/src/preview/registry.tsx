@@ -2776,6 +2776,16 @@ function DatePickerDemo() {
 }
 
 /**
+ * 预览用的语言目录。DS 不拥有语言目录（`LocaleSelectOption` 的注释：支持哪些
+ * 语言是平台业务事实），`ShellPreferencePanel` / `ShellLocaleSwitcher` 的缺省
+ * 选项是空数组——不传就是一个空下拉，所以预览必须自己给。
+ */
+const PREVIEW_LOCALES = [
+  { locale: "zh-CN", nativeName: "简体中文" },
+  { locale: "en-US", nativeName: "English" },
+];
+
+/**
  * 照 Figma 的 UserPanel（190:603）配的整块内容，ShellChrome 与 ShellPanel 两页
  * 共用同一份——各写一份，两页的用户面板迟早对不上。
  */
@@ -2820,6 +2830,7 @@ function useFigmaUserPanel() {
     ),
     settings: (
       <ShellPreferencePanel
+        localeOptions={PREVIEW_LOCALES}
         locale={locale}
         theme={theme}
         density={density}
@@ -2882,6 +2893,7 @@ function ShellChromeDemo() {
           onThemeChange={(next) => setTheme(next)}
         />
         <ShellLocaleSwitcher
+          options={PREVIEW_LOCALES}
           currentLocale={locale}
           onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
         />
@@ -2899,6 +2911,7 @@ function ShellChromeDemo() {
       </Row>
       <Row label="ShellPreferencePanel" stack>
         <ShellPreferencePanel
+          localeOptions={PREVIEW_LOCALES}
           locale={locale}
           theme={theme}
           density="default"
@@ -4173,7 +4186,9 @@ function ShellPanelDemo() {
    */
   return (
     <div className="flex flex-wrap items-start gap-lg">
-      <div className="w-fit rounded-md border border-border bg-popover">
+      {/* 外框与真实弹层同一表面（panel.base：ring-1 ring-foreground/10），与旁边的
+          ShellUserPanel 一致；此前写的 border-border 颜色与画法都不同。 */}
+      <div className="w-fit rounded-md bg-popover text-foreground ring-1 ring-foreground/10">
         <div className="flex w-80 flex-col gap-md p-md">
           {/* 主体是组织，所以 lead="icon" 不画头像圈 */}
           <ShellPanelHeader
