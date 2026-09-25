@@ -18,6 +18,11 @@
  */
 
 import * as React from "react";
+import brandMark from "@vxture/design-system/assets/brands/vx-brand/vxture-logo-icon.svg";
+import productLogo from "@vxture/design-system/assets/examples/product-logo.png";
+// 智能体图标：Varda 的动图身份标（原件在 vxture-platform 各门户 public/assets/ai/，
+// 2026-08-18 已从 DS 迁出归产品）。这里只复制一份给预览用。
+import aiAgentIcon from "./assets/ai-agent-icon-32.gif";
 import {
   Accordion,
   AccordionContent,
@@ -252,6 +257,13 @@ import {
   ShellPanelSlots,
   ShellPanelSurface,
   ShellScopePanel,
+  ShellAgentButton,
+  ShellHeaderDivider,
+  ShellHeaderDomain,
+  ShellHeaderMark,
+  ShellHeaderTitle,
+  ShellProductTitle,
+  ShellScopeButton,
   ShellSearchBox,
   ShellToolbox,
   ShellToolboxButton,
@@ -2645,6 +2657,23 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ShellToolboxDemo />,
   },
   {
+    name: "PageHeader",
+    layer: "pattern",
+    group: "外壳与登录",
+    tags: ["vxture", "patterns"],
+    covers: [
+      "ShellHeaderParts",
+      "ShellHeaderMark",
+      "ShellHeaderTitle",
+      "ShellHeaderDivider",
+      "ShellHeaderDomain",
+      "ShellProductTitle",
+    ],
+    deviation:
+      "四种页面视角的顶栏（owner 2026-09-25，Figma Header_website 2226:10298 / Header_console 682:2224 / Header_admin 682:2225 / Header_product 682:2226）。不做成四个写死的组件：都是 ShellHeader 三槽里拼零件，区别在放哪些零件。官网 layout=centered + surface=transparent；三种工作台全宽 + surface=background。与 Figma 的偏差：官网内容宽取 max-w-page-2xl（1536px，Figma 1600 不在容器刻度上）；槽内间距沿用 ShellHeader 既有值（Figma 统一 8px）；产品标识用 DS 示例图 assets/examples/product-logo.png（Y 字形），智能体图标是 Varda 的 32px 动图（原件归产品，预览里复制一份），均由产品侧换成自己的",
+    render: () => <PageHeadersDemo />,
+  },
+  {
     name: "ShellSearchBox",
     layer: "pattern",
     group: "外壳与登录",
@@ -3040,6 +3069,205 @@ function ShellToolboxDemo() {
             </label>
           ))}
         </div>
+      </Row>
+    </div>
+  );
+}
+
+/** 顶栏示例里所有工作台共用的右侧工具（Figma HeaderToolbar 123:43）。 */
+const HEADER_TOOLS: ShellToolboxItem[] = [
+  { key: "theme", icon: "sun", label: "主题", onClick: () => {} },
+  { key: "locale", icon: "globe", label: "语言", onClick: () => {} },
+  { key: "fullscreen", icon: "corners-out", label: "全屏", onClick: () => {} },
+  { key: "help", icon: "help", label: "帮助", href: "#help" },
+  { key: "notifications", icon: "bell", label: "通知", onClick: () => {} },
+  { key: "settings", icon: "settings", label: "设置", href: "#settings" },
+];
+
+const HEADER_LAUNCHER_ITEMS = [
+  { key: "ops", icon: "workspace" as const, label: "运营业务域", active: true },
+  { key: "platform", icon: "settings" as const, label: "平台自治域" },
+];
+
+/** 三种工作台共用的右侧：搜索、智能体、工具箱、头像。 */
+function ConsoleHeaderTrailing({
+  userPanel,
+}: {
+  userPanel: React.ComponentProps<typeof ShellUserMenu>;
+}) {
+  const [query, setQuery] = React.useState("");
+  return (
+    <>
+      <div className="w-media-3xl">
+        <ShellSearchBox
+          query={query}
+          onQueryChange={setQuery}
+          groups={[]}
+          labels={{ placeholder: "搜索" }}
+          shortcutKey={null}
+        />
+      </div>
+      {/* 智能体图标由产品侧提供（Varda 的 32px 动图）。 */}
+      <ShellAgentButton iconSrc={aiAgentIcon.src} label="智能助手" />
+      <ShellToolbox label="工具" items={HEADER_TOOLS} />
+      <ShellUserMenu {...userPanel} />
+    </>
+  );
+}
+
+/**
+ * 四种页面视角的顶栏（owner 2026-09-25）。每一种都只用 DS 零件拼，preview 不
+ * 手写任何视觉——各门户照着拼出来的就是同一个样子。
+ */
+function PageHeadersDemo() {
+  const { userPanel } = useFigmaUserPanel();
+  return (
+    <div className="flex w-full flex-col gap-xl">
+      <Row label="1 · 官网：内容居中限宽、无底色；未登录（注册 / 登录）" stack>
+        <ShellHeader
+          layout="centered"
+          surface="transparent"
+          height="xl"
+          leading={
+            <>
+              <ShellHeaderMark src={brandMark.src} href="#home" />
+              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+            </>
+          }
+          trailing={
+            <>
+              <ShellToolbox label="工具" items={HEADER_TOOLS} />
+              <Button variant="ghost">注册</Button>
+              <Button>登录</Button>
+            </>
+          }
+        />
+      </Row>
+      <Row label="1 · 官网：产品页（站名后接产品名，右侧回官网）" stack>
+        <ShellHeader
+          layout="centered"
+          surface="transparent"
+          height="xl"
+          leading={
+            <>
+              <ShellHeaderMark src={brandMark.src} href="#home" />
+              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+              <ShellHeaderDivider />
+              <ShellProductTitle name="产品" />
+            </>
+          }
+          trailing={
+            <>
+              <ShellToolbox label="工具" items={HEADER_TOOLS} />
+              <Button>官网</Button>
+            </>
+          }
+        />
+      </Row>
+      <Row label="1 · 官网：已登录（头像）" stack>
+        <ShellHeader
+          layout="centered"
+          surface="transparent"
+          height="xl"
+          leading={
+            <>
+              <ShellHeaderMark src={brandMark.src} href="#home" />
+              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+            </>
+          }
+          trailing={
+            <>
+              <ShellToolbox label="工具" items={HEADER_TOOLS} />
+              <ShellUserMenu {...userPanel} />
+            </>
+          }
+        />
+      </Row>
+
+      <Row
+        label="2 · 租户用户工作台：全宽；Workspace Console + 当前租户（租户用户视角）"
+        stack
+      >
+        <ShellHeader
+          surface="background"
+          height="xl"
+          leading={
+            <>
+              <ShellLauncher
+                items={HEADER_LAUNCHER_ITEMS}
+                onSelect={() => {}}
+                buttonLabel="切换业务域"
+              />
+              <ShellHeaderMark src={brandMark.src} href="#home" />
+              <ShellHeaderTitle>Workspace Console</ShellHeaderTitle>
+              <ShellHeaderDivider />
+              <ShellScopeButton
+                icon="building-office"
+                label="Tenant Name"
+                ariaLabel="切换租户与工作空间"
+              />
+            </>
+          }
+          trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
+        />
+      </Row>
+
+      <Row
+        label="3 · 平台管理工作台：全宽；Admin Console + 平台管理员徽标 + 域名（管理员视角）"
+        stack
+      >
+        <ShellHeader
+          surface="background"
+          height="xl"
+          leading={
+            <>
+              <ShellLauncher
+                items={HEADER_LAUNCHER_ITEMS}
+                onSelect={() => {}}
+                buttonLabel="切换业务域"
+              />
+              <ShellHeaderMark src={brandMark.src} href="#home" />
+              <ShellHeaderTitle badge={<Badge>平台管理员</Badge>}>
+                Admin Console
+              </ShellHeaderTitle>
+              <ShellHeaderDivider />
+              <ShellHeaderDomain>租户管理</ShellHeaderDomain>
+            </>
+          }
+          trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
+        />
+      </Row>
+
+      <Row
+        label="4 · 单产品视角：侧栏开关 + 产品标题组（标识 / 名称 / 类型 / 等级）+ 域名"
+        stack
+      >
+        <ShellHeader
+          surface="background"
+          height="xl"
+          leading={
+            <>
+              <ShellIconButton icon="sidebar" label="收起侧栏" />
+              <ShellLauncher
+                items={HEADER_LAUNCHER_ITEMS}
+                onSelect={() => {}}
+                buttonLabel="切换业务域"
+              />
+              <ShellHeaderMark src={brandMark.src} href="#home" />
+              <ShellHeaderDivider />
+              {/* 示例产品标识（DS assets/examples），各产品换成自己的。 */}
+              <ShellProductTitle
+                logoSrc={productLogo.src}
+                name="产品"
+                type="产品类型"
+                tier={<StatusBadge tone="brand">Pro</StatusBadge>}
+              />
+              <ShellHeaderDivider />
+              <ShellHeaderDomain>Domain Name</ShellHeaderDomain>
+            </>
+          }
+          trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
+        />
       </Row>
     </div>
   );

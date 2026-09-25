@@ -372,7 +372,7 @@ const rules = [
       if (!isDesignSystemConsumerSource(file)) return null;
       const specifiers = findDesignSystemSpecifiers(line);
       const unauthorized = specifiers.find(
-        (specifier) => !ALLOWED_DS_IMPORTS.has(specifier),
+        (specifier) => !isAllowedDesignSystemImport(specifier),
       );
       if (!unauthorized) return null;
       return violation(
@@ -2861,6 +2861,30 @@ function readAllowedDesignSystemImports(manifest) {
         : `@vxture/design-system/${key.replace(/^\.\//, "")}`,
     ),
   );
+}
+
+/**
+ * 一个导入是否落在 DS 的公共入口上。
+ *
+ * exports 的键可以是**通配**的（`./assets/*`，12.12.0 起资产对消费方开放）。
+ * 精确匹配会把它当成字面量 `@vxture/design-system/assets/*`，任何具体文件都
+ * 对不上——按官方入口导入默认标识反被拦下（2026-09-25 由 preview 的 PageHeader
+ * 示例查到）。通配键按前缀匹配，且不许用 `..` 跳出该前缀。
+ */
+function isAllowedDesignSystemImport(specifier) {
+  if (ALLOWED_DS_IMPORTS.has(specifier)) return true;
+  for (const entry of ALLOWED_DS_IMPORTS) {
+    if (!entry.endsWith("/*")) continue;
+    const prefix = entry.slice(0, -1);
+    if (
+      specifier.startsWith(prefix) &&
+      specifier.length > prefix.length &&
+      !specifier.slice(prefix.length).split("/").includes("..")
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function readDesignSystemExportedStylePaths(manifest) {

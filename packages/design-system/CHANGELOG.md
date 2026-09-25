@@ -5,6 +5,26 @@
 
 ---
 
+## 13.4.0 — 2026-09-25
+
+四种页面 Header 的零件（minor：新增件）。跟随 `@vxture/design-ui@10.3.0`
+（`ShellHeader` 新增 `layout` / `surface`）。owner 2026-09-25，照 Figma
+Header_website（2226:10298）/ Header_console（682:2224）/ Header_admin
+（682:2225）/ Header_product（682:2226）。
+
+- 新增 `ShellHeaderMark`（平台标识，32px 版位 24px 图形）、`ShellHeaderTitle`
+  （品牌字体 24px 粗体标题，可带徽标）、`ShellHeaderDivider`（20px 竖线）、
+  `ShellHeaderDomain`（当前域名，`label-lg` 弱化色）、`ShellProductTitle`（产品
+  标识 + 名称 + 类型 + 等级）。
+- 四种 header **不做成四个组件**，都是 `ShellHeader` 三槽里拼零件；选用判据写进
+  03-patterns-guide §7.1，preview 新增「PageHeader」四种示例。
+- 两种管理工作台以名称区分：租户用户工作台 Workspace Console（当前租户），平台
+  管理工作台 Admin Console（管理员徽标 + 当前域）。
+- 新增示例资源 `assets/examples/product-logo.png`：单产品视角演示用的产品标识，
+  **只是示例**，各产品换成自己的。
+- 与 Figma 的偏差：槽内间距沿用 `ShellHeader` 既有值（Figma 统一 8px）；示例里的
+  智能体图标暂用平台标识占位。
+
 ## 13.3.0 — 2026-09-25
 
 新增 `ShellToolbox` / `ShellToolboxButton`：外壳工具箱（minor：新增件）。owner

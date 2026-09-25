@@ -5,6 +5,18 @@
 
 ---
 
+## 10.3.0 — 2026-09-25
+
+`ShellHeader` 新增 `layout` 与 `surface`（minor：新增可选 prop，缺省不变）。
+owner 2026-09-25：四种页面 Header（官网 / 租户工作台 / 平台管理工作台 / 单产品）。
+
+- `layout`：`full`（缺省，铺满视口）/ `centered`（官网：内容居中封顶
+  `max-w-page-2xl`，左右 `px-xl`）。Figma 官网内容宽 1600px 不在容器刻度上，取
+  最近的 `page-2xl`（1536px）。
+- `surface`：`card`（缺省，白底 + sticky 阴影）/ `background`（与页面同底的浅灰 +
+  阴影，Figma 工作台画法）/ `transparent`（无底无影，官网）。
+- **缺省值与此前一致**：全宽、白底、sticky 阴影，现有门户顶栏不变。
+
 ## 10.2.0 — 2026-09-25
 
 `InputOTP` 新增形态轴 `variant`（minor：新增可选 prop）。owner 2026-09-25，照
