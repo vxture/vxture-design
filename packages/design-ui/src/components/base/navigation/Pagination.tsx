@@ -18,6 +18,7 @@
 import * as React from "react";
 import { cn } from "../../../utils/cn";
 import { Icon } from "../../../icons";
+import type { IconName } from "../../../icons";
 import { Button } from "../form/Button";
 import { SegmentedControl } from "../form/SegmentedControl";
 
@@ -44,8 +45,15 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
    * `filteredTotal` 都表达不了。
    */
   readonly countLabel?: React.ReactNode;
+  /**
+   * 四个翻页按钮（首页 / 上一页 / 下一页 / 末页）的可访问名。按钮只画图标
+   * （|< ‹ › >|），这几个名字落在 `aria-label` 与 `title` 上——读屏器念它，悬停
+   * 时浮出来，版面上不占字。做 i18n 的消费方照旧传入本地化文案。
+   */
+  readonly firstLabel?: string;
   readonly previousLabel?: string;
   readonly nextLabel?: string;
+  readonly lastLabel?: string;
   /** 每页条数选择器的可访问名。默认「每页条数」。 */
   readonly pageSizeLabel?: string;
   /**
@@ -81,8 +89,10 @@ function Pagination({
   onPageSizeChange,
   onPageChange,
   countLabel,
+  firstLabel = "First page",
   previousLabel = "Previous page",
   nextLabel = "Next page",
+  lastLabel = "Last page",
   pageSizeLabel = "Rows per page",
   pageSizeOptionTemplate = "{size} per page",
   pageSizeAutoLabel = "Fit rows to height",
@@ -138,16 +148,22 @@ function Pagination({
             }))}
           />
         ) : null}
+        {/* 翻页按钮一律只画图标：|< ‹ 页码 › >|。文字版「上一页 / 下一页」在
+            中英文下宽度差一倍，把整排页码推来推去；图标四个等宽，页码的位置
+            在任何语言下都稳定。名字进 aria-label / title，可访问性不丢。 */}
         <div className="flex items-center gap-2xs">
-          <Button
-            variant="outline"
-            size="md"
+          <PageStepButton
+            icon="caret-line-left"
+            label={firstLabel}
+            disabled={safePage <= 1}
+            onClick={() => onPageChange(1)}
+          />
+          <PageStepButton
+            icon="chevron-left"
+            label={previousLabel}
             disabled={safePage <= 1}
             onClick={() => onPageChange(safePage - 1)}
-          >
-            <Icon name="chevron-left" size={16} aria-hidden="true" />
-            {previousLabel}
-          </Button>
+          />
           {pages.map((item) => (
             <Button
               key={item}
@@ -159,18 +175,53 @@ function Pagination({
               {item}
             </Button>
           ))}
-          <Button
-            variant="outline"
-            size="md"
+          <PageStepButton
+            icon="chevron-right"
+            label={nextLabel}
             disabled={safePage >= safePageCount}
             onClick={() => onPageChange(safePage + 1)}
-          >
-            {nextLabel}
-            <Icon name="chevron-right" size={16} aria-hidden="true" />
-          </Button>
+          />
+          <PageStepButton
+            icon="caret-line-right"
+            label={lastLabel}
+            disabled={safePage >= safePageCount}
+            onClick={() => onPageChange(safePageCount)}
+          />
         </div>
       </div>
     </nav>
+  );
+}
+
+/**
+ * 翻页按钮：只画图标，名字进 `aria-label` 与 `title`。
+ *
+ * `icon-md` 与页码按钮同高（control-md），正方形——四个翻页键等宽，页码不会因为
+ * 两端按钮的文字长短被推来推去。outline 与页码的 ghost 区分开：两端是「走」，
+ * 中间是「到」。
+ */
+function PageStepButton({
+  icon,
+  label,
+  disabled,
+  onClick,
+}: {
+  icon: IconName;
+  label: string;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      variant="outline"
+      size="icon-md"
+      aria-label={label}
+      title={label}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      <Icon name={icon} size="sm" aria-hidden="true" />
+    </Button>
   );
 }
 

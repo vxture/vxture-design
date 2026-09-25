@@ -33,6 +33,8 @@ export const ICON_GROUPS = [
       "caret-double-down",
       "caret-double-left",
       "caret-double-right",
+      "caret-line-left", // |< 到最前（分页的首页）
+      "caret-line-right", // >| 到最后（分页的末页）
       "caret-up-down", // 表头/选择器排序指示
       "arrows-down-up", // 纵向交换/排序
       "arrow-bend-up-left", // 回复/返回上级
