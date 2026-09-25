@@ -80,7 +80,8 @@
  * 一段文字莫名变色，没人会想到去查一个字符串拆分函数。
  *
  * 导航项可带 `subLabel`，渲染成主名下方的小字第二行（中文主名 + 英文原词）。
- * 不传就是单行，行高与只有单行时完全一致。
+ * 不传就是单行，行高与只有单行时完全一致。第二行何时现身由 `subLabelReveal`
+ * 决定：缺省常驻；`"active-hover"` 下只在当前项、悬停、键盘聚焦时展开。
  *
  * 颜色：图标维持 muted-foreground 不变；标签文字单独提一级到
  * foreground（NavLabel 上单独盖一层 text-foreground，不影响图标的颜色，
@@ -201,6 +202,9 @@ export interface ShellNavSection {
   dividerBefore?: boolean;
 }
 
+/** `subLabel` 第二行的显隐策略，见 `ShellSidebarNavProps.subLabelReveal`。 */
+export type ShellNavSubLabelReveal = "always" | "active-hover";
+
 export interface ShellSidebarNavProps {
   /**
    * 侧栏顶部的域名称（title 行的文字）。**可选**——不传就不渲染那行文字，
@@ -229,6 +233,28 @@ export interface ShellSidebarNavProps {
    * 已由 content 自己的 `pb-6xl` 提供，不再需要一个空块去占位。
    */
   readonly footer?: React.ReactNode;
+  /**
+   * `subLabel` 第二行何时现身。缺省 `"always"`——不传时行为与加这个 prop 之前
+   * 完全一致。
+   *
+   * `"active-hover"`：只在**当前项**（`aria-current="page"`）、**悬停**、**键盘
+   * 聚焦**（`:focus-visible`）时展开双行，离开恢复单行。导航常态保持安静，英文
+   * 原词是「停下来对概念」时才需要的（karda owner，#47）。
+   *
+   * 此前 karda 用一段作用域 CSS 借内部 DOM 实现（`.font-mono` + `aria-current`
+   * 选择器）——那等于把内部结构变成公开契约，任何重构都会让它静默失效，所以
+   * 收成一等 prop。
+   *
+   * 两处与 `"always"` 不同，都是为了**展开时不挤动下面的项**：
+   * - 双行不再加 `py-2xs`。三档字号下两行内容高 30 / 32.5 / 37.5px，都落在
+   *   `min-h-control-xl`（默认密度 40）以内，展开前后行高不变；加了 py 大字号档
+   *   会撑到 45.5，悬停一下整列往下跳 5px。紧凑密度（行高 36）+ 大字号是唯一
+   *   仍会撑高 1.5px 的组合。
+   * - 副名对读屏**始终可读**：可视的那行在收起时 `display:none`，会从链接的
+   *   可访问名里掉出去，而且「当前项读得到、别的项读不到」。所以可视行标
+   *   `aria-hidden`，另放一份 `sr-only` 副本，可访问名在两种模式下一致。
+   */
+  readonly subLabelReveal?: ShellNavSubLabelReveal;
   /**
    * 两个控件的无障碍名。默认值是英文——本件从产品里提炼出来时把默认值一并
    * 去了业务语言，保留默认可以让不做 i18n 的消费方零配置接入；做 i18n 的
@@ -319,18 +345,24 @@ function NavItemRow({
   collapsed,
   active,
   linkComponent: LinkComponent,
+  subLabelReveal,
 }: {
   item: ShellNavItem;
   collapsed: boolean;
   active: boolean;
   linkComponent: React.ElementType;
+  subLabelReveal: ShellNavSubLabelReveal;
 }) {
+  /* 当前项在两种模式下都常驻双行，只有非当前项才需要按悬停/聚焦切换。 */
+  const revealOnDemand = subLabelReveal === "active-hover" && !active;
   const link = (
     <LinkComponent
       href={item.href}
       aria-current={active ? "page" : undefined}
       className={cn(
         interactive,
+        /* 具名 group：副名的显隐只认本行的悬停/聚焦，不被外层别的 group 牵动。 */
+        "group/nav-item",
         /* 两行项比单行高，所以行高由内容撑（min-h 而非固定 h）。不传 subLabel
            时内容仍是一行，min-h 与原来的 h-control-xl 等值——单行项的高度、
            图标位置、间距全部不变，这是"纯增量"的具体含义。 */
@@ -349,13 +381,32 @@ function NavItemRow({
       {!collapsed && (
         <NavLabel className={cn(!active && "text-foreground")}>
           {item.subLabel ? (
-            <span className="flex flex-col justify-center py-2xs">
+            <span
+              className={cn(
+                "flex flex-col justify-center",
+                /* 按需展开时不加 py：两行要落在 min-h 以内，展开才不挤动下面
+                   的项。理由见 `subLabelReveal` 的注释。 */
+                subLabelReveal === "always" && "py-2xs",
+              )}
+            >
               <span className="truncate leading-tight">{item.label}</span>
               {/* 副名恒 muted，选中态也不跟着变主色——它是注解不是标题，两行
                   一起高亮会让主名失去重音。 */}
-              <span className="truncate font-mono text-label-sm leading-tight text-muted-foreground">
+              <span
+                className={cn(
+                  "truncate font-mono text-label-sm leading-tight text-muted-foreground",
+                  revealOnDemand &&
+                    "hidden group-hover/nav-item:block group-focus-visible/nav-item:block",
+                )}
+                aria-hidden={revealOnDemand || undefined}
+              >
                 {item.subLabel}
               </span>
+              {/* 可视行收起时是 display:none，会从可访问名里掉出去——留一份
+                  给读屏，名字与 "always" 模式一致。 */}
+              {revealOnDemand ? (
+                <span className="sr-only">{item.subLabel}</span>
+              ) : null}
             </span>
           ) : (
             item.label
@@ -553,6 +604,7 @@ export function ShellSidebarNav({
   storageKeyPrefix,
   linkComponent = "a",
   footer,
+  subLabelReveal = "always",
   labels,
 }: ShellSidebarNavProps) {
   const text = { ...DEFAULT_LABELS, ...labels };
@@ -689,6 +741,7 @@ export function ShellSidebarNav({
                             collapsed={collapsed}
                             active={isActive(item.href)}
                             linkComponent={linkComponent}
+                            subLabelReveal={subLabelReveal}
                           />
                         ))}
                       </nav>
