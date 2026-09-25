@@ -4211,6 +4211,7 @@ function ShellPanelDemo() {
             icon="sparkles"
             label="AI Credits"
             href={`${TENANT_CONSOLE}/credits`}
+            chevron={false}
             description="workspace"
             value="300"
             unit="分"
@@ -4221,6 +4222,7 @@ function ShellPanelDemo() {
             icon="database"
             label="Storage"
             href={`${TENANT_CONSOLE}/storage`}
+            chevron={false}
             description="workspace"
             value="300"
             unit="MB"
@@ -4233,6 +4235,7 @@ function ShellPanelDemo() {
             icon="wallet"
             label="账户余额"
             href={`${TENANT_CONSOLE}/billing/balance`}
+            chevron={false}
             description="不含平台卡券"
             value="200.00"
             unit="RMB"
@@ -4242,6 +4245,7 @@ function ShellPanelDemo() {
             icon="receipt"
             label="本月账单"
             href={`${TENANT_CONSOLE}/billing/invoices`}
+            chevron={false}
             description="2026/09"
             value="100.00"
             unit="RMB"
