@@ -273,6 +273,8 @@
       "ShellSidebarFrame",
       "ShellSidebarNav",
       "ShellThemeToggle",
+      "ShellToolbox",
+      "ShellToolboxButton",
       "ShellUserMenu",
       "ShellUserPanel",
       "ShellViewport",

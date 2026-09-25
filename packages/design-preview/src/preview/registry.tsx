@@ -197,6 +197,7 @@ import {
   ShellFullscreenToggle,
   ShellIconButton,
   ShellLegalFooter,
+  LocaleSelectPanel,
   ShellLocaleSwitcher,
   ShellPreferencePanel,
   ShellThemeToggle,
@@ -252,6 +253,9 @@ import {
   ShellPanelSurface,
   ShellScopePanel,
   ShellSearchBox,
+  ShellToolbox,
+  ShellToolboxButton,
+  type ShellToolboxItem,
   ShellSidebarFrame,
   ShellSidebarNav,
   ShellViewport,
@@ -2632,6 +2636,15 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ShellPanelDemo />,
   },
   {
+    name: "ShellToolbox",
+    layer: "pattern",
+    group: "外壳与登录",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "照 Figma HeaderToolbar（123:43）：浅灰底圆角胶囊、20px 图标、间距 16px，单个工具无底色。两种用法可混用：items 按定义导入（href 链接 / onClick 回调 / hidden 显隐 / active / disabled / badge），children 自己组合 ShellToolboxButton（转发 ref，可做 PopoverTrigger asChild）。不绑定弹层。全部隐藏时整只胶囊不渲染。与 Figma 的图形差异：全屏 / 通知 / 设置用字典现有的 corners-out / bell / settings，Figma 画的是 FrameCorners / BellSimple / GearSix",
+    render: () => <ShellToolboxDemo />,
+  },
+  {
     name: "ShellSearchBox",
     layer: "pattern",
     group: "外壳与登录",
@@ -2949,6 +2962,88 @@ const OTP_DIALOGS = [
     footer: <a href="#recover">丢失所有双重验证设备和备份码？尝试恢复</a>,
   },
 ];
+
+/** Figma HeaderToolbar（123:43）的六个工具，作为可开关的定义。 */
+const TOOLBOX_TOOLS = [
+  { key: "theme", icon: "sun", label: "主题" },
+  { key: "locale", icon: "globe", label: "语言" },
+  { key: "fullscreen", icon: "corners-out", label: "全屏" },
+  { key: "help", icon: "help", label: "帮助" },
+  { key: "notifications", icon: "bell", label: "通知" },
+  { key: "settings", icon: "settings", label: "设置" },
+] as const;
+
+function ShellToolboxDemo() {
+  const [shown, setShown] = React.useState<Record<string, boolean>>(() =>
+    Object.fromEntries(TOOLBOX_TOOLS.map((t) => [t.key, true])),
+  );
+  const [fullscreen, setFullscreen] = React.useState(false);
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+
+  const themeIcon: ShellToolboxItem["icon"] =
+    theme === "light" ? "sun" : "moon";
+  /* 按定义导入：去向有两种——帮助 / 设置是链接，其余是回调。 */
+  const items: ShellToolboxItem[] = [
+    {
+      ...TOOLBOX_TOOLS[0],
+      icon: themeIcon,
+      onClick: () => setTheme((t) => (t === "light" ? "dark" : "light")),
+    },
+    {
+      ...TOOLBOX_TOOLS[2],
+      active: fullscreen,
+      onClick: () => setFullscreen((v) => !v),
+    },
+    { ...TOOLBOX_TOOLS[3], href: "#help" },
+    { ...TOOLBOX_TOOLS[4], badge: true, onClick: () => {} },
+    { ...TOOLBOX_TOOLS[5], href: "#settings" },
+  ].map((item) => ({ ...item, hidden: !shown[item.key] }));
+
+  return (
+    <div className="flex flex-col gap-lg">
+      <Row
+        label="照 Figma HeaderToolbar（123:43）：定义导入 + 语言用组合接弹层"
+        stack
+      >
+        <ShellToolbox label="工具" items={items}>
+          {shown["locale"] ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <ShellToolboxButton icon="globe" label="语言" />
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-auto">
+                <LocaleSelectPanel
+                  activeLocale="zh-CN"
+                  options={PREVIEW_LOCALES}
+                  onSelect={() => {}}
+                />
+              </PopoverContent>
+            </Popover>
+          ) : null}
+        </ShellToolbox>
+      </Row>
+      <Row
+        label="显示 / 隐藏：关掉的工具不渲染、不占位；全关时整只胶囊不出"
+        stack
+      >
+        <div className="flex flex-wrap gap-md">
+          {TOOLBOX_TOOLS.map((t) => (
+            <label
+              key={t.key}
+              className="flex items-center gap-xs text-body-sm text-foreground"
+            >
+              <Switch
+                checked={shown[t.key] ?? false}
+                onCheckedChange={(v) => setShown((s) => ({ ...s, [t.key]: v }))}
+              />
+              {t.label}
+            </label>
+          ))}
+        </div>
+      </Row>
+    </div>
+  );
+}
 
 /** Field 只读展示的示例数据（6 条，够排两行三列）。 */
 const FIELD_VALUE_SAMPLE: ReadonlyArray<readonly [string, string]> = [

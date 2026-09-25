@@ -4,3 +4,4 @@ export * from "./ShellLauncher";
 export * from "./ShellPanel";
 export * from "./ShellSearchBox";
 export * from "./ShellSidebarNav";
+export * from "./ShellToolbox";
