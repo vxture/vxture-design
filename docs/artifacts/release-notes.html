@@ -224,7 +224,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
 <tr><td class="mono">@vxture/design-system</td><td class="mono">12.23.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.12.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">9.13.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span>，见 §05k</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.4.0</td><td><span class="tag t-ok">minor</span> 宽松密度重排（§05i）；title / overline 字重 500、新增 code-lg（§05j）</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
@@ -402,7 +402,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="note warn"><strong><span class="mono">ShellUserMenu</span> 的 API 一字未变</strong>，弹层里渲染的就是 <span class="mono">ShellUserPanel</span> 的同一份代码，两处不会各自漂移。平铺时外壳带面板表面（底色 / 描边 / 圆角）但不带阴影；选中一项后调用可选的 <span class="mono">onItemSelect</span>，<span class="mono">ShellUserMenu</span> 用它收起弹层。</div>
 <p><strong>新增 <span class="mono">ShellPanelSurface</span></strong>：<span class="mono">ShellPanelContent</span> 的不弹层版本，同宽、同留白、同段间距、同表面，不带阴影。面板平铺时（抽屉、设置页、移动端账户页）<strong>用它做外壳，不要手写 div</strong>——手写的外壳宽度、留白、边线各写各的，业务系统之间就对不上了。<span class="mono">ShellUserPanel</span> 的平铺外壳就是它。</p>
 <div class="note warn"><strong>不用改代码，观感变了：<span class="mono">ShellPanelRow</span> 的 <span class="mono">valueTone="strong"</span> 不再套浅蓝底块。</strong>账户余额、本月账单这类读数改为与 <span class="mono">ShellPanelMeterRow</span>（额度、存储）同一份渲染：18px 纯数字 + 12px 弱化单位，底对齐。同一块面板里所有读数的数字高度与单位位置从此一致。</div>
-<p><strong><span class="mono">ShellPanelMeterRow</span> 可点</strong>：新增 <span class="mono">href</span> / <span class="mono">linkComponent</span> / <span class="mono">onClick</span> / <span class="mono">newTab</span> / <span class="mono">chevron</span>，与 <span class="mono">ShellPanelRow</span> 同名同义、同一个外框。不传即原行为。</p></section>
+<p><strong><span class="mono">ShellPanelMeterRow</span> 可点</strong>：新增 <span class="mono">href</span> / <span class="mono">linkComponent</span> / <span class="mono">onClick</span> / <span class="mono">newTab</span> / <span class="mono">chevron</span>，与 <span class="mono">ShellPanelRow</span> 同名同义、同一个外框。不传即原行为。</p>
+<div class="note warn"><strong>不用改代码，观感变了：<span class="mono">ShellScopePanel</span> 排版优化。</strong>组名改用紧凑头部（<span class="mono">ShellPanelHeader</span> 新增 <span class="mono">compact</span>），不再比下面的工作区还靠右；工作区缩进一档、统一行高；只有当前所在项突出显示（accent 底 + 圆形对勾 <span class="mono">check-circle</span>），其余一律浅灰底。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -444,7 +445,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.23.0 · design-tokens 3.4.0 / design-ui 9.12.0 / design-system 12.23.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.23.0 · design-tokens 3.4.0 / design-ui 9.13.0 / design-system 12.23.0 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

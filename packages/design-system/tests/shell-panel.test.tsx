@@ -11,7 +11,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { Popover, PopoverTrigger } from "@vxture/design-ui";
+import { Icon, Popover, PopoverTrigger } from "@vxture/design-ui";
 import {
   SHELL_PANEL_HAIRLINE,
   ShellPanelContent,
@@ -884,6 +884,51 @@ describe("ShellScopePanel · 两级范围切换", () => {
     await user.click(screen.getByText("停用的"));
     expect(onSelect).not.toHaveBeenCalled();
   });
+
+  /**
+   * **只有当前所在项突出显示，其余一律浅灰底**——不分是不是当前租户下的
+   * （owner 2026-09-25）。刻意选组内第二项：同组的第一项与另一组的项都要是灰的。
+   */
+  it("只有选中项走 accent，其余（含同组与别组）都是浅灰底", () => {
+    render1("w2");
+    for (const el of screen.getAllByRole("menuitemradio")) {
+      const selected = el.getAttribute("aria-checked") === "true";
+      expect(hasClass(el, "bg-accent")).toBe(selected);
+      expect(hasClass(el, "bg-muted")).toBe(!selected);
+    }
+  });
+
+  /** 有没有副行都占同一档行高，否则同一组里单行项与双行项忽高忽低。 */
+  it("单行项与双行项同一最小行高", () => {
+    render1("w1");
+    for (const el of screen.getAllByRole("menuitemradio")) {
+      expect(hasClass(el, "min-h-control-2xl")).toBe(true);
+    }
+  });
+
+  /** 选中标记是圆形对勾（check-circle），不是细对勾。 */
+  it("选中项尾部是 check-circle", () => {
+    const probe = render(<Icon name="check-circle" size="md" />);
+    const glyph = probe.container.querySelector("svg")!.innerHTML;
+    probe.unmount();
+
+    render1("w1");
+    const checked = screen
+      .getAllByRole("menuitemradio")
+      .find((el) => el.getAttribute("aria-checked") === "true")!;
+    expect([...checked.querySelectorAll("svg")].at(-1)!.innerHTML).toBe(glyph);
+  });
+
+  /**
+   * 组标题用紧凑头部：图标不占 48px 标识列，组名才不会被推到比子项还靠右。
+   * 变异「去掉 compact」时这条挂。
+   */
+  it("组标题的图标不占标识列", () => {
+    render1("w1");
+    const group = screen.getAllByRole("group")[0]!;
+    const icon = group.querySelector("svg")!;
+    expect(hasClass(icon.parentElement, "w-media-sm")).toBe(false);
+  });
 });
 
 /* ── 平铺外壳 ─────────────────────────────────────────────────────────────── */
@@ -1014,5 +1059,28 @@ describe("ShellPanelMeterRow · 可点", () => {
     );
     expect(interaction.length).toBeGreaterThan(0);
     for (const c of interaction) expect(meterClasses.has(c)).toBe(true);
+  });
+});
+
+/* ── ShellPanelHeader · 紧凑档 ────────────────────────────────────────────── */
+
+describe("ShellPanelHeader · compact", () => {
+  /** 缺省仍占标识列：面板顶部的头部与各行图标同列，不因新参数改变。 */
+  it("缺省时图标占 48px 标识列", () => {
+    const { container } = render(
+      <ShellPanelHeader lead="icon" icon="buildings" title="租户" />,
+    );
+    expect(
+      hasClass(container.querySelector("svg")!.parentElement, "w-media-sm"),
+    ).toBe(true);
+  });
+
+  it("compact 时图标不占标识列", () => {
+    const { container } = render(
+      <ShellPanelHeader lead="icon" icon="buildings" title="租户" compact />,
+    );
+    expect(
+      hasClass(container.querySelector("svg")!.parentElement, "w-media-sm"),
+    ).toBe(false);
   });
 });

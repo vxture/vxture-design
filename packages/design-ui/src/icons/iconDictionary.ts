@@ -67,6 +67,7 @@ export const ICON_GROUPS = [
       "minus", // 减少；复选框半选态的指示符
       "x",
       "check",
+      "check-circle", // 单选面板的选中标记；与 success（状态）同形不同义
       "copy",
       "play",
       "stop",

@@ -266,6 +266,15 @@ export interface ShellPanelHeaderProps {
    * 两档占同一列宽，所以同一面板里混用也不会错行。
    */
   lead?: "avatar" | "icon" | undefined;
+  /**
+   * 紧凑档：只对 `lead="icon"` 生效。图标（24px）不再占 48px 的标识列，贴着内距
+   * 排，标题随之左移到与下方列表项的文字大致同列。
+   *
+   * 用在**列表里的组标题**（`ShellScopePanel` 的租户行）：标识列是给面板顶部
+   * 那种大头部用的，放进列表会把组名推得比它下面的子项还靠右，层级读反
+   * （owner 2026-09-25）。缺省 false，面板顶部的头部不受影响。
+   */
+  compact?: boolean | undefined;
   title: ReactNode;
   /** 标题右侧的贴标（认证状态之类），由调用方直接给节点——DS 不判断"什么算已认证"。 */
   titleAside?: ReactNode | undefined;
@@ -292,18 +301,20 @@ export function ShellPanelHeader({
   avatarAlt,
   avatarFallback,
   lead = "avatar",
+  compact = false,
   title,
   titleAside,
   tone = "default",
   metaRows = [],
   className,
 }: Readonly<ShellPanelHeaderProps>) {
-  /* 只放图标时也占满标识列宽——否则同一面板里两种头部会错开一格。 */
+  /* 只放图标时也占满标识列宽——否则同一面板里两种头部会错开一格。
+     紧凑档例外：列表里的组标题不与面板顶部的头部同列，不必占这一列。 */
   const bareIcon =
     lead === "icon" && icon ? (
       <span
         className={cn(
-          IDENTITY_WIDTH,
+          !compact && IDENTITY_WIDTH,
           "flex shrink-0 justify-center text-muted-foreground",
         )}
       >
@@ -890,9 +901,12 @@ export function ShellScopePanel({
              * 组用 role="group" 而不是靠视觉分隔表达：读屏器线性念下来时，
              * 分隔线与缩进都不存在，没有 group 就是一长串选项。
              */}
-            <div role="group" className="flex flex-col">
+            <div role="group" className="flex flex-col gap-2xs">
+              {/* 紧凑头部：组名与下方项的文字大致同列，项的图标比组图标缩进
+                  一档——层级靠缩进读出来，而不是靠组名被标识列推到最右。 */}
               <ShellPanelHeader
                 lead="icon"
+                compact
                 {...(group.icon ? { icon: group.icon } : {})}
                 title={group.title}
                 {...(group.titleAside ? { titleAside: group.titleAside } : {})}
@@ -903,7 +917,8 @@ export function ShellScopePanel({
                     : []
                 }
               />
-              {/* 项比组标题往左靠一档：它们从属于上面那个组，不与组名同列。 */}
+              {/* 项比组缩进一档（pl-md）：它们从属于上面那个组，项的图标落在
+                  组图标右侧，项的文字与组名大致同列。 */}
               <div className="flex flex-col gap-2xs pl-md">
                 {group.options.map((option) => {
                   const selected = option.key === value;
@@ -918,14 +933,24 @@ export function ShellScopePanel({
                         onSelect ? () => onSelect(option.key) : undefined
                       }
                       className={cn(
-                        "h-auto w-full justify-start gap-sm px-sm py-xs text-left",
                         /*
+                         * 统一行高：有没有副行都占同一档（control-2xl，默认
+                         * 密度 48px）。按内容撑高时，同一组里单行项与双行项
+                         * 忽高忽低。min-h 而非 h：大字号 + 紧凑密度下双行放不
+                         * 进时让它撑开，而不是截掉一行字。
+                         */
+                        "h-auto min-h-control-2xl w-full justify-start gap-sm px-sm py-2xs text-left",
+                        /*
+                         * 只有当前所在项突出显示，其余一律浅灰底（owner
+                         * 2026-09-25）——不分是不是当前租户下的。
+                         *
                          * 选中走 accent 而不是 secondary：与 ShellScopeButton
                          * 展开态同一个底色，点开前点开后是同一件事的两头。
                          * hover 也钉住，否则划过选中项时它会先变灰再变回来。
                          */
-                        selected &&
-                          "bg-accent text-primary-text hover:bg-accent",
+                        selected
+                          ? "bg-accent text-primary-text hover:bg-accent"
+                          : "bg-muted text-muted-foreground",
                       )}
                     >
                       {option.icon ? (
@@ -953,7 +978,11 @@ export function ShellScopePanel({
                         ) : null}
                       </span>
                       {selected ? (
-                        <Icon name="check" size="sm" className="shrink-0" />
+                        <Icon
+                          name="check-circle"
+                          size="md"
+                          className="shrink-0"
+                        />
                       ) : null}
                     </Button>
                   );

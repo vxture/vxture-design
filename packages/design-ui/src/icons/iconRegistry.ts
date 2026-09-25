@@ -333,6 +333,7 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   minus: MinusIcon,
   x: XIcon,
   check: CheckIcon,
+  "check-circle": CheckCircleIcon,
   copy: CopyIcon,
   play: PlayIcon,
   stop: StopIcon,
