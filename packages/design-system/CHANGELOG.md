@@ -5,6 +5,23 @@
 
 ---
 
+## 13.3.0 — 2026-09-25
+
+新增 `ShellToolbox` / `ShellToolboxButton`：外壳工具箱（minor：新增件）。owner
+2026-09-25：支持显示 / 隐藏、链接、导入定义，样式照 Figma HeaderToolbar（123:43）。
+
+- 外观：浅灰底（`bg-background`）圆角胶囊，图标 20px（`size-icon-md`）、间距
+  `gap-md`，单个工具无底色，悬停与开启时提到前景色。整组 `role="toolbar"`。
+- **按定义导入**：`items: ShellToolboxItem[]`——`key` / `icon` / `label`（必给，
+  同时是悬停提示）/ `href`（给了就是链接，配 `newTab` / `linkComponent`）/
+  `onClick` / `hidden` / `active`（报 `aria-pressed`）/ `disabled`（带 href 也退成
+  禁用按钮）/ `badge`（右上角小圆点）。
+- **自己组合**：children 里放 `ShellToolboxButton`（转发 ref、透传 props），可做
+  `PopoverTrigger asChild`。不绑定弹层。定义的项在前、组合的项在后。
+- **显隐**：`hidden` 的项不渲染、不占位；一项都不可见时整只胶囊不渲染。
+- 与 Figma 的图形差异：全屏 / 通知 / 设置用字典现有的 `corners-out` / `bell` /
+  `settings`；Figma 画的是 FrameCorners / BellSimple / GearSix。
+
 ## 13.2.0 — 2026-09-25
 
 跟随 `@vxture/design-ui@10.2.0`（minor）：`InputOTP` 新增形态轴 `variant`；独立
