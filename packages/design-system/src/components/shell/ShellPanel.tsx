@@ -865,10 +865,16 @@ export interface ShellScopePanelProps {
 }
 
 /**
- * 范围切换面板：`ShellScopeButton` 点开后的那一层。
+ * 范围切换面板——**最常见的用法就是切换租户与工作空间**。
  *
- * 两级——**组**与**项**。DS 不认识"租户"和"工作区"，只认识"若干组、每组若干项、
- * 全局选中其中一项"（与 `ShellScopeButton` 同一句话：范围是什么由调用方定）。
+ * 「Scope（范围）」指用户当前在哪个容器里工作。叫 Scope 不叫 Tenant，是因为
+ * DS 不收业务名词（03-patterns-guide §8）：同一个件也可以用来切业务域、项目、
+ * 环境。但读代码时把它当成「租户切换」来理解，十有八九是对的。
+ *
+ * 两级——**组**与**项**，对应租户与其下的工作空间。组件只认识"若干组、每组
+ * 若干项、全局选中其中一项"。
+ *
+ * 不绑定弹层：可以装进弹层由 `ShellScopeButton` 点开，也可以直接平铺在页面上。
  *
  * 语义照本仓既有的两处单选面板（`ShellLauncher` / `LocaleSelectPanel`）：
  * `role="menu"` + `menuitemradio` + `aria-checked`，选中项尾部补一个对勾。
@@ -1016,8 +1022,14 @@ export interface ShellScopeButtonProps {
 }
 
 /**
- * header 上的"当前范围"触发器：图标 + 名称 + 下拉角标。哪个产品的"范围"是
- * 什么由调用方决定（租户、业务域、项目、环境……），组件只管这个形状。
+ * 显示**当前租户**（更一般地说：当前范围）的按钮：图标 + 名称 + 下拉角标。
+ *
+ * **不限于 header，也不绑定弹层**：放在 header、侧栏、设置页都可以；点了之后
+ * 是弹出 `ShellScopePanel`、跳到一个页面，还是什么都不做（`caret={false}` 只作
+ * 展示），由调用方决定。按钮与面板各自独立，按需组合。
+ *
+ * 叫 Scope 不叫 Tenant 的原因见 `ShellScopePanel`：范围最常见是租户 / 工作空间，
+ * 也可以是业务域、项目、环境，由调用方决定，组件只管这个形状。
  *
  * forwardRef + props 透传是给 Radix `PopoverTrigger asChild` 用的，跟
  * `ShellIconButton` 同一个理由：不透传则弹层永远打不开。
