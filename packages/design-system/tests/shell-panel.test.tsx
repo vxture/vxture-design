@@ -929,3 +929,90 @@ describe("ShellPanelSurface", () => {
     expect(hasClass(el, "w-80")).toBe(true);
   });
 });
+
+/* ── ShellPanelMeterRow · 可点 ────────────────────────────────────────────── */
+
+/**
+ * 读数行（额度、存储）与普通行（余额、租户信息…）同在一块面板里，都要能点
+ * 进控制台对应页面（owner 2026-09-25）。两者共用同一个外框，所以这里除了验
+ * 「能点」，还验「点起来与普通行一样」。
+ */
+describe("ShellPanelMeterRow · 可点", () => {
+  it("不给 href / onClick 时不可点，也没有角标", () => {
+    const { container } = render(
+      <ShellPanelMeterRow label="Storage" percent={30} value="300" />,
+    );
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(container.querySelectorAll("svg")).toHaveLength(0);
+  });
+
+  it("给 href 是链接，带角标；newTab 补 rel", () => {
+    render(
+      <ShellPanelMeterRow
+        label="Storage"
+        percent={30}
+        value="300"
+        href="/console/storage"
+        newTab
+      />,
+    );
+    const link = screen.getByRole("link", { name: /Storage/ });
+    expect(link).toHaveAttribute("href", "/console/storage");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noreferrer noopener");
+    expect(link.querySelectorAll("svg").length).toBeGreaterThan(0);
+  });
+
+  it("给 onClick 是按钮，点了回调", async () => {
+    const onClick = vi.fn();
+    render(
+      <ShellPanelMeterRow label="AI Credits" percent={30} onClick={onClick} />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: /AI Credits/ }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("chevron={false} 可关掉角标", () => {
+    render(
+      <ShellPanelMeterRow
+        label="Storage"
+        percent={30}
+        href="/console/storage"
+        chevron={false}
+      />,
+    );
+    expect(
+      screen.getByRole("link", { name: /Storage/ }).querySelectorAll("svg"),
+    ).toHaveLength(0);
+  });
+
+  /**
+   * 与普通行同一个外框：悬停、焦点、圆角来自同一处。判据是两者的链接外框
+   * 除了各自的布局类，交互相关的类名一致。
+   */
+  it("可点时外框的交互样式与 ShellPanelRow 一致", () => {
+    const a = render(
+      <ShellPanelRow label="账户余额" href="/console/billing" value="1" />,
+    );
+    const rowClasses = new Set(
+      screen.getByRole("link").className.split(" ").filter(Boolean),
+    );
+    a.unmount();
+    render(
+      <ShellPanelMeterRow
+        label="Storage"
+        percent={30}
+        href="/console/storage"
+      />,
+    );
+    const meterClasses = new Set(
+      screen.getByRole("link").className.split(" ").filter(Boolean),
+    );
+    const interaction = [...rowClasses].filter((c) =>
+      /^(hover:|focus-visible:|active:|rounded|transition)/.test(c),
+    );
+    expect(interaction.length).toBeGreaterThan(0);
+    for (const c of interaction) expect(meterClasses.has(c)).toBe(true);
+  });
+});

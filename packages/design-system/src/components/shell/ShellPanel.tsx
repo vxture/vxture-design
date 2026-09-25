@@ -492,17 +492,60 @@ export function ShellPanelRow({
     className,
   );
 
+  return (
+    <RowFrame
+      interactive={interactive}
+      href={href}
+      linkComponent={linkComponent}
+      onClick={onClick}
+      newTab={newTab}
+      active={active}
+      disabled={disabled}
+      className={shared}
+    >
+      {inner}
+    </RowFrame>
+  );
+}
+
+/**
+ * 行的外框：不可点是 `div`，有 `href` 是链接，只有 `onClick` 是按钮。
+ * `ShellPanelRow` 与 `ShellPanelMeterRow` **共用这一份**——同一块面板里的行，
+ * 悬停底色、焦点环、选中态、禁用态必须一样（owner 2026-09-25：TenantPanel 六个
+ * 条目都要能点）。
+ */
+function RowFrame({
+  interactive,
+  href,
+  linkComponent,
+  onClick,
+  newTab,
+  active,
+  disabled,
+  className,
+  children,
+}: {
+  interactive: boolean;
+  href?: string | undefined;
+  linkComponent?: React.ElementType | undefined;
+  onClick?: (() => void) | undefined;
+  newTab: boolean;
+  active: boolean;
+  disabled: boolean;
+  className: string;
+  children: ReactNode;
+}) {
   if (!interactive) {
     return (
       <div
         className={cn(
-          shared,
+          className,
           "rounded-md",
           disabled && "opacity-disabled",
           active && "bg-secondary",
         )}
       >
-        {inner}
+        {children}
       </div>
     );
   }
@@ -514,14 +557,14 @@ export function ShellPanelRow({
         asChild
         variant={active ? "secondary" : "ghost"}
         size="md"
-        className={shared}
+        className={className}
       >
         <Link
           href={href}
           onClick={onClick}
           {...(newTab ? { target: "_blank", rel: "noreferrer noopener" } : {})}
         >
-          {inner}
+          {children}
         </Link>
       </Button>
     );
@@ -531,10 +574,10 @@ export function ShellPanelRow({
     <Button
       variant={active ? "secondary" : "ghost"}
       size="md"
-      className={shared}
+      className={className}
       onClick={onClick}
     >
-      {inner}
+      {children}
     </Button>
   );
 }
@@ -599,6 +642,19 @@ export interface ShellPanelMeterRowProps {
   valueLabel?: ReactNode | undefined;
   /** 0–100。超出范围会被夹紧，避免进度条溢出容器。 */
   percent: number;
+  /**
+   * 可点：与 `ShellPanelRow` 同一套参数、同一个外框（`RowFrame`）——同一块面板里
+   * 读数行与普通行的悬停、焦点、角标一致。去向（控制台里的额度页、存储页…）由
+   * 调用方给，DS 不认识任何控制台地址。
+   */
+  href?: string | undefined;
+  /** 见 `ShellPanelRow.linkComponent`。 */
+  linkComponent?: React.ElementType | undefined;
+  onClick?: (() => void) | undefined;
+  /** 在新标签页打开（仅 href 生效），自动补 rel。 */
+  newTab?: boolean | undefined;
+  /** 右端"可进入"角标。有 onClick/href 时默认为 true，与 `ShellPanelRow` 一致。 */
+  chevron?: boolean | undefined;
   className?: string | undefined;
 }
 
@@ -610,11 +666,18 @@ export function ShellPanelMeterRow({
   unit,
   valueLabel,
   percent,
+  href,
+  linkComponent,
+  onClick,
+  newTab = false,
+  chevron,
   className,
 }: Readonly<ShellPanelMeterRowProps>) {
   const safe = Number.isFinite(percent)
     ? Math.max(0, Math.min(100, percent))
     : 0;
+  const interactive = Boolean(onClick || href);
+  const showChevron = chevron ?? interactive;
   return (
     /*
      * 两栏：左边是「这是什么」，右边是「现在多少」。
@@ -625,20 +688,34 @@ export function ShellPanelMeterRow({
      *
      * 右栏取一半宽而不是定死像素：面板宽度本身有 sm/md/lg 三档，写死的块在窄档
      * 里会把标签挤没。
+     *
+     * 内部一律用 span：可点时外框是 <a> / <button>，里面放 div 不合法。
      */
-    <div
-      className={cn("flex items-center py-xs", ROW_INSET, ROW_GAP, className)}
+    <RowFrame
+      interactive={interactive}
+      href={href}
+      linkComponent={linkComponent}
+      onClick={onClick}
+      newTab={newTab}
+      active={false}
+      disabled={false}
+      className={cn(
+        "flex h-auto w-full items-center justify-start py-xs",
+        ROW_INSET,
+        ROW_GAP,
+        className,
+      )}
     >
       <RowLead icon={icon} />
-      <div className="flex min-w-0 flex-1 flex-col items-start">
+      <span className="flex min-w-0 flex-1 flex-col items-start text-left">
         <span className="w-full truncate text-label-md">{label}</span>
         {description ? (
           <span className="w-full truncate text-body-sm text-muted-foreground">
             {description}
           </span>
         ) : null}
-      </div>
-      <div className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
+      </span>
+      <span className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
         {value !== undefined && value !== null ? (
           <RowReadout value={value} unit={unit} />
         ) : null}
@@ -648,8 +725,15 @@ export function ShellPanelMeterRow({
             {valueLabel}
           </span>
         ) : null}
-      </div>
-    </div>
+      </span>
+      {showChevron ? (
+        <Icon
+          name="chevron-right"
+          size="xs"
+          className={cn("shrink-0", ROW_ICON_TONE)}
+        />
+      ) : null}
+    </RowFrame>
   );
 }
 

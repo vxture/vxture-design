@@ -46,6 +46,15 @@ label-xl（18px）、单位 label-sm（12px、弱化色）、间距 `gap-2xs`、
 里数字高度、单位位置对不上（owner 2026-09-25）。`valueTone` 的 API 不变，
 `"muted"`（小灰字）不受影响。
 
+### `ShellPanelMeterRow` 可点
+
+新增 `href` / `linkComponent` / `onClick` / `newTab` / `chevron`，与
+`ShellPanelRow` 同名同义（全部可选，不传即原行为）。两者共用内部的行外框
+`RowFrame`：同一块面板里读数行（额度、存储）与普通行（余额、租户信息…）的
+悬停、焦点、角标一致。去向由调用方给，DS 不认识任何控制台地址。
+
+preview：TenantPanel 六个条目都可点，示意去向为租户控制台的对应页面。
+
 ## 12.22.0 — 2026-09-25
 
 跟随 `@vxture/design-tokens@3.4.0`（minor）。详见 design-tokens 3.4.0。

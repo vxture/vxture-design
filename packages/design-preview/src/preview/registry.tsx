@@ -4174,6 +4174,13 @@ function ShellScopePanelDemo() {
   );
 }
 
+/**
+ * TenantPanel 六个条目都能点，去向是租户控制台的对应页面（owner 2026-09-25）。
+ * DS 不认识任何控制台地址，链接由产品侧给；预览用 hash 路径示意，点了不离开
+ * 预览页。产品侧换成各自控制台的真实路由（配合 `linkComponent`）。
+ */
+const TENANT_CONSOLE = "#/console/tenant";
+
 function ShellPanelDemo() {
   const { userPanel } = useFigmaUserPanel();
   /*
@@ -4203,6 +4210,7 @@ function ShellPanelDemo() {
           <ShellPanelMeterRow
             icon="sparkles"
             label="AI Credits"
+            href={`${TENANT_CONSOLE}/credits`}
             description="workspace"
             value="300"
             unit="分"
@@ -4212,6 +4220,7 @@ function ShellPanelDemo() {
           <ShellPanelMeterRow
             icon="database"
             label="Storage"
+            href={`${TENANT_CONSOLE}/storage`}
             description="workspace"
             value="300"
             unit="MB"
@@ -4223,6 +4232,7 @@ function ShellPanelDemo() {
           <ShellPanelRow
             icon="wallet"
             label="账户余额"
+            href={`${TENANT_CONSOLE}/billing/balance`}
             description="不含平台卡券"
             value="200.00"
             unit="RMB"
@@ -4231,6 +4241,7 @@ function ShellPanelDemo() {
           <ShellPanelRow
             icon="receipt"
             label="本月账单"
+            href={`${TENANT_CONSOLE}/billing/invoices`}
             description="2026/09"
             value="100.00"
             unit="RMB"
@@ -4241,14 +4252,14 @@ function ShellPanelDemo() {
           <ShellPanelRow
             icon="buildings"
             label="租户信息"
+            href={`${TENANT_CONSOLE}/profile`}
             description="说明信息"
-            onClick={() => {}}
           />
           <ShellPanelRow
             icon="arrow-left-right"
             label="切换租户"
+            href={`${TENANT_CONSOLE}/switch`}
             description="切换租户、工作空间"
-            onClick={() => {}}
           />
         </ShellPanelSection>
       </ShellPanelSurface>
