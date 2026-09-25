@@ -5,6 +5,11 @@
 
 ---
 
+## 13.2.0 — 2026-09-25
+
+跟随 `@vxture/design-ui@10.2.0`（minor）：`InputOTP` 新增形态轴 `variant`；独立
+方格格间距改为 8px（lg 此前 16px）。详见 design-ui 10.2.0。
+
 ## 13.1.0 — 2026-09-25
 
 跟随 `@vxture/design-ui@10.1.0`（minor）：新增 `FieldValue`（表单的只读展示）与

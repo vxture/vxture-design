@@ -1,6 +1,6 @@
 # Design System 对外规范
 
-适用版本：**DS 13.1.0** ｜ 更新：2026-08-22
+适用版本：**DS 13.2.0** ｜ 更新：2026-08-22
 
 本目录随 `@vxture/design-system` 发包，是 DS 三包（design-tokens / design-ui / design-system）消费方的使用契约。工程过程（token 管线、守卫机制、偏离登记）留在本仓内部文档，消费方无需关心。
 

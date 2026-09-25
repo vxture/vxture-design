@@ -210,7 +210,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking13">必须改的：删 auto</a><a href="#breaking12">必须改的：列对齐</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#titleweight">字重 500 与 code-lg</a><a href="#userpanel">用户面板本体</a><a href="#pagination">分页改图标</a><a href="#fieldvalue">表单只读展示</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking13">必须改的：删 auto</a><a href="#breaking12">必须改的：列对齐</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#titleweight">字重 500 与 code-lg</a><a href="#userpanel">用户面板本体</a><a href="#pagination">分页改图标</a><a href="#fieldvalue">表单只读展示</a><a href="#inputotp">验证码形态轴</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
@@ -223,8 +223,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">13.1.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">10.1.0</td><td><span class="tag t-bad">major</span> 删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">13.2.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">10.2.0</td><td><span class="tag t-bad">major</span> 删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.4.0</td><td><span class="tag t-ok">minor</span> 宽松密度重排（§05i）；title / overline 字重 500、新增 code-lg（§05j）</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
@@ -429,6 +429,9 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td>左右（<span class="mono">orientation="labeled"</span>）</td><td class="mono">&lt;FieldGroup columns={2}&gt;</td><td class="mono">&lt;FieldGroup columns={3}&gt;</td></tr>
 </tbody></table></div>
 <div class="note"><strong><span class="mono">FieldValue</span></strong>：高度与输入框同档、字号与 <span class="mono">Input</span> 一致；空值显示 <span class="mono">—</span>（<span class="mono">empty</span> 可换）；缺省换行，<span class="mono">truncate</span> 时单行截断。<strong><span class="mono">columns={3}</span></strong> 需要页面级宽度，放进面板里一列只剩一百多像素。</div></section>
+<section id="inputotp"><h2><span class="num">05n</span><span class="mono">InputOTP</span> 新增形态轴 <span class="mono">variant</span><span class="h2-meta">design-ui 10.2.0 · 只增；lg 格间距变了</span></h2><div class="rule"></div>
+<p>尺寸 <span class="mono">size</span>（md / lg）与形态 <span class="mono">variant</span>（<span class="mono">joined</span> 连体 / <span class="mono">separate</span> 独立方格）拆成两根轴。不传 <span class="mono">variant</span> 时按尺寸取缺省：md 连体、lg 独立，与此前一致。实据是 8 位验证码按 4-4 分组、md 档也要独立方格，组间用「-」。</p>
+<div class="note warn"><strong>不用改代码，观感变了</strong>：独立方格的格间距统一为 <span class="mono">gap-xs</span>（默认密度 8px），照 Figma 2232:10415。<strong>lg 此前是 16px</strong>，验证弹窗里的六个格子会收紧一些。分隔符「-」的字号跟随档位，lg 下与数字同级。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -470,7 +473,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 13.1.0 · design-tokens 3.4.0 / design-ui 10.1.0 / design-system 13.1.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 13.2.0 · design-tokens 3.4.0 / design-ui 10.2.0 / design-system 13.2.0 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>
