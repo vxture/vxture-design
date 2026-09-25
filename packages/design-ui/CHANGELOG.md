@@ -5,6 +5,20 @@
 
 ---
 
+## 10.2.0 — 2026-09-25
+
+`InputOTP` 新增形态轴 `variant`（minor：新增可选 prop）。owner 2026-09-25，照
+Figma 2232:10415 / 2232:10450。
+
+- 尺寸 `size`（md / lg）与形态 `variant`（`joined` 连体 / `separate` 独立方格）
+  拆成两根轴。不传 `variant` 时 md 连体、lg 独立，与此前一致。实据：8 位验证码
+  按 4-4 分组，md 档也要独立方格，组间「-」。
+- **观感变化**：独立方格格间距统一为 `gap-xs`（默认 8px），照 Figma；**lg 此前是
+  `gap-md`（16px）**。
+- `InputOTPSeparator` 字号跟随档位（md `body-md` / lg `body-xl`）。
+- 与 Figma 的偏差：数字字号保持 `body-xl`。Figma 是 24px 常规字重的 Inter，DS 排版
+  角色里 24px 只有品牌展示体的 `heading-3`。
+
 ## 10.1.0 — 2026-09-25
 
 表单的只读展示（minor：新增件与新档，无删改）。owner 2026-09-25：「既是输入，

@@ -2498,35 +2498,8 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["shadcn", "vxture"],
     covers: ["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"],
     deviation:
-      "槽位绑控件刻度（md 档 control-md、lg 档 control-3xl）随密度三档；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。两个尺寸档是形态之别：md 连体（半边框 + first/last 收圆角），lg 独立方格（四边框 + radius-xl + 格间留白），档位定在根件经 context 下发",
-    render: () => (
-      <div className="flex flex-col gap-lg">
-        <Row label="md（默认）· 6 位，3+3 分组" stack>
-          <InputOTP maxLength={6}>
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-            </InputOTPGroup>
-            <InputOTPSeparator />
-            <InputOTPGroup>
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-        </Row>
-        <Row label="lg · 独立方格，不分组（验证弹窗用）" stack>
-          <InputOTP maxLength={6} size="lg">
-            <InputOTPGroup>
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <InputOTPSlot key={i} index={i} />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-        </Row>
-      </div>
-    ),
+      "槽位绑控件刻度（md 档 control-md、lg 档 control-3xl）随密度三档；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。尺寸 size（md / lg）与形态 variant（joined 连体 / separate 独立方格）是两根轴，不传 variant 时 md 连体、lg 独立；独立方格格间 gap-xs 照 Figma 2232:10415。档位定在根件经 context 下发。与 Figma 的偏差：数字字号 body-xl——Figma 是 24px 常规字重的 Inter，DS 排版角色里 24px 只有品牌展示体的 heading-3",
+    render: () => <InputOTPDemo />,
   },
   {
     name: "Resizable",
@@ -2873,6 +2846,108 @@ function DatePickerDemo() {
 const PREVIEW_LOCALES = [
   { locale: "zh-CN", nativeName: "简体中文" },
   { locale: "en-US", nativeName: "English" },
+];
+
+/** n 个格子（从 start 起），InputOTP 演示用。 */
+function OtpSlots({ start, count }: { start: number; count: number }) {
+  return (
+    <InputOTPGroup>
+      {Array.from({ length: count }, (_, i) => (
+        <InputOTPSlot key={start + i} index={start + i} />
+      ))}
+    </InputOTPGroup>
+  );
+}
+
+/**
+ * 验证码输入的四种标准形态（owner 2026-09-25）：
+ * - 6 位：不分组，md / lg
+ * - 8 位：4-4 分组，**独立方格**（不能连着），组间「-」，md / lg
+ * 以及照 Figma 2232:10415 / 2232:10450 拼的两张验证弹窗。
+ */
+function InputOTPDemo() {
+  return (
+    <div className="flex flex-col gap-lg">
+      <Row label="6 位 · md · 不分组（连体，缺省）" stack>
+        <InputOTP maxLength={6}>
+          <OtpSlots start={0} count={6} />
+        </InputOTP>
+      </Row>
+      <Row label="6 位 · md · 不分组 · variant=separate（独立方格）" stack>
+        <InputOTP maxLength={6} variant="separate">
+          <OtpSlots start={0} count={6} />
+        </InputOTP>
+      </Row>
+      <Row label="6 位 · lg · 不分组（独立方格，验证弹窗用）" stack>
+        <InputOTP maxLength={6} size="lg">
+          <OtpSlots start={0} count={6} />
+        </InputOTP>
+      </Row>
+      <Row label="8 位 · md · 4-4 分组 · 独立方格 + 「-」" stack>
+        <InputOTP maxLength={8} variant="separate">
+          <OtpSlots start={0} count={4} />
+          <InputOTPSeparator />
+          <OtpSlots start={4} count={4} />
+        </InputOTP>
+      </Row>
+      <Row label="8 位 · lg · 4-4 分组 · 独立方格 + 「-」" stack>
+        <InputOTP maxLength={8} size="lg">
+          <OtpSlots start={0} count={4} />
+          <InputOTPSeparator />
+          <OtpSlots start={4} count={4} />
+        </InputOTP>
+      </Row>
+      <Row label="验证弹窗 · 照 Figma 2232:10415 / 2232:10450" stack>
+        <div className="flex flex-wrap items-start gap-lg">
+          {OTP_DIALOGS.map((d) => (
+            <div
+              key={d.title}
+              className="flex w-full max-w-panel-sm flex-col gap-xl rounded-xl border border-border bg-popover p-xl shadow-dialog"
+            >
+              <div className="flex flex-col gap-xs">
+                <p className="text-heading-3 text-foreground">{d.title}</p>
+                <p className="text-body-sm text-muted-foreground">
+                  {d.description}
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <InputOTP maxLength={6} size="lg" aria-label={d.title}>
+                  <OtpSlots start={0} count={6} />
+                </InputOTP>
+              </div>
+              <Button size="xl" className="w-full">
+                验证
+              </Button>
+              <Separator />
+              <p className="flex items-center justify-center gap-2xs text-body-sm text-muted-foreground">
+                {d.footer}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Row>
+    </div>
+  );
+}
+
+const OTP_DIALOGS = [
+  {
+    title: "手机邮箱验证码",
+    description: "请输入发送到您手机或邮箱的 6 位验证码",
+    footer: (
+      <>
+        没有收到验证码？
+        <a href="#resend" className="text-label-md text-primary-text">
+          重新发送
+        </a>
+      </>
+    ),
+  },
+  {
+    title: "验证器应用验证",
+    description: "请输入验证器应用生成的验证码",
+    footer: <a href="#recover">丢失所有双重验证设备和备份码？尝试恢复</a>,
+  },
 ];
 
 /** Field 只读展示的示例数据（6 条，够排两行三列）。 */

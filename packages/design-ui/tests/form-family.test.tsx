@@ -25,6 +25,7 @@ import {
 import {
   InputOTP,
   InputOTPGroup,
+  InputOTPSeparator,
   InputOTPSlot,
 } from "../src/components/base/form/InputOTP";
 import { SegmentedControl } from "../src/components/base/form/SegmentedControl";
@@ -349,13 +350,16 @@ describe("InputOTP · 尺寸档经上下文下发", () => {
     expect(c).not.toContain("first:rounded-l-md");
   });
 
-  /** lg 档格子之间要留白，否则"独立方格"会挤成一条。 */
-  it("lg 档 Group 内留白，md 档不留", () => {
+  /**
+   * 独立方格之间要留白，否则会挤成一条；连体格子组内不能留缝。
+   * 间距 gap-xs（默认密度 8px）照 Figma 2232:10415——lg 此前是 gap-md（16px）。
+   */
+  it("独立方格组内 gap-xs，连体组内不留缝", () => {
     const { unmount } = render(<Otp size="lg" />);
-    expect(cls(screen.getByTestId("group")).split(" ")).toContain("gap-md");
+    expect(cls(screen.getByTestId("group")).split(" ")).toContain("gap-xs");
     unmount();
     render(<Otp />);
-    expect(cls(screen.getByTestId("group")).split(" ")).not.toContain("gap-md");
+    expect(cls(screen.getByTestId("group")).split(" ")).not.toContain("gap-xs");
   });
 
   /** 尺寸走控件刻度，不写裸数值——密度三档要跟着变。 */
@@ -767,5 +771,81 @@ describe("FieldValue · 只读展示", () => {
     const children = [...screen.getByTestId("f").children];
     expect(children[0]).toHaveTextContent("名称");
     expect(children[1]).toHaveAttribute("data-slot", "field-value");
+  });
+});
+
+describe("InputOTP · 形态轴 variant", () => {
+  function Otp8({
+    size,
+    variant,
+  }: {
+    size?: "md" | "lg";
+    variant?: "joined" | "separate";
+  }) {
+    return (
+      <InputOTP
+        maxLength={8}
+        aria-label="验证码"
+        {...(size ? { size } : {})}
+        {...(variant ? { variant } : {})}
+      >
+        <InputOTPGroup data-testid="g1">
+          {[0, 1, 2, 3].map((i) => (
+            <InputOTPSlot key={i} index={i} data-testid={`s${i}`} />
+          ))}
+        </InputOTPGroup>
+        <InputOTPSeparator data-testid="sep" />
+        <InputOTPGroup data-testid="g2">
+          {[4, 5, 6, 7].map((i) => (
+            <InputOTPSlot key={i} index={i} data-testid={`s${i}`} />
+          ))}
+        </InputOTPGroup>
+      </InputOTP>
+    );
+  }
+
+  /** 不传 variant 时按尺寸取缺省：md 连体、lg 独立——两档加入时的原样。 */
+  it("缺省：md 连体、lg 独立", () => {
+    const { unmount } = render(<Otp8 />);
+    expect(screen.getByTestId("s0")).toHaveAttribute("data-variant", "joined");
+    unmount();
+    render(<Otp8 size="lg" />);
+    expect(screen.getByTestId("s0")).toHaveAttribute(
+      "data-variant",
+      "separate",
+    );
+  });
+
+  /**
+   * 8 位按 4-4 分组、md 档、格子不能连着（owner 2026-09-25）——这是把形态从
+   * 尺寸上拆下来的实据。判据落在类名：四边框、自带 rounded-md、无连体收边。
+   */
+  it("md + separate：独立方格，四边框 + rounded-md，组内 gap-xs", () => {
+    render(<Otp8 variant="separate" />);
+    const c = cls(screen.getByTestId("s0")).split(" ");
+    expect(c).toContain("border");
+    expect(c).toContain("rounded-md");
+    expect(c).toContain("h-control-md");
+    expect(c).not.toContain("border-y");
+    expect(c).not.toContain("first:rounded-l-md");
+    expect(cls(screen.getByTestId("g1")).split(" ")).toContain("gap-xs");
+  });
+
+  it("8 位 4-4：两组各 4 格，中间一个「-」分隔", () => {
+    render(<Otp8 variant="separate" />);
+    expect(screen.getByTestId("g1").children).toHaveLength(4);
+    expect(screen.getByTestId("g2").children).toHaveLength(4);
+    const sep = screen.getByTestId("sep");
+    expect(sep).toHaveAttribute("role", "separator");
+    expect(sep).toHaveTextContent("-");
+  });
+
+  /** 分隔符字号跟随档位：lg 格子里是 body-xl 的数字，一杠用正文字号会细得像没画。 */
+  it("分隔符字号跟随档位", () => {
+    const { unmount } = render(<Otp8 variant="separate" />);
+    expect(cls(screen.getByTestId("sep")).split(" ")).toContain("text-body-md");
+    unmount();
+    render(<Otp8 size="lg" />);
+    expect(cls(screen.getByTestId("sep")).split(" ")).toContain("text-body-xl");
   });
 });
