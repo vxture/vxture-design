@@ -7,8 +7,20 @@
 
 ## 12.23.0 — 2026-09-25
 
-新增 `ShellUserPanel`：`ShellUserMenu` 弹层里那块用户面板的本体，独立导出
+新增 `ShellUserPanel`（用户面板本体）与 `ShellPanelSurface`（面板的平铺外壳）
 （minor：新增件，无删改）。
+
+### `ShellPanelSurface`
+
+`ShellPanelContent` 的不弹层版本：同宽（`w-80`）、同留白（`p-md`）、同段间距
+（`gap-md`）、同表面（`panel.base` + `rounded-md`），不带阴影。
+
+此前面板平铺时没有外壳组件，调用方只能手写一个 div，宽度、留白、边线各写各的
+——本仓预览就曾把边线写成 `border border-border`，与弹层的
+`ring-1 ring-foreground/10` 颜色与画法都不同。外壳归组件之后，各业务系统平铺
+出来的面板与弹层里的逐像素一致。
+
+### `ShellUserPanel`
 
 - **组合使用**：`ShellUserMenu` 管入口（头像按钮、在线小点、弹层开合与落点），
   弹层里装的就是 `ShellUserPanel`；`ShellUserPanel` 也可以单独平铺，给抽屉、
@@ -17,10 +29,11 @@
   `links` / `actions`，与 `ShellUserMenu` 的内容字段同一份；另有可选的
   `onItemSelect`（点了链接、动作、「回到来处」之后调用，叉掉提示不算）与
   `className`。
-- 平铺外壳带面板表面（底色 / 描边 / 圆角）、不带阴影；宽度与留白与弹层一致。
+- 平铺时外壳走 `ShellPanelSurface`。
 - `ShellUserMenuProps` 改为由 `ShellUserPanelProps` 派生，字段与此前逐项一致，
   **调用方无需改动**。
-- preview 的外壳页同时摆出头像按钮与平铺面板，内容照 Figma UserPanel
+- preview：外壳页同时摆出头像按钮与平铺面板；ShellPanel 页的 TenantPanel 与
+  ShellUserPanel 并排，两块外壳都走 `ShellPanelSurface`。内容照 Figma UserPanel
   （190:603）配，偏好设置用中文档名。
 
 ## 12.22.0 — 2026-09-25

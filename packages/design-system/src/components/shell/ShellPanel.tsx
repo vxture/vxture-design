@@ -36,6 +36,7 @@ import {
   Separator,
   cn,
 } from "@vxture/design-ui";
+import { panel } from "@vxture/design-ui/styles";
 import type { IconName } from "@vxture/design-ui";
 
 /** 面板内的段落分隔：虚线发丝线（02-visual-spec.md §3）。ShellUserMenu 同款。 */
@@ -137,6 +138,40 @@ export const ShellPanelContent = React.forwardRef<
     />
   );
 });
+
+export interface ShellPanelSurfaceProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+/**
+ * 面板的**平铺外壳**：`ShellPanelContent` 的不弹层版本。
+ *
+ * 面板不一定装在弹层里——抽屉、设置页、移动端账户页、预览面都会直接平铺。
+ * 此前平铺时没有可用的外壳，调用方只能手写一个 div，宽度、留白、边线各写
+ * 各的（本仓预览就曾把边线写成 `border border-border`，与弹层的
+ * `ring-1 ring-foreground/10` 颜色与画法都不同）。外壳归组件，业务系统拼出来
+ * 的面板才能与弹层里的逐像素一致。
+ *
+ * 与 `ShellPanelContent` 同宽、同留白、同段间距、同表面（`panel.base` +
+ * 圆角）；**不带阴影**——阴影是「浮在上面」的信号，平铺的面板没有浮起来。
+ */
+export function ShellPanelSurface({
+  className,
+  ...props
+}: Readonly<ShellPanelSurfaceProps>) {
+  return (
+    <div
+      className={cn(
+        panel.base,
+        "rounded-md",
+        /* 与 ShellPanelContent 的 `flex w-80 flex-col gap-md p-md` **刻意重复**、
+           不抽常量：类名由消费方的 Tailwind 扫描本包源码生成，拼出来的串它
+           看不见（理由同 ShellPanelContent 的注释）。 */
+        "flex w-80 flex-col gap-md p-md",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 /* ─────────────────────────── 段落 ─────────────────────────── */
 

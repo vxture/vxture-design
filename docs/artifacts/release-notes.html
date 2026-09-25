@@ -391,7 +391,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p><span class="mono">title-xl / lg / md / sm</span> 与 <span class="mono">overline</span> 的字重从 600（semibold）改为 500（medium），三档字号模式同步。<span class="mono">heading-*</span> 仍是 600，<span class="mono">display-*</span> 仍是 700。</p>
 <div class="note warn"><strong>写了 <span class="mono">text-title-*</span> 又自己加 <span class="mono">font-semibold</span> / <span class="mono">font-bold</span> 的地方不会跟着变</strong>：显式字重类优先于角色自带的字重。DS 内这样写的都是数值展示（<span class="mono">MetricCard</span>、<span class="mono">LabeledValue</span>、<span class="mono">MetricListCard</span> 的数字），属于有意加重，本次未改。</div>
 <p><strong>新增 <span class="mono">text-code-lg</span></strong>：code 族从两档变三档，<span class="mono">code-sm / md / lg</span> 默认 12 / 14 / 16px，随字号三档整体平移（较小档下 lg 为 14，较大档下为 18）。</p></section>
-<section id="userpanel"><h2><span class="num">05k</span>新增 <span class="mono">ShellUserPanel</span>：用户面板本体<span class="h2-meta">12.23.0 · 只增不改</span></h2><div class="rule"></div>
+<section id="userpanel"><h2><span class="num">05k</span>新增 <span class="mono">ShellUserPanel</span> 与 <span class="mono">ShellPanelSurface</span><span class="h2-meta">12.23.0 · 只增不改</span></h2><div class="rule"></div>
 <p><span class="mono">ShellUserMenu</span> 弹层里的那块面板（Figma UserPanel 190:603）拆成独立导出的 <span class="mono">ShellUserPanel</span>，两者<strong>组合使用</strong>：</p>
 <div class="tw"><table>
 <thead><tr><th>件</th><th>管什么</th><th>什么时候用</th></tr></thead>
@@ -399,7 +399,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">ShellUserMenu</td><td>入口：header 上的头像按钮、在线小点、弹层开合与落点</td><td>门户 header，照旧</td></tr>
 <tr><td class="mono">ShellUserPanel</td><td>内容：头部、徽章、自定义段、回到来处、链接、偏好设置、动作</td><td>不需要「点头像才出来」的地方：抽屉、移动端账户页、预览面</td></tr>
 </tbody></table></div>
-<div class="note warn"><strong><span class="mono">ShellUserMenu</span> 的 API 一字未变</strong>，弹层里渲染的就是 <span class="mono">ShellUserPanel</span> 的同一份代码，两处不会各自漂移。平铺时外壳带面板表面（底色 / 描边 / 圆角）但不带阴影；选中一项后调用可选的 <span class="mono">onItemSelect</span>，<span class="mono">ShellUserMenu</span> 用它收起弹层。</div></section>
+<div class="note warn"><strong><span class="mono">ShellUserMenu</span> 的 API 一字未变</strong>，弹层里渲染的就是 <span class="mono">ShellUserPanel</span> 的同一份代码，两处不会各自漂移。平铺时外壳带面板表面（底色 / 描边 / 圆角）但不带阴影；选中一项后调用可选的 <span class="mono">onItemSelect</span>，<span class="mono">ShellUserMenu</span> 用它收起弹层。</div>
+<p><strong>新增 <span class="mono">ShellPanelSurface</span></strong>：<span class="mono">ShellPanelContent</span> 的不弹层版本，同宽、同留白、同段间距、同表面，不带阴影。面板平铺时（抽屉、设置页、移动端账户页）<strong>用它做外壳，不要手写 div</strong>——手写的外壳宽度、留白、边线各写各的，业务系统之间就对不上了。<span class="mono">ShellUserPanel</span> 的平铺外壳就是它。</p></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>

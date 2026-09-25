@@ -37,7 +37,7 @@ import {
   useFullscreen,
 } from "@vxture/design-ui";
 import type { FullscreenMode, IconName } from "@vxture/design-ui";
-import { interactive, panel } from "@vxture/design-ui/styles";
+import { interactive } from "@vxture/design-ui/styles";
 import type { Density } from "../../density";
 import {
   SHELL_PANEL_HAIRLINE,
@@ -46,6 +46,7 @@ import {
   ShellPanelHeader,
   ShellPanelRow,
   ShellPanelSectionTitle,
+  ShellPanelSurface,
 } from "./ShellPanel";
 
 export type ShellFontSizePreference = "small" | "default" | "large";
@@ -785,24 +786,14 @@ export function ShellPreferencePanel({
  * 装的就是本件。本件也可以单独平铺——抽屉、移动端的账户页、预览面，任何
  * 不需要「点头像才出来」的地方。两处渲染的是同一份代码，不会各自漂移。
  *
- * 平铺时外壳自带面板表面（底色 / 描边 / 圆角），不带阴影：阴影是「浮在上面」
+ * 平铺时外壳走 `ShellPanelSurface`（与弹层同宽、同留白、同表面），不带阴影：阴影是「浮在上面」
  * 的信号，平铺的面板没有浮起来。
  */
 export function ShellUserPanel({ className, ...props }: ShellUserPanelProps) {
   return (
-    <div
-      className={cn(
-        panel.base,
-        "rounded-md",
-        /* 与 ShellPanelContent 的 `flex w-80 flex-col gap-md p-md` **刻意重复**、
-           不抽常量：类名由消费方的 Tailwind 扫描本包源码生成，拼出来的串它看
-           不见（理由同 ShellPanelContent 的注释）。 */
-        "flex w-80 flex-col gap-md p-md",
-        className,
-      )}
-    >
+    <ShellPanelSurface {...(className ? { className } : {})}>
       <ShellUserPanelSections {...props} />
-    </div>
+    </ShellPanelSurface>
   );
 }
 

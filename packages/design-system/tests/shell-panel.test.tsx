@@ -23,6 +23,7 @@ import {
   ShellPanelSection,
   ShellPanelSectionTitle,
   ShellPanelSlots,
+  ShellPanelSurface,
   ShellScopeButton,
 } from "../src/components/shell/ShellPanel";
 
@@ -849,5 +850,49 @@ describe("ShellScopePanel · 两级范围切换", () => {
     );
     await user.click(screen.getByText("停用的"));
     expect(onSelect).not.toHaveBeenCalled();
+  });
+});
+
+/* ── 平铺外壳 ─────────────────────────────────────────────────────────────── */
+
+/**
+ * `ShellPanelSurface` 是 `ShellPanelContent` 的不弹层版本。两者的布局与表面
+ * 必须一致——业务系统平铺出来的面板要与弹层里的逐像素同款，这是它存在的理由。
+ */
+describe("ShellPanelSurface", () => {
+  const LAYOUT = ["flex", "w-80", "flex-col", "gap-md", "p-md"];
+  const SURFACE = ["bg-popover", "ring-1", "ring-foreground/10", "rounded-md"];
+
+  it("宽度、留白、段间距、表面与弹层外壳一致", () => {
+    render(
+      <Popover open>
+        <PopoverTrigger>t</PopoverTrigger>
+        <ShellPanelContent aria-label="弹层">x</ShellPanelContent>
+      </Popover>,
+    );
+    const popover = screen.getByLabelText("弹层");
+    const { container } = render(<ShellPanelSurface>y</ShellPanelSurface>);
+    const flat = container.firstElementChild;
+    for (const token of [...LAYOUT, ...SURFACE]) {
+      expect(hasClass(flat, token)).toBe(true);
+      expect(hasClass(popover, token)).toBe(true);
+    }
+  });
+
+  /** 阴影是「浮在上面」的信号，平铺的面板没有浮起来。 */
+  it("不带阴影", () => {
+    const { container } = render(<ShellPanelSurface>y</ShellPanelSurface>);
+    expect(container.firstElementChild?.className).not.toMatch(/shadow-/);
+  });
+
+  it("className 合并、其余属性透传", () => {
+    render(
+      <ShellPanelSurface className="EXTRA" aria-label="账户">
+        y
+      </ShellPanelSurface>,
+    );
+    const el = screen.getByLabelText("账户");
+    expect(hasClass(el, "EXTRA")).toBe(true);
+    expect(hasClass(el, "w-80")).toBe(true);
   });
 });

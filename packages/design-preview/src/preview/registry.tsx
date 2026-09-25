@@ -248,6 +248,7 @@ import {
   ShellPanelRow,
   ShellPanelSection,
   ShellPanelSlots,
+  ShellPanelSurface,
   ShellScopePanel,
   ShellSearchBox,
   ShellSidebarFrame,
@@ -4130,48 +4131,46 @@ function ShellLauncherDemo() {
 function ShellScopePanelDemo() {
   const [scope, setScope] = React.useState("ws-default");
   return (
-    <div className="w-fit rounded-md bg-popover p-md text-foreground ring-1 ring-foreground/10">
-      <div className="w-80">
-        <ShellScopePanel
-          ariaLabel="切换租户与工作区"
-          value={scope}
-          onSelect={setScope}
-          groups={[
-            {
-              key: "t-1",
-              icon: "buildings",
-              title: "Tenant Name",
-              titleAside: <Badge>组织租户</Badge>,
-              meta: "T-2222888885",
-              options: [
-                {
-                  key: "ws-default",
-                  icon: "folder",
-                  label: "Default Workspace",
-                  description: "默认工作空间",
-                },
-                { key: "ws-2", icon: "folder", label: "Another Workspace" },
-              ],
-            },
-            {
-              key: "t-2",
-              icon: "buildings",
-              title: "Tenant Name",
-              titleAside: <Badge>个人租户</Badge>,
-              meta: "T-2222888885",
-              options: [
-                {
-                  key: "ws-3",
-                  icon: "folder",
-                  label: "Default Workspace",
-                  description: "默认工作空间",
-                },
-              ],
-            },
-          ]}
-        />
-      </div>
-    </div>
+    <ShellPanelSurface>
+      <ShellScopePanel
+        ariaLabel="切换租户与工作区"
+        value={scope}
+        onSelect={setScope}
+        groups={[
+          {
+            key: "t-1",
+            icon: "buildings",
+            title: "Tenant Name",
+            titleAside: <Badge>组织租户</Badge>,
+            meta: "T-2222888885",
+            options: [
+              {
+                key: "ws-default",
+                icon: "folder",
+                label: "Default Workspace",
+                description: "默认工作空间",
+              },
+              { key: "ws-2", icon: "folder", label: "Another Workspace" },
+            ],
+          },
+          {
+            key: "t-2",
+            icon: "buildings",
+            title: "Tenant Name",
+            titleAside: <Badge>个人租户</Badge>,
+            meta: "T-2222888885",
+            options: [
+              {
+                key: "ws-3",
+                icon: "folder",
+                label: "Default Workspace",
+                description: "默认工作空间",
+              },
+            ],
+          },
+        ]}
+      />
+    </ShellPanelSurface>
   );
 }
 
@@ -4186,75 +4185,73 @@ function ShellPanelDemo() {
    */
   return (
     <div className="flex flex-wrap items-start gap-lg">
-      {/* 外框与真实弹层同一表面（panel.base：ring-1 ring-foreground/10），与旁边的
-          ShellUserPanel 一致；此前写的 border-border 颜色与画法都不同。 */}
-      <div className="w-fit rounded-md bg-popover text-foreground ring-1 ring-foreground/10">
-        <div className="flex w-80 flex-col gap-md p-md">
-          {/* 主体是组织，所以 lead="icon" 不画头像圈 */}
-          <ShellPanelHeader
-            lead="icon"
-            icon="buildings"
-            title="Tenant Name"
-            titleAside={<Badge>个人租户</Badge>}
-            metaRows={[
-              { key: "ws", content: "default workspace" },
-              { key: "code", content: "T-2222888885" },
-            ]}
+      {/* 外壳走 ShellPanelSurface：与弹层同宽、同留白、同表面，与旁边的
+          ShellUserPanel 同一个外壳组件，不再手写。 */}
+      <ShellPanelSurface>
+        {/* 主体是组织，所以 lead="icon" 不画头像圈 */}
+        <ShellPanelHeader
+          lead="icon"
+          icon="buildings"
+          title="Tenant Name"
+          titleAside={<Badge>个人租户</Badge>}
+          metaRows={[
+            { key: "ws", content: "default workspace" },
+            { key: "code", content: "T-2222888885" },
+          ]}
+        />
+        <ShellPanelSection title="资源">
+          <ShellPanelMeterRow
+            icon="sparkles"
+            label="AI Credits"
+            description="workspace"
+            value="300"
+            unit="分"
+            valueLabel="已用 30% · 共 1000 分"
+            percent={30}
           />
-          <ShellPanelSection title="资源">
-            <ShellPanelMeterRow
-              icon="sparkles"
-              label="AI Credits"
-              description="workspace"
-              value="300"
-              unit="分"
-              valueLabel="已用 30% · 共 1000 分"
-              percent={30}
-            />
-            <ShellPanelMeterRow
-              icon="database"
-              label="Storage"
-              description="workspace"
-              value="300"
-              unit="MB"
-              valueLabel="已用 30% · 共 1000 MB"
-              percent={30}
-            />
-          </ShellPanelSection>
-          <ShellPanelSection title="账单">
-            <ShellPanelRow
-              icon="wallet"
-              label="账户余额"
-              description="不含平台卡券"
-              value="200.00"
-              unit="RMB"
-              valueTone="strong"
-            />
-            <ShellPanelRow
-              icon="receipt"
-              label="本月账单"
-              description="2026/09"
-              value="100.00"
-              unit="RMB"
-              valueTone="strong"
-            />
-          </ShellPanelSection>
-          <ShellPanelSection>
-            <ShellPanelRow
-              icon="buildings"
-              label="租户信息"
-              description="说明信息"
-              onClick={() => {}}
-            />
-            <ShellPanelRow
-              icon="arrow-left-right"
-              label="切换租户"
-              description="切换租户、工作空间"
-              onClick={() => {}}
-            />
-          </ShellPanelSection>
-        </div>
-      </div>
+          <ShellPanelMeterRow
+            icon="database"
+            label="Storage"
+            description="workspace"
+            value="300"
+            unit="MB"
+            valueLabel="已用 30% · 共 1000 MB"
+            percent={30}
+          />
+        </ShellPanelSection>
+        <ShellPanelSection title="账单">
+          <ShellPanelRow
+            icon="wallet"
+            label="账户余额"
+            description="不含平台卡券"
+            value="200.00"
+            unit="RMB"
+            valueTone="strong"
+          />
+          <ShellPanelRow
+            icon="receipt"
+            label="本月账单"
+            description="2026/09"
+            value="100.00"
+            unit="RMB"
+            valueTone="strong"
+          />
+        </ShellPanelSection>
+        <ShellPanelSection>
+          <ShellPanelRow
+            icon="buildings"
+            label="租户信息"
+            description="说明信息"
+            onClick={() => {}}
+          />
+          <ShellPanelRow
+            icon="arrow-left-right"
+            label="切换租户"
+            description="切换租户、工作空间"
+            onClick={() => {}}
+          />
+        </ShellPanelSection>
+      </ShellPanelSurface>
 
       {/*
        * 与 TenantPanel 并排的 UserPanel（Figma 190:603）：直接用 DS 的
