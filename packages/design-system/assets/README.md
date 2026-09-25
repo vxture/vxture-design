@@ -11,6 +11,9 @@
   accounts / console / website 多产品共用。
 - `icons/avatar-default.{svg,png}` — 通用缺省用户头像。
 - `icons/tenant-default.png` — 通用缺省租户/组织头像（未上传 logo 时的楼宇图形）。
+- `examples/product-logo.png` — **示例**产品标识（512×512），给 `ShellProductTitle`
+  等「单产品视角」的演示用（owner 2026-09-25）。**不是任何产品的正式标识**：各产品
+  换成自己的图，不要在生产里引用这一张。
 - `icons/levels/01–05.svg` — 通用五档等级图，配 DS 的 `LevelMarker`（第几名/哪一档
   配哪张图是业务判断，由调用方决定）。
 - `shell-template/` — console + admin 共用的后台外壳遗留样式层（`shell-template.css`

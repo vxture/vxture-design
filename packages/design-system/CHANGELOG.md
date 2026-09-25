@@ -20,8 +20,10 @@ Header_website（2226:10298）/ Header_console（682:2224）/ Header_admin
   03-patterns-guide §7.1，preview 新增「PageHeader」四种示例。
 - 两种管理工作台以名称区分：租户用户工作台 Workspace Console（当前租户），平台
   管理工作台 Admin Console（管理员徽标 + 当前域）。
+- 新增示例资源 `assets/examples/product-logo.png`：单产品视角演示用的产品标识，
+  **只是示例**，各产品换成自己的。
 - 与 Figma 的偏差：槽内间距沿用 `ShellHeader` 既有值（Figma 统一 8px）；示例里的
-  智能体与产品标识用平台标识占位。
+  智能体图标暂用平台标识占位。
 
 ## 13.3.0 — 2026-09-25
 
