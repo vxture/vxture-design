@@ -19,7 +19,11 @@ const nextConfig = {
     resolveAlias: { "@vxture/design-system": alias },
   },
   webpack: (config) => {
-    config.resolve.alias["@vxture/design-system"] = join(__dirname, alias);
+    /* 键末尾的 $ 是**精确匹配**：只把根入口指向源码。webpack 的别名默认按前缀
+     * 替换，不带 $ 时 "@vxture/design-system/assets/x.svg" 会被改写成
+     * "src/client.ts/assets/x.svg"，生产构建直接 Module not found；子路径应按包的
+     * exports 正常解析（2026-09-26 CI 查到，dev 走 turbopack 没暴露）。 */
+    config.resolve.alias["@vxture/design-system$"] = join(__dirname, alias);
     return config;
   },
 };
