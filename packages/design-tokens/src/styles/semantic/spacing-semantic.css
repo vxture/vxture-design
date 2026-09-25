@@ -106,27 +106,27 @@
 .density-comfortable {
   /* inset */
   --space-none: 0px;
-  --space-2xs: calc(var(--vx-spacing) * 1);
-  --space-xs: calc(var(--vx-spacing) * 2);
-  --space-sm: calc(var(--vx-spacing) * 2.5);
-  --space-md: calc(var(--vx-spacing) * 4);
-  --space-lg: calc(var(--vx-spacing) * 6);
-  --space-xl: calc(var(--vx-spacing) * 8);
-  --space-2xl: calc(var(--vx-spacing) * 10);
-  --space-3xl: calc(var(--vx-spacing) * 12);
-  --space-4xl: calc(var(--vx-spacing) * 14);
-  --space-5xl: calc(var(--vx-spacing) * 16);
-  --space-6xl: calc(var(--vx-spacing) * 20);
-  --space-7xl: calc(var(--vx-spacing) * 32);
+  --space-2xs: calc(var(--vx-spacing) * 1.5);
+  --space-xs: calc(var(--vx-spacing) * 2.5);
+  --space-sm: calc(var(--vx-spacing) * 4);
+  --space-md: calc(var(--vx-spacing) * 6);
+  --space-lg: calc(var(--vx-spacing) * 8);
+  --space-xl: calc(var(--vx-spacing) * 10);
+  --space-2xl: calc(var(--vx-spacing) * 12);
+  --space-3xl: calc(var(--vx-spacing) * 14);
+  --space-4xl: calc(var(--vx-spacing) * 16);
+  --space-5xl: calc(var(--vx-spacing) * 20);
+  --space-6xl: calc(var(--vx-spacing) * 24);
+  --space-7xl: calc(var(--vx-spacing) * 40);
 
   /* row */
-  --space-row-sm: calc(var(--vx-spacing) * 12);
-  --space-row-md: calc(var(--vx-spacing) * 14);
-  --space-row-lg: calc(var(--vx-spacing) * 16);
-  --space-row-xl: calc(var(--vx-spacing) * 20);
-  --space-row-2xl: calc(var(--vx-spacing) * 24);
-  --space-row-3xl: calc(var(--vx-spacing) * 28);
-  --space-row-4xl: calc(var(--vx-spacing) * 32);
+  --space-row-sm: calc(var(--vx-spacing) * 14);
+  --space-row-md: calc(var(--vx-spacing) * 16);
+  --space-row-lg: calc(var(--vx-spacing) * 20);
+  --space-row-xl: calc(var(--vx-spacing) * 24);
+  --space-row-2xl: calc(var(--vx-spacing) * 28);
+  --space-row-3xl: calc(var(--vx-spacing) * 32);
+  --space-row-4xl: calc(var(--vx-spacing) * 36);
 
   /* control */
   --space-control-3xs: calc(var(--vx-spacing) * 5);

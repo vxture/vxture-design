@@ -210,7 +210,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking12">必须改的</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
@@ -223,9 +223,9 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">12.21.0</td><td><span class="tag t-ok">minor</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">12.21.1</td><td><span class="tag t-ok">patch</span> 应用侧主依赖，装这个</td></tr>
 <tr><td class="mono">@vxture/design-ui</td><td class="mono">9.12.0</td><td><span class="tag t-ok">minor</span> 由伞包精确钉版，不要直接装；固定列补下限，见 §05f</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.3.0</td><td><span class="tag t-dim">未动</span> 12.8.0 新增的 <span class="mono">table-col-fixed</span> 沿用</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.3.1</td><td><span class="tag t-ok">patch</span> 宽松密度的留白与行高重排，见 §05i</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
@@ -374,6 +374,19 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p><span class="mono">ShellLegalFooter</span> 的 <span class="mono">ShellLegalFooterLink</span> 新增可选字段 <span class="mono">external</span>。给了 <span class="mono">true</span> 就在新标签页打开，并带 <span class="mono">rel="noopener noreferrer"</span>。</p>
 <div class="note warn"><strong>缺省行为一字未变</strong>：不传 <span class="mono">external</span> 的链接仍在当前窗口跳转。五个门户共用本件，不能因为新增一个能力就改掉既有链接的去向——测试里专门有一条盯着这件事（「不传 external 的链接没有 target」），它比盯新能力本身更要紧。</div>
 <div class="note"><strong>用途是把「离开本站」的链接与站内法律页区分开</strong>：备案号指向工信部 / 公安部的查询系统，登录页上点它不该把正在登录的人带走（owner 2026-09-20）。站内的服务条款 / 隐私政策 / Cookie 政策仍然当前窗口打开。</div></section>
+<section id="comfortable"><h2><span class="num">05i</span>宽松密度与默认真正拉开<span class="h2-meta">tokens 3.3.1 · 不用改，观感变了</span></h2><div class="rule"></div>
+<p>此前 <span class="mono">.density-comfortable</span> 的留白（inset）与行高（row）两组与默认档<strong>逐字相同</strong>，只有控件高度抬了一档。用户切到「宽松」，看到的只是按钮变高，卡片内边距和各种间距都没变（ruyin 报，#59）。</p>
+<div class="tw"><table>
+<thead><tr><th>档</th><th>紧凑</th><th>默认</th><th>宽松（之前 → 现在）</th></tr></thead>
+<tbody>
+<tr><td class="mono">space-md</td><td class="mono">8</td><td class="mono">16</td><td class="mono">16 → 24</td></tr>
+<tr><td class="mono">space-lg</td><td class="mono">12</td><td class="mono">24</td><td class="mono">24 → 32</td></tr>
+<tr><td class="mono">space-xl</td><td class="mono">16</td><td class="mono">32</td><td class="mono">32 → 40</td></tr>
+<tr><td class="mono">space-row-md</td><td class="mono">40</td><td class="mono">56</td><td class="mono">56 → 64</td></tr>
+<tr><td class="mono">control-md</td><td class="mono">28</td><td class="mono">32</td><td class="mono">36（未变）</td></tr>
+</tbody></table></div>
+<div class="note warn"><strong>默认档与紧凑档一个值都没动</strong>，只有显式挂了 <span class="mono">.density-comfortable</span> 的页面观感会变。页面四周留白 <span class="mono">page-inset</span> 的上下界引用 <span class="mono">lg</span> / <span class="mono">3xl</span>，也会跟着放宽。</div>
+<div class="note"><strong>产品侧为此加的过渡覆盖可以删了</strong>：ruyin 在 <span class="mono">app.css</span> 里用 <span class="mono">html.density-comfortable</span> 逐条撑开自己容器的那一段，升级后整段删掉，否则会叠加两次。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -415,7 +428,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 12.21.0 · design-tokens 3.3.0 / design-ui 9.12.0 / design-system 12.21.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 12.21.1 · design-tokens 3.3.1 / design-ui 9.12.0 / design-system 12.21.1 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>
