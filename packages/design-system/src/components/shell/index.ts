@@ -1,5 +1,6 @@
 export * from "./ShellBootScreen";
 export * from "./ShellChrome";
+export * from "./ShellHeaderParts";
 export * from "./ShellLauncher";
 export * from "./ShellPanel";
 export * from "./ShellSearchBox";

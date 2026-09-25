@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 13.3.0** ｜ 更新：2026-08-26
+适用版本：**DS 13.4.0** ｜ 更新：2026-09-25
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -132,6 +132,24 @@ DataTable 三态一次定齐：加载出骨架行（撑住高度）、空态出 
 | FormPageTemplate   | 整页表单   | **表单区不限宽**（2026-08-12 撤掉原先的 `max-w-content-narrow-lg`）——与列表页在同一侧栏下露出两种内容宽度，读者会当成两套系统；字段多宽由调用方自己用 grid 控制。动作条虚线上边框，可 sticky 粘底 |
 | DashboardTemplate  | 工作台     | 指标区 → 入口区 → 其余板块；阅读顺序焊死：先看数、再选路、最后处理事项                                                                                                                            |
 | ResultPageTemplate | 整页结果   | 见 §4                                                                                                                                                                                             |
+
+## 7.1 页面 Header 四种视角
+
+顶栏按**页面视角**分四种（owner 2026-09-25，Figma Header_website / Header_console / Header_admin / Header_product）。不做成四个组件：都是 `ShellHeader` 的三个槽位里拼零件，区别只在放哪些零件。示例见 preview「外壳与登录 → PageHeader」。
+
+| 视角             | `ShellHeader` 参数                                        | 左侧（leading）                                                                                                                                                                              | 右侧（trailing）                                                         |
+| ---------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 1 官网           | `layout="centered"` `surface="transparent"` `height="xl"` | `ShellHeaderMark` + `ShellHeaderTitle`（站名）；产品页再加 `ShellHeaderDivider` + `ShellProductTitle`                                                                                        | `ShellToolbox` + 注册 / 登录（`Button`）或「官网」按钮或 `ShellUserMenu` |
+| 2 租户用户工作台 | 全宽 `surface="background"` `height="xl"`                 | `ShellLauncher` + `ShellHeaderMark` + `ShellHeaderTitle`（Workspace Console）+ `ShellHeaderDivider` + `ShellScopeButton`（当前租户）                                                         | `ShellSearchBox` + `ShellAgentButton` + `ShellToolbox` + `ShellUserMenu` |
+| 3 平台管理工作台 | 同 2                                                      | 同 2，但标题为 Admin Console 且**必须带管理员徽标**（`ShellHeaderTitle badge`）；分隔线后是 `ShellHeaderDomain`（当前域），不放租户选择                                                      | 同 2                                                                     |
+| 4 单产品视角     | 同 2                                                      | `ShellIconButton icon="sidebar"` + `ShellLauncher` + `ShellHeaderMark` + `ShellHeaderDivider` + `ShellProductTitle`（标识 / 名称 / 类型 / 等级）+ `ShellHeaderDivider` + `ShellHeaderDomain` | 同 2                                                                     |
+
+判据：
+
+- **官网不带任何工作属性**：没有九宫格、租户、域名、搜索、智能体。内容居中封顶，与正文同列。
+- **两种管理工作台靠名称与徽标区分视角**：租户工作台是「租户用户管理自己」，分隔线后是当前租户（可切换）；平台管理工作台是「管理员管理平台或全部租户」，标题不同、带管理员徽标，分隔线后是当前管理域。两者同屏出现在截图里要一眼分得开。
+- **单产品视角的主角是产品**：平台标识退为一个小标，产品标题组居中心位置；侧栏开关在最左。
+- 域名只在 header 出现一次，侧栏不再重复（`ShellSidebarNav` 的 `domainName` 可省）。
 
 ## 8. 目录分层
 

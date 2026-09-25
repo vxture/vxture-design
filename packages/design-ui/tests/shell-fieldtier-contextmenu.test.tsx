@@ -85,6 +85,53 @@ describe("ShellHeader · 三个插槽与中槽对齐", () => {
     const { container } = render(<ShellHeader />);
     expect(cls(container.querySelector("header"))).toContain("h-header-md");
   });
+
+  /**
+   * layout / surface 是 2026-09-25 为四种页面 header 加的；**缺省必须与加之前
+   * 一模一样**——全宽、白底、sticky 阴影、槽位直接挂在 header 上。
+   */
+  it("缺省：全宽、card 材质，槽位直挂 header", () => {
+    const { container } = render(
+      <ShellHeader leading={<span>标识</span>} trailing={<span>工具</span>} />,
+    );
+    const header = container.querySelector("header")!;
+    const c = cls(header).split(" ");
+    for (const t of ["bg-card", "shadow-sticky", "px-lg", "justify-between"]) {
+      expect(c).toContain(t);
+    }
+    expect(header).toHaveAttribute("data-layout", "full");
+    expect(header.children).toHaveLength(2);
+  });
+
+  /** 官网：内容居中封顶，槽位包在一层 max-w-page-2xl 的内层里。 */
+  it("layout=centered：内层居中封顶，外层不再挂横向内距", () => {
+    const { container } = render(
+      <ShellHeader
+        layout="centered"
+        leading={<span>标识</span>}
+        trailing={<span>工具</span>}
+      />,
+    );
+    const header = container.querySelector("header")!;
+    expect(cls(header).split(" ")).not.toContain("px-lg");
+    expect(header.children).toHaveLength(1);
+    const inner = cls(header.children[0]).split(" ");
+    for (const t of ["mx-auto", "max-w-page-2xl", "px-xl", "justify-between"]) {
+      expect(inner).toContain(t);
+    }
+    expect(header.children[0]!.children).toHaveLength(2);
+  });
+
+  it.each([
+    ["card", ["bg-card", "shadow-sticky"], []],
+    ["background", ["bg-background", "shadow-sticky"], ["bg-card"]],
+    ["transparent", ["bg-transparent"], ["bg-card", "shadow-sticky"]],
+  ] as const)("surface=%s", (surface, has, lacks) => {
+    const { container } = render(<ShellHeader surface={surface} />);
+    const c = cls(container.querySelector("header")).split(" ");
+    for (const t of has) expect(c).toContain(t);
+    for (const t of lacks) expect(c).not.toContain(t);
+  });
 });
 
 /* ── ShellPageContainer ───────────────────────────────────────────────────── */

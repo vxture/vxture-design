@@ -34,6 +34,20 @@ import { cn } from "../../utils/cn";
 
 export type ShellHeaderHeight = "sm" | "md" | "lg" | "xl";
 
+/**
+ * 横向布局：`full`（缺省）铺满视口宽，工作台用；`centered` 内容居中封顶
+ * （`max-w-page-2xl`，左右 `px-xl`），官网用——官网的标识与工具要和正文同列，
+ * 超宽屏上贴着两边会离内容太远（owner 2026-09-25，Figma Header_website 2226:10298）。
+ */
+export type ShellHeaderLayout = "full" | "centered";
+
+/**
+ * 材质：`card`（缺省）白底 + sticky 阴影；`background` 与页面同底的浅灰 +
+ * 阴影（Figma 工作台 Header_console 682:2224 的画法）；`transparent` 无底无影，
+ * 贴在页面上（官网）。
+ */
+export type ShellHeaderSurface = "card" | "background" | "transparent";
+
 export interface ShellHeaderProps {
   leading?: ReactNode;
   center?: ReactNode;
@@ -45,8 +59,18 @@ export interface ShellHeaderProps {
    */
   centerAlign?: "center" | "end" | undefined;
   height?: ShellHeaderHeight;
+  /** 见 `ShellHeaderLayout`。缺省 `full`，与加这个参数之前一致。 */
+  layout?: ShellHeaderLayout | undefined;
+  /** 见 `ShellHeaderSurface`。缺省 `card`，与加这个参数之前一致。 */
+  surface?: ShellHeaderSurface | undefined;
   className?: string | undefined;
 }
+
+const HEADER_SURFACE_CLASS: Record<ShellHeaderSurface, string> = {
+  card: "bg-card shadow-sticky",
+  background: "bg-background shadow-sticky",
+  transparent: "bg-transparent",
+};
 
 const HEADER_HEIGHT_CLASS: Record<ShellHeaderHeight, string> = {
   sm: "h-header-sm",
@@ -61,16 +85,12 @@ export function ShellHeader({
   trailing,
   centerAlign = "center",
   height = "md",
+  layout = "full",
+  surface = "card",
   className,
 }: ShellHeaderProps) {
-  return (
-    <header
-      className={cn(
-        "flex shrink-0 items-center justify-between gap-md bg-card px-lg shadow-sticky",
-        HEADER_HEIGHT_CLASS[height],
-        className,
-      )}
-    >
+  const slots = (
+    <>
       <div className="flex min-w-0 items-center gap-sm">{leading}</div>
       {center ? (
         <div
@@ -83,6 +103,28 @@ export function ShellHeader({
         </div>
       ) : null}
       <div className="flex shrink-0 items-center gap-2xs">{trailing}</div>
+    </>
+  );
+  const row = "flex items-center justify-between gap-md";
+  return (
+    <header
+      data-layout={layout}
+      data-surface={surface}
+      className={cn(
+        "shrink-0",
+        HEADER_SURFACE_CLASS[surface],
+        HEADER_HEIGHT_CLASS[height],
+        layout === "full" && [row, "px-lg"],
+        className,
+      )}
+    >
+      {layout === "centered" ? (
+        <div className={cn(row, "mx-auto h-full w-full max-w-page-2xl px-xl")}>
+          {slots}
+        </div>
+      ) : (
+        slots
+      )}
     </header>
   );
 }
