@@ -5,6 +5,17 @@
 
 ---
 
+## 12.21.1 — 2026-09-25
+
+跟随 `@vxture/design-tokens@3.3.1`（patch）：宽松密度的留白与行高与默认档真正
+拉开（#59）。**调用方无需改代码**；只有挂了 `.density-comfortable` 的页面观感
+会变，默认与紧凑不变。详见 design-tokens 3.3.1。
+
+- 02 视觉规格 §4 改为：密度调留白、行高、控件高度三样，控件只动 ±1 档；任何
+  一档不得与相邻档取值相同。
+- 产品侧为宽松档自行加的过渡覆盖（ruyin `app.css` 里 `html.density-comfortable`
+  那一段）升级后应删除，否则会叠加两次。
+
 ## 12.21.0 — 2026-09-25
 
 `ShellSidebarNav` 新增 `subLabelReveal`：副名第二行何时现身（minor：新增可选

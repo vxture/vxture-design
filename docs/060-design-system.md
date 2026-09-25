@@ -1,7 +1,7 @@
 # Design System 内部工程规范
 
-适用版本：**DS 12.21.0**
-更新：2026-09-24
+适用版本：**DS 12.21.1**
+更新：2026-09-25
 范围：本仓 DS 三包的维护者与守卫脚本
 
 > **对外使用规范已随包发布**，见 `packages/design-system/docs/`（01 使用契约 / 02 视觉规格 / 03 模式选用 / 04 token 契约 / 05 内容规范 / 06 无障碍达标线），随 `@vxture/design-system` 的 `files` 一同发包。本文只保留内部工程内容：token 管线决策、守卫机制、偏离登记与历史判据。消费方规则一律以包内 docs 为准，本文不得复述。
@@ -43,7 +43,8 @@ L0–L5 组件归属与 T1–T4 token 分层的对外定义见包内 `docs/01-us
 - 组件视觉规格取 shadcn vega，原语基座保持 Radix。实测三个基座（radix / base / aria）的 vega 类名逐字相同——style 与基座正交，换基座不改变任何视觉。
 - 危险动作淡底取自 vega，但不照抄它的 `bg-destructive/10`——alpha 不自适应暗色，vega 必须补写 `dark:` 变体，而我们有十档 destructive 阶，实色结果确定。**采纳的是上游的判断，不是它缺 muted 阶时的将就手段。**
 - `destructive-strong` 上游没有，是因为它不发确认对话框图案，从未遇到这个问题。
-- 密度不改控件高度：实测 shadcn 的 maia（generous）与 vega 控件高度完全相同（24/32/36/40）。故 `SPACING_SCALE` 的 `control` 族默认档取中间列，`inset` 与 `row` 取最宽列。
+- 密度调控件高度，但只动 ±1 档（owner 2026-09-25，#59）。上游 shadcn 的 maia（generous）与 vega 控件高度完全相同（24/32/36/40），改密度不动控件高度；我们保留了 ±1 档的变化，没有照搬上游，幅度则刻意小于留白。
+- `SPACING_SCALE` 三列就是 compact / default / comfortable，三族按同一个列号取值。此前默认档的 `inset` / `row` 取了最宽那一列，宽松档在这两族上与默认逐字相同，切到宽松只看得到控件变高（#59）。生成器现在断言每一档三档严格递增。
 - 透明模式的视觉权威 = admin 内容区语法。
 
 ### 1.2.2 配方层

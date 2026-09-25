@@ -220,21 +220,16 @@ function buildRoles(modeIndex) {
  * 密度类挂在子树上的可能——密度是"这一片紧凑些"的合法诉求，不必须全局。
  */
 /**
- * 每档取 `SPACING_SCALE` 的哪一列，**按族分开**。
+ * 每档取 `SPACING_SCALE` 的哪一列。三个族**同一个列号**，第几列就是第几档。
  *
- * 默认档的留白与行高取最宽那一列（原 comfortable 的取值），但 `control` 族**不跟**：
- * 密度是"一屏放多少信息"，由留白和行高决定；控件高度是人机工程（点击目标、
- * 文字可读性），不该因为页面变宽松就把按钮撑胖。
- *
- * 这不是我们的发明——实测 shadcn 的 maia（generous）与 vega 的控件高度完全相同，
- * 都是 24/32/36/40。上游改密度从不改控件高度。
- *
- * 于是 `control` 的第三列在默认档下闲置，只有显式 `.density-comfortable` 才用到。
+ * 此前是按族分开的：默认档的 inset / row 取最宽那一列，control 取中间列。结果
+ * inset / row 的中间列闲置，宽松档在这两族上与默认逐字相同（#59）。现在表本身
+ * 就按 compact / default / comfortable 三列排，不再需要按族映射。
  */
 const DENSITY_MODES = [
-  [{ inset: 2, row: 2, control: 1 }, ":root, .density-default"],
-  [{ inset: 0, row: 0, control: 0 }, ".density-compact"],
-  [{ inset: 2, row: 2, control: 2 }, ".density-comfortable"],
+  [1, ":root, .density-default"],
+  [0, ".density-compact"],
+  [2, ".density-comfortable"],
 ];
 
 /**
@@ -242,10 +237,10 @@ const DENSITY_MODES = [
  * 自己的注册（`--spacing-md: var(--spacing-md)`），CSS 判定为循环、整族失效且不报错。
  * 注册由 generate-theme.mjs 改名完成。
  */
-function buildSpacing(columnOf) {
+function buildSpacing(column) {
   return SPACING_SCALE.map(([step, ...mults]) => {
     const kind = SPACING_KINDS.find((k) => step.startsWith(`${k}-`)) ?? "inset";
-    const n = mults[columnOf(kind)];
+    const n = mults[column];
     const value =
       n === 0 ? "0px" : `calc(${t1("--vx-spacing", `spacing/${step}`)} * ${n})`;
     return [`--space-${step}`, value, kind];
@@ -291,11 +286,11 @@ function assertSpacingMonotonic() {
   const last = {};
   for (const [step, ...mults] of SPACING_SCALE) {
     const kind = SPACING_KINDS.find((k) => step.startsWith(`${k}-`)) ?? "inset";
+    /* 严格递增而非非递减：两档相等就是那一档在用户眼里「切了没变化」（#59）。
+       `none` 三档都是 0，是唯一合法的例外。 */
     for (let i = 1; i < mults.length; i++) {
-      if (mults[i] < mults[i - 1]) {
-        errors.push(
-          `间距 ${step}：密度三档非递减被打破（${mults.join(" / ")}）`,
-        );
+      if (step !== "none" && mults[i] <= mults[i - 1]) {
+        errors.push(`间距 ${step}：密度三档须严格递增（${mults.join(" / ")}）`);
       }
     }
     const prev = last[kind];
@@ -522,9 +517,9 @@ const t1Literals = loadT1();
 assertSpacingMonotonic();
 assertFluidOrdered();
 const typoBlocks = FONT_SIZE_MODES.map(([i, sel]) => [sel, buildRoles(i)]);
-const spaceBlocks = DENSITY_MODES.map(([cols, sel]) => [
+const spaceBlocks = DENSITY_MODES.map(([column, sel]) => [
   sel,
-  buildSpacing((kind) => cols[kind]),
+  buildSpacing(column),
 ]);
 const roleCount = TYPE_ROLES.length;
 
