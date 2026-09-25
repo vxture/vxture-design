@@ -8,6 +8,28 @@
 
 ---
 
+## 3.4.0 — 2026-09-25
+
+新增 `code-lg` 排版角色；`title` 与 `overline` 字重从 600 降到 500（minor：
+新增 token 档，050 §2）。均为 owner 决定。
+
+### 新增 `code-lg`
+
+- code 族从两档变三档：`code-sm` / `code-md` / `code-lg` 默认 12 / 14 / 16px，
+  工具类 `text-code-lg`。等宽体、400 字重，与另两档同。
+- 随字号三档整体平移：较小 14、默认 16、较大 18。
+
+### `title` / `overline` 字重 500
+
+- `--title-{xl,lg,md,sm}-font-weight` 与 `--overline-font-weight` 由
+  `--vx-font-weight-semibold` 改为 `--vx-font-weight-medium`，三档字号模式同步。
+- `heading-*`（600）、`display-*`（700）、`label-*`（500）、`body-*` / `code-*`
+  （400）不变。
+- 由此 `title` 与 `label` 同重：同字号下两族不再靠字重区分，靠用途与位置。
+- 写了 `text-title-*` 又显式加 `font-semibold` / `font-bold` 的地方不跟随
+  （显式类优先）。DS 内只有数值展示这样写（`MetricCard` / `LabeledValue` /
+  `MetricListCard`），是有意加重，未改。
+
 ## 3.3.1 — 2026-09-25
 
 修宽松密度（patch：只改取值，不增删名字，050 §2）。来自 ruyin（#59）。

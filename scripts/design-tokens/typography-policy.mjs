@@ -110,11 +110,14 @@ export const TYPE_ROLES = [
   ["heading-3", "brand", "semibold", "2xl"],
 
   /* title 与 body / label 同为四档、同用 t-shirt 档名——三者在 14–20 这一段并排，
-     档名对得上才能一眼看出「同字号、不同字重」的那三层。 */
-  ["title-xl", "sans", "semibold", "xl"],
-  ["title-lg", "sans", "semibold", "lg"],
-  ["title-md", "sans", "semibold", "base"],
-  ["title-sm", "sans", "semibold", "sm"],
+     档名对得上才能一眼看出「同字号、不同字重」的那三层。
+
+     title 字重 500（medium），不是 600（owner 2026-09-25）。与 label 同重，
+     两族在同字号上靠用途与所在位置区分，不再靠字重。 */
+  ["title-xl", "sans", "medium", "xl"],
+  ["title-lg", "sans", "medium", "lg"],
+  ["title-md", "sans", "medium", "base"],
+  ["title-sm", "sans", "medium", "sm"],
 
   ["body-xl", "sans", "normal", "lg"],
   ["body-lg", "sans", "normal", "base"],
@@ -126,10 +129,14 @@ export const TYPE_ROLES = [
   ["label-md", "sans", "medium", "sm"],
   ["label-sm", "sans", "medium", "xs"],
 
+  /* code-lg：代码字号偏好「较大」一档要有地方落（owner 2026-09-25）。
+     三档 sm / md / lg 默认 12 / 14 / 16，与 body 的下三档同字号。 */
+  ["code-lg", "mono", "normal", "base"],
   ["code-md", "mono", "normal", "sm"],
   ["code-sm", "mono", "normal", "xs", "noShrink"],
 
-  ["overline", "sans", "semibold", "xs", "noShrink"],
+  /* 字重 500，与 title 同步从 600 降下来（owner 2026-09-25）。 */
+  ["overline", "sans", "medium", "xs", "noShrink"],
 ];
 
 /** 产物里的分组顺序，与角色名前缀一致。 */
