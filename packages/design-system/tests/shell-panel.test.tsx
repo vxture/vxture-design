@@ -923,6 +923,22 @@ describe("ShellScopePanel · 两级范围切换", () => {
    * 组标题用紧凑头部：图标不占 48px 标识列，组名才不会被推到比子项还靠右。
    * 变异「去掉 compact」时这条挂。
    */
+  /**
+   * 项文字与组名同列靠一条算术成立：组名起点 px-sm + 24 + gap-md，项文字起点
+   * pl-md + px-sm + 16 + gap-xs，默认密度下两边都是 50px。任一项被改，
+   * 对齐就静默失效——所以把参与算术的每一项都钉住。
+   */
+  it("项图标 16px、图标与文字间距 gap-xs、项容器缩进 pl-md", () => {
+    render1("w1");
+    const item = screen.getAllByRole("menuitemradio")[0]!;
+    expect(hasClass(item, "gap-xs")).toBe(true);
+    expect(hasClass(item, "px-sm")).toBe(true);
+    expect(hasClass(item.parentElement, "pl-md")).toBe(true);
+    expect(
+      item.querySelector("svg")!.getAttribute("class")!.split(" "),
+    ).toContain("size-icon-sm");
+  });
+
   it("组标题的图标不占标识列", () => {
     render1("w1");
     const group = screen.getAllByRole("group")[0]!;

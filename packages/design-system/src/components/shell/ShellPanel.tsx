@@ -918,7 +918,14 @@ export function ShellScopePanel({
                 }
               />
               {/* 项比组缩进一档（pl-md）：它们从属于上面那个组，项的图标落在
-                  组图标右侧，项的文字与组名大致同列。 */}
+                  组图标右侧。
+
+                  **项的文字与组名同列**（owner 2026-09-25）。默认密度下：
+                    组名起点 = px-sm 10 + 组图标 24 + gap-md 16          = 50
+                    项文字起点 = pl-md 16 + px-sm 10 + 项图标 16 + gap-xs 8 = 50
+                  所以项图标取 sm（16px）、图标与文字间距取 gap-xs。等式成立的
+                  条件是 24 = 16 + xs，只在默认密度精确；紧凑 / 宽松密度下
+                  xs 为 4 / 10，差 4 / 2px。 */}
               <div className="flex flex-col gap-2xs pl-md">
                 {group.options.map((option) => {
                   const selected = option.key === value;
@@ -939,7 +946,7 @@ export function ShellScopePanel({
                          * 忽高忽低。min-h 而非 h：大字号 + 紧凑密度下双行放不
                          * 进时让它撑开，而不是截掉一行字。
                          */
-                        "h-auto min-h-control-2xl w-full justify-start gap-sm px-sm py-2xs text-left",
+                        "h-auto min-h-control-2xl w-full justify-start gap-xs px-sm py-2xs text-left",
                         /*
                          * 只有当前所在项突出显示，其余一律浅灰底（owner
                          * 2026-09-25）——不分是不是当前租户下的。
@@ -956,7 +963,7 @@ export function ShellScopePanel({
                       {option.icon ? (
                         <Icon
                           name={option.icon}
-                          size="md"
+                          size="sm"
                           className="shrink-0"
                         />
                       ) : null}
