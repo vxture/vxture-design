@@ -172,6 +172,7 @@
       "FieldGroup",
       "FieldLabel",
       "FieldTier",
+      "FieldValue",
       "FileTrigger",
       "FilterBar",
       "FilterPanel",

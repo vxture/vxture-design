@@ -115,11 +115,22 @@ export interface FieldGroupProps extends React.HTMLAttributes<HTMLDivElement> {
    *
    * `2` 是注册 / 编辑类表单的常态（owner 2026-09-15：「一行两条，保持足够的 gap」），
    * 只在 `DialogForm` 的 `lg` / `xl` 挡里用——`sm` 面板半列放不下一个输入框。
+   * `3` 给详情页的只读展示与字段短的表单（owner 2026-09-25），需要页面级宽度，
+   * 放进面板里一列只剩一百多像素。
    * 行距与列距同为 `lg`：两列之间比一列之内的行距更窄，眼睛会把左右两个字段读成一个。
    * 需要占满整行的字段给 `<Field span="full">`。
    */
-  readonly columns?: 1 | 2;
+  readonly columns?: 1 | 2 | 3;
 }
+
+const GROUP_COLUMNS_CLASS: Record<
+  NonNullable<FieldGroupProps["columns"]>,
+  string
+> = {
+  1: "flex w-full flex-col gap-lg",
+  2: "grid w-full grid-cols-2 gap-x-lg gap-y-lg",
+  3: "grid w-full grid-cols-3 gap-x-lg gap-y-lg",
+};
 
 /** 多行表单的编组：行距一次定齐（表单密度只在这里调，不散落在行间）。 */
 export function FieldGroup({
@@ -131,12 +142,7 @@ export function FieldGroup({
     <div
       data-slot="field-group"
       data-columns={columns}
-      className={cn(
-        columns === 2
-          ? "grid w-full grid-cols-2 gap-x-lg gap-y-lg"
-          : "flex w-full flex-col gap-lg",
-        className,
-      )}
+      className={cn(GROUP_COLUMNS_CLASS[columns], className)}
       {...props}
     />
   );
@@ -218,6 +224,59 @@ export function FieldLabel({
         </Tooltip>
       </TooltipProvider>
     </span>
+  );
+}
+
+export interface FieldValueProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** 值为空（undefined / null / false / 空串）时显示的占位。默认 `—`。 */
+  readonly empty?: React.ReactNode;
+  /**
+   * 单行截断。默认 false：长文本换行，完整读得到——展示态的首要任务是把值给全。
+   * 表格化的密排详情里要求每行等高时再开。
+   */
+  readonly truncate?: boolean;
+}
+
+/**
+ * 只读的值：`Field` 里控件那一格的**展示版**（owner 2026-09-25：「既是输入，
+ * 也是展示」）。
+ *
+ * 同一套 `Field` / `FieldLabel` / `FieldGroup` 既搭表单也搭详情，只是控件换成
+ * 本件——标签位置、列宽、行距、一行几条全部沿用，编辑态与查看态是同一张版面，
+ * 切换时不跳；一张表单里部分字段只读也能与输入行对齐。
+ *
+ * 高度与输入框同档（`min-h-control-md`），文字垂直居中、字号跟 `Input` 一致——
+ * 混排时两种行的文字落在同一条基线上。不画边框、不留内距：它不是一个可点的框，
+ * 文字左缘与输入框左缘同列（labeled 方向「控件左缘成一条竖线」）。
+ */
+export function FieldValue({
+  className,
+  children,
+  empty = "—",
+  truncate = false,
+  ...props
+}: FieldValueProps) {
+  const isEmpty =
+    children === undefined ||
+    children === null ||
+    children === false ||
+    children === "";
+  return (
+    <div
+      data-slot="field-value"
+      data-empty={isEmpty || undefined}
+      className={cn(
+        "flex min-h-control-md min-w-0 items-center",
+        "text-body-lg md:text-body-md",
+        isEmpty ? "text-muted-foreground" : "text-foreground",
+        className,
+      )}
+      {...props}
+    >
+      <span className={cn("min-w-0", truncate ? "truncate" : "break-words")}>
+        {isEmpty ? empty : children}
+      </span>
+    </div>
   );
 }
 
