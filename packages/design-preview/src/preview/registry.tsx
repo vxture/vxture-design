@@ -4130,7 +4130,7 @@ function ShellLauncherDemo() {
 function ShellScopePanelDemo() {
   const [scope, setScope] = React.useState("ws-default");
   return (
-    <div className="w-fit rounded-md border border-border bg-popover p-md">
+    <div className="w-fit rounded-md bg-popover p-md text-foreground ring-1 ring-foreground/10">
       <div className="w-80">
         <ShellScopePanel
           ariaLabel="切换租户与工作区"
