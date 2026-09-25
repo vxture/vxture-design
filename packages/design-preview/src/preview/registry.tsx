@@ -4155,7 +4155,7 @@ function ShellScopePanelDemo() {
           },
           {
             key: "t-2",
-            icon: "buildings",
+            icon: "building-office",
             title: "Tenant Name",
             titleAside: <Badge>个人租户</Badge>,
             meta: "T-2222888885",
@@ -4195,10 +4195,11 @@ function ShellPanelDemo() {
       {/* 外壳走 ShellPanelSurface：与弹层同宽、同留白、同表面，与旁边的
           ShellUserPanel 同一个外壳组件，不再手写。 */}
       <ShellPanelSurface>
-        {/* 主体是组织，所以 lead="icon" 不画头像圈 */}
+        {/* 主体是租户不是人，所以 lead="icon" 不画头像圈。租户图标按类型：
+            个人租户 building-office，组织租户 buildings。 */}
         <ShellPanelHeader
           lead="icon"
-          icon="buildings"
+          icon="building-office"
           title="Tenant Name"
           titleAside={<Badge>个人租户</Badge>}
           metaRows={[
