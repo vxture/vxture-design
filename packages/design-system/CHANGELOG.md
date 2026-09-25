@@ -57,7 +57,7 @@ preview：TenantPanel 六个条目都可点，示意去向为租户控制台的�
 
 ### `ShellScopePanel` 排版优化（不用改代码，观感变了）
 
-跟随 `@vxture/design-ui@9.13.0`（新增图标 `check-circle`）。owner 2026-09-25：
+跟随 `@vxture/design-ui@9.13.0`（新增图标 `check-circle` 与 `workspace`）。owner 2026-09-25：
 租户条目与工作区条目排列难看。逐项对照 Figma（2252:10089）后改四处：
 
 - **组名不再比子项靠右**：组标题此前借用面板顶部的大头部，24px 图标占着 48px

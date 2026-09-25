@@ -463,6 +463,7 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   role: UsersIcon,
   "user-switch": UserSwitchIcon,
   buildings: BuildingsIcon,
+  workspace: CubeIcon,
   users: UsersIcon,
   medal: MedalIcon,
   star: StarIcon,

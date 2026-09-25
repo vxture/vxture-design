@@ -7,7 +7,16 @@
 
 ## 9.13.0 — 2026-09-25
 
-新增图标 `check-circle`（minor：只增不改）。
+新增图标 `check-circle` 与 `workspace`（minor：只增不改）。
+
+### `workspace`
+
+- 工作空间（租户下的一块工作区域），图形是立方体（`CubeIcon`，与 `cube` 同形
+  不同义：`cube` 泛指资源 / 包）。放在租户 `buildings` 同一分组。
+- 此前范围切换面板的工作空间用的是 `folder`，读起来像「点进去是文件列表」
+  （owner 2026-09-25 选定立方体）。各产品统一写 `icon="workspace"`，不再各自挑。
+
+### `check-circle`
 
 - 单选面板的**选中标记**（圆形对勾），首个使用者是 design-system 的
   `ShellScopePanel`。Figma 上的选中标记一直是 CheckCircle，此前字典里没有这个

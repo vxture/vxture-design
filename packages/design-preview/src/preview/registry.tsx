@@ -4146,11 +4146,11 @@ function ShellScopePanelDemo() {
             options: [
               {
                 key: "ws-default",
-                icon: "folder",
+                icon: "workspace",
                 label: "Default Workspace",
                 description: "默认工作空间",
               },
-              { key: "ws-2", icon: "folder", label: "Another Workspace" },
+              { key: "ws-2", icon: "workspace", label: "Another Workspace" },
             ],
           },
           {
@@ -4162,7 +4162,7 @@ function ShellScopePanelDemo() {
             options: [
               {
                 key: "ws-3",
-                icon: "folder",
+                icon: "workspace",
                 label: "Default Workspace",
                 description: "默认工作空间",
               },
