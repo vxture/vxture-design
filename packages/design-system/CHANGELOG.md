@@ -5,6 +5,24 @@
 
 ---
 
+## 12.23.0 — 2026-09-25
+
+新增 `ShellUserPanel`：`ShellUserMenu` 弹层里那块用户面板的本体，独立导出
+（minor：新增件，无删改）。
+
+- **组合使用**：`ShellUserMenu` 管入口（头像按钮、在线小点、弹层开合与落点），
+  弹层里装的就是 `ShellUserPanel`；`ShellUserPanel` 也可以单独平铺，给抽屉、
+  移动端账户页、预览面这类「不用点头像」的场合。两处是同一份代码。
+- `ShellUserPanelProps`：`user` / `extras` / `settings` / `portalReturn` /
+  `links` / `actions`，与 `ShellUserMenu` 的内容字段同一份；另有可选的
+  `onItemSelect`（点了链接、动作、「回到来处」之后调用，叉掉提示不算）与
+  `className`。
+- 平铺外壳带面板表面（底色 / 描边 / 圆角）、不带阴影；宽度与留白与弹层一致。
+- `ShellUserMenuProps` 改为由 `ShellUserPanelProps` 派生，字段与此前逐项一致，
+  **调用方无需改动**。
+- preview 的外壳页同时摆出头像按钮与平铺面板，内容照 Figma UserPanel
+  （190:603）配，偏好设置用中文档名。
+
 ## 12.22.0 — 2026-09-25
 
 跟随 `@vxture/design-tokens@3.4.0`（minor）。详见 design-tokens 3.4.0。

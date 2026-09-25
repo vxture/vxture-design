@@ -17,9 +17,10 @@
  * 放 design-system 而不是 design-ui：`ShellPanelHeader` 复用同目录 `ShellChrome`
  * 的头像件，依赖方向是单向 design-system → design-ui。
  *
- * 与 `ShellUserMenu` 的关系：那个是**装配好的**账户菜单（带触发器与弹层），
- * 这里是**散件**。ShellUserMenu 的分段语法就是 ShellPanelSection，两处共用同
- * 一组常量，改一处等于改两处。
+ * 与 `ShellUserPanel` / `ShellUserMenu` 的关系：那两个是**装配好的**用户面板
+ * （前者是面板本体，后者是头像按钮 + 弹层，弹层里装前者），这里是**散件**。
+ * 用户面板的分段语法就是 ShellPanelSection，两处共用同一组常量，改一处等于
+ * 改两处。
  */
 
 import * as React from "react";

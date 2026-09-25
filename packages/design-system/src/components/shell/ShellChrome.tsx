@@ -1,5 +1,5 @@
 /**
- * ShellChrome.tsx - 门户外壳部件族（品牌、工具按钮、语言/主题/全屏、偏好、用户菜单、法务页脚）。
+ * ShellChrome.tsx - 门户外壳部件族（品牌、工具按钮、语言/主题/全屏、偏好、用户菜单与用户面板、法务页脚）。
  * @package @vxture/design-system
  * @layer Presentation
  * @category Components - Shell
@@ -37,7 +37,7 @@ import {
   useFullscreen,
 } from "@vxture/design-ui";
 import type { FullscreenMode, IconName } from "@vxture/design-ui";
-import { interactive } from "@vxture/design-ui/styles";
+import { interactive, panel } from "@vxture/design-ui/styles";
 import type { Density } from "../../density";
 import {
   SHELL_PANEL_HAIRLINE,
@@ -212,10 +212,12 @@ export interface ShellUserMenuPortalReturn {
   onDismiss?: (() => void) | undefined;
 }
 
-export interface ShellUserMenuProps {
+/**
+ * 用户面板本体的内容（`ShellUserPanel`）。`ShellUserMenu` 把它原样装进弹层，
+ * 所以两者的内容字段是同一份。
+ */
+export interface ShellUserPanelProps {
   user: ShellUserMenuUser;
-  openLabel?: string | undefined;
-  online?: boolean | undefined;
   /**
    * 产品自定义段落，插在头部之后、导航链接之前，自带分隔线。用于放本产品才
    * 有的东西（成就槽位、配额摘要、任何 `ShellPanel*` 拼出来的内容）——DS 不
@@ -227,6 +229,27 @@ export interface ShellUserMenuProps {
   /** Navigation links rendered as their own divided section (e.g. 个人信息). */
   links?: ShellUserMenuLink[] | undefined;
   actions?: ShellUserMenuAction[] | undefined;
+  /**
+   * 面板里有一项被选中之后调用：点了链接、点了动作、点了「回到来处」。
+   * `ShellUserMenu` 用它收起弹层；单独平铺使用时通常不传。
+   *
+   * 叉掉「回到来处」提示**不算**选中——「不再显示这条」和「我要走了」是两回事。
+   */
+  onItemSelect?: (() => void) | undefined;
+  /** 单独平铺使用时挂在面板外壳上。 */
+  className?: string | undefined;
+}
+
+/**
+ * 头像按钮 + 弹层。弹层里就是 `ShellUserPanel`，内容字段与它相同；
+ * `onItemSelect` 与 `className` 由本件接管（选中即收起、外壳交给弹层）。
+ */
+export interface ShellUserMenuProps extends Omit<
+  ShellUserPanelProps,
+  "onItemSelect" | "className"
+> {
+  openLabel?: string | undefined;
+  online?: boolean | undefined;
   triggerClassName?: string | undefined;
   contentClassName?: string | undefined;
   statusClassName?: string | undefined;
@@ -754,20 +777,181 @@ export function ShellPreferencePanel({
   );
 }
 
-export function ShellUserMenu({
+/**
+ * 用户面板本体：头部（头像 / 名称 / 认证标 / meta 行）→ 徽章 → 产品自定义段
+ * → 回到来处 → 链接 → 偏好设置 → 动作。对应 Figma 的 UserPanel（190:603）。
+ *
+ * 与 `ShellUserMenu` **组合使用**：那个是 header 上的头像按钮加弹层，弹层里
+ * 装的就是本件。本件也可以单独平铺——抽屉、移动端的账户页、预览面，任何
+ * 不需要「点头像才出来」的地方。两处渲染的是同一份代码，不会各自漂移。
+ *
+ * 平铺时外壳自带面板表面（底色 / 描边 / 圆角），不带阴影：阴影是「浮在上面」
+ * 的信号，平铺的面板没有浮起来。
+ */
+export function ShellUserPanel({ className, ...props }: ShellUserPanelProps) {
+  return (
+    <div
+      className={cn(
+        panel.base,
+        "rounded-md",
+        /* 与 ShellPanelContent 的 `flex w-80 flex-col gap-md p-md` **刻意重复**、
+           不抽常量：类名由消费方的 Tailwind 扫描本包源码生成，拼出来的串它看
+           不见（理由同 ShellPanelContent 的注释）。 */
+        "flex w-80 flex-col gap-md p-md",
+        className,
+      )}
+    >
+      <ShellUserPanelSections {...props} />
+    </div>
+  );
+}
+
+/**
+ * 面板的各段内容，不含外壳。`ShellUserPanel`（平铺外壳）与 `ShellUserMenu`
+ * （弹层外壳 `ShellPanelContent`）共用这一份——外壳不同，内容必须同源。
+ */
+function ShellUserPanelSections({
   user,
-  openLabel = "User menu",
-  online = true,
   extras,
   settings,
   portalReturn,
   links = [],
   actions = [],
+  onItemSelect,
+}: Omit<ShellUserPanelProps, "className">) {
+  return (
+    <>
+      {/* 头部走 ShellPanelHeader：账户菜单的头部与产品自拼面板的头部本来就是
+          同一个东西（标识 + 标题 + 贴标 + 若干 meta 行），各写一份必然漂移。 */}
+      <ShellPanelHeader
+        {...(user.avatarSrc ? { avatarSrc: user.avatarSrc } : {})}
+        avatarAlt={user.avatarAlt ?? user.displayName}
+        avatarFallback={<AvatarSilhouette className="size-media-xs" />}
+        title={user.displayName}
+        {...(user.statusTag
+          ? {
+              titleAside: (
+                <StatusBadge
+                  tone={user.statusTag.verified ? "success" : "neutral"}
+                >
+                  {user.statusTag.label}
+                </StatusBadge>
+              ),
+            }
+          : {})}
+        metaRows={[
+          ...(user.uniqueLine
+            ? [{ key: "unique", content: user.uniqueLine }]
+            : []),
+          ...(user.meta ? [{ key: "meta", content: user.meta }] : []),
+        ]}
+      />
+
+      {user.badges && user.badges.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2xs">
+          {user.badges.map((badge) => (
+            <StatusBadge key={badge.key} tone="brand">
+              {badge.label}
+            </StatusBadge>
+          ))}
+        </div>
+      ) : null}
+
+      {extras ? <ShellUserMenuSection>{extras}</ShellUserMenuSection> : null}
+
+      {portalReturn ? (
+        <ShellUserMenuSection>
+          <div className="flex items-center gap-2xs">
+            <Button
+              variant="ghost"
+              size="md"
+              className="flex-1 justify-start gap-sm"
+              onClick={() => {
+                onItemSelect?.();
+                portalReturn.onReturn();
+              }}
+            >
+              <Icon name="arrow-left" size="sm" />
+              <span>{portalReturn.label}</span>
+            </Button>
+            {portalReturn.onDismiss ? (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                aria-label={portalReturn.dismissLabel ?? "Close"}
+                onClick={portalReturn.onDismiss}
+              >
+                <Icon name="x" size="xs" />
+              </Button>
+            ) : null}
+          </div>
+        </ShellUserMenuSection>
+      ) : null}
+
+      {links.length > 0 ? (
+        <ShellUserMenuSection>
+          {/* 走 ShellPanelRow 而不是自己拼 Button：行的列、高、图标色由组件
+              拥有，用了组件就自动一致，不必在这里跟着复刻一遍。 */}
+          {links.map((link) => (
+            <ShellPanelRow
+              key={link.key}
+              icon={link.icon}
+              label={link.label}
+              href={link.href}
+              newTab={link.newTab ?? false}
+              // 这一行会离开当前面板去到另一个页面，右端给去向图标而不是
+              // 单纯的 chevron——chevron 在本面板里已经被"展开子面板"占用
+              // （见 TenantPanel 的切换范围），两种去向要能一眼分开。
+              trailingIcon="external-link"
+              onClick={() => onItemSelect?.()}
+            />
+          ))}
+        </ShellUserMenuSection>
+      ) : null}
+
+      {settings ? (
+        <ShellUserMenuSection>{settings}</ShellUserMenuSection>
+      ) : null}
+
+      {actions.length > 0 ? (
+        <ShellUserMenuSection>
+          {actions.map((action) => (
+            <ShellPanelRow
+              key={action.key}
+              icon={action.icon}
+              label={action.label}
+              disabled={action.disabled ?? false}
+              danger={action.danger ?? false}
+              // 动作就地生效，不去别处，所以右端不画去向图标。
+              chevron={false}
+              onClick={() => {
+                onItemSelect?.();
+                void action.onClick();
+              }}
+            />
+          ))}
+        </ShellUserMenuSection>
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * header 上的头像按钮 + 弹层，弹层里是 `ShellUserPanel` 的内容。
+ *
+ * 与 `ShellUserPanel` 组合使用：本件管「入口」（触发器、在线小点、弹层的开合与
+ * 落点），面板管「内容」。选中面板里任何一项都会收起弹层（「选完就关」）。
+ */
+export function ShellUserMenu({
+  user,
+  openLabel = "User menu",
+  online = true,
   triggerClassName,
   contentClassName,
   statusClassName,
   align = "end",
   sideOffset = 10,
+  ...panelProps
 }: ShellUserMenuProps) {
   const [open, setOpen] = useState(false);
 
@@ -802,118 +986,11 @@ export function ShellUserMenu({
         sideOffset={sideOffset}
         {...(contentClassName ? { className: contentClassName } : {})}
       >
-        {/* 头部同样走 ShellPanelHeader：账户菜单的头部与产品自拼面板的头部
-            本来就是同一个东西（标识 + 标题 + 贴标 + 若干 meta 行），各写一份
-            必然漂移。 */}
-        <ShellPanelHeader
-          {...(user.avatarSrc ? { avatarSrc: user.avatarSrc } : {})}
-          avatarAlt={user.avatarAlt ?? user.displayName}
-          avatarFallback={<AvatarSilhouette className="size-media-xs" />}
-          title={user.displayName}
-          {...(user.statusTag
-            ? {
-                titleAside: (
-                  <StatusBadge
-                    tone={user.statusTag.verified ? "success" : "neutral"}
-                  >
-                    {user.statusTag.label}
-                  </StatusBadge>
-                ),
-              }
-            : {})}
-          metaRows={[
-            ...(user.uniqueLine
-              ? [{ key: "unique", content: user.uniqueLine }]
-              : []),
-            ...(user.meta ? [{ key: "meta", content: user.meta }] : []),
-          ]}
+        <ShellUserPanelSections
+          user={user}
+          {...panelProps}
+          onItemSelect={() => setOpen(false)}
         />
-
-        {user.badges && user.badges.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-2xs">
-            {user.badges.map((badge) => (
-              <StatusBadge key={badge.key} tone="brand">
-                {badge.label}
-              </StatusBadge>
-            ))}
-          </div>
-        ) : null}
-
-        {extras ? <ShellUserMenuSection>{extras}</ShellUserMenuSection> : null}
-
-        {portalReturn ? (
-          <ShellUserMenuSection>
-            <div className="flex items-center gap-2xs">
-              <Button
-                variant="ghost"
-                size="md"
-                className="flex-1 justify-start gap-sm"
-                onClick={() => {
-                  setOpen(false);
-                  portalReturn.onReturn();
-                }}
-              >
-                <Icon name="arrow-left" size="sm" />
-                <span>{portalReturn.label}</span>
-              </Button>
-              {portalReturn.onDismiss ? (
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  aria-label={portalReturn.dismissLabel ?? "Close"}
-                  onClick={portalReturn.onDismiss}
-                >
-                  <Icon name="x" size="xs" />
-                </Button>
-              ) : null}
-            </div>
-          </ShellUserMenuSection>
-        ) : null}
-
-        {links.length > 0 ? (
-          <ShellUserMenuSection>
-            {/* 走 ShellPanelRow 而不是自己拼 Button：行的列、高、图标色由组件
-                拥有，用了组件就自动一致，不必在这里跟着复刻一遍。 */}
-            {links.map((link) => (
-              <ShellPanelRow
-                key={link.key}
-                icon={link.icon}
-                label={link.label}
-                href={link.href}
-                newTab={link.newTab ?? false}
-                // 这一行会离开当前面板去到另一个页面，右端给去向图标而不是
-                // 单纯的 chevron——chevron 在本面板里已经被"展开子面板"占用
-                // （见 TenantPanel 的切换范围），两种去向要能一眼分开。
-                trailingIcon="external-link"
-                onClick={() => setOpen(false)}
-              />
-            ))}
-          </ShellUserMenuSection>
-        ) : null}
-
-        {settings ? (
-          <ShellUserMenuSection>{settings}</ShellUserMenuSection>
-        ) : null}
-
-        {actions.length > 0 ? (
-          <ShellUserMenuSection>
-            {actions.map((action) => (
-              <ShellPanelRow
-                key={action.key}
-                icon={action.icon}
-                label={action.label}
-                disabled={action.disabled ?? false}
-                danger={action.danger ?? false}
-                // 动作就地生效，不去别处，所以右端不画去向图标。
-                chevron={false}
-                onClick={() => {
-                  setOpen(false);
-                  void action.onClick();
-                }}
-              />
-            ))}
-          </ShellUserMenuSection>
-        ) : null}
       </ShellPanelContent>
     </Popover>
   );

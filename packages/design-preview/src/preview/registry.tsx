@@ -201,6 +201,7 @@ import {
   ShellPreferencePanel,
   ShellThemeToggle,
   ShellUserMenu,
+  ShellUserPanel,
 } from "@vxture/design-system";
 import {
   BUTTON_GROUP_ORIENTATIONS,
@@ -2781,6 +2782,83 @@ function ShellChromeDemo() {
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">(
     "light",
   );
+  const [density, setDensity] = React.useState<
+    "compact" | "default" | "comfortable"
+  >("default");
+  const [fontSize, setFontSize] = React.useState<"small" | "default" | "large">(
+    "default",
+  );
+
+  /*
+   * 照 Figma 的 UserPanel（190:603）配的内容。`ShellUserMenu`（头像 + 弹层）与
+   * `ShellUserPanel`（平铺）吃**同一份**——前者弹层里装的就是后者，两处渲染的
+   * 是同一份代码。
+   */
+  const userPanel = {
+    user: {
+      displayName: "User Name",
+      uniqueLine: "18022228888",
+      meta: "abcdefg@gmail.com",
+      avatarFallback: "U",
+      statusTag: { label: "个人认证", verified: true },
+    },
+    extras: (
+      <ShellPanelSlots
+        label="账户标识"
+        lead="identity"
+        leadIcon="seal-check"
+        slots={[
+          { key: "s1", icon: "seal-check", label: "实名", earned: true },
+          { key: "s2", icon: "shield", label: "安全", earned: true },
+          { key: "s3", icon: "star", label: "会员" },
+          { key: "s4", icon: "medal", label: "贡献" },
+          { key: "s5", icon: "gift", label: "权益" },
+        ]}
+      />
+    ),
+    settings: (
+      <ShellPreferencePanel
+        locale={locale}
+        theme={theme}
+        density={density}
+        fontSize={fontSize}
+        labels={{
+          title: "偏好设置",
+          themeOptions: { system: "系统", light: "亮色", dark: "暗色" },
+          densityOptions: {
+            compact: "紧凑",
+            default: "标准",
+            comfortable: "宽松",
+          },
+          fontSizeOptions: { small: "较小", default: "默认", large: "较大" },
+        }}
+        onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
+        onThemeChange={(next) => setTheme(next)}
+        onDensityChange={setDensity}
+        onFontSizeChange={setFontSize}
+      />
+    ),
+    links: [
+      { key: "profile", label: "个人中心", icon: "user", href: "#profile" },
+    ],
+    actions: [
+      {
+        key: "switch",
+        label: "切换账号",
+        icon: "user-switch",
+        onClick: () => {},
+      },
+      // danger 语气（2026-08-18 批 D 补齐）：红字 + hover 淡红底，四端登出同款。
+      {
+        key: "logout",
+        label: "退出登录",
+        icon: "sign-out",
+        danger: true,
+        onClick: () => {},
+      },
+    ],
+  } satisfies React.ComponentProps<typeof ShellUserPanel>;
+
   return (
     <div className="flex w-full flex-col gap-md">
       <Row label="ShellBrand">
@@ -2802,61 +2880,15 @@ function ShellChromeDemo() {
         />
       </Row>
       {/*
-       * 照 Figma 的 UserPanel（190:603）整块搭出来——**没有另做 ShellUserPanel**：
-       * 这件本身就是用户面板，槽位（extras / settings / links / actions）正是
-       * 留给产品填内容的。再建一个同名同义的件就是第二个轮子。
+       * 两件组合使用：`ShellUserMenu` 是 header 上的头像按钮 + 弹层，弹层里装的
+       * 就是 `ShellUserPanel`。下面第二行把面板平铺出来，不点头像也能对着设计稿
+       * 逐行看。
        */}
-      <Row label="ShellUserMenu · 照 Figma UserPanel 整块搭" stack>
-        <ShellUserMenu
-          user={{
-            displayName: "User Name",
-            uniqueLine: "18022228888",
-            meta: "abcdefg@gmail.com",
-            avatarFallback: "U",
-            statusTag: { label: "个人认证", verified: true },
-          }}
-          extras={
-            <ShellPanelSlots
-              label="账户标识"
-              lead="identity"
-              leadIcon="seal-check"
-              slots={[
-                { key: "s1", icon: "seal-check", label: "实名", earned: true },
-                { key: "s2", icon: "shield", label: "安全", earned: true },
-                { key: "s3", icon: "star", label: "会员" },
-                { key: "s4", icon: "medal", label: "贡献" },
-                { key: "s5", icon: "gift", label: "权益" },
-              ]}
-            />
-          }
-          settings={
-            <ShellPreferencePanel
-              locale={locale}
-              theme={theme}
-              density="default"
-              fontSize="default"
-              onLocaleChange={(next) => setLocale(next as "zh-CN" | "en-US")}
-              onThemeChange={(next) => setTheme(next)}
-            />
-          }
-          links={[{ key: "profile", label: "个人中心", href: "#profile" }]}
-          actions={[
-            {
-              key: "switch",
-              label: "切换用户",
-              icon: "user-switch",
-              onClick: () => {},
-            },
-            // danger 语气（2026-08-18 批 D 补齐）：红字 + hover 淡红底，四端登出同款。
-            {
-              key: "logout",
-              label: "退出登录",
-              icon: "sign-out",
-              danger: true,
-              onClick: () => {},
-            },
-          ]}
-        />
+      <Row label="ShellUserMenu · 头像按钮，点开是下面那块面板">
+        <ShellUserMenu {...userPanel} />
+      </Row>
+      <Row label="ShellUserPanel · 平铺（Figma UserPanel 190:603）" stack>
+        <ShellUserPanel {...userPanel} />
       </Row>
       <Row label="ShellPreferencePanel" stack>
         <ShellPreferencePanel
