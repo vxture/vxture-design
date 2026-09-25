@@ -1,6 +1,6 @@
 # 02 视觉规格
 
-适用版本：**DS 12.21.1** ｜ 更新：2026-09-25
+适用版本：**DS 12.22.0** ｜ 更新：2026-09-25
 
 组件视觉规格取 shadcn vega，原语基座为 Radix；style 与基座正交，换基座不改变视觉。
 
@@ -57,7 +57,7 @@
 
 **七族**：`display` / `heading` / `title` / `body` / `label` / `code` / `overline`。`display` 与 `heading` 用品牌展示体，其余用正文体——一族一种字体，族的边界就是换字体的地方；24px 是展示体与正文体的分界（`heading-3` 24 是展示体最小档，`title-xl` 20 起用正文体）。
 
-**档数按实际用量定，不求形状整齐**：display 3 档（48/60/72）、heading 3 档（24/30/36）、title / body / label 各 4 档（title 14–20，body / label 12–18）、code 2 档、overline 1 档。**全刻度最小 12px**——字号三档是无障碍设置，任何档下都不该把文字推到读不了。
+**档数按实际用量定，不求形状整齐**：display 3 档（48/60/72）、heading 3 档（24/30/36）、title / body / label 各 4 档（title 14–20，body / label 12–18）、code 3 档（12–16）、overline 1 档。**全刻度最小 12px**——字号三档是无障碍设置，任何档下都不该把文字推到读不了。
 
 ## 6. 图标与媒体尺寸
 

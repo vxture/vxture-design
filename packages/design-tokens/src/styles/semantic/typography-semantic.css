@@ -56,22 +56,22 @@
   /* title */
   --title-xl-font-family: var(--vx-font-sans);
   --title-xl-font-size: var(--vx-text-xl);
-  --title-xl-font-weight: var(--vx-font-weight-semibold);
+  --title-xl-font-weight: var(--vx-font-weight-medium);
   --title-xl-line-height: calc(var(--vx-text-xl--line-height) + var(--vx-cjk-leading-add));
   --title-xl-letter-spacing: var(--vx-tracking-normal);
   --title-lg-font-family: var(--vx-font-sans);
   --title-lg-font-size: var(--vx-text-lg);
-  --title-lg-font-weight: var(--vx-font-weight-semibold);
+  --title-lg-font-weight: var(--vx-font-weight-medium);
   --title-lg-line-height: calc(var(--vx-text-lg--line-height) + var(--vx-cjk-leading-add));
   --title-lg-letter-spacing: var(--vx-tracking-normal);
   --title-md-font-family: var(--vx-font-sans);
   --title-md-font-size: var(--vx-text-base);
-  --title-md-font-weight: var(--vx-font-weight-semibold);
+  --title-md-font-weight: var(--vx-font-weight-medium);
   --title-md-line-height: calc(var(--vx-text-base--line-height) + var(--vx-cjk-leading-add));
   --title-md-letter-spacing: var(--vx-tracking-normal);
   --title-sm-font-family: var(--vx-font-sans);
   --title-sm-font-size: var(--vx-text-sm);
-  --title-sm-font-weight: var(--vx-font-weight-semibold);
+  --title-sm-font-weight: var(--vx-font-weight-medium);
   --title-sm-line-height: calc(var(--vx-text-sm--line-height) + var(--vx-cjk-leading-add));
   --title-sm-letter-spacing: var(--vx-tracking-normal);
 
@@ -120,6 +120,11 @@
   --label-sm-letter-spacing: var(--vx-tracking-normal);
 
   /* code */
+  --code-lg-font-family: var(--vx-font-mono);
+  --code-lg-font-size: var(--vx-text-base);
+  --code-lg-font-weight: var(--vx-font-weight-normal);
+  --code-lg-line-height: calc(var(--vx-text-base--line-height) + var(--vx-cjk-leading-add));
+  --code-lg-letter-spacing: var(--vx-tracking-normal);
   --code-md-font-family: var(--vx-font-mono);
   --code-md-font-size: var(--vx-text-sm);
   --code-md-font-weight: var(--vx-font-weight-normal);
@@ -134,7 +139,7 @@
   /* overline */
   --overline-font-family: var(--vx-font-sans);
   --overline-font-size: var(--vx-text-xs);
-  --overline-font-weight: var(--vx-font-weight-semibold);
+  --overline-font-weight: var(--vx-font-weight-medium);
   --overline-line-height: calc(var(--vx-text-xs--line-height) + var(--vx-cjk-leading-add));
   --overline-letter-spacing: var(--vx-tracking-wider);
 }
@@ -177,22 +182,22 @@ html.vx-font-small {
   /* title */
   --title-xl-font-family: var(--vx-font-sans);
   --title-xl-font-size: var(--vx-text-lg);
-  --title-xl-font-weight: var(--vx-font-weight-semibold);
+  --title-xl-font-weight: var(--vx-font-weight-medium);
   --title-xl-line-height: calc(var(--vx-text-lg--line-height) + var(--vx-cjk-leading-add));
   --title-xl-letter-spacing: var(--vx-tracking-normal);
   --title-lg-font-family: var(--vx-font-sans);
   --title-lg-font-size: var(--vx-text-base);
-  --title-lg-font-weight: var(--vx-font-weight-semibold);
+  --title-lg-font-weight: var(--vx-font-weight-medium);
   --title-lg-line-height: calc(var(--vx-text-base--line-height) + var(--vx-cjk-leading-add));
   --title-lg-letter-spacing: var(--vx-tracking-normal);
   --title-md-font-family: var(--vx-font-sans);
   --title-md-font-size: var(--vx-text-sm);
-  --title-md-font-weight: var(--vx-font-weight-semibold);
+  --title-md-font-weight: var(--vx-font-weight-medium);
   --title-md-line-height: calc(var(--vx-text-sm--line-height) + var(--vx-cjk-leading-add));
   --title-md-letter-spacing: var(--vx-tracking-normal);
   --title-sm-font-family: var(--vx-font-sans);
   --title-sm-font-size: var(--vx-text-xs);
-  --title-sm-font-weight: var(--vx-font-weight-semibold);
+  --title-sm-font-weight: var(--vx-font-weight-medium);
   --title-sm-line-height: calc(var(--vx-text-xs--line-height) + var(--vx-cjk-leading-add));
   --title-sm-letter-spacing: var(--vx-tracking-normal);
 
@@ -241,6 +246,11 @@ html.vx-font-small {
   --label-sm-letter-spacing: var(--vx-tracking-normal);
 
   /* code */
+  --code-lg-font-family: var(--vx-font-mono);
+  --code-lg-font-size: var(--vx-text-sm);
+  --code-lg-font-weight: var(--vx-font-weight-normal);
+  --code-lg-line-height: calc(var(--vx-text-sm--line-height) + var(--vx-cjk-leading-add));
+  --code-lg-letter-spacing: var(--vx-tracking-normal);
   --code-md-font-family: var(--vx-font-mono);
   --code-md-font-size: var(--vx-text-xs);
   --code-md-font-weight: var(--vx-font-weight-normal);
@@ -255,7 +265,7 @@ html.vx-font-small {
   /* overline */
   --overline-font-family: var(--vx-font-sans);
   --overline-font-size: var(--vx-text-xs);
-  --overline-font-weight: var(--vx-font-weight-semibold);
+  --overline-font-weight: var(--vx-font-weight-medium);
   --overline-line-height: calc(var(--vx-text-xs--line-height) + var(--vx-cjk-leading-add));
   --overline-letter-spacing: var(--vx-tracking-wider);
 }
@@ -298,22 +308,22 @@ html.vx-font-large {
   /* title */
   --title-xl-font-family: var(--vx-font-sans);
   --title-xl-font-size: var(--vx-text-2xl);
-  --title-xl-font-weight: var(--vx-font-weight-semibold);
+  --title-xl-font-weight: var(--vx-font-weight-medium);
   --title-xl-line-height: calc(var(--vx-text-2xl--line-height) + var(--vx-cjk-leading-add));
   --title-xl-letter-spacing: var(--vx-tracking-normal);
   --title-lg-font-family: var(--vx-font-sans);
   --title-lg-font-size: var(--vx-text-xl);
-  --title-lg-font-weight: var(--vx-font-weight-semibold);
+  --title-lg-font-weight: var(--vx-font-weight-medium);
   --title-lg-line-height: calc(var(--vx-text-xl--line-height) + var(--vx-cjk-leading-add));
   --title-lg-letter-spacing: var(--vx-tracking-normal);
   --title-md-font-family: var(--vx-font-sans);
   --title-md-font-size: var(--vx-text-lg);
-  --title-md-font-weight: var(--vx-font-weight-semibold);
+  --title-md-font-weight: var(--vx-font-weight-medium);
   --title-md-line-height: calc(var(--vx-text-lg--line-height) + var(--vx-cjk-leading-add));
   --title-md-letter-spacing: var(--vx-tracking-normal);
   --title-sm-font-family: var(--vx-font-sans);
   --title-sm-font-size: var(--vx-text-base);
-  --title-sm-font-weight: var(--vx-font-weight-semibold);
+  --title-sm-font-weight: var(--vx-font-weight-medium);
   --title-sm-line-height: calc(var(--vx-text-base--line-height) + var(--vx-cjk-leading-add));
   --title-sm-letter-spacing: var(--vx-tracking-normal);
 
@@ -362,6 +372,11 @@ html.vx-font-large {
   --label-sm-letter-spacing: var(--vx-tracking-normal);
 
   /* code */
+  --code-lg-font-family: var(--vx-font-mono);
+  --code-lg-font-size: var(--vx-text-lg);
+  --code-lg-font-weight: var(--vx-font-weight-normal);
+  --code-lg-line-height: calc(var(--vx-text-lg--line-height) + var(--vx-cjk-leading-add));
+  --code-lg-letter-spacing: var(--vx-tracking-normal);
   --code-md-font-family: var(--vx-font-mono);
   --code-md-font-size: var(--vx-text-base);
   --code-md-font-weight: var(--vx-font-weight-normal);
@@ -376,7 +391,7 @@ html.vx-font-large {
   /* overline */
   --overline-font-family: var(--vx-font-sans);
   --overline-font-size: var(--vx-text-sm);
-  --overline-font-weight: var(--vx-font-weight-semibold);
+  --overline-font-weight: var(--vx-font-weight-medium);
   --overline-line-height: calc(var(--vx-text-sm--line-height) + var(--vx-cjk-leading-add));
   --overline-letter-spacing: var(--vx-tracking-wider);
 }

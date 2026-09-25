@@ -5,6 +5,14 @@
 
 ---
 
+## 12.22.0 — 2026-09-25
+
+跟随 `@vxture/design-tokens@3.4.0`（minor）。详见 design-tokens 3.4.0。
+
+- 新增 `text-code-lg`：code 族从两档变三档（默认 12 / 14 / 16px）。
+- `title` 与 `overline` 字重降到 500。**调用方无需改代码**；用到
+  `text-title-*` / `text-overline` 的标题观感变轻。
+
 ## 12.21.1 — 2026-09-25
 
 跟随 `@vxture/design-tokens@3.3.1`（patch）：宽松密度的留白与行高与默认档真正
