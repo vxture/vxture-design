@@ -5,6 +5,21 @@
 
 ---
 
+## 10.0.0 — 2026-09-25
+
+**破坏性**：每页条数的 `"auto"` 档全面删除（owner 2026-09-25）。
+
+- `PageSizeChoice` 由 `number | "auto"` 收窄为 `number`。写了 `"auto"` 的
+  `pageSize` / `pageSizeOptions` / `useListPagination(rows, "auto")` 升级后类型报错，
+  改成具体条数即可。
+- `Pagination`：删除 `pageSizeAutoLabel`；缺省档位 `["auto", 10, 20, 50, 100]` →
+  `[10, 20, 50, 100]`。
+- `useListPagination`：删除按可视高度量行高的逻辑；缺省每页条数由 `"auto"` 改为
+  **20**。**不传第二个参数的页面不会报错，但每页从「一屏能放几行」变成固定 20 条。**
+- `ListCard`：不再输出 `data-list-card` 属性（它只给 auto 的行高测量当探针用）。
+
+同时包含未单独发布的 9.13.0 各项（见下）。
+
 ## 9.13.0 — 2026-09-25
 
 新增图标 `check-circle`、`workspace`、`caret-line-left` / `caret-line-right`；

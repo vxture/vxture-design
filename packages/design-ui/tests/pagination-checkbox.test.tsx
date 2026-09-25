@@ -166,18 +166,30 @@ describe("Pagination · 计数语与逃生口", () => {
       <Pagination
         {...base}
         pageSize={20}
-        pageSizeOptions={["auto", 20]}
+        pageSizeOptions={[10, 20]}
         onPageSizeChange={() => undefined}
         pageSizeOptionTemplate="每页 {size} 条"
-        pageSizeAutoLabel="每页条数自适应"
       />,
     );
     expect(
-      screen.getByRole("radio", { name: "每页 20 条" }),
+      screen.getByRole("radio", { name: "每页 10 条" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("radio", { name: "每页条数自适应" }),
+      screen.getByRole("radio", { name: "每页 20 条" }),
     ).toBeInTheDocument();
+  });
+
+  /** "auto" 档已全面删除（owner 2026-09-25）：缺省档位只有具体条数。 */
+  it("缺省档位是 10 / 20 / 50 / 100，没有 auto", () => {
+    render(
+      <Pagination {...base} pageSize={20} onPageSizeChange={() => undefined} />,
+    );
+    expect(screen.getAllByRole("radio").map((r) => r.textContent)).toEqual([
+      "10",
+      "20",
+      "50",
+      "100",
+    ]);
   });
 });
 

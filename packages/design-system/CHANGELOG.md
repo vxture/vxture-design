@@ -5,6 +5,19 @@
 
 ---
 
+## 13.0.0 — 2026-09-25
+
+跟随 `@vxture/design-ui@10.0.0`（major）：每页条数的 `"auto"` 档全面删除。
+迁移见 design-ui 10.0.0 与发版说明 §02。
+
+- 写了 `pageSize="auto"`、`pageSizeOptions` 含 `"auto"`、
+  `useListPagination(rows, "auto")`、`pageSizeAutoLabel` 的地方：类型报错，改成
+  具体条数 / 删掉参数。
+- **`useListPagination(rows)` 不传条数的页面不报错，但行为会变**：每页由「一屏
+  放几行」变成固定 20 条。
+
+同时包含未单独发布的 12.23.0 各项（见下）。
+
 ## 12.23.0 — 2026-09-25
 
 新增 `ShellUserPanel`（用户面板本体）与 `ShellPanelSurface`（面板的平铺外壳）

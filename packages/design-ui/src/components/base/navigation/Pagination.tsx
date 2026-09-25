@@ -22,8 +22,12 @@ import type { IconName } from "../../../icons";
 import { Button } from "../form/Button";
 import { SegmentedControl } from "../form/SegmentedControl";
 
-/** 每页条数的取值："auto" = 自适应（由调用方按可视高度解析成实际行数）。 */
-export type PageSizeChoice = number | "auto";
+/**
+ * 每页条数的取值：一律是具体的条数。
+ *
+ * 曾有 `"auto"` 档（按可视高度解析行数），owner 2026-09-25 决定全面删除。
+ */
+export type PageSizeChoice = number;
 
 export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   readonly page: number;
@@ -31,7 +35,7 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   readonly total?: number;
   /** 筛选后的条数：与 `total` 不同时，左侧计数语补"当前筛选 N 条"。 */
   readonly filteredTotal?: number;
-  /** 当前选中的档（不是解析后的行数——"auto" 档就传 "auto"）。 */
+  /** 当前选中的每页条数。 */
   readonly pageSize?: PageSizeChoice;
   /** 给了 `onPageSizeChange` 才出每页条数选择器（翻页条左邻）。 */
   readonly pageSizeOptions?: readonly PageSizeChoice[];
@@ -63,11 +67,9 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
    * 件替调用方拼就等于替它定了语序（同 `ConfirmDestructive.titleTemplate`）。
    */
   readonly pageSizeOptionTemplate?: string;
-  /** 「自适应」档的可访问名。默认「每页条数自适应」。 */
-  readonly pageSizeAutoLabel?: string;
 }
 
-const DEFAULT_PAGE_SIZES: readonly PageSizeChoice[] = ["auto", 10, 20, 50, 100];
+const DEFAULT_PAGE_SIZES: readonly PageSizeChoice[] = [10, 20, 50, 100];
 
 function getVisiblePages(page: number, pageCount: number) {
   const start = Math.max(1, Math.min(page - 2, pageCount - 4));
@@ -95,7 +97,6 @@ function Pagination({
   lastLabel = "Last page",
   pageSizeLabel = "Rows per page",
   pageSizeOptionTemplate = "{size} per page",
-  pageSizeAutoLabel = "Fit rows to height",
   ...props
 }: PaginationProps) {
   const safePageCount = Math.max(1, pageCount);
@@ -127,8 +128,7 @@ function Pagination({
       <div className="flex flex-wrap items-center gap-2xl">
         {onPageSizeChange && pageSize !== undefined ? (
           /* 按钮化的每页条数（承旧 PageSizePicker，载体为 SegmentedControl）：
-             纯数字、不带标签文字——档位一眼即懂；语义留给 aria-label。
-             "auto" 档=自适应，实际行数由调用方按可视高度解析。 */
+             纯数字、不带标签文字——档位一眼即懂；语义留给 aria-label。 */
           <SegmentedControl
             /* md(32) 而不是 sm(28)：它与右侧翻页按钮同处一行，翻页按钮是
                control-md。差 4px 时两组数字按钮的基线对不齐，一眼能看出来
@@ -139,12 +139,11 @@ function Pagination({
             onChange={onPageSizeChange}
             items={pageSizeOptions.map((option) => ({
               value: option,
-              // "auto" 档中英文一律显示 "auto"（owner 定，2026-08-03）。
-              label: option === "auto" ? "auto" : option,
-              ariaLabel:
-                option === "auto"
-                  ? pageSizeAutoLabel
-                  : pageSizeOptionTemplate.replaceAll("{size}", String(option)),
+              label: option,
+              ariaLabel: pageSizeOptionTemplate.replaceAll(
+                "{size}",
+                String(option),
+              ),
             }))}
           />
         ) : null}
