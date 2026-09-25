@@ -19,8 +19,10 @@
 
 import * as React from "react";
 import brandMark from "@vxture/design-system/assets/brands/vx-brand/vxture-logo-icon.svg";
-import brandMarkV from "@vxture/design-system/assets/brands/vx-brand/vxture-logo-icon-V.svg";
 import productLogo from "@vxture/design-system/assets/examples/product-logo.png";
+// 智能体图标：Varda 的动图身份标（原件在 vxture-platform 各门户 public/assets/ai/，
+// 2026-08-18 已从 DS 迁出归产品）。这里只复制一份给预览用。
+import aiAgentIcon from "./assets/ai-agent-icon-32.gif";
 import {
   Accordion,
   AccordionContent,
@@ -2668,7 +2670,7 @@ export const ENTRIES: readonly Entry[] = [
       "ShellProductTitle",
     ],
     deviation:
-      "四种页面视角的顶栏（owner 2026-09-25，Figma Header_website 2226:10298 / Header_console 682:2224 / Header_admin 682:2225 / Header_product 682:2226）。不做成四个写死的组件：都是 ShellHeader 三槽里拼零件，区别在放哪些零件。官网 layout=centered + surface=transparent；三种工作台全宽 + surface=background。与 Figma 的偏差：官网内容宽取 max-w-page-2xl（1536px，Figma 1600 不在容器刻度上）；槽内间距沿用 ShellHeader 既有值（Figma 统一 8px）；产品标识用 DS 的示例图 assets/examples/product-logo.png，智能体图标暂用平台标识占位，均由产品侧换成自己的",
+      "四种页面视角的顶栏（owner 2026-09-25，Figma Header_website 2226:10298 / Header_console 682:2224 / Header_admin 682:2225 / Header_product 682:2226）。不做成四个写死的组件：都是 ShellHeader 三槽里拼零件，区别在放哪些零件。官网 layout=centered + surface=transparent；三种工作台全宽 + surface=background。与 Figma 的偏差：官网内容宽取 max-w-page-2xl（1536px，Figma 1600 不在容器刻度上）；槽内间距沿用 ShellHeader 既有值（Figma 统一 8px）；产品标识用 DS 示例图 assets/examples/product-logo.png（Y 字形），智能体图标是 Varda 的 32px 动图（原件归产品，预览里复制一份），均由产品侧换成自己的",
     render: () => <PageHeadersDemo />,
   },
   {
@@ -3105,8 +3107,8 @@ function ConsoleHeaderTrailing({
           shortcutKey={null}
         />
       </div>
-      {/* 智能体图标由产品侧提供；这里用平台标识占位。 */}
-      <ShellAgentButton iconSrc={brandMarkV.src} label="智能助手" />
+      {/* 智能体图标由产品侧提供（Varda 的 32px 动图）。 */}
+      <ShellAgentButton iconSrc={aiAgentIcon.src} label="智能助手" />
       <ShellToolbox label="工具" items={HEADER_TOOLS} />
       <ShellUserMenu {...userPanel} />
     </>
