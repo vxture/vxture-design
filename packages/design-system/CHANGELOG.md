@@ -5,6 +5,11 @@
 
 ---
 
+## 13.1.0 — 2026-09-25
+
+跟随 `@vxture/design-ui@10.1.0`（minor）：新增 `FieldValue`（表单的只读展示）与
+`FieldGroup columns={3}`。详见 design-ui 10.1.0。
+
 ## 13.0.0 — 2026-09-25
 
 跟随 `@vxture/design-ui@10.0.0`（major）：每页条数的 `"auto"` 档全面删除。

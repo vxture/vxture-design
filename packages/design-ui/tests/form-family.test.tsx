@@ -15,6 +15,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldValue,
 } from "../src/components/base/form/Field";
 import {
   InputGroup,
@@ -666,5 +667,105 @@ describe("FieldGroup · 两列", () => {
   it("不给 columns 仍是单列纵排", () => {
     render(<FieldGroup data-testid="g" />);
     expect(screen.getByTestId("g").className).toContain("flex-col");
+  });
+});
+
+describe("FieldGroup · 三列", () => {
+  it("columns=3 走三列网格，span=full 仍占满整行", () => {
+    render(
+      <FieldGroup columns={3} data-testid="g">
+        <Field data-testid="cell" />
+        <Field span="full" data-testid="full" />
+      </FieldGroup>,
+    );
+    const group = screen.getByTestId("g");
+    expect(group.className).toContain("grid-cols-3");
+    expect(group).toHaveAttribute("data-columns", "3");
+    expect(screen.getByTestId("full").className).toContain("col-span-full");
+  });
+
+  /** 列数与方向是两个独立参数：上下、左右两种 Field 都能放进两列 / 三列。 */
+  it("上下与左右两种方向都能放进多列", () => {
+    render(
+      <FieldGroup columns={3}>
+        <Field data-testid="v" />
+        <Field orientation="labeled" data-testid="h" />
+      </FieldGroup>,
+    );
+    expect(screen.getByTestId("v")).toHaveAttribute(
+      "data-orientation",
+      "vertical",
+    );
+    expect(screen.getByTestId("h")).toHaveAttribute(
+      "data-orientation",
+      "labeled",
+    );
+  });
+});
+
+describe("FieldValue · 只读展示", () => {
+  it("渲染值，高度与输入框同档", () => {
+    render(<FieldValue data-testid="v">平台运维</FieldValue>);
+    const v = screen.getByTestId("v");
+    expect(v).toHaveTextContent("平台运维");
+    expect(v.className).toContain("min-h-control-md");
+    expect(v).toHaveAttribute("data-slot", "field-value");
+    expect(v).not.toHaveAttribute("data-empty");
+  });
+
+  /** 字号与 Input 一致：混排时两种行的文字落在同一条基线上。 */
+  it("字号与 Input 同档", () => {
+    render(<FieldValue data-testid="v">x</FieldValue>);
+    const cls = screen.getByTestId("v").className;
+    expect(cls).toContain("text-body-lg");
+    expect(cls).toContain("md:text-body-md");
+  });
+
+  it("空值显示占位 —，弱化色，可覆盖", () => {
+    const { rerender } = render(<FieldValue data-testid="v">{""}</FieldValue>);
+    const v = screen.getByTestId("v");
+    expect(v).toHaveTextContent("—");
+    expect(v).toHaveAttribute("data-empty", "true");
+    expect(v.className).toContain("text-muted-foreground");
+
+    rerender(
+      <FieldValue data-testid="v" empty="未设置">
+        {null}
+      </FieldValue>,
+    );
+    expect(screen.getByTestId("v")).toHaveTextContent("未设置");
+  });
+
+  it("0 不是空值", () => {
+    render(<FieldValue data-testid="v">{0}</FieldValue>);
+    expect(screen.getByTestId("v")).toHaveTextContent("0");
+    expect(screen.getByTestId("v")).not.toHaveAttribute("data-empty");
+  });
+
+  it("缺省换行，truncate 时单行截断", () => {
+    const { rerender } = render(
+      <FieldValue data-testid="v">长文本</FieldValue>,
+    );
+    const inner = () => screen.getByTestId("v").firstElementChild!;
+    expect(inner().className).toContain("break-words");
+    rerender(
+      <FieldValue data-testid="v" truncate>
+        长文本
+      </FieldValue>,
+    );
+    expect(inner().className).toContain("truncate");
+  });
+
+  /** labeled 方向下落在控件那一列：标签第一列、值第二列。 */
+  it("放进 labeled Field 时在标签之后", () => {
+    render(
+      <Field orientation="labeled" data-testid="f">
+        <FieldLabel>名称</FieldLabel>
+        <FieldValue>平台运维</FieldValue>
+      </Field>,
+    );
+    const children = [...screen.getByTestId("f").children];
+    expect(children[0]).toHaveTextContent("名称");
+    expect(children[1]).toHaveAttribute("data-slot", "field-value");
   });
 });

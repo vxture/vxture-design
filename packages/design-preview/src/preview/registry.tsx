@@ -213,6 +213,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldValue,
   INPUT_GROUP_ALIGNS,
   InputGroup,
   InputGroupAddon,
@@ -2337,7 +2338,13 @@ export const ENTRIES: readonly Entry[] = [
     layer: "pattern",
     group: "表单",
     tags: ["shadcn", "vxture"],
-    covers: ["FieldGroup", "FieldLabel", "FieldDescription", "FieldError"],
+    covers: [
+      "FieldGroup",
+      "FieldLabel",
+      "FieldDescription",
+      "FieldError",
+      "FieldValue",
+    ],
     deviation:
       "取上游核心子集（Set/Legend/responsive 等无实据未收）；刻意不引 react-hook-form——UI 层零表单框架绑定，错误经 FieldError 或 aria-invalid 进来",
     axes: [{ name: "orientation", values: FIELD_ORIENTATIONS }],
@@ -2399,6 +2406,88 @@ export const ENTRIES: readonly Entry[] = [
             <FieldLabel htmlFor="fld-notify">接收通知</FieldLabel>
           </Field>
         </FieldGroup>
+        {/*
+         * 只读展示（owner 2026-09-25：「既是输入，也是展示」）：同一套 Field /
+         * FieldLabel / FieldGroup，控件换成 FieldValue。方向（上下 / 左右）与
+         * 一行几项（2 / 3）是两个独立参数，四种组合都能搭。
+         */}
+        <Row label="展示 · 上下 · 一行两项" stack>
+          <FieldGroup columns={2} className="max-w-panel-lg">
+            {FIELD_VALUE_SAMPLE.slice(0, 4).map(([label, value]) => (
+              <Field key={label}>
+                <FieldLabel>{label}</FieldLabel>
+                <FieldValue>{value}</FieldValue>
+              </Field>
+            ))}
+          </FieldGroup>
+        </Row>
+        <Row label="展示 · 上下 · 一行三项" stack>
+          <FieldGroup columns={3}>
+            {FIELD_VALUE_SAMPLE.map(([label, value]) => (
+              <Field key={label}>
+                <FieldLabel>{label}</FieldLabel>
+                <FieldValue>{value}</FieldValue>
+              </Field>
+            ))}
+          </FieldGroup>
+        </Row>
+        <Row label="展示 · 左右 · 一行两项" stack>
+          <FieldGroup columns={2}>
+            {FIELD_VALUE_SAMPLE.slice(0, 4).map(([label, value]) => (
+              <Field key={label} orientation="labeled" labelWidth="sm">
+                <FieldLabel>{label}</FieldLabel>
+                <FieldValue>{value}</FieldValue>
+              </Field>
+            ))}
+          </FieldGroup>
+        </Row>
+        <Row label="展示 · 左右 · 一行三项" stack>
+          <FieldGroup columns={3}>
+            {FIELD_VALUE_SAMPLE.map(([label, value]) => (
+              <Field key={label} orientation="labeled" labelWidth="sm">
+                <FieldLabel>{label}</FieldLabel>
+                <FieldValue>{value}</FieldValue>
+              </Field>
+            ))}
+          </FieldGroup>
+        </Row>
+        <Row
+          label="展示 · 左右 · 长文本占满整行（span=full）、空值显示 —"
+          stack
+        >
+          <FieldGroup columns={2}>
+            <Field orientation="labeled" labelWidth="sm">
+              <FieldLabel>负责人</FieldLabel>
+              <FieldValue>{""}</FieldValue>
+            </Field>
+            <Field orientation="labeled" labelWidth="sm">
+              <FieldLabel>标签</FieldLabel>
+              <FieldValue>生产 · 华东</FieldValue>
+            </Field>
+            <Field orientation="labeled" labelWidth="sm" span="full">
+              <FieldLabel>备注</FieldLabel>
+              <FieldValue>
+                该工作空间承载平台运维相关的全部资源，包括监控、告警、日志与值班排班；变更需经值班负责人审批。
+              </FieldValue>
+            </Field>
+          </FieldGroup>
+        </Row>
+        <Row label="编辑与展示混排 · 左右：只读行与输入行对齐" stack>
+          <FieldGroup className="max-w-panel-md">
+            <Field orientation="labeled" labelWidth="sm">
+              <FieldLabel>标识</FieldLabel>
+              <FieldValue>ws-ops-001</FieldValue>
+            </Field>
+            <Field orientation="labeled" labelWidth="sm">
+              <FieldLabel htmlFor="fld-mix-name">名称</FieldLabel>
+              <Input id="fld-mix-name" defaultValue="平台运维" />
+            </Field>
+            <Field orientation="labeled" labelWidth="sm">
+              <FieldLabel>创建时间</FieldLabel>
+              <FieldValue>2026-09-01 10:24</FieldValue>
+            </Field>
+          </FieldGroup>
+        </Row>
       </div>
     ),
   },
@@ -2784,6 +2873,16 @@ function DatePickerDemo() {
 const PREVIEW_LOCALES = [
   { locale: "zh-CN", nativeName: "简体中文" },
   { locale: "en-US", nativeName: "English" },
+];
+
+/** Field 只读展示的示例数据（6 条，够排两行三列）。 */
+const FIELD_VALUE_SAMPLE: ReadonlyArray<readonly [string, string]> = [
+  ["名称", "平台运维"],
+  ["标识", "ws-ops-001"],
+  ["所属租户", "Tenant Name"],
+  ["状态", "运行中"],
+  ["创建人", "User Name"],
+  ["创建时间", "2026-09-01 10:24"],
 ];
 
 /**
