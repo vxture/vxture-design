@@ -1607,6 +1607,35 @@ export const ENTRIES: readonly Entry[] = [
             />
           </ViewLayout>
         </Row>
+        <Row
+          label="一行对齐：图标 | 标题 | 动作同一行垂直居中；描述可省，省了不占空间"
+          stack
+        >
+          <div className="flex w-full flex-col gap-md">
+            <SectionHeader
+              level={3}
+              icon="stack"
+              title="有描述"
+              description="描述在第二行，只在标题列下。"
+              action={<Button variant="outline">动作</Button>}
+            />
+            <SectionHeader
+              level={3}
+              icon="stack"
+              title="无描述"
+              action={<Button variant="outline">动作</Button>}
+            />
+            <SectionHeader
+              level={4}
+              title="无图标、无描述"
+              action={
+                <Button variant="outline" size="sm">
+                  动作
+                </Button>
+              }
+            />
+          </div>
+        </Row>
         <Row label="无图标：每级缺省带虚线，divider={false} 关掉" stack>
           <div className="flex w-full flex-col gap-md">
             <SectionHeader level={2} title="level 2 标题" />

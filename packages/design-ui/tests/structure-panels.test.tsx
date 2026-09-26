@@ -126,9 +126,76 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
       />,
     );
     const root = container.firstElementChild as HTMLElement;
-    expect(root.children).toHaveLength(2); // 标题块 + action 层
+    expect(root.children).toHaveLength(3); // 标题格 + action 格 + 描述行
     expect(screen.getByText("一句话说清这一块收了什么")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "详情" })).toBeInTheDocument();
+  });
+
+  /**
+   * 一行对齐（owner 2026-09-26）：图标 | 标题 | 动作在第一行、垂直居中，动作靠右；
+   * 描述是第二行、只在标题列下。
+   */
+  it("图标、标题、动作同一行垂直居中，动作靠右", () => {
+    const { container } = render(
+      <SectionHeader
+        icon="settings"
+        title="标题"
+        description="描述"
+        action={<button>详情</button>}
+      />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.className.split(" ")).toEqual(
+      expect.arrayContaining(["grid", "items-center"]),
+    );
+    expect(root.style.gridTemplateColumns).toBe("auto minmax(0, 1fr) auto");
+    const icon = root.querySelector("[aria-hidden=true]") as HTMLElement;
+    const heading = screen.getByRole("heading", { name: "标题" });
+    const action = screen.getByRole("button", { name: "详情" }).parentElement!;
+    expect(icon.className).toContain("row-start-1");
+    expect(heading.parentElement!.className).toContain("row-start-1");
+    expect(action.className.split(" ")).toEqual(
+      expect.arrayContaining(["row-start-1", "col-start-3", "justify-end"]),
+    );
+  });
+
+  it("描述在第二行、标题那一列下", () => {
+    render(<SectionHeader icon="settings" title="标题" description="描述" />);
+    const desc = screen.getByText("描述");
+    expect(desc.className.split(" ")).toEqual(
+      expect.arrayContaining(["row-start-2", "col-start-2"]),
+    );
+  });
+
+  /** 不给描述就没有第二行：不留空位、不留行距。 */
+  it("不给描述就没有第二行", () => {
+    const { container } = render(
+      <SectionHeader
+        icon="settings"
+        title="标题"
+        action={<button>x</button>}
+      />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.querySelector(".row-start-2")).toBeNull();
+    expect(root.querySelector("p")).toBeNull();
+  });
+
+  /** 无图标时去掉图标列：空列也会吃一道列间距，标题就不贴左了。 */
+  it("无图标时两列，标题贴左", () => {
+    const { container } = render(
+      <SectionHeader
+        title="标题"
+        description="描述"
+        action={<button>x</button>}
+      />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.style.gridTemplateColumns).toBe("minmax(0, 1fr) auto");
+    expect(
+      screen.getByRole("heading", { name: "标题" }).parentElement!.className,
+    ).toContain("col-start-1");
+    expect(screen.getByText("描述").className).toContain("col-start-1");
   });
 
   /**
@@ -140,9 +207,8 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
     const { container } = render(
       <SectionHeader title="标题" icon="settings" />,
     );
-    // 根 → 标题块（图标 + 文字）→ 图标层
-    const wrap = container.firstElementChild?.firstElementChild
-      ?.firstElementChild as HTMLElement;
+    // 根的第一格就是图标层
+    const wrap = container.firstElementChild?.firstElementChild as HTMLElement;
     expect(wrap.querySelector("svg")).not.toBeNull();
     expect(wrap).toHaveAttribute("aria-hidden", "true");
   });

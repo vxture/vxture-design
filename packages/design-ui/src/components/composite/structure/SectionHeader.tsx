@@ -25,9 +25,12 @@
  *   每一级字号都不同。
  * - 原 level 1 也是 h1、level 与 h 错位一格；现在 level 与 h 一一对齐。
  *
- * 间距随层级收：图标与标题的间距、描述的字级、虚线距离都跟着档位走。图标顶端与
- * 标题首行对齐、不加偏移——三档的图标与标题行高正好同值（32/28、24/24、20/20，
- * 拉丁行高），原先统一的 `mt-2xs` 反而把图标压低 4px。
+ * **一行对齐**（owner 2026-09-26）：图标 | 标题 | 动作在同一行、垂直居中，动作靠右；
+ * 描述是第二行，只在标题列下（不在图标下、不在动作下）。不给描述就没有第二行，
+ * 不留空位、不留行距。用 grid 排：第一行三格各自居中，描述单独一行，互不牵动——
+ * 原先图标与标题顶对齐、动作贴底（self-end），有描述时三者各在各的高度上。
+ *
+ * 间距随层级收：图标与标题的列间距、描述的字级、虚线距离都跟着档位走。
  *
  * **每一级都带虚线下边框，可关**（`divider={false}`；owner 2026-09-26「每级应该都有
  * 下划线（可显隐）」）。虚线分字段、实线开区块（V4）——标题的线界的是标题与正文。
@@ -91,7 +94,7 @@ const BY_LEVEL = {
     tag: "h2",
     type: "text-title-lg",
     iconSize: "xl",
-    lead: "gap-md",
+    lead: "gap-x-md",
     description: "text-body-md",
     rule: "pb-md",
   },
@@ -99,7 +102,7 @@ const BY_LEVEL = {
     tag: "h3",
     type: "text-title-md",
     iconSize: "lg",
-    lead: "gap-sm",
+    lead: "gap-x-sm",
     description: "text-body-sm",
     rule: "pb-sm",
   },
@@ -107,7 +110,7 @@ const BY_LEVEL = {
     tag: "h4",
     type: "text-title-sm",
     iconSize: "md",
-    lead: "gap-xs",
+    lead: "gap-x-xs",
     description: "text-body-sm",
     rule: "pb-xs",
   },
@@ -124,6 +127,7 @@ function SectionHeader({
   iconSize,
   iconFallback = "placeholder",
   divider,
+  style,
   ...props
 }: SectionHeaderProps) {
   const {
@@ -135,47 +139,79 @@ function SectionHeader({
     rule,
   } = BY_LEVEL[level];
   const withDivider = divider ?? true;
+  /* 有图标三列（图标 | 标题 | 动作），无图标两列——空的图标列也会吃掉一道列间距，
+     标题就不贴左了。 */
+  const hasIcon = Boolean(icon);
+  const titleCol = hasIcon ? "col-start-2" : "col-start-1";
+  const actionCol = hasIcon ? "col-start-3" : "col-start-2";
+
+  const heading = (
+    <Tag className={cn(type, "min-w-0 text-foreground")}>{title}</Tag>
+  );
 
   return (
     <div
       className={cn(
-        "flex items-start gap-lg",
+        "grid items-center gap-y-2xs",
+        lead,
         withDivider && ["border-b", rule, hairline.field],
         className,
       )}
+      style={{
+        // 布局骨架，不是视觉取值：列模板没有对应的 token 工具类。
+        gridTemplateColumns: hasIcon
+          ? "auto minmax(0, 1fr) auto"
+          : "minmax(0, 1fr) auto",
+        ...style,
+      }}
       {...props}
     >
-      <div className={cn("flex min-w-0 flex-1 items-start", lead)}>
-        {icon ? (
-          <span className="flex shrink-0 text-primary-text" aria-hidden="true">
-            <Icon
-              name={icon}
-              size={iconSize ?? levelIconSize}
-              fallback={iconFallback}
-            />
-          </span>
-        ) : null}
-        <div className="flex min-w-0 flex-1 flex-col gap-2xs">
-          {titleSuffix ? (
-            <span className="flex min-w-0 items-center gap-xs">
-              <Tag className={cn(type, "min-w-0 text-foreground")}>{title}</Tag>
-              <span className="shrink-0">{titleSuffix}</span>
-            </span>
-          ) : (
-            <Tag className={cn(type, "text-foreground")}>{title}</Tag>
+      {icon ? (
+        <span
+          className="col-start-1 row-start-1 flex text-primary-text"
+          aria-hidden="true"
+        >
+          <Icon
+            name={icon}
+            size={iconSize ?? levelIconSize}
+            fallback={iconFallback}
+          />
+        </span>
+      ) : null}
+      {titleSuffix ? (
+        <span
+          className={cn(
+            titleCol,
+            "row-start-1 flex min-w-0 items-center gap-xs",
           )}
-          {description ? (
-            <p className={cn(descriptionType, "text-muted-foreground")}>
-              {description}
-            </p>
-          ) : null}
-        </div>
-      </div>
+        >
+          {heading}
+          <span className="shrink-0">{titleSuffix}</span>
+        </span>
+      ) : (
+        <div className={cn(titleCol, "row-start-1 min-w-0")}>{heading}</div>
+      )}
       {action ? (
-        /* self-end：与标题块下沿对齐，不跟标题首行齐平。 */
-        <div className="flex shrink-0 items-center gap-sm self-end">
+        <div
+          className={cn(
+            actionCol,
+            "row-start-1 flex items-center justify-end gap-sm",
+          )}
+        >
           {action}
         </div>
+      ) : null}
+      {description ? (
+        <p
+          className={cn(
+            titleCol,
+            "row-start-2 min-w-0",
+            descriptionType,
+            "text-muted-foreground",
+          )}
+        >
+          {description}
+        </p>
       ) : null}
     </div>
   );

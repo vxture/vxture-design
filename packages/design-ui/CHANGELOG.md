@@ -27,8 +27,11 @@ header 文本」「每级都有下划线（可显隐）」。
 - **每一级都带虚线下边框，可关**：`SectionHeader` 的 `divider` 缺省由「只有
   level 2」改为每一级都开，距离随档收（`pb-md` / `pb-sm` / `pb-xs`）；`ViewHeader`
   新增 `divider`（缺省开）。不要线的地方传 `divider={false}`。
-- 间距随层级收：图标与标题的间距 level 2 / 3 / 4 为 `gap-md` / `gap-sm` / `gap-xs`
-  （原一律 `gap-lg`）；level 2 描述 `body-md`。图标去掉 `mt-2xs`，顶端对齐标题首行。
+- **一行对齐**：`SectionHeader` 改用 grid——图标 | 标题 | 动作同一行、垂直居中，
+  动作靠右（原为图标顶对齐、动作贴底 `self-end`）；描述是第二行、只在标题列下，
+  不给就没有这一行、不占空间；无图标时去掉图标列。`ViewHeader` 不变。
+- 间距随层级收：图标与标题的列间距 level 2 / 3 / 4 为 `gap-x-md` / `gap-x-sm` /
+  `gap-x-xs`（原一律 `gap-lg`）；level 2 描述 `body-md`。
 - `PanelCard` 标题改用 level 4（h4 · `title-sm`，字号不变）。
 - 迁移见发版说明 §02a。
 

@@ -249,7 +249,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">没传 divider 的 level 1 / 3 / 4、ViewHeader</td><td><strong>不报错，多出一条虚线</strong></td><td>不要线的地方传 <span class="mono">divider={false}</span></td></tr>
 <tr><td class="mono">getByRole("heading", { level })</td><td>level 2 / 3 / 4 与之前 h 相同</td><td>原 <span class="mono">level={1}</span> 的查询改查 h2</td></tr>
 </tbody></table></div>
-<p>视觉上也有变化：图标不再下沉 4px（与标题首行顶端对齐）；图标与标题的间距随层级收（level 2 16px / 3 10px / 4 8px，原来一律 24px）。<span class="mono">PanelCard</span> 标题改用 level 4（h4，字号不变）。确认迁完：<span class="mono">grep -rn "level={1}" --include=*.tsx</span> 为空、<span class="mono">tsc</span> 通过，再逐页看一遍标题字号与虚线。</p></section>
+<p>视觉上也有变化：<span class="mono">SectionHeader</span> 的图标、标题、动作改为<strong>同一行垂直居中</strong>，动作靠右（原先动作贴描述底沿）；描述在第二行、只在标题下，不给就不占空间；图标与标题的间距随层级收（level 2 16px / 3 10px / 4 8px，原来一律 24px）。<span class="mono">PanelCard</span> 标题改用 level 4（h4，字号不变）。确认迁完：<span class="mono">grep -rn "level={1}" --include=*.tsx</span> 为空、<span class="mono">tsc</span> 通过，再逐页看一遍标题字号与虚线。</p></section>
 <section id="breaking13"><h2><span class="num">02</span>必须改的：每页条数删除 <span class="mono">auto</span> 档<span class="h2-meta">design-ui 10.0.0 / 伞包 13.0.0 · major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem"><span class="mono">Pagination</span> 与 <span class="mono">useListPagination</span> 的 <span class="mono">"auto"</span>（按可视高度自动算每页条数）<strong>全面删除</strong>（owner 2026-09-25）。写了 <span class="mono">"auto"</span> 的地方升级后<strong>类型检查报错</strong>；没写的地方不报错，但<strong>行为会变</strong>，见下表第三行。</div>
 <div class="tw"><table>

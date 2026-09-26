@@ -21,21 +21,21 @@ const LADDER = [
     level: 2,
     tag: "H2",
     type: "text-title-lg",
-    lead: "gap-md",
+    lead: "gap-x-md",
     description: "text-body-md",
   },
   {
     level: 3,
     tag: "H3",
     type: "text-title-md",
-    lead: "gap-sm",
+    lead: "gap-x-sm",
     description: "text-body-sm",
   },
   {
     level: 4,
     tag: "H4",
     type: "text-title-sm",
-    lead: "gap-xs",
+    lead: "gap-x-xs",
     description: "text-body-sm",
   },
 ] as const;
@@ -89,9 +89,8 @@ describe("SectionHeader · 语义元素与排版角色不许各说各话", () =>
           description="d"
         />,
       );
-      const copy = screen.getByText("t").parentElement!;
-      const leadBox = copy.parentElement!;
-      expect(leadBox.className.split(" ")).toContain(lead);
+      const root = screen.getByText("t").closest(".grid")!;
+      expect(root.className.split(" ")).toContain(lead);
       expect(screen.getByText("d").className).toContain(description);
     },
   );
