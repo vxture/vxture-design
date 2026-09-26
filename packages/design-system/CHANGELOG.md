@@ -5,6 +5,23 @@
 
 ---
 
+## 13.6.0 — 2026-09-26
+
+新增 `ShellHeaderTools`：顶栏标准工具箱（minor：新增件）。`@vxture/design-ui`
+仍为 10.4.0。owner 2026-09-26 定顺序与交互。
+
+- 六件、**固定顺序**：① 主题（点击切换）② 语言（弹出面板选择）③ 全屏（直接切换，
+  需 `FullscreenProvider`）④ 帮助（新标签页，`href` 由调用方按当前页算出帮助主题）
+  ⑤ 消息（侧边抽屉 `Drawer`，`unread` 小圆点，`onOpenChange`）⑥ 配置（当前页跳转
+  后台配置）。顺序不由 prop 书写先后决定；不给的工具不渲染、不占位，一件都不给
+  时整组不渲染。访客给前三件，登录后给全部六件。
+- 主题图标表示**当前**主题（亮色太阳、暗色月亮，照 Figma），可访问名说点下去会
+  怎样（`toDarkLabel` / `toLightLabel`）。
+- 新增 `ShellToolboxLink`：工具箱里的链接，外观与 `ShellToolboxButton` 同一份；
+  `ShellToolbox` 的 `items` 链接改由它渲染（外观不变）。
+- 03-patterns-guide §7.1：顶栏右侧工具改用 `ShellHeaderTools`；preview「PageHeader」
+  与「ShellToolbox」按标准顺序重排。
+
 ## 13.5.0 — 2026-09-26
 
 四种页面 Header 照 Figma 重排；`ShellToolbox` 改为常态透明。跟随

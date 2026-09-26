@@ -129,29 +129,65 @@ export const ShellToolboxButton = React.forwardRef<
   );
 });
 
+export interface ShellToolboxLinkProps {
+  icon: IconName;
+  /** 可访问名与悬停提示，必给。 */
+  label: string;
+  href: string;
+  /** 在新标签页打开，自动补 rel。 */
+  newTab?: boolean | undefined;
+  badge?: boolean | undefined;
+  onClick?: (() => void) | undefined;
+  /** 渲染链接的元素，默认原生 <a>；产品侧有路由库时传自己的 Link。 */
+  linkComponent?: React.ElementType | undefined;
+  className?: string | undefined;
+}
+
+/** 工具箱里的一个链接，外观与 `ShellToolboxButton` 同一份。 */
+export function ShellToolboxLink({
+  icon,
+  label,
+  href,
+  newTab = false,
+  badge = false,
+  onClick,
+  linkComponent: Link = "a",
+  className,
+}: Readonly<ShellToolboxLinkProps>) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      data-slot="shell-toolbox-link"
+      className={cn(TOOL_CLASS, className)}
+      {...(newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      <Icon name={icon} size="md" aria-hidden="true" />
+      {badge ? <ToolBadge /> : null}
+    </Link>
+  );
+}
+
 function ToolboxItem({
   item,
-  linkComponent: Link,
+  linkComponent,
 }: {
   item: ShellToolboxItem;
   linkComponent: React.ElementType;
 }) {
   if (item.href && !item.disabled) {
     return (
-      <Link
+      <ShellToolboxLink
+        icon={item.icon}
+        label={item.label}
         href={item.href}
-        aria-label={item.label}
-        title={item.label}
+        newTab={item.newTab}
+        badge={item.badge}
         onClick={item.onClick}
-        data-slot="shell-toolbox-link"
-        className={TOOL_CLASS}
-        {...(item.newTab
-          ? { target: "_blank", rel: "noopener noreferrer" }
-          : {})}
-      >
-        <Icon name={item.icon} size="md" aria-hidden="true" />
-        {item.badge ? <ToolBadge /> : null}
-      </Link>
+        linkComponent={linkComponent}
+      />
     );
   }
   return (
