@@ -459,11 +459,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <thead><tr><th>改了什么</th><th>之前</th><th>现在</th></tr></thead>
 <tbody>
 <tr><td class="mono">ShellHeader</td><td>左槽 10px、右槽 4px、槽间 16px</td><td>一律 8px（<span class="mono">gap-xs</span>）</td></tr>
-<tr><td class="mono">ShellHeaderTitle</td><td>标题无内距，徽标垂直居中</td><td>标题左右 8px；徽标顶端对齐，读作上标</td></tr>
-<tr><td class="mono">ShellProductTitle tier</td><td>垂直居中</td><td>上标位，与标题徽标一致</td></tr>
+<tr><td class="mono">ShellHeaderTitle</td><td>标题无内距，徽标垂直居中</td><td>标题左右 8px；徽标放进 24px 顶端对齐位，读作上标</td></tr>
+<tr><td class="mono">ShellProductTitle tier</td><td>垂直居中</td><td>32px 上标位</td></tr>
 <tr><td class="mono">ShellHeaderDomain</td><td>左右 4px</td><td>无内距，距离由槽间距决定</td></tr>
 </tbody></table></div>
-<div class="note warn"><strong>门户侧要跟着改的拼法</strong>（03-patterns-guide §7.1）：工作台三种高度用缺省 <span class="mono">md</span>（48px），不要再传 <span class="mono">height="xl"</span>，只有官网用 64px；工具箱按有没有账户分两组，访客用主题 / 语言 / 全屏，登录后用帮助 / 通知 / 设置；单产品视角分隔线后改为当前租户（<span class="mono">ShellScopeButton</span>），不再放域名；官网的注册 / 登录 / 官网按钮用 <span class="mono">size="sm"</span>。</div></section>
+<div class="note warn"><strong>门户侧要跟着改的拼法</strong>（03-patterns-guide §7.1）：工作台三种高度用缺省 <span class="mono">md</span>（48px），不要再传 <span class="mono">height="xl"</span>，只有官网用 64px；工具箱按有没有账户分两组，访客用主题 / 语言 / 全屏，登录后用帮助 / 通知 / 设置；单产品视角分隔线后改为当前租户（<span class="mono">ShellScopeButton</span>），不再放域名；两种工作台标题都写平台名 vxture.ai，靠管理员徽标区分；官网的注册 / 登录 / 官网按钮用 <span class="mono">size="sm"</span>。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>

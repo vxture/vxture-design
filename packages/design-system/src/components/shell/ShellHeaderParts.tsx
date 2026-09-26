@@ -81,7 +81,10 @@ export interface ShellHeaderTitleProps {
   className?: string | undefined;
 }
 
-/** 品牌字体 24px 粗体标题：官网的站名、工作台的控制台名。 */
+/**
+ * 品牌字体 24px 粗体标题：平台名（官网与两种工作台都写 vxture.ai，Figma 09-26
+ * 定稿；两种工作台靠徽标与分隔线后的内容分视角，不靠标题）。
+ */
 export function ShellHeaderTitle({
   children,
   badge,
@@ -100,21 +103,35 @@ export function ShellHeaderTitle({
       <span className="truncate whitespace-nowrap px-xs font-brand text-heading-3 font-bold text-foreground">
         {children}
       </span>
-      {badge ? <HeaderSuperscript>{badge}</HeaderSuperscript> : null}
+      {badge ? <HeaderSuperscript box="sm">{badge}</HeaderSuperscript> : null}
     </span>
   );
 }
 
 /**
- * 标题后的徽标位：32px 高的版位里**顶端对齐**，徽标因此比标题略高、读作
- * 上标——它是对标题的注脚（管理员视角 / 等级），不是与标题并列的第二个名字
- * （Figma 09-26 重排：Header_console_workforce 的徽标、Header_product 的 Pro）。
+ * 标题后的徽标位：版位里**顶端对齐**，徽标因此比标题略高、读作上标——它是
+ * 对标题的注脚（管理员视角 / 等级），不是与标题并列的第二个名字。
+ *
+ * 版位两档，照 Figma 09-26 定稿：
+ * - `sm`（24px）：标题徽标（Header_console_workforce）。20px 高的实底徽标只抬
+ *   2px——品牌标题字大，徽标抬多了会脱离标题。
+ * - `md`（32px）：产品等级（Header_product 的 Pro）。16px 高的小徽标抬得更明显，
+ *   才读得出是挂在产品名上的角标。
  */
-function HeaderSuperscript({ children }: { children: ReactNode }) {
+function HeaderSuperscript({
+  box,
+  children,
+}: Readonly<{
+  box: "sm" | "md";
+  children: ReactNode;
+}>) {
   return (
     <span
       data-slot="header-superscript"
-      className="flex h-icon-xl shrink-0 items-start"
+      className={cn(
+        "flex shrink-0 items-start",
+        box === "sm" ? "h-icon-lg" : "h-icon-xl",
+      )}
     >
       {children}
     </span>
@@ -210,7 +227,7 @@ export function ShellProductTitle({
           {type}
         </span>
       ) : null}
-      {tier ? <HeaderSuperscript>{tier}</HeaderSuperscript> : null}
+      {tier ? <HeaderSuperscript box="md">{tier}</HeaderSuperscript> : null}
     </span>
   );
 }

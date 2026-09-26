@@ -3213,10 +3213,7 @@ function PageHeadersDemo() {
         />
       </Row>
 
-      <Row
-        label="2 · 租户用户工作台（48px）：全宽；Workspace Console + 当前租户"
-        stack
-      >
+      <Row label="2 · 租户用户工作台（48px）：全宽；平台名 + 当前租户" stack>
         <ShellHeader
           surface="background"
           leading={
@@ -3227,7 +3224,7 @@ function PageHeadersDemo() {
                 buttonLabel="切换业务域"
               />
               <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle>Workspace Console</ShellHeaderTitle>
+              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
               <ShellHeaderDivider />
               <TenantScope />
             </>
@@ -3237,7 +3234,7 @@ function PageHeadersDemo() {
       </Row>
 
       <Row
-        label="3 · 平台管理工作台（48px）：Admin Console + 上标徽标 + 域名（员工视角）"
+        label="3 · 平台管理工作台（48px）：平台名 + 管理员徽标 + 域名（员工视角）"
         stack
       >
         <ShellHeader
@@ -3253,7 +3250,7 @@ function PageHeadersDemo() {
               <ShellHeaderTitle
                 badge={<Badge variant="default">平台管理员</Badge>}
               >
-                Admin Console
+                vxture.ai
               </ShellHeaderTitle>
               <ShellHeaderDivider />
               <ShellHeaderDomain>租户管理</ShellHeaderDomain>

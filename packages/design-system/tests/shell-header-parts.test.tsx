@@ -75,10 +75,10 @@ describe("ShellHeaderTitle", () => {
   });
 
   /**
-   * 徽标读作上标（Figma 09-26 重排）：32px 版位里顶端对齐，比标题略高。
+   * 徽标读作上标（Figma 09-26 重排）：24px 版位里顶端对齐，比标题略高（09-26 定稿）。
    * 居中对齐会让它读成与标题并列的第二个名字。
    */
-  it("徽标放在顶端对齐的 32px 上标位里", () => {
+  it("徽标放在顶端对齐的 24px 上标位里", () => {
     render(
       <ShellHeaderTitle badge={<span>平台管理员</span>}>
         Admin Console
@@ -87,7 +87,7 @@ describe("ShellHeaderTitle", () => {
     const slot = screen.getByText("平台管理员").parentElement!;
     expect(slot).toHaveAttribute("data-slot", "header-superscript");
     expect(tokens(slot)).toEqual(
-      expect.arrayContaining(["h-icon-xl", "items-start", "shrink-0"]),
+      expect.arrayContaining(["h-icon-lg", "items-start", "shrink-0"]),
     );
   });
 });
@@ -147,8 +147,10 @@ describe("ShellProductTitle", () => {
       "数据平台",
       "Pro",
     ]);
-    // 等级与标题徽标同为上标位。
+    // 等级同为上标位，但版位 32px：小徽标要抬得更明显。
     expect(kids[3]).toHaveAttribute("data-slot", "header-superscript");
-    expect(tokens(kids[3]!)).toContain("items-start");
+    expect(tokens(kids[3]!)).toEqual(
+      expect.arrayContaining(["items-start", "h-icon-xl"]),
+    );
   });
 });
