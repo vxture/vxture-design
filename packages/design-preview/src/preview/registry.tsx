@@ -101,6 +101,7 @@ import {
   Stack,
   AvatarFallback,
   Badge,
+  BADGE_SIZES,
   BADGE_VARIANTS,
   Banner,
   BarChart,
@@ -717,19 +718,31 @@ export const ENTRIES: readonly Entry[] = [
     group: "展示",
     tags: ["shadcn", "vxture"],
     deviation:
-      "增 asChild（可渲染为 <a>）；保留 forwardRef，上游面向 React 19 已去掉",
-    axes: [{ name: "variant", values: [...BADGE_VARIANTS] }],
+      "增 asChild（可渲染为 <a>）；保留 forwardRef，上游面向 React 19 已去掉；增 size（sm 为挂在标题上的角标）",
+    axes: [
+      { name: "variant", values: [...BADGE_VARIANTS] },
+      { name: "size", values: [...BADGE_SIZES] },
+    ],
     render: () => (
-      <Row>
-        {BADGE_VARIANTS.map((v) => (
-          <Badge key={v} variant={v}>
-            {v}
-          </Badge>
+      <div className="flex flex-col gap-md">
+        {BADGE_SIZES.map((s) => (
+          <Row key={s} label={`size=${s}`}>
+            {BADGE_VARIANTS.map((v) => (
+              <Badge key={v} variant={v} size={s}>
+                {v}
+              </Badge>
+            ))}
+            <StatusBadge tone="brand" size={s}>
+              Pro
+            </StatusBadge>
+          </Row>
         ))}
-        <Badge asChild>
-          <a href="#badge">asChild 链接</a>
-        </Badge>
-      </Row>
+        <Row>
+          <Badge asChild>
+            <a href="#badge">asChild 链接</a>
+          </Badge>
+        </Row>
+      </div>
     ),
   },
   {
@@ -2653,7 +2666,7 @@ export const ENTRIES: readonly Entry[] = [
     group: "外壳与登录",
     tags: ["vxture", "patterns"],
     deviation:
-      "照 Figma HeaderToolbar（123:43）：浅灰底圆角胶囊、20px 图标、间距 16px，单个工具无底色。两种用法可混用：items 按定义导入（href 链接 / onClick 回调 / hidden 显隐 / active / disabled / badge），children 自己组合 ShellToolboxButton（转发 ref，可做 PopoverTrigger asChild）。不绑定弹层。全部隐藏时整只胶囊不渲染。与 Figma 的图形差异：全屏 / 通知 / 设置用字典现有的 corners-out / bell / settings，Figma 画的是 FrameCorners / BellSimple / GearSix",
+      "照 Figma HeaderToolbar（123:43）：圆角胶囊、20px 图标、间距 16px。常态透明，悬停 / 键盘焦点时整组亮底、指针所在的工具再亮一层。两种用法可混用：items 按定义导入（href 链接 / onClick 回调 / hidden 显隐 / active / disabled / badge），children 自己组合 ShellToolboxButton（转发 ref，可做 PopoverTrigger asChild）。不绑定弹层。全部隐藏时整只胶囊不渲染。与 Figma 的图形差异：全屏 / 通知 / 设置用字典现有的 corners-out / bell / settings，Figma 画的是 FrameCorners / BellSimple / GearSix",
     render: () => <ShellToolboxDemo />,
   },
   {
@@ -3281,7 +3294,11 @@ function PageHeadersDemo() {
                 logoSrc={productLogo.src}
                 name="产品"
                 type="产品类型"
-                tier={<StatusBadge tone="brand">Pro</StatusBadge>}
+                tier={
+                  <StatusBadge tone="brand" size="sm">
+                    Pro
+                  </StatusBadge>
+                }
               />
               <ShellHeaderDivider />
               <TenantScope />

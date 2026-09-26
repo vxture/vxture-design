@@ -11,6 +11,8 @@
  * - 尺度走 T2（min-h-control-2xs / px-sm / text-label-sm），跟随密度与字号三档；
  *   上游的裸数值 px-2.5 / py-0.5 / text-xs 不跟随，故不用。
  * - **缺省是 `outline` 而非 `default`**（2026-08-05 owner 定，理由见下）。
+ * - 增 `size`：`md`（缺省，即此前唯一的尺寸）与 `sm`（紧凑，挂在标题上的角标用，
+ *   见下「两档尺寸」）。
  *
  * ## 缺省是描边
  *
@@ -28,6 +30,14 @@
  * 与 `StatusBadge` 的分工也因此清楚了：Badge 是中性标签，StatusBadge 才带语气
  * 底色——后者本就建在 `outline` 之上再叠 `toneSurfaceClasses`，两件现在同源。
  *
+ * ## 两档尺寸
+ *
+ * - `md`：下限 `control-2xs`（标准密度 20px），高度随文字行盒长，左右 `px-sm`。
+ * - `sm`：下限 `control-3xs`（16px），行高收成 1、左右 `px-2xs`——给挂在标题上的
+ *   角标用（Figma Header_product 的 Pro 等级，2026-09-26 owner：tag 高度要压缩）。
+ *   标准尺寸的徽章放在 20px 品牌标题旁边块头太大，读起来像并列的第二个名字。
+ *   **只用于一两个字的短标**：行高收成 1 之后多行文字会挤在一起。
+ *
  * 原实现用对象式 cn 手写变体，且挂了一个已随遗留样式层退役的 .vx-badge。
  */
 
@@ -42,8 +52,8 @@ const badgeVariants = cva(
     // control-2xs 是下限，不是裁切框：密度与字号是独立轴，文字行盒更高时徽章
     // 必须随字体长高。无垂直 padding，实际高度由 max(control-2xs, line box + border)
     // 决定；同一字号下仍然等高，Large 字体档也不会被 Compact 密度裁掉。
-    "inline-flex min-h-control-2xs w-fit shrink-0 items-center justify-center gap-2xs",
-    "overflow-hidden rounded-4xl border border-transparent px-sm",
+    "inline-flex w-fit shrink-0 items-center justify-center gap-2xs",
+    "overflow-hidden rounded-4xl border border-transparent",
     "text-label-sm whitespace-nowrap",
     interactive,
     invalid,
@@ -69,10 +79,16 @@ const badgeVariants = cva(
         ),
         outline: "border-border text-foreground [a&]:hover:bg-accent",
       },
+      size: {
+        md: "min-h-control-2xs px-sm",
+        // leading-none 必须跟在 text-label-sm 之后（base 里），才压得住角色自带的行高。
+        sm: "min-h-control-3xs px-2xs leading-none",
+      },
     },
     defaultVariants: {
       // 不是 `default`——见文件头"缺省是描边"。
       variant: "outline",
+      size: "md",
     },
   },
 );
@@ -90,6 +106,11 @@ export const BADGE_VARIANTS = [
 
 export type BadgeVariant = (typeof BADGE_VARIANTS)[number];
 
+/** 尺寸的运行时数组，同 `BADGE_VARIANTS`。 */
+export const BADGE_SIZES = ["md", "sm"] as const;
+
+export type BadgeSize = (typeof BADGE_SIZES)[number];
+
 /** cva 的变体键必须与数组一致——两处各写一份必然漂移，此处编译期对账。 */
 type Equal<A, B> =
   (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
@@ -104,6 +125,10 @@ export type _BadgeVariantKeysMatch = Expect<
   >
 >;
 
+export type _BadgeSizeKeysMatch = Expect<
+  Equal<NonNullable<VariantProps<typeof badgeVariants>["size"]>, BadgeSize>
+>;
+
 export interface BadgeProps
   extends
     React.HTMLAttributes<HTMLSpanElement>,
@@ -112,14 +137,14 @@ export interface BadgeProps
 }
 
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
-  { className, variant, asChild = false, ...props },
+  { className, variant, size, asChild = false, ...props },
   ref,
 ) {
   const Comp = asChild ? Slot : "span";
   return (
     <Comp
       ref={ref}
-      className={cn(badgeVariants({ variant }), className)}
+      className={cn(badgeVariants({ variant, size }), className)}
       {...props}
     />
   );

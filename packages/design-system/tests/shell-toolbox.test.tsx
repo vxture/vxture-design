@@ -29,21 +29,43 @@ const ITEMS: ShellToolboxItem[] = [
 ];
 
 describe("ShellToolbox · 外观", () => {
-  /** 照 Figma：浅灰底圆角胶囊、图标间距 16px；单个工具 20px、无底色。 */
-  it("胶囊：bg-background + rounded-lg + gap-md，是一个 toolbar", () => {
+  /**
+   * 常态透明（owner 2026-09-26：常驻灰底是 bug）。只在悬停 / 键盘焦点落进组内
+   * 时整组亮底——常态挂着任何 bg-* 都算回归。
+   */
+  it("胶囊：常态透明，hover / focus-within 才亮 bg-accent", () => {
     render(<ShellToolbox label="工具" items={ITEMS} />);
     const bar = screen.getByRole("toolbar", { name: "工具" });
-    for (const c of ["bg-background", "rounded-lg", "gap-md"]) {
+    for (const c of [
+      "rounded-lg",
+      "gap-md",
+      "hover:bg-accent",
+      "focus-within:bg-accent",
+    ]) {
       expect(hasClass(bar, c)).toBe(true);
     }
+    const idle = bar.className.split(" ").filter((c) => c.startsWith("bg-"));
+    expect(idle).toEqual([]);
   });
 
-  it("单个工具 20px 图标格，平时弱化色", () => {
+  it("单个工具 20px 图标格，平时弱化色、无底；悬停亮 bg-card", () => {
     render(<ShellToolbox label="工具" items={ITEMS} />);
     const bell = screen.getByRole("button", { name: "通知" });
     expect(hasClass(bell, "size-icon-md")).toBe(true);
     expect(hasClass(bell, "text-muted-foreground")).toBe(true);
+    expect(hasClass(bell, "hover:bg-card")).toBe(true);
+    const idle = bell.className.split(" ").filter((c) => c.startsWith("bg-"));
+    expect(idle).toEqual([]);
     expect(bell).toHaveAttribute("title", "通知");
+  });
+
+  /** 悬停底外扩 4px，再用等量负外边距抵掉：胶囊尺寸与图标间距不变。 */
+  it("悬停底外扩与负外边距成对出现", () => {
+    render(<ShellToolbox label="工具" items={ITEMS} />);
+    const help = screen.getByRole("link", { name: "帮助" });
+    for (const c of ["box-content", "p-2xs", "-m-2xs"]) {
+      expect(hasClass(help, c)).toBe(true);
+    }
   });
 });
 

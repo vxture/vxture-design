@@ -64,6 +64,7 @@
       "AvatarFallback",
       "AvatarImage",
       "AvatarSilhouette",
+      "BADGE_SIZES",
       "BADGE_VARIANTS",
       "BUTTON_GROUP_ORIENTATIONS",
       "BUTTON_SIZES",
@@ -351,6 +352,7 @@
       "useToast"
     ],
     "./server": [
+      "BADGE_SIZES",
       "BADGE_VARIANTS",
       "Badge",
       "Banner",
