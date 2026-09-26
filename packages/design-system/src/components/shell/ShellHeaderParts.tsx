@@ -4,9 +4,9 @@
  * @layer Presentation
  * @category Components - Shell
  *
- * 对应 Figma 的 Header 四种页面（owner 2026-09-25）：官网 Header_website
- * （2226:10298）、租户工作台 Header_console（682:2224）、平台管理工作台
- * Header_admin（682:2225）、单产品 Header_product（682:2226）。四种 header
+ * 对应 Figma 的 Header 四种页面（owner 2026-09-25，09-26 重排）：官网 Header_website
+ * （2226:10298）、租户工作台 Header_console_tenant（682:2224）、平台管理工作台
+ * Header_console_workforce（682:2225）、单产品 Header_product（682:2226）。四种 header
  * **不做成四个写死的组件**——都是 `ShellHeader` 三个槽位里拼零件，区别只在放
  * 哪些零件（见 03-patterns-guide 的「页面 Header 四种视角」与 preview 示例）。
  *
@@ -95,10 +95,28 @@ export function ShellHeaderTitle({
       {/* font-brand 必须单独写：排版角色的 `text-heading-3` 只带字号 / 行高 / 字距 /
           字重，**不带字体族**（generate-semantic-scales 的注释）。漏了它标题会落回
           正文体 Inter，而 Figma 是 Funnel Display（2026-09-26 owner 实页发现）。 */}
-      <span className="truncate whitespace-nowrap font-brand text-heading-3 font-bold text-foreground">
+      {/* `px-xs`：Figma BrandTitle 的文字自带左右 8px，与前面的标识、后面的徽标
+          各拉开 16px（槽间距 8 + 自身 8）——标题是这一行的主角，要留出气口。 */}
+      <span className="truncate whitespace-nowrap px-xs font-brand text-heading-3 font-bold text-foreground">
         {children}
       </span>
-      {badge ? <span className="shrink-0">{badge}</span> : null}
+      {badge ? <HeaderSuperscript>{badge}</HeaderSuperscript> : null}
+    </span>
+  );
+}
+
+/**
+ * 标题后的徽标位：32px 高的版位里**顶端对齐**，徽标因此比标题略高、读作
+ * 上标——它是对标题的注脚（管理员视角 / 等级），不是与标题并列的第二个名字
+ * （Figma 09-26 重排：Header_console_workforce 的徽标、Header_product 的 Pro）。
+ */
+function HeaderSuperscript({ children }: { children: ReactNode }) {
+  return (
+    <span
+      data-slot="header-superscript"
+      className="flex h-icon-xl shrink-0 items-start"
+    >
+      {children}
     </span>
   );
 }
@@ -134,7 +152,7 @@ export function ShellHeaderDomain({
     <span
       data-slot="header-domain"
       className={cn(
-        "min-w-0 truncate whitespace-nowrap px-2xs text-label-lg text-content-tertiary",
+        "min-w-0 truncate whitespace-nowrap text-label-lg text-content-tertiary",
         className,
       )}
     >
@@ -192,7 +210,7 @@ export function ShellProductTitle({
           {type}
         </span>
       ) : null}
-      {tier ? <span className="shrink-0">{tier}</span> : null}
+      {tier ? <HeaderSuperscript>{tier}</HeaderSuperscript> : null}
     </span>
   );
 }

@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 13.4.0** ｜ 更新：2026-09-25
+适用版本：**DS 13.4.1** ｜ 更新：2026-09-25
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -135,20 +135,24 @@ DataTable 三态一次定齐：加载出骨架行（撑住高度）、空态出 
 
 ## 7.1 页面 Header 四种视角
 
-顶栏按**页面视角**分四种（owner 2026-09-25，Figma Header_website / Header_console / Header_admin / Header_product）。不做成四个组件：都是 `ShellHeader` 的三个槽位里拼零件，区别只在放哪些零件。示例见 preview「外壳与登录 → PageHeader」。
+顶栏按**页面视角**分四种（owner 2026-09-25，09-26 重排高度与操作组合；Figma Header_website / Header_console_tenant / Header_console_workforce / Header_product）。不做成四个组件：都是 `ShellHeader` 的三个槽位里拼零件，区别只在放哪些零件。示例见 preview「外壳与登录 → PageHeader」。
 
-| 视角             | `ShellHeader` 参数                                        | 左侧（leading）                                                                                                                                                                              | 右侧（trailing）                                                         |
-| ---------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| 1 官网           | `layout="centered"` `surface="transparent"` `height="xl"` | `ShellHeaderMark` + `ShellHeaderTitle`（站名）；产品页再加 `ShellHeaderDivider` + `ShellProductTitle`                                                                                        | `ShellToolbox` + 注册 / 登录（`Button`）或「官网」按钮或 `ShellUserMenu` |
-| 2 租户用户工作台 | 全宽 `surface="background"` `height="xl"`                 | `ShellLauncher` + `ShellHeaderMark` + `ShellHeaderTitle`（Workspace Console）+ `ShellHeaderDivider` + `ShellScopeButton`（当前租户）                                                         | `ShellSearchBox` + `ShellAgentButton` + `ShellToolbox` + `ShellUserMenu` |
-| 3 平台管理工作台 | 同 2                                                      | 同 2，但标题为 Admin Console 且**必须带管理员徽标**（`ShellHeaderTitle badge`）；分隔线后是 `ShellHeaderDomain`（当前域），不放租户选择                                                      | 同 2                                                                     |
-| 4 单产品视角     | 同 2                                                      | `ShellIconButton icon="sidebar"` + `ShellLauncher` + `ShellHeaderMark` + `ShellHeaderDivider` + `ShellProductTitle`（标识 / 名称 / 类型 / 等级）+ `ShellHeaderDivider` + `ShellHeaderDomain` | 同 2                                                                     |
+| 视角             | `ShellHeader` 参数                                        | 左侧（leading）                                                                                                                                                                                             | 右侧（trailing）                                                                                                                                                                |
+| ---------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 官网           | `layout="centered"` `surface="transparent"` `height="xl"` | `ShellHeaderMark` + `ShellHeaderTitle`（站名）；产品页再加 `ShellHeaderDivider` + `ShellProductTitle`（标识 / 名称 / 类型）                                                                                 | 未登录：`ShellToolbox`（主题 / 语言 / 全屏）+ 注册 / 登录（`Button size="sm"`）；产品页把注册 / 登录换成「官网」；已登录：`ShellToolbox`（帮助 / 通知 / 设置）+ `ShellUserMenu` |
+| 2 租户用户工作台 | 全宽 `surface="background"`，高度用缺省 `md`（48px）      | `ShellLauncher` + `ShellHeaderMark` + `ShellHeaderTitle`（Workspace Console）+ `ShellHeaderDivider` + `ShellScopeButton`（当前租户，不带图标）                                                              | `ShellSearchBox` + `ShellAgentButton` + `ShellToolbox`（帮助 / 通知 / 设置）+ `ShellUserMenu`                                                                                   |
+| 3 平台管理工作台 | 同 2                                                      | 同 2，但标题为 Admin Console 且**必须带管理员徽标**（`ShellHeaderTitle badge`，实底 `Badge`，上标位）；分隔线后是 `ShellHeaderDomain`（当前域），不放租户选择                                               | 同 2                                                                                                                                                                            |
+| 4 单产品视角     | 同 2                                                      | `ShellIconButton icon="sidebar"` + `ShellLauncher` + `ShellHeaderMark` + `ShellHeaderDivider` + `ShellProductTitle`（标识 / 名称 / 类型 / 上标等级）+ `ShellHeaderDivider` + `ShellScopeButton`（当前租户） | 同 2                                                                                                                                                                            |
 
 判据：
 
+- **高度**：工作台三种 48px（`ShellHeader` 缺省 `md`），把纵向空间让给内容；官网 64px（`xl`），它是页面门面。
+- **间距**：左 / 中 / 右三组之间、组内零件之间一律 8px（`ShellHeader` 自带 `gap-xs`），不要在零件外再包一层间距。
 - **官网不带任何工作属性**：没有九宫格、租户、域名、搜索、智能体。内容居中封顶，与正文同列。
-- **两种管理工作台靠名称与徽标区分视角**：租户工作台是「租户用户管理自己」，分隔线后是当前租户（可切换）；平台管理工作台是「管理员管理平台或全部租户」，标题不同、带管理员徽标，分隔线后是当前管理域。两者同屏出现在截图里要一眼分得开。
-- **单产品视角的主角是产品**：平台标识退为一个小标，产品标题组居中心位置；侧栏开关在最左。
+- **工具箱按有没有账户分两组**：访客用主题 / 语言 / 全屏；登录后用帮助 / 通知 / 设置，主题与语言收进头像面板的偏好设置，不在顶栏重复。
+- **两种管理工作台靠名称与徽标区分视角**：租户工作台是「租户用户管理自己」，分隔线后是当前租户（可切换）；平台管理工作台是「平台员工管理平台或全部租户」，标题不同、带管理员徽标，分隔线后是当前管理域。两者同屏出现在截图里要一眼分得开。
+- **徽标与等级读作上标**：`ShellHeaderTitle` 的 `badge`、`ShellProductTitle` 的 `tier` 都放在顶端对齐的 32px 位里，比标题略高——它们是标题的注脚，不是并列的第二个名字。
+- **单产品视角的主角是产品**：平台标识退为一个小标，产品标题组居中心位置；侧栏开关在最左；分隔线后是当前租户。
 - 域名只在 header 出现一次，侧栏不再重复（`ShellSidebarNav` 的 `domainName` 可省）。
 
 ## 8. 目录分层

@@ -5,6 +5,15 @@
 
 ---
 
+## 10.3.1 — 2026-09-26
+
+`ShellHeader` 槽内、槽间间距统一为 `gap-xs`（patch：样式对齐 Figma）。owner
+2026-09-26 重排四种页面 Header：左 / 中 / 右三组之间与组内零件之间都是 8px。
+
+- 之前：左槽 `gap-sm`（10px）、中槽 `gap-sm`、右槽 `gap-2xs`（4px）、槽间
+  `gap-md`（16px）。**所有用了 `ShellHeader` 的顶栏间距都会变**，API 不变。
+- `height` 的注释写明取档：工作台 `md`（48px，缺省），官网 `xl`（64px）。
+
 ## 10.3.0 — 2026-09-25
 
 `ShellHeader` 新增 `layout` 与 `surface`（minor：新增可选 prop，缺省不变）。

@@ -81,6 +81,28 @@ describe("ShellHeader · 三个插槽与中槽对齐", () => {
     expect(cls(container.querySelector("header"))).toContain(expected);
   });
 
+  /**
+   * Figma 09-26 重排：左 / 中 / 右三组之间、组内零件之间都是 8px 一格。此前左槽
+   * 10px、右槽 4px、槽间 16px，拼出来节奏不齐。
+   */
+  it("槽内、槽间统一 gap-xs", () => {
+    const { container } = render(
+      <ShellHeader
+        leading={<span>标识</span>}
+        center={<span>搜索</span>}
+        trailing={<span>工具</span>}
+      />,
+    );
+    const header = container.querySelector("header")!;
+    expect(cls(header).split(" ")).toContain("gap-xs");
+    for (const slot of header.children) {
+      const c = cls(slot).split(" ");
+      expect(c).toContain("gap-xs");
+      expect(c).not.toContain("gap-sm");
+      expect(c).not.toContain("gap-2xs");
+    }
+  });
+
   it("不给 height 时是 md", () => {
     const { container } = render(<ShellHeader />);
     expect(cls(container.querySelector("header"))).toContain("h-header-md");
