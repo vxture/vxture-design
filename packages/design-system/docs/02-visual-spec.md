@@ -1,6 +1,6 @@
 # 02 视觉规格
 
-适用版本：**DS 13.6.0** ｜ 更新：2026-09-25
+适用版本：**DS 14.0.0** ｜ 更新：2026-09-25
 
 组件视觉规格取 shadcn vega，原语基座为 Radix；style 与基座正交，换基座不改变视觉。
 
@@ -55,7 +55,7 @@
 
 ## 5. 排版
 
-**七族**：`display` / `heading` / `title` / `body` / `label` / `code` / `overline`。`display` 与 `heading` 用品牌展示体，其余用正文体——一族一种字体，族的边界就是换字体的地方；24px 是展示体与正文体的分界（`heading-3` 24 是展示体最小档，`title-xl` 20 起用正文体）。
+**七族**：`display` / `heading` / `title` / `body` / `label` / `code` / `overline`。`display` 与 `heading` 用品牌展示体，其余用正文体——一族一种字体，族的边界就是换字体的地方；24px 是展示体与正文体的分界（`heading-3` 24 是展示体最小档，`title-xl` 20 起用正文体）。工作界面里展示体只用在页头（`ViewHeader` 的 `heading-3`），其余标题一律 `title` 族。
 
 **档数按实际用量定，不求形状整齐**：display 3 档（48/60/72）、heading 3 档（24/30/36）、title / body / label 各 4 档（title 14–20，body / label 12–18）、code 3 档（12–16）、overline 1 档。**全刻度最小 12px**——字号三档是无障碍设置，任何档下都不该把文字推到读不了。
 
@@ -90,12 +90,23 @@
 
 `ViewHeader` 与 `SectionHeader` 的分工是结构繁简，不是层级高低。
 
-**整页标题阶梯**（定稿 2026-08-02）：ViewHeader 是页头，其下由 `SectionHeader` 的 `level` 承担，icon 与字级逐级递减、语法同构（icon + 标题 + 描述 + 可选动作）：
+**整页标题阶梯**（owner 2026-09-26 定稿，取代 2026-08-02 的四档）：**level 的数字就是 h 的数字**。level 1 是页头 `ViewHeader`，level 2–4 由 `SectionHeader` 承担。icon、字级、间距逐级递减，语法同构（icon + 标题 + 描述 + 可选动作）：
 
-| 层级 | ViewHeader | level 1    | 2（默认虚线下边框） | 3          | 4          |
-| ---- | ---------- | ---------- | ------------------- | ---------- | ---------- |
-| 元素 | `h1`       | `h1`       | `h2`                | `h3`       | `h4`       |
-| 排版 | `title-xl` | `title-lg` | `title-md`          | `title-sm` | `label-md` |
-| icon | 48         | 32         | 24                  | 20         | 16         |
+| level           | 1 · ViewHeader             | 2（SectionHeader 缺省） | 3          | 4          |
+| --------------- | -------------------------- | ----------------------- | ---------- | ---------- |
+| 元素            | `h1`                       | `h2`                    | `h3`       | `h4`       |
+| 排版            | `heading-3` + `font-brand` | `title-lg`              | `title-md` | `title-sm` |
+| 字号（默认档）  | 24                         | 18                      | 16         | 14         |
+| icon            | 48                         | 32                      | 24         | 20         |
+| icon 与标题间距 | `xl`                       | `md`                    | `sm`       | `xs`       |
+| 描述            | `body-md`                  | `body-md`               | `body-sm`  | `body-sm`  |
+| 虚线下边框距离  | `lg`                       | `md`                    | `sm`       | `xs`       |
 
-四档全开。DS 只定每档长什么样；放几个、放在哪属于信息结构，不在本规范内。
+判据：
+
+- **页头用页头文本 `heading-3`，板块用 `title` 族**。原先页头也用 `title-xl`，`title` 族四档被页头占一档，板块只剩三档，第四级只能去 `label` 族借 `label-md`——它与 `title-sm` 取值完全相同（14px / 500 / 同行高），三、四级看上去一模一样。页头改用 `heading` 族后，`title` 族的 18 / 16 / 14 整族留给板块，每一级字号都不同。`heading-3` 不带字体族，必须另挂 `font-brand`。
+- **level 与 h 一一对齐，一页一个 h1**：h1 只归 `ViewHeader`；`SectionHeader` 没有 level 1。
+- **每一级都带虚线下边框，可关**（`divider={false}`）：页头与各级板块同一条线（`hairline.field`），与标题的距离随档收。
+- **一行对齐**（level 2–4）：图标 | 标题 | 动作在同一行、垂直居中，动作靠右；描述是第二行，只在标题列下。不给描述就没有第二行，不留空位与行距；无图标时去掉图标列，标题贴左。页头 `ViewHeader` 不在此列（图标跨标题与描述两行，动作底沿对齐描述）。
+
+DS 只定每档长什么样；放几个、放在哪属于信息结构，不在本规范内。

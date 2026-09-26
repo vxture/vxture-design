@@ -210,7 +210,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking13">必须改的：删 auto</a><a href="#breaking12">必须改的：列对齐</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#titleweight">字重 500 与 code-lg</a><a href="#userpanel">用户面板本体</a><a href="#pagination">分页改图标</a><a href="#fieldvalue">表单只读展示</a><a href="#inputotp">验证码形态轴</a><a href="#toolbox">工具箱</a><a href="#pageheader">四种页面 Header</a><a href="#pageheader2">Header 重排</a><a href="#headertools">顶栏标准工具箱</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking14">必须改的：标题阶梯</a><a href="#breaking13">必须改的：删 auto</a><a href="#breaking12">必须改的：列对齐</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#titleweight">字重 500 与 code-lg</a><a href="#userpanel">用户面板本体</a><a href="#pagination">分页改图标</a><a href="#fieldvalue">表单只读展示</a><a href="#inputotp">验证码形态轴</a><a href="#toolbox">工具箱</a><a href="#pageheader">四种页面 Header</a><a href="#pageheader2">Header 重排</a><a href="#headertools">顶栏标准工具箱</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
@@ -223,12 +223,33 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">13.6.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">10.4.0</td><td><span class="tag t-bad">major</span> 删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）；<span class="mono">ShellHeader</span> 新增 layout / surface（§05p），10.4.0 槽间距统一 8px、<span class="mono">Badge</span> 新增 size（§05q）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">14.0.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">11.0.0</td><td><span class="tag t-bad">major</span> 标题阶梯重排：level 即 h、页头改 heading-3、每级虚线（§02a）；删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）；<span class="mono">ShellHeader</span> 新增 layout / surface（§05p），10.4.0 槽间距统一 8px、<span class="mono">Badge</span> 新增 size（§05q）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.4.0</td><td><span class="tag t-ok">minor</span> 宽松密度重排（§05i）；title / overline 字重 500、新增 code-lg（§05j）</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
+<section id="breaking14"><h2><span class="num">02a</span>必须改的：标题阶梯重排——level 即 h，页头改用页头文本<span class="h2-meta">design-ui 11.0.0 / 伞包 14.0.0 · major</span></h2><div class="rule"></div>
+<div class="note danger" style="font-size:1rem">原四档里 level 4 用的 <span class="mono">label-md</span> 与 level 3 的 <span class="mono">title-sm</span> 取值完全相同，三、四级看上去一样；level 与 h 也错位（owner 2026-09-26）。现在 <strong>level 的数字就是 h 的数字</strong>：level 1 是页头 <span class="mono">ViewHeader</span>（改用 <span class="mono">heading-3</span>），<span class="mono">SectionHeader</span> 只有 level 2 / 3 / 4。<strong>每一级都带虚线下边框，可关。</strong></div>
+<div class="tw"><table>
+<thead><tr><th>level</th><th>之前</th><th>现在</th></tr></thead>
+<tbody>
+<tr><td class="mono">ViewHeader</td><td>h1 · title-xl 20</td><td><strong>level 1</strong> · h1 · heading-3 24 品牌体 · 虚线</td></tr>
+<tr><td class="mono">SectionHeader 1</td><td>h1 · title-lg 18</td><td><strong>类型错误（已删除）</strong></td></tr>
+<tr><td class="mono">SectionHeader 2（缺省）</td><td>h2 · title-md 16 · 虚线</td><td>h2 · <strong>title-lg 18</strong> · 虚线</td></tr>
+<tr><td class="mono">SectionHeader 3</td><td>h3 · title-sm 14</td><td>h3 · <strong>title-md 16</strong> · 虚线</td></tr>
+<tr><td class="mono">SectionHeader 4</td><td>h4 · label-md 14</td><td>h4 · title-sm 14 · 虚线</td></tr>
+</tbody></table></div>
+<div class="tw"><table>
+<thead><tr><th>原写法</th><th>升级后</th><th>要做的</th></tr></thead>
+<tbody>
+<tr><td class="mono">level={1}</td><td>类型错误</td><td>页面顶部的标题改用 <span class="mono">ViewHeader</span>；页中的大板块改 <span class="mono">level={2}</span></td></tr>
+<tr><td class="mono">不传 level / level={2}</td><td><strong>不报错，16px 变 18px</strong></td><td>要保持 16px 改传 <span class="mono">level={3}</span></td></tr>
+<tr><td class="mono">level={3}</td><td><strong>不报错，14px 变 16px</strong></td><td>要保持 14px 改传 <span class="mono">level={4}</span></td></tr>
+<tr><td class="mono">没传 divider 的 level 1 / 3 / 4、ViewHeader</td><td><strong>不报错，多出一条虚线</strong></td><td>不要线的地方传 <span class="mono">divider={false}</span></td></tr>
+<tr><td class="mono">getByRole("heading", { level })</td><td>level 2 / 3 / 4 与之前 h 相同</td><td>原 <span class="mono">level={1}</span> 的查询改查 h2</td></tr>
+</tbody></table></div>
+<p>视觉上也有变化：<span class="mono">SectionHeader</span> 的图标、标题、动作改为<strong>同一行垂直居中</strong>，动作靠右（原先动作贴描述底沿）；描述在第二行、只在标题下，不给就不占空间；图标与标题的间距随层级收（level 2 16px / 3 10px / 4 8px，原来一律 24px）。<span class="mono">PanelCard</span> 标题改用 level 4（h4，字号不变）。确认迁完：<span class="mono">grep -rn "level={1}" --include=*.tsx</span> 为空、<span class="mono">tsc</span> 通过，再逐页看一遍标题字号与虚线。</p></section>
 <section id="breaking13"><h2><span class="num">02</span>必须改的：每页条数删除 <span class="mono">auto</span> 档<span class="h2-meta">design-ui 10.0.0 / 伞包 13.0.0 · major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem"><span class="mono">Pagination</span> 与 <span class="mono">useListPagination</span> 的 <span class="mono">"auto"</span>（按可视高度自动算每页条数）<strong>全面删除</strong>（owner 2026-09-25）。写了 <span class="mono">"auto"</span> 的地方升级后<strong>类型检查报错</strong>；没写的地方不报错，但<strong>行为会变</strong>，见下表第三行。</div>
 <div class="tw"><table>
@@ -520,7 +541,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 13.6.0 · design-tokens 3.4.0 / design-ui 10.4.0 / design-system 13.6.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 14.0.0 · design-tokens 3.4.0 / design-ui 11.0.0 / design-system 14.0.0 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

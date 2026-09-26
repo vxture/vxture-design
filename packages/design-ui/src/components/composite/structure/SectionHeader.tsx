@@ -4,21 +4,39 @@
  * @layer Presentation
  * @category Components - Pattern
  *
- * 层级由 `level` 给出，同时决定语义元素与排版角色，两者不会各说各话。
- * 整页的标题阶梯（owner 定稿 2026-08-02）：ViewHeader 是页头（20px / icon 48），
- * 其后的板块层级由本件承担，icon 与字级逐级递减、语法同构（icon+标题+描述+可选操作）：
+ * 层级由 `level` 给出，同时决定语义元素、排版角色、图标档与间距，几样不会各说各话。
  *
- *   level 1 → <h1> + title-lg (18px) + icon 32   大板块
- *   level 2 → <h2> + title-md (16px) + icon 24   二级板块，默认带虚线下边框
- *   level 3 → <h3> + title-sm (14px) + icon 20   板块内的分组
- *   level 4 → <h4> + label-md (14px medium) + icon 16   分组内的小节
+ * ## 标题阶梯（owner 2026-09-26 定稿，取代 2026-08-02 的四档）
  *
- * 展示体 heading 族退出工作界面的标题阶——它是营销页的字体。
- * 板块标题（level 2）默认带虚线下边框，这是 admin 的板块开始记号（V4：虚线分
- * 字段、实线开区块——标题属于"字段级"分隔，界的是标题与正文，不是区块与区块）。
+ * **level 的数字就是 h 的数字**，整页一套：
  *
- * **四档全开，包括 level 1。** 本件的职责到"每一档长什么样"为止——排版角色、语义
- * 元素、两者的对应关系。放几个、放在哪属于信息结构，不在这里的题目里。
+ *   level 1 → ViewHeader    <h1> + heading-3 (24px 品牌体) + icon 48   页头（另一件）
+ *   level 2 → SectionHeader <h2> + title-lg  (18px)          + icon 32   大板块（缺省）
+ *   level 3 → SectionHeader <h3> + title-md  (16px)          + icon 24   板块
+ *   level 4 → SectionHeader <h4> + title-sm  (14px)          + icon 20   分组
+ *
+ * 所以本件只有 2 / 3 / 4 三档——第 1 级是页头，归 `ViewHeader`，一页一个 h1。
+ *
+ * **为什么这样排**（owner 2026-09-26「四级标题样式混乱」）：
+ * - 原 level 4 用 `label-md`，与 level 3 的 `title-sm` 取值完全相同（14px / 500 /
+ *   同行高），三、四两级看上去一模一样。根因在 token：`title` 族只有四档，页头
+ *   也用 `title-xl`，板块只剩三档，第四档只能去别的族借。
+ * - 页头改用 `heading` 族（页头文本），`title` 族四档里的 18 / 16 / 14 全留给板块，
+ *   每一级字号都不同。
+ * - 原 level 1 也是 h1、level 与 h 错位一格；现在 level 与 h 一一对齐。
+ *
+ * **一行对齐**（owner 2026-09-26）：图标 | 标题 | 动作在同一行、垂直居中，动作靠右；
+ * 描述是第二行，只在标题列下（不在图标下、不在动作下）。不给描述就没有第二行，
+ * 不留空位、不留行距。用 grid 排：第一行三格各自居中，描述单独一行，互不牵动——
+ * 原先图标与标题顶对齐、动作贴底（self-end），有描述时三者各在各的高度上。
+ *
+ * 间距随层级收：图标与标题的列间距、描述的字级、虚线距离都跟着档位走。
+ *
+ * **每一级都带虚线下边框，可关**（`divider={false}`；owner 2026-09-26「每级应该都有
+ * 下划线（可显隐）」）。虚线分字段、实线开区块（V4）——标题的线界的是标题与正文。
+ *
+ * 本件的职责到"每一档长什么样"为止——排版角色、语义元素、两者的对应关系。
+ * 放几个、放在哪属于信息结构，不在这里的题目里。
  *
  * 与 `ViewHeader` 的分工：`ViewHeader` 是 view 顶部那个完整区域（眉标、图标底板、
  * 描述、标题旁附加物、右侧动作区），`SectionHeader` 是纯粹的标题阶梯。要那套完整
@@ -38,7 +56,8 @@ import type { IconName, IconSize } from "../../../icons";
 import { hairline } from "../../../styles/recipes";
 import { cn } from "../../../utils/cn";
 
-export type SectionHeaderLevel = 1 | 2 | 3 | 4;
+/** 2 / 3 / 4，数字即 h 的数字；第 1 级是页头 `ViewHeader`。 */
+export type SectionHeaderLevel = 2 | 3 | 4;
 
 export interface SectionHeaderProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -53,7 +72,7 @@ export interface SectionHeaderProps extends Omit<
    * （2026-08-05）。同 `TableTitleCell.titleSuffix` 的先例。
    */
   readonly titleSuffix?: React.ReactNode;
-  /** 1–4，同时决定语义元素与排版角色。 */
+  /** 2–4，即 h2–h4；同时决定排版角色、图标档与间距。缺省 2。 */
   readonly level?: SectionHeaderLevel;
   readonly description?: React.ReactNode;
   /** 板块级动作，通常是一个 ghost / outline 按钮。 */
@@ -61,16 +80,40 @@ export interface SectionHeaderProps extends Omit<
   readonly icon?: IconName;
   readonly iconSize?: IconSize | number;
   readonly iconFallback?: IconName;
-  /** 虚线下边框。缺省时 level 2 有、其余没有——板块开始的记号只属于板块标题。 */
+  /** 虚线下边框。缺省每一级都有；`false` 关掉。 */
   readonly divider?: boolean;
 }
 
-/* icon 档随层级走（32/24/20/16），与字级同向递减；20px/48 那一档属 ViewHeader。 */
+/**
+ * 每档一行，几样属性一起定——分开定就会出现「字是三级、间距是一级」。
+ * 第 1 级（h1 / heading-3 / icon 48）属 ViewHeader。
+ * ⚠ 类名必须是完整字面量：Tailwind 扫源码文本，拼接出来的类不会生成、也不报错。
+ */
 const BY_LEVEL = {
-  1: { tag: "h1", type: "text-title-lg", iconSize: "xl" },
-  2: { tag: "h2", type: "text-title-md", iconSize: "lg" },
-  3: { tag: "h3", type: "text-title-sm", iconSize: "md" },
-  4: { tag: "h4", type: "text-label-md", iconSize: "sm" },
+  2: {
+    tag: "h2",
+    type: "text-title-lg",
+    iconSize: "xl",
+    lead: "gap-x-md",
+    description: "text-body-md",
+    rule: "pb-md",
+  },
+  3: {
+    tag: "h3",
+    type: "text-title-md",
+    iconSize: "lg",
+    lead: "gap-x-sm",
+    description: "text-body-sm",
+    rule: "pb-sm",
+  },
+  4: {
+    tag: "h4",
+    type: "text-title-sm",
+    iconSize: "md",
+    lead: "gap-x-xs",
+    description: "text-body-sm",
+    rule: "pb-xs",
+  },
 } as const;
 
 function SectionHeader({
@@ -84,22 +127,50 @@ function SectionHeader({
   iconSize,
   iconFallback = "placeholder",
   divider,
+  style,
   ...props
 }: SectionHeaderProps) {
-  const { tag: Tag, type, iconSize: levelIconSize } = BY_LEVEL[level];
-  const withDivider = divider ?? level === 2;
+  const {
+    tag: Tag,
+    type,
+    iconSize: levelIconSize,
+    lead,
+    description: descriptionType,
+    rule,
+  } = BY_LEVEL[level];
+  const withDivider = divider ?? true;
+  /* 有图标三列（图标 | 标题 | 动作），无图标两列——空的图标列也会吃掉一道列间距，
+     标题就不贴左了。 */
+  const hasIcon = Boolean(icon);
+  const titleCol = hasIcon ? "col-start-2" : "col-start-1";
+  const actionCol = hasIcon ? "col-start-3" : "col-start-2";
+
+  const heading = (
+    <Tag className={cn(type, "min-w-0 text-foreground")}>{title}</Tag>
+  );
 
   return (
     <div
       className={cn(
-        "flex items-start gap-lg",
-        withDivider && ["border-b pb-md", hairline.field],
+        "grid items-center gap-y-2xs",
+        lead,
+        withDivider && ["border-b", rule, hairline.field],
         className,
       )}
+      style={{
+        // 布局骨架，不是视觉取值：列模板没有对应的 token 工具类。
+        gridTemplateColumns: hasIcon
+          ? "auto minmax(0, 1fr) auto"
+          : "minmax(0, 1fr) auto",
+        ...style,
+      }}
       {...props}
     >
       {icon ? (
-        <span className="mt-2xs shrink-0 text-primary-text" aria-hidden="true">
+        <span
+          className="col-start-1 row-start-1 flex text-primary-text"
+          aria-hidden="true"
+        >
           <Icon
             name={icon}
             size={iconSize ?? levelIconSize}
@@ -107,24 +178,40 @@ function SectionHeader({
           />
         </span>
       ) : null}
-      <div className="flex min-w-0 flex-1 flex-col gap-2xs">
-        {titleSuffix ? (
-          <span className="flex min-w-0 items-center gap-xs">
-            <Tag className={cn(type, "min-w-0 text-foreground")}>{title}</Tag>
-            <span className="shrink-0">{titleSuffix}</span>
-          </span>
-        ) : (
-          <Tag className={cn(type, "text-foreground")}>{title}</Tag>
-        )}
-        {description ? (
-          <p className="text-body-sm text-muted-foreground">{description}</p>
-        ) : null}
-      </div>
+      {titleSuffix ? (
+        <span
+          className={cn(
+            titleCol,
+            "row-start-1 flex min-w-0 items-center gap-xs",
+          )}
+        >
+          {heading}
+          <span className="shrink-0">{titleSuffix}</span>
+        </span>
+      ) : (
+        <div className={cn(titleCol, "row-start-1 min-w-0")}>{heading}</div>
+      )}
       {action ? (
-        /* self-end：与标题块下沿对齐，不跟标题首行齐平。 */
-        <div className="flex shrink-0 items-center gap-sm self-end">
+        <div
+          className={cn(
+            actionCol,
+            "row-start-1 flex items-center justify-end gap-sm",
+          )}
+        >
           {action}
         </div>
+      ) : null}
+      {description ? (
+        <p
+          className={cn(
+            titleCol,
+            "row-start-2 min-w-0",
+            descriptionType,
+            "text-muted-foreground",
+          )}
+        >
+          {description}
+        </p>
       ) : null}
     </div>
   );

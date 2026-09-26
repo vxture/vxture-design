@@ -11,7 +11,7 @@
  * 与 `MetricCard` / `StatCard` 的分工：那两件的内容是固定的（一个读数），本件的内容
  * 是任意的——排行行、读数行、一小段列表。头部固定，内容交给调用方。
  *
- * 头部**复用 `SectionHeader`（level 3）**，不自己再渲染一遍 h3：admin 总览里四个面板
+ * 头部**复用 `SectionHeader`（level 4 · h4 · title-sm）**，不自己再渲染一遍标题：admin 总览里四个面板
  * （经营指标 / 产品排行 / 模型分类 / 服务分块）各写了一份结构相同的头部，字重从 760
  * 到 780 各写各的，四份 CSS 说的是同一件事（2026-08-05 盘点）。
  *
@@ -67,7 +67,7 @@ function PanelCard({
     >
       <CardContent>
         <SectionHeader
-          level={3}
+          level={4}
           title={title}
           {...(titleSuffix !== undefined ? { titleSuffix } : {})}
           {...(description !== undefined ? { description } : {})}

@@ -11,12 +11,33 @@ import { SectionHeader } from "../src/components/composite/structure/SectionHead
 import { Section } from "../src/components/composite/structure/Section";
 import { ViewLayout } from "../src/components/layout/ViewLayout";
 
-/** owner 2026-08-02 定稿的标题阶梯，逐档一一对应。 */
+/**
+ * owner 2026-09-26 定稿的标题阶梯：level 的数字就是 h 的数字。第 1 级是页头
+ * ViewHeader（h1 · heading-3），本件只有 2 / 3 / 4，字级出自 title 族 18 / 16 / 14。
+ * 图标间距与描述字级随档收。
+ */
 const LADDER = [
-  { level: 1, tag: "H1", type: "text-title-lg" },
-  { level: 2, tag: "H2", type: "text-title-md" },
-  { level: 3, tag: "H3", type: "text-title-sm" },
-  { level: 4, tag: "H4", type: "text-label-md" },
+  {
+    level: 2,
+    tag: "H2",
+    type: "text-title-lg",
+    lead: "gap-x-md",
+    description: "text-body-md",
+  },
+  {
+    level: 3,
+    tag: "H3",
+    type: "text-title-md",
+    lead: "gap-x-sm",
+    description: "text-body-sm",
+  },
+  {
+    level: 4,
+    tag: "H4",
+    type: "text-title-sm",
+    lead: "gap-x-xs",
+    description: "text-body-sm",
+  },
 ] as const;
 
 describe("SectionHeader · 语义元素与排版角色不许各说各话", () => {
@@ -32,7 +53,60 @@ describe("SectionHeader · 语义元素与排版角色不许各说各话", () =>
     expect(heading.className).toContain(type);
   });
 
-  it("四档各不相同——阶梯塌成一档就没有阶梯了", () => {
+  /**
+   * 原 level 4 借了 label-md，与 title-sm 取值完全相同，三、四级看上去一样
+   * （owner 2026-09-26）。每档的排版角色必须两两不同。
+   */
+  it("三档排版角色两两不同——阶梯塌成一档就没有阶梯了", () => {
+    const types = LADDER.map((l) => l.type);
+    expect(new Set(types).size).toBe(types.length);
+  });
+
+  it("字级全部出自 title 族", () => {
+    for (const { type } of LADDER) expect(type).toMatch(/^text-title-/);
+  });
+
+  it("level 的数字就是 h 的数字", () => {
+    for (const { level, tag } of LADDER) expect(tag).toBe(`H${level}`);
+  });
+
+  it("一页一个 h1：板块标题不出 h1", () => {
+    for (const { level } of LADDER) {
+      const { unmount } = render(<SectionHeader level={level} title="t" />);
+      expect(screen.getByText("t").tagName).not.toBe("H1");
+      unmount();
+    }
+  });
+
+  it.each(LADDER)(
+    "level $level：图标间距 $lead、描述 $description",
+    ({ level, lead, description }) => {
+      render(
+        <SectionHeader
+          level={level}
+          icon="database"
+          title="t"
+          description="d"
+        />,
+      );
+      const root = screen.getByText("t").closest(".grid")!;
+      expect(root.className.split(" ")).toContain(lead);
+      expect(screen.getByText("d").className).toContain(description);
+    },
+  );
+
+  /** 三档的图标与标题行高同值，图标顶端对齐标题首行，不加偏移。 */
+  it("图标不加上偏移", () => {
+    const { container } = render(
+      <SectionHeader level={3} icon="database" title="t" />,
+    );
+    const iconBox = container.querySelector("[aria-hidden=true]")!;
+    expect(iconBox.className.split(" ").some((c) => c.startsWith("mt-"))).toBe(
+      false,
+    );
+  });
+
+  it("三档各不相同（元素 + 类名）", () => {
     const seen = new Set<string>();
     for (const { level } of LADDER) {
       const { unmount } = render(<SectionHeader level={level} title="t" />);
@@ -56,6 +130,7 @@ describe("SectionHeader · 语义元素与排版角色不许各说各话", () =>
   it("默认层级是 2——板块标题是最常见的那一档", () => {
     render(<SectionHeader title="t" />);
     expect(screen.getByText("t").tagName).toBe("H2");
+    expect(screen.getByText("t").className).toContain("text-title-lg");
   });
 });
 
@@ -72,7 +147,7 @@ describe("Section · 标题层级只有一个来源", () => {
     );
     const heading = screen.getByText("危险操作");
     expect(heading.tagName).toBe("H2");
-    expect(heading.className).toContain("text-title-md");
+    expect(heading.className).toContain("text-title-lg");
   });
 
   it("不给 title 就不出标题——板块不必都有名字", () => {

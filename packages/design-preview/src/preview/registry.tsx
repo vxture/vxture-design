@@ -1416,31 +1416,6 @@ export const ENTRIES: readonly Entry[] = [
     ),
   },
   {
-    name: "Section tone",
-    layer: "pattern",
-    group: "图案",
-    tags: ["vxture", "component"],
-    deviation:
-      "三档表达「这块要不要从背景里托起来」,不是重要程度:default 靠留白分层;raised 描边+卡片底色,用于要明确切开的块(危险操作区);glass 同形状但底色由 card 渐到 accent(品牌蓝极淡态,与页面底色同色系),用于信息陈列的长页面——一页叠四五张 raised 就是一块接一块的死白;渐变另一端**不能用 surface-1**(中性灰叠在冷蓝底上灰蓝打架,看着是蒙了层脏)",
-    render: () => (
-      <div className="flex w-full flex-col gap-md">
-        <Section title="default" description="不托起,靠留白与标题分层">
-          <span className="text-body-sm text-muted-foreground">板块内容</span>
-        </Section>
-        <Section tone="raised" title="raised" description="描边 + 卡片底色">
-          <span className="text-body-sm text-muted-foreground">板块内容</span>
-        </Section>
-        <Section
-          tone="glass"
-          title="glass"
-          description="卡形不变，底色渐到品牌淡色"
-        >
-          <span className="text-body-sm text-muted-foreground">板块内容</span>
-        </Section>
-      </div>
-    ),
-  },
-  {
     name: "EditableRow",
     layer: "pattern",
     group: "图案",
@@ -1592,59 +1567,127 @@ export const ENTRIES: readonly Entry[] = [
     group: "图案",
     tags: ["vxture", "patterns"],
     deviation:
-      "ViewHeader / SectionHeader(level 1–4) / Section / ViewLayout / SplitViewLayout 是一族，层级与间距节奏一次定齐；字级对齐 admin 密度（20/16/14），level 2 默认带虚线下边框",
+      "ViewHeader / SectionHeader(level 2–4) / Section / ViewLayout 是一族，层级与间距节奏一次定齐。标题阶梯（owner 2026-09-26 定稿）：level 的数字就是 h 的数字——level 1 是页头 ViewHeader（h1 · heading-3 24 品牌体），SectionHeader 只有 level 2 / 3 / 4（h2 / h3 / h4 · title-lg 18 / title-md 16 / title-sm 14）；图标 48 / 32 / 24 / 20，图标与标题的间距、描述字级随档收；每一级都带虚线下边框（可用 divider={false} 关掉），虚线距离随档收。原四档里 level 4 借 label-md，与 title-sm 取值相同、看不出差别；页头改用 heading 族后 title 族三档整族留给板块",
     axes: [
-      { name: "level", values: ["1", "2", "3", "4"] },
-      { name: "divider", values: ["default(level2)", "off"] },
-      { name: "tone", values: ["default", "raised"] },
+      { name: "level", values: ["1(ViewHeader)", "2", "3", "4"] },
+      { name: "divider", values: ["on(缺省)", "off"] },
+      { name: "tone", values: ["default", "raised", "glass"] },
     ],
     render: () => (
-      <ViewLayout className="w-full rounded-lg border border-dashed border-border p-lg">
-        <SectionHeader
-          level={1}
-          icon="squares-four"
-          title="大板块标题（h1 · title-lg 18px · icon 32）"
-          description="页头之下的一级板块，icon 与字级自页头逐级递减。"
-        />
-        <SectionHeader
-          level={2}
-          icon="database"
-          title="二级标题（h2 · title-md 16px · 虚线下边框）"
-          description="板块标题区，可带板块级动作。"
-          action={<Button variant="outline">板块动作</Button>}
-        />
-        <SectionHeader
-          level={2}
-          divider={false}
-          title="二级标题（divider=false）"
-        />
-        <Section
-          title="Section · default"
-          description="不托起，靠留白与标题分层。绝大多数板块用这个。"
+      <div className="flex w-full flex-col gap-xl">
+        <Row
+          label="整页阶梯：level 1（页头）→ 2 → 3 → 4，数字即 h 的数字，逐级递减"
+          stack
         >
-          <p className="text-body-sm text-muted-foreground">板块内容。</p>
-        </Section>
-        <Section
-          tone="raised"
-          level={3}
-          title="Section · raised（h3 · title-sm）"
-          description="描边 + 卡片底色，用于需要与周围明确切开的块。"
-          action={
-            <Button
-              variant="destructive"
-              confirmExempt="预览面示例，不接真实动作"
+          <ViewLayout className="w-full rounded-lg border border-dashed border-border p-lg">
+            <ViewHeader
+              icon="squares-four"
+              title="level 1 · 页头 ViewHeader（h1 · heading-3 24 · 图标 48）"
+              description="一页一个，页面的路标。"
+              action={<Button>页面动作</Button>}
+            />
+            <SectionHeader
+              level={2}
+              icon="database"
+              title="level 2 · 大板块（h2 · title-lg 18 · 图标 32）"
+              description="页头之下的大板块，SectionHeader / Section 的缺省。描述 body-md。"
+            />
+            <SectionHeader
+              level={3}
+              icon="stack"
+              title="level 3 · 板块（h3 · title-md 16 · 图标 24）"
+              description="板块。描述 body-sm。"
+              action={<Button variant="outline">板块动作</Button>}
+            />
+            <SectionHeader
+              level={4}
+              icon="list"
+              title="level 4 · 分组（h4 · title-sm 14 · 图标 20）"
+              description="板块内的分组。图标与标题间距收到 8px。"
+            />
+          </ViewLayout>
+        </Row>
+        <Row
+          label="一行对齐：图标 | 标题 | 动作同一行垂直居中；描述可省，省了不占空间"
+          stack
+        >
+          <div className="flex w-full flex-col gap-md">
+            <SectionHeader
+              level={3}
+              icon="stack"
+              title="有描述"
+              description="描述在第二行，只在标题列下。"
+              action={<Button variant="outline">动作</Button>}
+            />
+            <SectionHeader
+              level={3}
+              icon="stack"
+              title="无描述"
+              action={<Button variant="outline">动作</Button>}
+            />
+            <SectionHeader
+              level={4}
+              title="无图标、无描述"
+              action={
+                <Button variant="outline" size="sm">
+                  动作
+                </Button>
+              }
+            />
+          </div>
+        </Row>
+        <Row label="无图标：每级缺省带虚线，divider={false} 关掉" stack>
+          <div className="flex w-full flex-col gap-md">
+            <SectionHeader level={2} title="level 2 标题" />
+            <SectionHeader level={3} title="level 3 标题" />
+            <SectionHeader level={4} title="level 4 标题" />
+            <SectionHeader
+              level={3}
+              divider={false}
+              title="level 3 标题（divider=false）"
+            />
+          </div>
+        </Row>
+        <Row
+          label="Section：三种 tone（要不要从背景里托起来，不是重要程度），头部都复用 SectionHeader"
+          stack
+        >
+          <div className="flex w-full flex-col gap-lg">
+            <Section
+              title="Section · default"
+              description="不托起，靠留白与标题分层。绝大多数板块用这个。"
             >
-              危险操作
-            </Button>
-          }
-        >
-          <p className="text-body-sm text-muted-foreground">
-            raised 对应视觉高度阶梯那一档，不叫
-            muted——后者在色彩语义里已表示弱化。
-          </p>
-        </Section>
-        <SectionHeader level={4} title="四级标题（h4 · label-md）" />
-      </ViewLayout>
+              <p className="text-body-sm text-muted-foreground">板块内容。</p>
+            </Section>
+            <Section
+              tone="raised"
+              level={4}
+              title="Section · raised（level 4）"
+              description="描边 + 卡片底色，用于需要与周围明确切开的块。"
+              action={
+                <Button
+                  variant="destructive"
+                  confirmExempt="预览面示例，不接真实动作"
+                >
+                  危险操作
+                </Button>
+              }
+            >
+              <p className="text-body-sm text-muted-foreground">
+                raised 对应视觉高度阶梯那一档，不叫
+                muted——后者在色彩语义里已表示弱化。
+              </p>
+            </Section>
+            <Section
+              tone="glass"
+              title="Section · glass"
+              description="与 Card 同一张卡面，用在信息陈列的长页面上。"
+            >
+              <p className="text-body-sm text-muted-foreground">板块内容。</p>
+            </Section>
+          </div>
+        </Row>
+      </div>
     ),
   },
   {

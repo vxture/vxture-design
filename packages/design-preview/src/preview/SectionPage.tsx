@@ -13,9 +13,11 @@
 
 import * as React from "react";
 import {
+  Badge,
   ICON_GROUPS,
   iconDictionary,
   StatusBadge,
+  ViewHeader,
 } from "@vxture/design-system";
 import { Section } from "./kit";
 import {
@@ -42,13 +44,13 @@ export function SectionPage({ slug }: { readonly slug: string }) {
 
   return (
     <>
-      <header className="flex flex-col gap-2xs">
-        <span className="text-overline text-muted-foreground">
-          {section.realm}
-        </span>
-        <h1 className="text-heading-2 text-foreground">{section.label}</h1>
-        <p className="text-body-sm text-muted-foreground">{section.summary}</p>
-      </header>
+      {/* 页头用 DS 的 ViewHeader：工作界面的页标题是 title-xl，不是营销页的展示体。
+          大类（基础 / 组件）作为标题旁的徽标，不另起一行眉标——ViewHeader 定稿无眉标。 */}
+      <ViewHeader
+        title={section.label}
+        description={section.summary}
+        secondary={<Badge>{section.realm}</Badge>}
+      />
 
       {section.kind === "color" ? <ColorPage /> : null}
       {section.kind === "icon" ? <IconPage /> : null}
@@ -78,10 +80,10 @@ function ColorPage() {
         <Stat value={semantic.length} label="语义角色" note="T2 · 跟随主题" />
         <Stat value={2} label="主题" note="明 / 暗" />
       </Stats>
-      <Section id="c-ramps" title="原子色阶（T1）">
+      <Section id="c-ramps" level={2} title="原子色阶（T1）">
         <PrimitiveRamps />
       </Section>
-      <Section id="c-semantic" title="语义色板（T2）">
+      <Section id="c-semantic" level={2} title="语义色板（T2）">
         <SemanticColors />
       </Section>
     </>
@@ -104,7 +106,7 @@ function IconPage() {
           note={`${ICON_SIZES[0]} … ${ICON_SIZES[ICON_SIZES.length - 1]}`}
         />
       </Stats>
-      <Section id="c-icons" title="图标全集">
+      <Section id="c-icons" level={2} title="图标全集">
         <IconGallery />
       </Section>
     </>
@@ -122,7 +124,7 @@ function TypePage() {
         <Stat value={families.size} label="族" note="display / heading / …" />
         <Stat value={3} label="字号档位" note="small / default / large" />
       </Stats>
-      <Section id="c-type" title="排版角色">
+      <Section id="c-type" level={2} title="排版角色">
         <TypographyScale />
       </Section>
     </>
@@ -202,12 +204,11 @@ function ComponentPage({ layer }: { readonly layer: Layer }) {
       </Stats>
 
       {all.map(({ group, items }) => (
-        <div key={group} className="flex flex-col gap-xl">
-          <h2 className="text-title-md text-foreground">{group}</h2>
+        <Section key={group} level={2} title={group}>
           {items.map((e) => (
             <EntrySection key={e.name} entry={e} />
           ))}
-        </div>
+        </Section>
       ))}
     </>
   );
