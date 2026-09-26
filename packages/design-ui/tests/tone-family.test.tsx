@@ -141,3 +141,38 @@ describe("Banner · 常驻，不自动消失", () => {
     expect(screen.getByText("ACT")).toBeInTheDocument();
   });
 });
+
+/**
+ * 尺寸两档（2026-09-26 owner：tag 高度要压缩）。`sm` 是挂在标题上的角标：下限
+ * 收到 control-3xs、行高收成 1、左右内距收一档；缺省 `md` 与加 size 之前一致。
+ */
+describe("Badge · 尺寸", () => {
+  const cls = (text: string) => screen.getByText(text).className.split(" ");
+
+  it("缺省 md：control-2xs 下限、px-sm，与加 size 之前一致", () => {
+    render(<Badge>md</Badge>);
+    const c = cls("md");
+    expect(c).toEqual(expect.arrayContaining(["min-h-control-2xs", "px-sm"]));
+    expect(c).not.toContain("leading-none");
+  });
+
+  it("sm：control-3xs 下限、行高 1、px-2xs", () => {
+    render(<Badge size="sm">sm</Badge>);
+    const c = cls("sm");
+    expect(c).toEqual(
+      expect.arrayContaining(["min-h-control-3xs", "leading-none", "px-2xs"]),
+    );
+    expect(c).not.toContain("min-h-control-2xs");
+    expect(c).not.toContain("px-sm");
+  });
+
+  it("StatusBadge 透传 size", () => {
+    render(
+      <StatusBadge tone="brand" size="sm">
+        Pro
+      </StatusBadge>,
+    );
+    const badge = screen.getByText("Pro").closest("span.inline-flex")!;
+    expect(badge.className.split(" ")).toContain("min-h-control-3xs");
+  });
+});

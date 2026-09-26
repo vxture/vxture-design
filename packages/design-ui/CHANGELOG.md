@@ -5,10 +5,17 @@
 
 ---
 
-## 10.3.1 — 2026-09-26
+## 10.4.0 — 2026-09-26
 
-`ShellHeader` 槽内、槽间间距统一为 `gap-xs`（patch：样式对齐 Figma）。owner
-2026-09-26 重排四种页面 Header：左 / 中 / 右三组之间与组内零件之间都是 8px。
+`Badge` 新增 `size`（minor：新增 cva 变体，缺省不变）；`ShellHeader` 槽内、槽间
+间距统一为 `gap-xs`。owner 2026-09-26 重排四种页面 Header。
+
+- `Badge size`：`md`（缺省，与此前一致：`control-2xs` 下限、`px-sm`）/ `sm`
+  （`control-3xs` 下限 16px、行高 1、`px-2xs`）。`sm` 给挂在标题上的角标用
+  （Figma Header_product 的 Pro 等级 46×18，owner：tag 高度要压缩）；`StatusBadge`
+  透传。新增导出 `BADGE_SIZES` / `BadgeSize`。与 Figma 的差：实际高 16px，Figma
+  18px——18px 没有对应的 token 档，取 Figma 自己标的下限 16px。
+- `ShellHeader`：左 / 中 / 右三组之间与组内零件之间都是 8px。
 
 - 之前：左槽 `gap-sm`（10px）、中槽 `gap-sm`、右槽 `gap-2xs`（4px）、槽间
   `gap-md`（16px）。**所有用了 `ShellHeader` 的顶栏间距都会变**，API 不变。

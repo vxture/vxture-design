@@ -5,9 +5,15 @@
  * @layer Presentation
  * @category Components - Shell
  *
- * 外观照 Figma HeaderToolbar（123:43）：浅灰底（`bg-background`）圆角胶囊，
- * 图标 20px、图标间距 16px，单个工具没有自己的底色。与 `ShellIconGroup` 不同：
- * 那个平时透明、悬停才整组亮底，按钮是 32px 的幽灵按钮。
+ * 外观照 Figma HeaderToolbar（123:43）：圆角胶囊，图标 20px、图标间距 16px。
+ *
+ * **常态透明**（owner 2026-09-26 定，此前常驻 `bg-background` 底是 bug）：
+ * 顶栏上常驻一条灰底会把工具箱读成一个输入框或分段控件，抢了标题的注意力。
+ * 只在交互时出底，两层叠加：
+ * - 整组：指针进入或键盘焦点落进组内（`:hover` / `:focus-within`），胶囊点亮
+ *   `bg-accent`，标示「这几个是一组」——与 `ShellIconGroup` 同一套做法；
+ * - 单个工具：指针所在的那一个再亮一层 `bg-card`，标示「点的是这个」。
+ * 两层都是纯 CSS 伪类，不是受控状态。
  *
  * 两种用法，可以混用（owner 2026-09-25：「支持显示 / 隐藏，链接导入定义」）：
  *
@@ -62,11 +68,19 @@ export interface ShellToolboxProps {
   className?: string | undefined;
 }
 
-/** 单个工具的外观：20px 图标格，无底色，悬停与开启时提到前景色。 */
+/**
+ * 单个工具的外观：20px 图标格，常态无底色；悬停时亮一块 `bg-card` 底并提到
+ * 前景色，开启态（`aria-pressed`）只提前景色。
+ *
+ * 悬停底比图标外扩 4px（`box-content p-2xs`），再用等量负外边距（`-m-2xs`）
+ * 抵掉——底块有了呼吸，胶囊的尺寸与图标间距仍是 Figma 的 20px / 16px，不因
+ * 加了悬停底而变胖。
+ */
 const TOOL_CLASS = cn(
   interactive,
-  "relative inline-flex size-icon-md shrink-0 items-center justify-center rounded-sm",
-  "text-muted-foreground hover:text-foreground",
+  "relative -m-2xs box-content inline-flex size-icon-md shrink-0 items-center justify-center rounded-md p-2xs",
+  "text-muted-foreground transition-colors duration-fast",
+  "hover:bg-card hover:text-foreground",
   "aria-pressed:text-foreground",
 );
 
@@ -74,7 +88,7 @@ function ToolBadge() {
   return (
     <span
       aria-hidden="true"
-      className="absolute -top-2xs -right-2xs size-2xs rounded-full bg-destructive ring-2 ring-background"
+      className="absolute top-0 right-0 size-2xs rounded-full bg-destructive ring-2 ring-background"
     />
   );
 }
@@ -169,7 +183,8 @@ export function ShellToolbox({
       aria-label={label}
       data-slot="shell-toolbox"
       className={cn(
-        "inline-flex items-center gap-md rounded-lg bg-background px-xs py-2xs",
+        "inline-flex items-center gap-md rounded-lg px-xs py-2xs",
+        "transition-colors duration-fast hover:bg-accent focus-within:bg-accent",
         className,
       )}
     >

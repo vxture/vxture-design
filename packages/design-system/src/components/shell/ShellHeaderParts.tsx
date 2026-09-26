@@ -186,7 +186,10 @@ export interface ShellProductTitleProps {
   name: ReactNode;
   /** 产品类型（正文字体、弱化色），如「数据平台」。 */
   type?: ReactNode;
-  /** 等级徽标，如 `<StatusBadge tone="brand">Pro</StatusBadge>`。 */
+  /**
+   * 等级徽标，如 `<StatusBadge tone="brand" size="sm">Pro</StatusBadge>`。用
+   * `size="sm"`（Figma 46×18 的紧凑角标）：标准尺寸挂在 20px 产品名旁边块头太大。
+   */
   tier?: ReactNode;
   className?: string | undefined;
 }

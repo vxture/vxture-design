@@ -223,8 +223,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">13.4.1</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">10.3.1</td><td><span class="tag t-bad">major</span> 删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）；<span class="mono">ShellHeader</span> 新增 layout / surface（§05p），10.3.1 槽间距统一 8px（§05q）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">13.5.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">10.4.0</td><td><span class="tag t-bad">major</span> 删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）；<span class="mono">ShellHeader</span> 新增 layout / surface（§05p），10.4.0 槽间距统一 8px、<span class="mono">Badge</span> 新增 size（§05q）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.4.0</td><td><span class="tag t-ok">minor</span> 宽松密度重排（§05i）；title / overline 字重 500、新增 code-lg（§05j）</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
@@ -453,7 +453,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">ShellProductTitle</td><td>单产品视角：标识 + 名称 + 类型 + 等级</td></tr>
 </tbody></table></div>
 <div class="note warn"><strong>缺省值不变</strong>：不传 <span class="mono">layout</span> / <span class="mono">surface</span> 时仍是全宽白底 sticky 阴影，现有门户的顶栏观感不变。两种管理工作台以名称区分：租户用户工作台 Workspace Console（分隔线后是当前租户），平台管理工作台 Admin Console（带管理员徽标，分隔线后是当前域）。</div></section>
-<section id="pageheader2"><h2><span class="num">05q</span>四种页面 Header 重排：高度、间距、操作组合<span class="h2-meta">design-ui 10.3.1 / 13.4.1 · patch，观感变化</span></h2><div class="rule"></div>
+<section id="pageheader2"><h2><span class="num">05q</span>四种页面 Header 重排：高度、间距、操作组合<span class="h2-meta">design-ui 10.4.0 / 13.5.0 · minor，观感变化</span></h2><div class="rule"></div>
 <p>照 Figma 09-26 重排（Header_website / Header_console_tenant / Header_console_workforce / Header_product）。<strong>没有 API 变化</strong>，但凡是用了 <span class="mono">ShellHeader</span> 的顶栏，间距都会变。</p>
 <div class="tw"><table>
 <thead><tr><th>改了什么</th><th>之前</th><th>现在</th></tr></thead>
@@ -462,6 +462,8 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">ShellHeaderTitle</td><td>标题无内距，徽标垂直居中</td><td>标题左右 8px；徽标放进 24px 顶端对齐位，读作上标</td></tr>
 <tr><td class="mono">ShellProductTitle tier</td><td>垂直居中</td><td>32px 上标位</td></tr>
 <tr><td class="mono">ShellHeaderDomain</td><td>左右 4px</td><td>无内距，距离由槽间距决定</td></tr>
+<tr><td class="mono">ShellToolbox</td><td>常驻浅灰底（bug）</td><td>常态透明；悬停 / 键盘焦点时整组亮底，指针所在的工具再亮一层</td></tr>
+<tr><td class="mono">Badge size="sm"</td><td>只有一种尺寸（20px）</td><td>新增紧凑档：16px、行高 1、内距收一档；产品等级用它</td></tr>
 </tbody></table></div>
 <div class="note warn"><strong>门户侧要跟着改的拼法</strong>（03-patterns-guide §7.1）：工作台三种高度用缺省 <span class="mono">md</span>（48px），不要再传 <span class="mono">height="xl"</span>，只有官网用 64px；工具箱按有没有账户分两组，访客用主题 / 语言 / 全屏，登录后用帮助 / 通知 / 设置；单产品视角分隔线后改为当前租户（<span class="mono">ShellScopeButton</span>），不再放域名；两种工作台标题都写平台名 vxture.ai，靠管理员徽标区分；官网的注册 / 登录 / 官网按钮用 <span class="mono">size="sm"</span>。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
@@ -505,7 +507,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 13.4.1 · design-tokens 3.4.0 / design-ui 10.3.1 / design-system 13.4.1 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 13.5.0 · design-tokens 3.4.0 / design-ui 10.4.0 / design-system 13.5.0 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

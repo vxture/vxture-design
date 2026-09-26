@@ -5,10 +5,10 @@
 
 ---
 
-## 13.4.1 — 2026-09-26
+## 13.5.0 — 2026-09-26
 
-四种页面 Header 照 Figma 重排（patch：样式对齐，无 API 变化）。跟随
-`@vxture/design-ui@10.3.1`（`ShellHeader` 槽间距统一 8px）。owner 2026-09-26，
+四种页面 Header 照 Figma 重排；`ShellToolbox` 改为常态透明。跟随
+`@vxture/design-ui@10.4.0`（`Badge` 新增 `size`、`ShellHeader` 槽间距统一 8px）。owner 2026-09-26，
 Figma Header_website（2226:10298）/ Header_console_tenant（682:2224）/
 Header_console_workforce（682:2225）/ Header_product（682:2226）。
 
@@ -17,6 +17,11 @@ Header_console_workforce（682:2225）/ Header_product（682:2226）。
 - `ShellProductTitle`：`tier` 同样放进上标位，版位 32px（16px 小徽标抬得更明显）。
 - 工作台两种的标题都改写平台名 vxture.ai（Figma 定稿），两种视角靠管理员徽标与
   分隔线后的内容区分。
+- **`ShellToolbox` 常态透明**（修 bug，owner 2026-09-26）：此前常驻 `bg-background`
+  灰底。现在平时无底；指针进入或键盘焦点落进组内时整组亮 `bg-accent`，指针所在
+  的那个工具再亮一层 `bg-card`。悬停底比图标外扩 4px、以等量负外边距抵掉，胶囊
+  尺寸与图标间距不变；未读圆点改贴悬停底的角。
+- `ShellProductTitle` 的 `tier` 推荐 `<StatusBadge size="sm">`（Figma 46×18 的紧凑角标）。
 - `ShellHeaderDomain`：去掉自带的 `px-2xs`，与竖线的距离由槽间距决定。
 - 03-patterns-guide §7.1 按新稿重写：工作台三种高度 48px（缺省 `md`）、官网 64px；
   工具箱分访客组（主题 / 语言 / 全屏）与账户组（帮助 / 通知 / 设置）；单产品视角
