@@ -19,8 +19,13 @@
  * 视觉语法对齐 admin 页头（workplan §1 V6），2026-08-02 owner 定稿：
  * - icon 裸色无底块、48px（2xl；admin 的 40 不在刻度上，取上档）——顶部与标题
  *   光学对齐（mt-2xs 抵消标题行高的上半距），下部随内容自然。
- * - 标题 20px（title-xl）而非展示体 heading——控制台页头是工作界面的路标。
+ * - 标题用**页头文本** `heading-3`（24px 品牌体，owner 2026-09-26 定，取代 2026-08-02 的
+ *   title-xl 20）：页头是标题阶梯的第 1 级（level 1 = h1），`title` 族的 18 / 16 / 14
+ *   整族留给 `SectionHeader` 的 level 2–4，每一级字号都不同。原先页头也用 title 族，
+ *   板块只剩三档，第四级只能去别的族借一个同值的档，三、四级因此看不出差别。
  * - 无 eyebrow：页头只有标题与描述两行（原 eyebrow 行随定稿删除）。
+ * - 底部虚线下边框，缺省开、可关（`divider={false}`）——与 `SectionHeader` 每一级
+ *   同一条线（owner 2026-09-26：每级都有下划线，可显隐）。
  * - 右侧操作区底沿与描述行对齐（self-end），不与标题顶平——按钮属于"接下来做
  *   什么"，挂在页头的收束线上。
  */
@@ -28,6 +33,7 @@
 import * as React from "react";
 import { Icon } from "../../../icons";
 import type { IconName, IconSize } from "../../../icons";
+import { hairline } from "../../../styles/recipes";
 import { cn } from "../../../utils/cn";
 
 export interface PageHeaderProps extends Omit<
@@ -43,6 +49,8 @@ export interface PageHeaderProps extends Omit<
   readonly action?: React.ReactNode;
   /** 标题行内的附加物，通常是 StatusBadge。 */
   readonly secondary?: React.ReactNode;
+  /** 虚线下边框，缺省开；`false` 关掉。 */
+  readonly divider?: boolean;
 }
 
 const ViewHeader = React.forwardRef<HTMLElement, PageHeaderProps>(
@@ -56,6 +64,7 @@ const ViewHeader = React.forwardRef<HTMLElement, PageHeaderProps>(
       description,
       action,
       secondary,
+      divider = true,
       ...props
     },
     ref,
@@ -63,7 +72,11 @@ const ViewHeader = React.forwardRef<HTMLElement, PageHeaderProps>(
     return (
       <section
         ref={ref}
-        className={cn("flex flex-wrap items-start gap-xl pb-lg", className)}
+        className={cn(
+          "flex flex-wrap items-start gap-xl pb-lg",
+          divider && ["border-b", hairline.field],
+          className,
+        )}
         {...props}
       >
         {icon ? (
@@ -76,7 +89,11 @@ const ViewHeader = React.forwardRef<HTMLElement, PageHeaderProps>(
         ) : null}
         <div className="flex min-w-0 flex-1 flex-col gap-sm">
           <div className="flex flex-wrap items-center gap-sm">
-            <h1 className="text-title-xl text-foreground">{title}</h1>
+            {/* font-brand 必须单独写：`text-heading-3` 只带字号 / 行高 / 字距 / 字重，
+                不带字体族，漏了就落回正文体（同 ShellHeaderTitle）。 */}
+            <h1 className="font-brand text-heading-3 text-foreground">
+              {title}
+            </h1>
             {secondary}
           </div>
           {description ? (

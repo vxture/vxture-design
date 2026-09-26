@@ -5,6 +5,33 @@
 
 ---
 
+## 11.0.0 — 2026-09-26
+
+**破坏性**：标题阶梯重排——level 的数字就是 h 的数字，页头改用页头文本（major）。
+owner 2026-09-26：「四级标题样式混乱」「level 与 Hn 错位」「ViewHeader 应该用
+header 文本」「每级都有下划线（可显隐）」。
+
+| level                     | 之前               | 现在                                    |
+| ------------------------- | ------------------ | --------------------------------------- |
+| `ViewHeader`              | h1 · `title-xl` 20 | **level 1**：h1 · `heading-3` 24 品牌体 |
+| `SectionHeader` 1         | h1 · `title-lg` 18 | **类型错误（已删除）**                  |
+| `SectionHeader` 2（缺省） | h2 · `title-md` 16 | h2 · **`title-lg` 18**                  |
+| `SectionHeader` 3         | h3 · `title-sm` 14 | h3 · **`title-md` 16**                  |
+| `SectionHeader` 4         | h4 · `label-md` 14 | h4 · `title-sm` 14                      |
+
+- `SectionHeaderLevel` 改为 `2 | 3 | 4`。根因在 token：原先页头也用 `title` 族，
+  板块只剩三档，第四级借 `label-md`，与 `title-sm` 取值完全相同，三、四级看不出
+  差别。页头改用 `heading-3`（另挂 `font-brand`），`title` 族三档整族留给板块。
+- **缺省（不传 level）的板块标题由 16px 变为 18px**，`Section` 同。要保持 16px
+  传 `level={3}`；原 `level={3}` 要保持 14px 改传 `level={4}`。
+- **每一级都带虚线下边框，可关**：`SectionHeader` 的 `divider` 缺省由「只有
+  level 2」改为每一级都开，距离随档收（`pb-md` / `pb-sm` / `pb-xs`）；`ViewHeader`
+  新增 `divider`（缺省开）。不要线的地方传 `divider={false}`。
+- 间距随层级收：图标与标题的间距 level 2 / 3 / 4 为 `gap-md` / `gap-sm` / `gap-xs`
+  （原一律 `gap-lg`）；level 2 描述 `body-md`。图标去掉 `mt-2xs`，顶端对齐标题首行。
+- `PanelCard` 标题改用 level 4（h4 · `title-sm`，字号不变）。
+- 迁移见发版说明 §02a。
+
 ## 10.4.0 — 2026-09-26
 
 `Badge` 新增 `size`（minor：新增 cva 变体，缺省不变）；`ShellHeader` 槽内、槽间

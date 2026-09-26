@@ -5,11 +5,21 @@
  * @package @vxture/design-preview
  *
  * ⚠ 这里的东西**不是设计系统的一部分**，只服务于这张预览页：分组标题、示例行、
- *   模式轴开关。它们刻意只用 DS 已有的工具类拼，不引入任何新样式来源——预览面
+ *   模式轴开关。它们刻意只用 DS 已有的件与工具类拼，不引入任何新样式来源——预览面
  *   一旦有自己的皮，看到的就不再是 DS 的真实产出了。
+ *
+ * 标题阶梯同样**直接用 DS 的结构件**（owner 2026-09-26：预览面的标题各写各的，
+ * 页标题用了营销页的展示体、分组与条目两个 h2 字号倒挂）。预览面自己就是 DS
+ * 标题阶梯的第一个消费方：
+ *
+ *   页（大类）   ViewHeader          level 1 · h1 · heading-3
+ *   分组 / 基础  Section level 2     h2 · title-lg
+ *   条目（组件） Section level 3     h3 · title-md
+ *   示例行说明   Row label           不是标题，label-sm 弱化色
  */
 
 import * as React from "react";
+import { Section as DsSection } from "@vxture/design-system";
 
 export const DENSITIES = ["compact", "default", "comfortable"] as const;
 export const FONT_SIZES = ["small", "default", "large"] as const;
@@ -31,23 +41,41 @@ export function useRootClass(
 }
 
 export interface SectionProps {
-  readonly id: string;
+  readonly id?: string;
   readonly title: string;
+  /** 2：分组 / 基础页的板块；3（缺省）：一个组件条目。数字即 h 的数字。 */
+  readonly level?: 2 | 3;
   readonly note?: React.ReactNode;
   readonly children: React.ReactNode;
 }
 
-export function Section({ id, title, note, children }: SectionProps) {
+/**
+ * DS `Section` 加一个锚点 id（侧栏跳转用）。子项间距按层级给：分组之内是一条条
+ * 组件，隔得开些（gap-xl）；条目之内是一行行示例（gap-lg）。
+ */
+export function Section({
+  id,
+  title,
+  level = 3,
+  note,
+  children,
+}: SectionProps) {
   return (
-    <section id={id} className="flex scroll-mt-xl flex-col gap-md">
-      <div className="flex flex-col gap-2xs border-b border-border pb-sm">
-        <h2 className="text-title-sm text-foreground">{title}</h2>
-        {note ? (
-          <p className="text-body-sm text-muted-foreground">{note}</p>
-        ) : null}
+    <DsSection
+      {...(id ? { id } : {})}
+      level={level}
+      title={title}
+      description={note}
+      className="scroll-mt-xl"
+    >
+      <div
+        className={
+          level === 2 ? "flex flex-col gap-xl" : "flex flex-col gap-lg"
+        }
+      >
+        {children}
       </div>
-      <div className="flex flex-col gap-lg">{children}</div>
-    </section>
+    </DsSection>
   );
 }
 

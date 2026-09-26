@@ -24,13 +24,13 @@ import { ViewHeader } from "../src/components/composite/structure/ViewHeader";
 describe("SectionHeader · level 同时定语义元素与排版角色", () => {
   /**
    * 层级不是「多大的字」，是**语义元素**：读屏器靠 h1–h4 建立文档大纲，
-   * 用对了字号但用错了标签，视觉上一样、结构上是平的。
+   * 用对了字号但用错了标签，视觉上一样、结构上是平的。level 的数字就是 h 的
+   * 数字；第 1 级（h1）归 ViewHeader（owner 2026-09-26）。
    */
   it.each([
-    [1, "h1", "text-title-lg"],
-    [2, "h2", "text-title-md"],
-    [3, "h3", "text-title-sm"],
-    [4, "h4", "text-label-md"],
+    [2, "h2", "text-title-lg"],
+    [3, "h3", "text-title-md"],
+    [4, "h4", "text-title-sm"],
   ] as const)("level=%i → <%s> + %s", (level, tag, type) => {
     const { container } = render(<SectionHeader level={level} title="标题" />);
     const el = container.querySelector(tag) as HTMLElement;
@@ -39,45 +39,36 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
     expect(el.className).toContain(type);
   });
 
-  it("不给 level 时是 2", () => {
+  it("不给 level 时是 2（h2）", () => {
     const { container } = render(<SectionHeader title="标题" />);
     expect(container.querySelector("h2")).not.toBeNull();
   });
 
   /**
-   * **虚线的缺省跟着 level 走**：板块开始的记号只属于板块标题（level 2），
-   * 三四级标题挂虚线会把一段内容切成好几块，读起来像并列的板块而不是同一块的
-   * 子层。虚线分字段、实线开区块（V4）。
+   * **每一级都带虚线下边框，可关**（owner 2026-09-26：「每级应该都有下划线
+   * （可显隐）」，取代「只有 level 2 有」）。虚线与标题的距离随档收。
    */
-  it("虚线缺省：只有 level 2 有", () => {
-    const two = render(<SectionHeader title="标题" />);
-    expect(
-      (two.container.firstElementChild as HTMLElement).className,
-    ).toContain("border-b");
-    two.unmount();
-
-    for (const level of [1, 3, 4] as const) {
-      const other = render(<SectionHeader level={level} title="标题" />);
-      expect(
-        (other.container.firstElementChild as HTMLElement).className,
-      ).not.toContain("border-b");
-      other.unmount();
-    }
+  it.each([
+    [2, "pb-md"],
+    [3, "pb-sm"],
+    [4, "pb-xs"],
+  ] as const)("level %i 缺省带虚线，距离 %s", (level, pad) => {
+    const { container } = render(<SectionHeader level={level} title="标题" />);
+    const cls = (container.firstElementChild as HTMLElement).className.split(
+      " ",
+    );
+    expect(cls).toEqual(
+      expect.arrayContaining(["border-b", "border-dashed", pad]),
+    );
   });
 
-  it("divider 可两头覆盖缺省", () => {
-    const on = render(<SectionHeader level={3} title="标题" divider />);
-    expect((on.container.firstElementChild as HTMLElement).className).toContain(
-      "border-b",
+  it.each([2, 3, 4] as const)("level %i 给 divider={false} 就关掉", (level) => {
+    const { container } = render(
+      <SectionHeader level={level} title="标题" divider={false} />,
     );
-    on.unmount();
-
-    const off = render(
-      <SectionHeader level={2} title="标题" divider={false} />,
-    );
-    expect(
-      (off.container.firstElementChild as HTMLElement).className,
-    ).not.toContain("border-b");
+    const cls = (container.firstElementChild as HTMLElement).className;
+    expect(cls).not.toContain("border-b");
+    expect(cls).not.toMatch(/\bpb-/);
   });
 
   /**
@@ -93,18 +84,18 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
         action={<button>详情</button>}
       />,
     );
-    const h2 = container.querySelector("h2") as HTMLElement;
+    const h = container.querySelector("h2") as HTMLElement;
     // titleSuffix 与标题同在一个内联容器里
-    expect(h2.parentElement?.textContent).toContain("口径");
+    expect(h.parentElement?.textContent).toContain("口径");
     // action 不在
-    expect(h2.parentElement?.textContent).not.toContain("详情");
+    expect(h.parentElement?.textContent).not.toContain("详情");
     expect(screen.getByRole("button", { name: "详情" })).toBeInTheDocument();
   });
 
   it("不给 titleSuffix 时标题不套额外一层", () => {
     const { container } = render(<SectionHeader title="标题" />);
-    const h2 = container.querySelector("h2") as HTMLElement;
-    expect(h2.parentElement?.tagName).not.toBe("SPAN");
+    const h = container.querySelector("h2") as HTMLElement;
+    expect(h.parentElement?.tagName).not.toBe("SPAN");
   });
 
   /**
@@ -120,8 +111,9 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
   it("description 与 action 不给就不渲染那一层", () => {
     const { container } = render(<SectionHeader title="标题" />);
     const root = container.firstElementChild as HTMLElement;
-    // 只剩中间那个标题块，没有图标层、没有 action 层
+    // 只剩标题块，没有 action 层；标题块里也没有图标层
     expect(root.children).toHaveLength(1);
+    expect(root.firstElementChild!.children).toHaveLength(1);
     expect(container.querySelector("p")).toBeNull();
   });
 
@@ -148,7 +140,9 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
     const { container } = render(
       <SectionHeader title="标题" icon="settings" />,
     );
-    const wrap = container.firstElementChild?.firstElementChild as HTMLElement;
+    // 根 → 标题块（图标 + 文字）→ 图标层
+    const wrap = container.firstElementChild?.firstElementChild
+      ?.firstElementChild as HTMLElement;
     expect(wrap.querySelector("svg")).not.toBeNull();
     expect(wrap).toHaveAttribute("aria-hidden", "true");
   });
@@ -210,16 +204,16 @@ describe("PanelCard · 语气只染顶缘", () => {
     ).toBe(brandCls);
   });
 
-  /** 头部复用 `SectionHeader` level 3，不自己再渲染一遍 h3。 */
-  it("标题是 h3，并带虚线", () => {
+  /** 头部复用 `SectionHeader` level 4（h4 · title-sm），不自己再渲染一遍标题。 */
+  it("标题是 h4，并带虚线", () => {
     const { container } = render(
       <PanelCard title="产品排行">
         <p>内容</p>
       </PanelCard>,
     );
-    const h3 = container.querySelector("h3") as HTMLElement;
-    expect(h3.textContent).toBe("产品排行");
-    expect(h3.closest("div[class*='border-b']") as HTMLElement).not.toBeNull();
+    const h4 = container.querySelector("h4") as HTMLElement;
+    expect(h4.textContent).toBe("产品排行");
+    expect(h4.closest("div[class*='border-b']") as HTMLElement).not.toBeNull();
   });
 
   it("四个可选槽都透传得下去", () => {
@@ -367,6 +361,32 @@ describe("ViewHeader · 页面级标题", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "租户详情" }),
     ).toBeInTheDocument();
+  });
+
+  /**
+   * 页头用页头文本 heading-3（owner 2026-09-26），title 族整族留给板块。
+   * font-brand 必须单独挂：text-heading-3 不带字体族，漏了落回正文体。
+   */
+  it("标题用 heading-3 + 品牌体，不用 title 族", () => {
+    render(<ViewHeader title="租户详情" />);
+    const cls = screen.getByRole("heading", { level: 1 }).className.split(" ");
+    expect(cls).toEqual(
+      expect.arrayContaining(["text-heading-3", "font-brand"]),
+    );
+    expect(cls.some((c) => c.startsWith("text-title-"))).toBe(false);
+  });
+
+  /** 页头与 SectionHeader 每一级同一条虚线，缺省开、可关。 */
+  it("缺省带虚线下边框，divider={false} 关掉", () => {
+    const on = render(<ViewHeader title="租户详情" />);
+    expect(
+      (on.container.firstElementChild as HTMLElement).className.split(" "),
+    ).toEqual(expect.arrayContaining(["border-b", "border-dashed"]));
+    on.unmount();
+    const off = render(<ViewHeader title="租户详情" divider={false} />);
+    expect(
+      (off.container.firstElementChild as HTMLElement).className,
+    ).not.toContain("border-b");
   });
 
   it("三个可选槽不给就不渲染那一层", () => {

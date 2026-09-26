@@ -5,6 +5,14 @@
 
 ---
 
+## 14.0.0 — 2026-09-26
+
+跟随 `@vxture/design-ui@11.0.0`（major：标题阶梯重排，level 即 h，页头改用 heading-3）。
+伞包自身无 API 变化。
+
+- 02-visual-spec §7「整页标题阶梯」重写：level 即 h，逐档列出元素 / 排版 / 图标 / 间距 / 描述 / 虚线；判据写明页头为何改用 heading-3。
+- preview 的标题阶梯改用 DS 结构件：页头 `ViewHeader`（level 1，原为手写的营销页展示体 `heading-2`）、分组与基础页板块 `Section level 2`、组件条目 `Section level 3`（原为手写的两个 h2，字号倒挂）。「结构件族」示例按 level 1–4 重排，并入原「Section tone」条目。
+
 ## 13.6.0 — 2026-09-26
 
 新增 `ShellHeaderTools`：顶栏标准工具箱（minor：新增件）。`@vxture/design-ui`
