@@ -210,7 +210,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 .theme-btn:hover { color: var(--text); }
 </style>
 <div class="shell" id="top">
-<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking13">必须改的：删 auto</a><a href="#breaking12">必须改的：列对齐</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#titleweight">字重 500 与 code-lg</a><a href="#userpanel">用户面板本体</a><a href="#pagination">分页改图标</a><a href="#fieldvalue">表单只读展示</a><a href="#inputotp">验证码形态轴</a><a href="#toolbox">工具箱</a><a href="#pageheader">四种页面 Header</a><a href="#pageheader2">Header 重排</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
+<nav class="rail"><div class="rail-brand">Vxture Design</div><div class="rail-title">发版说明</div><div class="rail-group">文档集</div><a class="doc" href="https://claude.ai/code/artifact/c25b00bf-bf4e-42f8-bda9-7f70815d5383">· 系统架构</a><a class="doc" href="https://claude.ai/code/artifact/021f4ed6-0692-42a1-8466-f88528c5b95f">· 能力登记册</a><a class="doc" href="https://claude.ai/code/artifact/ab98bc86-c28a-49a7-ba66-dd25710ebc72">· 审计报告</a><a class="doc cur" href="#top">▸ 发版说明</a><a class="doc" href="https://claude.ai/code/artifact/878ce1ef-92e4-445e-a44d-ad8f777fdf1f">· 接口文档</a><a class="doc" href="https://claude.ai/code/artifact/ea75f2af-689c-4b69-8ffa-2f8bf771951d">· 设计语言</a><div class="rail-group">本页</div><a href="#install">现在该装什么</a><a href="#breaking13">必须改的：删 auto</a><a href="#breaking12">必须改的：列对齐</a><a href="#breaking10">还没迁完 10.0.0 的</a><a href="#breaking9">还没迁完 9.0.0 的</a><a href="#patches">不用改，但行为变了</a><a href="#actionmenu">行操作菜单</a><a href="#gutter">栏间沟档</a><a href="#filetrigger">选文件</a><a href="#fixedcol">表格固定列</a><a href="#sidebarfoot">侧栏底部块</a><a href="#legalexternal">法务页脚外链</a><a href="#comfortable">宽松密度拉开</a><a href="#titleweight">字重 500 与 code-lg</a><a href="#userpanel">用户面板本体</a><a href="#pagination">分页改图标</a><a href="#fieldvalue">表单只读展示</a><a href="#inputotp">验证码形态轴</a><a href="#toolbox">工具箱</a><a href="#pageheader">四种页面 Header</a><a href="#pageheader2">Header 重排</a><a href="#headertools">顶栏标准工具箱</a><a href="#check">怎么确认迁完了</a><a href="#notmine">报错查到 DS 头上时</a></nav>
 <main class="main">
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
@@ -223,7 +223,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">13.5.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">13.6.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
 <tr><td class="mono">@vxture/design-ui</td><td class="mono">10.4.0</td><td><span class="tag t-bad">major</span> 删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）；<span class="mono">ShellHeader</span> 新增 layout / surface（§05p），10.4.0 槽间距统一 8px、<span class="mono">Badge</span> 新增 size（§05q）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.4.0</td><td><span class="tag t-ok">minor</span> 宽松密度重排（§05i）；title / overline 字重 500、新增 code-lg（§05j）</td></tr>
 </tbody></table></div>
@@ -466,6 +466,19 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <tr><td class="mono">Badge size="sm"</td><td>只有一种尺寸（20px）</td><td>新增紧凑档：16px、行高 1、内距收一档；产品等级用它</td></tr>
 </tbody></table></div>
 <div class="note warn"><strong>门户侧要跟着改的拼法</strong>（03-patterns-guide §7.1）：工作台三种高度用缺省 <span class="mono">md</span>（48px），不要再传 <span class="mono">height="xl"</span>，只有官网用 64px；工具箱按有没有账户分两组，访客用主题 / 语言 / 全屏，登录后用帮助 / 通知 / 设置；单产品视角分隔线后改为当前租户（<span class="mono">ShellScopeButton</span>），不再放域名；两种工作台标题都写平台名 vxture.ai，靠管理员徽标区分；官网的注册 / 登录 / 官网按钮用 <span class="mono">size="sm"</span>。</div></section>
+<section id="headertools"><h2><span class="num">05r</span>顶栏标准工具箱 ShellHeaderTools：六件、固定顺序、交互接好<span class="h2-meta">13.6.0 · minor，新增件</span></h2><div class="rule"></div>
+<p>顶栏右侧工具改用 <span class="mono">ShellHeaderTools</span>。顺序由组件固定，门户只决定给哪几件：访客给前三件，登录后给全部六件。</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>工具</th><th>交互</th><th>prop</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>主题</td><td>点击直接切换</td><td class="mono">theme</td></tr>
+<tr><td>2</td><td>语言</td><td>弹出面板选择</td><td class="mono">locale</td></tr>
+<tr><td>3</td><td>全屏</td><td>直接切换（需 FullscreenProvider）</td><td class="mono">fullscreen</td></tr>
+<tr><td>4</td><td>帮助</td><td>新标签页，定位到当前页面的帮助主题</td><td class="mono">help</td></tr>
+<tr><td>5</td><td>消息</td><td>侧边抽屉面板，未读小圆点</td><td class="mono">notifications</td></tr>
+<tr><td>6</td><td>配置</td><td>跳转到后台配置</td><td class="mono">settings</td></tr>
+</tbody></table></div>
+<div class="note warn"><strong>门户要改的</strong>：之前用 <span class="mono">ShellToolbox items</span> 自己排的顶栏工具，换成 <span class="mono">ShellHeaderTools</span>。帮助的 <span class="mono">href</span> 要按当前路由算出对应主题，不要一律指向帮助中心首页。另新增 <span class="mono">ShellToolboxLink</span>（工具箱里的链接，外观与按钮同一份）。</div></section>
 <section id="check"><h2><span class="num">06</span>怎么确认自己迁完了<span class="h2-meta">一条 grep</span></h2><div class="rule"></div>
 <p>6.0 之前需要两条 grep，其中一条是<strong>纯人工纪律、没有任何强制力</strong>——正是这套契约一开始要消灭的东西。现在回到一条：</p>
 <pre class="code"><code>grep -rn confirmExempt portals/</code></pre>
@@ -507,7 +520,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 13.5.0 · design-tokens 3.4.0 / design-ui 10.4.0 / design-system 13.5.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 13.6.0 · design-tokens 3.4.0 / design-ui 10.4.0 / design-system 13.6.0 · 2026-09-20</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

@@ -1,6 +1,6 @@
 # 04 Token 契约（T2 全族）
 
-适用版本：**DS 13.5.0** ｜ 更新：2026-09-25 ｜ 事实来源：`@vxture/design-tokens` 的 `styles/semantic/*`（生成物，本文与之核对）
+适用版本：**DS 13.6.0** ｜ 更新：2026-09-25 ｜ 事实来源：`@vxture/design-tokens` 的 `styles/semantic/*`（生成物，本文与之核对）
 
 T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md) §2）。每族都产出真工具类，取值一律走工具类。
 

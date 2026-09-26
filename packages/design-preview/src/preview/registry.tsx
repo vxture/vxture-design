@@ -263,12 +263,13 @@ import {
   ShellHeaderDomain,
   ShellHeaderMark,
   ShellHeaderTitle,
+  ShellHeaderTools,
   ShellProductTitle,
   ShellScopeButton,
   ShellSearchBox,
   ShellToolbox,
   ShellToolboxButton,
-  type ShellToolboxItem,
+  ShellToolboxLink,
   ShellSidebarFrame,
   ShellSidebarNav,
   ShellViewport,
@@ -2681,9 +2682,10 @@ export const ENTRIES: readonly Entry[] = [
       "ShellHeaderDivider",
       "ShellHeaderDomain",
       "ShellProductTitle",
+      "ShellHeaderTools",
     ],
     deviation:
-      "四种页面视角的顶栏（owner 2026-09-25，Figma Header_website 2226:10298 / Header_console 682:2224 / Header_admin 682:2225 / Header_product 682:2226）。不做成四个写死的组件：都是 ShellHeader 三槽里拼零件，区别在放哪些零件。官网 layout=centered + surface=transparent；三种工作台全宽 + surface=background。与 Figma 的偏差：官网内容宽取 max-w-page-2xl（1536px，Figma 1600 不在容器刻度上）；槽内间距沿用 ShellHeader 既有值（Figma 统一 8px）；产品标识用 DS 示例图 assets/examples/product-logo.png（Y 字形），智能体图标是 Varda 的 32px 动图（原件归产品，预览里复制一份），均由产品侧换成自己的",
+      "四种页面视角的顶栏（owner 2026-09-25，09-26 重排；Figma Header_website 2226:10298 / Header_console_tenant 682:2224 / Header_console_workforce 682:2225 / Header_product 682:2226）。不做成四个写死的组件：都是 ShellHeader 三槽里拼零件，区别在放哪些零件。官网 layout=centered + surface=transparent + 64px；三种工作台全宽 + surface=background + 48px。右侧工具用 ShellHeaderTools：主题 语言 全屏 帮助 消息 配置，顺序与交互固定，访客只给前三件。与 Figma 的偏差：官网内容宽取 max-w-page-2xl（1536px，Figma 1600 不在容器刻度上）；搜索框用 ShellSearchBox（32px）而非 20px 的 Legacy Search；产品标识用 DS 示例图 assets/examples/product-logo.png，智能体图标是 Varda 的 32px 动图，均由产品侧换成自己的",
     render: () => <PageHeadersDemo />,
   },
   {
@@ -3011,8 +3013,8 @@ const TOOLBOX_TOOLS = [
   { key: "locale", icon: "globe", label: "语言" },
   { key: "fullscreen", icon: "corners-out", label: "全屏" },
   { key: "help", icon: "help", label: "帮助" },
-  { key: "notifications", icon: "bell", label: "通知" },
-  { key: "settings", icon: "settings", label: "设置" },
+  { key: "notifications", icon: "bell", label: "消息" },
+  { key: "settings", icon: "settings", label: "配置" },
 ] as const;
 
 function ShellToolboxDemo() {
@@ -3022,33 +3024,28 @@ function ShellToolboxDemo() {
   const [fullscreen, setFullscreen] = React.useState(false);
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
 
-  const themeIcon: ShellToolboxItem["icon"] =
-    theme === "light" ? "sun" : "moon";
-  /* 按定义导入：去向有两种——帮助 / 设置是链接，其余是回调。 */
-  const items: ShellToolboxItem[] = [
-    {
-      ...TOOLBOX_TOOLS[0],
-      icon: themeIcon,
-      onClick: () => setTheme((t) => (t === "light" ? "dark" : "light")),
-    },
-    {
-      ...TOOLBOX_TOOLS[2],
-      active: fullscreen,
-      onClick: () => setFullscreen((v) => !v),
-    },
-    { ...TOOLBOX_TOOLS[3], href: "#help" },
-    { ...TOOLBOX_TOOLS[4], badge: true, onClick: () => {} },
-    { ...TOOLBOX_TOOLS[5], href: "#settings" },
-  ].map((item) => ({ ...item, hidden: !shown[item.key] }));
+  const on = (key: string) => shown[key] ?? false;
 
+  /* 标准顺序：主题 语言 全屏 帮助 消息 配置（owner 2026-09-26）。这里用底层的
+     组合式逐件摆出来，演示 ShellToolboxButton / ShellToolboxLink；产品里直接用
+     ShellHeaderTools，顺序与交互由它固定。 */
   return (
     <div className="flex flex-col gap-lg">
       <Row
-        label="照 Figma HeaderToolbar（123:43）：定义导入 + 语言用组合接弹层"
+        label="照 Figma HeaderToolbar（123:43）：组合式，按标准顺序；语言接弹层"
         stack
       >
-        <ShellToolbox label="工具" items={items}>
-          {shown["locale"] ? (
+        <ShellToolbox label="工具">
+          {on("theme") ? (
+            <ShellToolboxButton
+              icon={theme === "light" ? "sun" : "moon"}
+              label={theme === "light" ? "切到暗色" : "切到亮色"}
+              onClick={() =>
+                setTheme((t) => (t === "light" ? "dark" : "light"))
+              }
+            />
+          ) : null}
+          {on("locale") ? (
             <Popover>
               <PopoverTrigger asChild>
                 <ShellToolboxButton icon="globe" label="语言" />
@@ -3061,6 +3058,23 @@ function ShellToolboxDemo() {
                 />
               </PopoverContent>
             </Popover>
+          ) : null}
+          {on("fullscreen") ? (
+            <ShellToolboxButton
+              icon="corners-out"
+              label="全屏"
+              active={fullscreen}
+              onClick={() => setFullscreen((v) => !v)}
+            />
+          ) : null}
+          {on("help") ? (
+            <ShellToolboxLink icon="help" label="帮助" href="#help" newTab />
+          ) : null}
+          {on("notifications") ? (
+            <ShellToolboxButton icon="bell" label="消息" badge />
+          ) : null}
+          {on("settings") ? (
+            <ShellToolboxLink icon="settings" label="配置" href="#settings" />
           ) : null}
         </ShellToolbox>
       </Row>
@@ -3088,24 +3102,45 @@ function ShellToolboxDemo() {
 }
 
 /**
- * 官网用的工具（Figma Header_website 2226:10298 未登录 / 产品页）：主题、语言、
- * 全屏——访客还没有账户，帮助 / 通知 / 设置对他没有意义。
+ * 顶栏标准工具箱的示例数据（owner 2026-09-26：主题 语言 全屏 帮助 消息 配置，
+ * 顺序与交互由 ShellHeaderTools 固定）。访客（官网未登录 / 产品页）只给前三件；
+ * 登录后给全部六件。
  */
-const WEBSITE_TOOLS: ShellToolboxItem[] = [
-  { key: "theme", icon: "sun", label: "主题", onClick: () => {} },
-  { key: "locale", icon: "globe", label: "语言", onClick: () => {} },
-  { key: "fullscreen", icon: "corners-out", label: "全屏", onClick: () => {} },
-];
-
-/**
- * 登录后的工具（工作台三种 + 官网已登录）：帮助、通知、设置。主题与语言收进
- * 头像面板的偏好设置，不在顶栏重复（Figma 09-26 重排）。
- */
-const ACCOUNT_TOOLS: ShellToolboxItem[] = [
-  { key: "help", icon: "help", label: "帮助", href: "#help" },
-  { key: "notifications", icon: "bell", label: "通知", onClick: () => {} },
-  { key: "settings", icon: "settings", label: "设置", href: "#settings" },
-];
+function useHeaderTools(scope: "visitor" | "account") {
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+  const [locale, setLocale] = React.useState("zh-CN");
+  const visitor = {
+    theme: {
+      current: theme,
+      onChange: setTheme,
+      toDarkLabel: "切到暗色",
+      toLightLabel: "切到亮色",
+    },
+    locale: {
+      current: locale,
+      options: PREVIEW_LOCALES,
+      onChange: setLocale,
+      label: "语言",
+    },
+    fullscreen: { enterLabel: "全屏", exitLabel: "退出全屏" },
+  };
+  if (scope === "visitor") return visitor;
+  return {
+    ...visitor,
+    // 帮助去向按当前页算：这里演示「订单列表页」对应的帮助主题。
+    help: { label: "帮助", href: "#help/orders" },
+    notifications: {
+      label: "消息",
+      unread: true,
+      children: (
+        <p className="text-body-sm text-muted-foreground">
+          消息列表由产品给，这里只演示抽屉。
+        </p>
+      ),
+    },
+    settings: { label: "配置", href: "#admin/settings" },
+  };
+}
 
 const HEADER_LAUNCHER_ITEMS = [
   { key: "ops", icon: "workspace" as const, label: "运营业务域", active: true },
@@ -3119,6 +3154,7 @@ function ConsoleHeaderTrailing({
   userPanel: React.ComponentProps<typeof ShellUserMenu>;
 }) {
   const [query, setQuery] = React.useState("");
+  const tools = useHeaderTools("account");
   return (
     <>
       <div className="w-media-3xl">
@@ -3132,7 +3168,7 @@ function ConsoleHeaderTrailing({
       </div>
       {/* 智能体图标由产品侧提供（Varda 的 32px 动图）。 */}
       <ShellAgentButton iconSrc={aiAgentIcon.src} label="智能助手" />
-      <ShellToolbox label="工具" items={ACCOUNT_TOOLS} />
+      <ShellHeaderTools label="工具" {...tools} />
       <ShellUserMenu {...userPanel} />
     </>
   );
@@ -3151,163 +3187,167 @@ function TenantScope() {
  */
 function PageHeadersDemo() {
   const { userPanel } = useFigmaUserPanel();
+  const visitorTools = useHeaderTools("visitor");
+  const accountTools = useHeaderTools("account");
   return (
-    <div className="flex w-full flex-col gap-xl">
-      <Row
-        label="1 · 官网（64px）：内容居中限宽、无底色；未登录（注册 / 登录）"
-        stack
-      >
-        <ShellHeader
-          layout="centered"
-          surface="transparent"
-          height="xl"
-          leading={
-            <>
-              <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
-            </>
-          }
-          trailing={
-            <>
-              <ShellToolbox label="工具" items={WEBSITE_TOOLS} />
-              <Button variant="ghost" size="sm">
-                注册
-              </Button>
-              <Button size="sm">登录</Button>
-            </>
-          }
-        />
-      </Row>
-      <Row
-        label="1 · 官网：产品页（站名后接产品标识 / 名称 / 类型，右侧回官网）"
-        stack
-      >
-        <ShellHeader
-          layout="centered"
-          surface="transparent"
-          height="xl"
-          leading={
-            <>
-              <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
-              <ShellHeaderDivider />
-              <ShellProductTitle
-                logoSrc={productLogo.src}
-                name="产品"
-                type="产品类型"
-              />
-            </>
-          }
-          trailing={
-            <>
-              <ShellToolbox label="工具" items={WEBSITE_TOOLS} />
-              <Button size="sm">官网</Button>
-            </>
-          }
-        />
-      </Row>
-      <Row label="1 · 官网：已登录（帮助 / 通知 / 设置 + 头像）" stack>
-        <ShellHeader
-          layout="centered"
-          surface="transparent"
-          height="xl"
-          leading={
-            <>
-              <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
-            </>
-          }
-          trailing={
-            <>
-              <ShellToolbox label="工具" items={ACCOUNT_TOOLS} />
-              <ShellUserMenu {...userPanel} />
-            </>
-          }
-        />
-      </Row>
+    <FullscreenProvider>
+      <div className="flex w-full flex-col gap-xl">
+        <Row
+          label="1 · 官网（64px）：内容居中限宽、无底色；未登录（注册 / 登录）"
+          stack
+        >
+          <ShellHeader
+            layout="centered"
+            surface="transparent"
+            height="xl"
+            leading={
+              <>
+                <ShellHeaderMark src={brandMark.src} href="#home" />
+                <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+              </>
+            }
+            trailing={
+              <>
+                <ShellHeaderTools label="工具" {...visitorTools} />
+                <Button variant="ghost" size="sm">
+                  注册
+                </Button>
+                <Button size="sm">登录</Button>
+              </>
+            }
+          />
+        </Row>
+        <Row
+          label="1 · 官网：产品页（站名后接产品标识 / 名称 / 类型，右侧回官网）"
+          stack
+        >
+          <ShellHeader
+            layout="centered"
+            surface="transparent"
+            height="xl"
+            leading={
+              <>
+                <ShellHeaderMark src={brandMark.src} href="#home" />
+                <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+                <ShellHeaderDivider />
+                <ShellProductTitle
+                  logoSrc={productLogo.src}
+                  name="产品"
+                  type="产品类型"
+                />
+              </>
+            }
+            trailing={
+              <>
+                <ShellHeaderTools label="工具" {...visitorTools} />
+                <Button size="sm">官网</Button>
+              </>
+            }
+          />
+        </Row>
+        <Row label="1 · 官网：已登录（帮助 / 通知 / 设置 + 头像）" stack>
+          <ShellHeader
+            layout="centered"
+            surface="transparent"
+            height="xl"
+            leading={
+              <>
+                <ShellHeaderMark src={brandMark.src} href="#home" />
+                <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+              </>
+            }
+            trailing={
+              <>
+                <ShellHeaderTools label="工具" {...accountTools} />
+                <ShellUserMenu {...userPanel} />
+              </>
+            }
+          />
+        </Row>
 
-      <Row label="2 · 租户用户工作台（48px）：全宽；平台名 + 当前租户" stack>
-        <ShellHeader
-          surface="background"
-          leading={
-            <>
-              <ShellLauncher
-                items={HEADER_LAUNCHER_ITEMS}
-                onSelect={() => {}}
-                buttonLabel="切换业务域"
-              />
-              <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
-              <ShellHeaderDivider />
-              <TenantScope />
-            </>
-          }
-          trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
-        />
-      </Row>
+        <Row label="2 · 租户用户工作台（48px）：全宽；平台名 + 当前租户" stack>
+          <ShellHeader
+            surface="background"
+            leading={
+              <>
+                <ShellLauncher
+                  items={HEADER_LAUNCHER_ITEMS}
+                  onSelect={() => {}}
+                  buttonLabel="切换业务域"
+                />
+                <ShellHeaderMark src={brandMark.src} href="#home" />
+                <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
+                <ShellHeaderDivider />
+                <TenantScope />
+              </>
+            }
+            trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
+          />
+        </Row>
 
-      <Row
-        label="3 · 平台管理工作台（48px）：平台名 + 管理员徽标 + 域名（员工视角）"
-        stack
-      >
-        <ShellHeader
-          surface="background"
-          leading={
-            <>
-              <ShellLauncher
-                items={HEADER_LAUNCHER_ITEMS}
-                onSelect={() => {}}
-                buttonLabel="切换业务域"
-              />
-              <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle
-                badge={<Badge variant="default">平台管理员</Badge>}
-              >
-                vxture.ai
-              </ShellHeaderTitle>
-              <ShellHeaderDivider />
-              <ShellHeaderDomain>租户管理</ShellHeaderDomain>
-            </>
-          }
-          trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
-        />
-      </Row>
+        <Row
+          label="3 · 平台管理工作台（48px）：平台名 + 管理员徽标 + 域名（员工视角）"
+          stack
+        >
+          <ShellHeader
+            surface="background"
+            leading={
+              <>
+                <ShellLauncher
+                  items={HEADER_LAUNCHER_ITEMS}
+                  onSelect={() => {}}
+                  buttonLabel="切换业务域"
+                />
+                <ShellHeaderMark src={brandMark.src} href="#home" />
+                <ShellHeaderTitle
+                  badge={<Badge variant="default">平台管理员</Badge>}
+                >
+                  vxture.ai
+                </ShellHeaderTitle>
+                <ShellHeaderDivider />
+                <ShellHeaderDomain>租户管理</ShellHeaderDomain>
+              </>
+            }
+            trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
+          />
+        </Row>
 
-      <Row
-        label="4 · 单产品视角（48px）：侧栏开关 + 产品标题组（标识 / 名称 / 类型 / 上标等级）+ 当前租户"
-        stack
-      >
-        <ShellHeader
-          surface="background"
-          leading={
-            <>
-              <ShellIconButton icon="sidebar" label="收起侧栏" />
-              <ShellLauncher
-                items={HEADER_LAUNCHER_ITEMS}
-                onSelect={() => {}}
-                buttonLabel="切换业务域"
-              />
-              <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderDivider />
-              {/* 示例产品标识（DS assets/examples），各产品换成自己的。 */}
-              <ShellProductTitle
-                logoSrc={productLogo.src}
-                name="产品"
-                type="产品类型"
-                tier={
-                  <StatusBadge tone="brand" size="sm">
-                    Pro
-                  </StatusBadge>
-                }
-              />
-              <ShellHeaderDivider />
-              <TenantScope />
-            </>
-          }
-          trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
-        />
-      </Row>
-    </div>
+        <Row
+          label="4 · 单产品视角（48px）：侧栏开关 + 产品标题组（标识 / 名称 / 类型 / 上标等级）+ 当前租户"
+          stack
+        >
+          <ShellHeader
+            surface="background"
+            leading={
+              <>
+                <ShellIconButton icon="sidebar" label="收起侧栏" />
+                <ShellLauncher
+                  items={HEADER_LAUNCHER_ITEMS}
+                  onSelect={() => {}}
+                  buttonLabel="切换业务域"
+                />
+                <ShellHeaderMark src={brandMark.src} href="#home" />
+                <ShellHeaderDivider />
+                {/* 示例产品标识（DS assets/examples），各产品换成自己的。 */}
+                <ShellProductTitle
+                  logoSrc={productLogo.src}
+                  name="产品"
+                  type="产品类型"
+                  tier={
+                    <StatusBadge tone="brand" size="sm">
+                      Pro
+                    </StatusBadge>
+                  }
+                />
+                <ShellHeaderDivider />
+                <TenantScope />
+              </>
+            }
+            trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
+          />
+        </Row>
+      </div>
+    </FullscreenProvider>
   );
 }
 
