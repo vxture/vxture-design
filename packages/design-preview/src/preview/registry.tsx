@@ -3074,11 +3074,21 @@ function ShellToolboxDemo() {
   );
 }
 
-/** 顶栏示例里所有工作台共用的右侧工具（Figma HeaderToolbar 123:43）。 */
-const HEADER_TOOLS: ShellToolboxItem[] = [
+/**
+ * 官网用的工具（Figma Header_website 2226:10298 未登录 / 产品页）：主题、语言、
+ * 全屏——访客还没有账户，帮助 / 通知 / 设置对他没有意义。
+ */
+const WEBSITE_TOOLS: ShellToolboxItem[] = [
   { key: "theme", icon: "sun", label: "主题", onClick: () => {} },
   { key: "locale", icon: "globe", label: "语言", onClick: () => {} },
   { key: "fullscreen", icon: "corners-out", label: "全屏", onClick: () => {} },
+];
+
+/**
+ * 登录后的工具（工作台三种 + 官网已登录）：帮助、通知、设置。主题与语言收进
+ * 头像面板的偏好设置，不在顶栏重复（Figma 09-26 重排）。
+ */
+const ACCOUNT_TOOLS: ShellToolboxItem[] = [
   { key: "help", icon: "help", label: "帮助", href: "#help" },
   { key: "notifications", icon: "bell", label: "通知", onClick: () => {} },
   { key: "settings", icon: "settings", label: "设置", href: "#settings" },
@@ -3109,21 +3119,31 @@ function ConsoleHeaderTrailing({
       </div>
       {/* 智能体图标由产品侧提供（Varda 的 32px 动图）。 */}
       <ShellAgentButton iconSrc={aiAgentIcon.src} label="智能助手" />
-      <ShellToolbox label="工具" items={HEADER_TOOLS} />
+      <ShellToolbox label="工具" items={ACCOUNT_TOOLS} />
       <ShellUserMenu {...userPanel} />
     </>
   );
 }
 
+/** 当前租户：无图标的范围按钮，点开切换租户（Figma Header_Tenant_Select）。 */
+function TenantScope() {
+  return <ShellScopeButton label="Tenant Name" ariaLabel="切换租户" />;
+}
+
 /**
- * 四种页面视角的顶栏（owner 2026-09-25）。每一种都只用 DS 零件拼，preview 不
- * 手写任何视觉——各门户照着拼出来的就是同一个样子。
+ * 四种页面视角的顶栏（owner 2026-09-25，09-26 重排）。每一种都只用 DS 零件拼，
+ * preview 不手写任何视觉——各门户照着拼出来的就是同一个样子。
+ *
+ * 高度：工作台三种用缺省 `md`（48px），官网 `xl`（64px）。
  */
 function PageHeadersDemo() {
   const { userPanel } = useFigmaUserPanel();
   return (
     <div className="flex w-full flex-col gap-xl">
-      <Row label="1 · 官网：内容居中限宽、无底色；未登录（注册 / 登录）" stack>
+      <Row
+        label="1 · 官网（64px）：内容居中限宽、无底色；未登录（注册 / 登录）"
+        stack
+      >
         <ShellHeader
           layout="centered"
           surface="transparent"
@@ -3136,14 +3156,19 @@ function PageHeadersDemo() {
           }
           trailing={
             <>
-              <ShellToolbox label="工具" items={HEADER_TOOLS} />
-              <Button variant="ghost">注册</Button>
-              <Button>登录</Button>
+              <ShellToolbox label="工具" items={WEBSITE_TOOLS} />
+              <Button variant="ghost" size="sm">
+                注册
+              </Button>
+              <Button size="sm">登录</Button>
             </>
           }
         />
       </Row>
-      <Row label="1 · 官网：产品页（站名后接产品名，右侧回官网）" stack>
+      <Row
+        label="1 · 官网：产品页（站名后接产品标识 / 名称 / 类型，右侧回官网）"
+        stack
+      >
         <ShellHeader
           layout="centered"
           surface="transparent"
@@ -3153,18 +3178,22 @@ function PageHeadersDemo() {
               <ShellHeaderMark src={brandMark.src} href="#home" />
               <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
               <ShellHeaderDivider />
-              <ShellProductTitle name="产品" />
+              <ShellProductTitle
+                logoSrc={productLogo.src}
+                name="产品"
+                type="产品类型"
+              />
             </>
           }
           trailing={
             <>
-              <ShellToolbox label="工具" items={HEADER_TOOLS} />
-              <Button>官网</Button>
+              <ShellToolbox label="工具" items={WEBSITE_TOOLS} />
+              <Button size="sm">官网</Button>
             </>
           }
         />
       </Row>
-      <Row label="1 · 官网：已登录（头像）" stack>
+      <Row label="1 · 官网：已登录（帮助 / 通知 / 设置 + 头像）" stack>
         <ShellHeader
           layout="centered"
           surface="transparent"
@@ -3177,20 +3206,16 @@ function PageHeadersDemo() {
           }
           trailing={
             <>
-              <ShellToolbox label="工具" items={HEADER_TOOLS} />
+              <ShellToolbox label="工具" items={ACCOUNT_TOOLS} />
               <ShellUserMenu {...userPanel} />
             </>
           }
         />
       </Row>
 
-      <Row
-        label="2 · 租户用户工作台：全宽；Workspace Console + 当前租户（租户用户视角）"
-        stack
-      >
+      <Row label="2 · 租户用户工作台（48px）：全宽；平台名 + 当前租户" stack>
         <ShellHeader
           surface="background"
-          height="xl"
           leading={
             <>
               <ShellLauncher
@@ -3199,13 +3224,9 @@ function PageHeadersDemo() {
                 buttonLabel="切换业务域"
               />
               <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle>Workspace Console</ShellHeaderTitle>
+              <ShellHeaderTitle>vxture.ai</ShellHeaderTitle>
               <ShellHeaderDivider />
-              <ShellScopeButton
-                icon="building-office"
-                label="Tenant Name"
-                ariaLabel="切换租户与工作空间"
-              />
+              <TenantScope />
             </>
           }
           trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}
@@ -3213,12 +3234,11 @@ function PageHeadersDemo() {
       </Row>
 
       <Row
-        label="3 · 平台管理工作台：全宽；Admin Console + 平台管理员徽标 + 域名（管理员视角）"
+        label="3 · 平台管理工作台（48px）：平台名 + 管理员徽标 + 域名（员工视角）"
         stack
       >
         <ShellHeader
           surface="background"
-          height="xl"
           leading={
             <>
               <ShellLauncher
@@ -3227,8 +3247,10 @@ function PageHeadersDemo() {
                 buttonLabel="切换业务域"
               />
               <ShellHeaderMark src={brandMark.src} href="#home" />
-              <ShellHeaderTitle badge={<Badge>平台管理员</Badge>}>
-                Admin Console
+              <ShellHeaderTitle
+                badge={<Badge variant="default">平台管理员</Badge>}
+              >
+                vxture.ai
               </ShellHeaderTitle>
               <ShellHeaderDivider />
               <ShellHeaderDomain>租户管理</ShellHeaderDomain>
@@ -3239,12 +3261,11 @@ function PageHeadersDemo() {
       </Row>
 
       <Row
-        label="4 · 单产品视角：侧栏开关 + 产品标题组（标识 / 名称 / 类型 / 等级）+ 域名"
+        label="4 · 单产品视角（48px）：侧栏开关 + 产品标题组（标识 / 名称 / 类型 / 上标等级）+ 当前租户"
         stack
       >
         <ShellHeader
           surface="background"
-          height="xl"
           leading={
             <>
               <ShellIconButton icon="sidebar" label="收起侧栏" />
@@ -3263,7 +3284,7 @@ function PageHeadersDemo() {
                 tier={<StatusBadge tone="brand">Pro</StatusBadge>}
               />
               <ShellHeaderDivider />
-              <ShellHeaderDomain>Domain Name</ShellHeaderDomain>
+              <TenantScope />
             </>
           }
           trailing={<ConsoleHeaderTrailing userPanel={userPanel} />}

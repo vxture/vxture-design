@@ -1,6 +1,6 @@
 # Design System 版本发布规范
 
-适用版本：**DS 13.4.0**
+适用版本：**DS 13.4.1**
 更新：2026-09-24
 范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`publish-design-system.yml`
 

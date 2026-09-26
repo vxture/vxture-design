@@ -58,6 +58,12 @@ export interface ShellHeaderProps {
    * 中槽内容归到右极）。
    */
   centerAlign?: "center" | "end" | undefined;
+  /**
+   * 高度档。缺省 `md`（48px）：三种工作台（租户 / 平台管理 / 单产品）都用它；
+   * 官网用 `xl`（64px）——官网顶栏是页面门面，工作台顶栏要把纵向空间让给内容
+   * （Figma Header_console / Header_product 48px、Header_website 64px，
+   * owner 2026-09-26）。
+   */
   height?: ShellHeaderHeight;
   /** 见 `ShellHeaderLayout`。缺省 `full`，与加这个参数之前一致。 */
   layout?: ShellHeaderLayout | undefined;
@@ -89,23 +95,26 @@ export function ShellHeader({
   surface = "card",
   className,
 }: ShellHeaderProps) {
+  /* 槽内、槽间统一 `gap-xs`（标准密度 8px）：Figma 四种 Header 的左 / 中 / 右三组
+     与组内零件都是 8px 一格（owner 2026-09-26 重排）。此前左槽 10px、右槽 4px、
+     槽间 16px 是各自沿用的旧值，拼在一起节奏不齐。 */
   const slots = (
     <>
-      <div className="flex min-w-0 items-center gap-sm">{leading}</div>
+      <div className="flex min-w-0 items-center gap-xs">{leading}</div>
       {center ? (
         <div
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-sm",
+            "flex min-w-0 flex-1 items-center gap-xs",
             centerAlign === "end" ? "justify-end" : "justify-center",
           )}
         >
           {center}
         </div>
       ) : null}
-      <div className="flex shrink-0 items-center gap-2xs">{trailing}</div>
+      <div className="flex shrink-0 items-center gap-xs">{trailing}</div>
     </>
   );
-  const row = "flex items-center justify-between gap-md";
+  const row = "flex items-center justify-between gap-xs";
   return (
     <header
       data-layout={layout}

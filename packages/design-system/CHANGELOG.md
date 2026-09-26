@@ -5,6 +5,26 @@
 
 ---
 
+## 13.4.1 — 2026-09-26
+
+四种页面 Header 照 Figma 重排（patch：样式对齐，无 API 变化）。跟随
+`@vxture/design-ui@10.3.1`（`ShellHeader` 槽间距统一 8px）。owner 2026-09-26，
+Figma Header_website（2226:10298）/ Header_console_tenant（682:2224）/
+Header_console_workforce（682:2225）/ Header_product（682:2226）。
+
+- `ShellHeaderTitle`：标题文字加左右 `px-xs`（Figma BrandTitle 自带 8px）；`badge`
+  改放在顶端对齐的 24px 上标位里（`data-slot="header-superscript"`），比标题略高。
+- `ShellProductTitle`：`tier` 同样放进上标位，版位 32px（16px 小徽标抬得更明显）。
+- 工作台两种的标题都改写平台名 vxture.ai（Figma 定稿），两种视角靠管理员徽标与
+  分隔线后的内容区分。
+- `ShellHeaderDomain`：去掉自带的 `px-2xs`，与竖线的距离由槽间距决定。
+- 03-patterns-guide §7.1 按新稿重写：工作台三种高度 48px（缺省 `md`）、官网 64px；
+  工具箱分访客组（主题 / 语言 / 全屏）与账户组（帮助 / 通知 / 设置）；单产品视角
+  分隔线后改为当前租户；官网按钮 `size="sm"`。preview「PageHeader」同步。
+- 与 Figma 的偏差：搜索框沿用 `ShellSearchBox`（32px 高、图标在左），Figma 用的是
+  20px 高的 Legacy · Search 占位件；租户选择沿用 `ShellScopeButton`（label-md、
+  12px 角标），Figma 是 body-md 弱化色 + 16px CaretDown。
+
 ## 13.4.0 — 2026-09-25
 
 四种页面 Header 的零件（minor：新增件）。跟随 `@vxture/design-ui@10.3.0`
