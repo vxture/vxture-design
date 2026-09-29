@@ -63,20 +63,17 @@ export const toneEdgeClasses: Record<Tone, string> = {
  */
 
 /**
- * 语气对应的图标。调用方不传图标名，避免同一语气在各处配不同的图。
+ * 语气对应的缺省图标。调用方不传图标名，避免同一语气在各处配不同的图。
  *
- * `neutral` 配短横而不是 ⓘ（owner 2026-08-06 判）：ⓘ 说的是"这里有信息"，而
- * `neutral` 说的是"没有状态"，两者对不上——「已停用」「已作废」「未认证」这些
- * 标顶着一个信息图标，图标本身不表达任何东西。短横占住图标位以便各档横向对齐，
- * 但不再声称有信息可读。
- *
- * 顺带解掉一处撞车：改之前 `neutral` 与 `info` 用的是同一张图，两档只靠颜色区分。
+ * `neutral` 默认不画图标：它只表示无额外语义强度，硬塞短横只是为了占位，并没有
+ * 提供可识别的信息。密集列表若需要扫描标记，由 `StatusBadge` 显式使用 `dot`；
+ * 业务状态若有准确图形，则由支持覆盖的组件显式传入。
  */
-export const toneIcons: Record<Tone, IconName> = {
-  neutral: "minus",
+export const toneIcons = {
+  neutral: false,
   brand: "sparkles",
   info: "info",
   success: "success",
   warning: "warning",
   danger: "error",
-};
+} as const satisfies Record<Tone, IconName | false>;

@@ -53,7 +53,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         className={cn(
           cn(
             "relative inline-flex flex-1 items-center justify-center gap-xs whitespace-nowrap",
-            "rounded-md border border-transparent px-sm py-2xs text-label-md",
+            "rounded-md border border-transparent px-sm py-2xs text-label",
             interactive,
             iconInset,
             // 未选中的标签压到 60% 而不是换成 muted-foreground：同一组标签里

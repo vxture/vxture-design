@@ -378,22 +378,24 @@ describe("ShellUserMenu · 头部", () => {
   it("两条 meta 都不给时头部只剩名字", async () => {
     const { panel } = await openMenu({ user: { displayName: "某某" } });
     expect(within(panel).getByText("某某")).toBeInTheDocument();
-    expect(panel.querySelectorAll('p[class~="text-body-sm"]')).toHaveLength(0);
+    expect(panel.querySelectorAll('p[class~="text-body-small"]')).toHaveLength(
+      0,
+    );
   });
 
   it("只给一条 meta 时就只画一行", async () => {
     const { panel } = await openMenu({
       user: { displayName: "某某", uniqueLine: "@somebody" },
     });
-    expect(panel.querySelectorAll('p[class~="text-body-sm"]')).toHaveLength(1);
+    expect(panel.querySelectorAll('p[class~="text-body-small"]')).toHaveLength(
+      1,
+    );
   });
 
   /**
-   * 认证贴标靠 `verified` 翻**语气**，图标随语气来。
+   * 认证贴标靠 `verified` 翻**语气**：成功档有对勾，中性档默认无图标。
    *
-   * ⚠ 不能拿「有没有 svg」当判据——`StatusBadge` 两种语气**都**自带前导图标
-   * （成功=圆形对勾，中性=减号）。第一版就是这么写的，于是它既没验出语气，
-   * 也没发现这里本来多画了一个对勾。
+   * 这里直接断言语气色，避免把图标数量误当成业务状态本身。
    */
   it("已认证时上成功语气", async () => {
     const { panel } = await openMenu({
@@ -414,9 +416,8 @@ describe("ShellUserMenu · 头部", () => {
   /**
    * **只画一个对勾。**
    *
-   * `StatusBadge` 的图标缺省随语气来（它的文件头：「不必每处各配一张」）。
-   * 这里曾经在语气图标之外又显式画了一个 `check`，「已认证」前面于是并排
-   * 两个对勾——不报错，就是看着别扭。
+   * `success` 已由 `StatusBadge` 提供缺省对勾。这里曾经又显式画了一个 `check`，
+   * 「已认证」前面于是并排两个对勾——不报错，就是看着别扭。
    */
   it("已认证只带一个前导图标", async () => {
     const { panel } = await openMenu({

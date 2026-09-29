@@ -1,9 +1,8 @@
 /**
  * Banner 与 StatusBadge：语气六档共用一份刻度。
  *
- * 两个件的图标**都不开 prop 的默认口**（StatusBadge 可换但不必配），一律取自
- * `toneIcons`——「同一个语气在两处有两套名字迟早对不上」是它们合并刻度的理由。
- * 这条约定没有任何类型能表达，只有断言得到。
+ * 五个有语义的档位默认取自 `toneIcons`，neutral 默认无图标。StatusBadge 可按
+ * 业务状态显式换图；这套跨组件约定没有类型能完整表达，只有断言得到。
  */
 
 import { render, screen } from "@testing-library/react";
@@ -14,6 +13,8 @@ import { Badge } from "../src/components/base/display/Badge";
 import { StatusBadge } from "../src/components/base/display/StatusBadge";
 import { TONES, toneIcons } from "../src/components/tone";
 import { Icon, type IconName } from "../src/icons";
+
+const ICON_TONES = TONES.filter((tone) => tone !== "neutral");
 
 /**
  * Icon 不落任何标识属性（它直接把 Phosphor 组件渲染出来），所以认图只能**比对
@@ -33,13 +34,20 @@ function shapeOf(name: IconName) {
   return shape;
 }
 
-describe("语气六档 · 图标由语气决定", () => {
-  it.each([...TONES])("Banner 的 %s 档取 toneIcons 里那一张", (tone) => {
+describe("语气六档 · neutral 无图标，其余由语气决定", () => {
+  it("Banner 与 StatusBadge 的 neutral 档默认都没有图标", () => {
+    const banner = render(<Banner tone="neutral" title="t" />);
+    const badge = render(<StatusBadge tone="neutral">状态</StatusBadge>);
+    expect(shapesIn(banner.container)).toHaveLength(0);
+    expect(shapesIn(badge.container)).toHaveLength(0);
+  });
+
+  it.each(ICON_TONES)("Banner 的 %s 档取 toneIcons 里那一张", (tone) => {
     const { container } = render(<Banner tone={tone} title="t" />);
     expect(shapesIn(container)).toContain(shapeOf(toneIcons[tone]));
   });
 
-  it.each([...TONES])("StatusBadge 的 %s 档取同一张", (tone) => {
+  it.each(ICON_TONES)("StatusBadge 的 %s 档取同一张", (tone) => {
     const { container } = render(<StatusBadge tone={tone}>状态</StatusBadge>);
     expect(shapesIn(container)).toContain(shapeOf(toneIcons[tone]));
   });
@@ -49,7 +57,7 @@ describe("语气六档 · 图标由语气决定", () => {
    * 这条断言在「有人给其中一个件单独换图」时会红。
    */
   it("同一档在两个件里是同一张图", () => {
-    for (const tone of TONES) {
+    for (const tone of ICON_TONES) {
       const a = render(<Banner tone={tone} title="t" />);
       const b = render(<StatusBadge tone={tone}>状态</StatusBadge>);
       const want = shapeOf(toneIcons[tone]);
@@ -71,8 +79,7 @@ describe("StatusBadge · 三件一体", () => {
   });
 
   /**
-   * 表意图标 + 语气底色 + 文字，少哪一件都退化：只有底色 = 得靠记颜色；
-   * 只有文字 = 一屏扫不出来；只有图标 = 同一张图在不同业务里含义不同。
+   * 有明确语义的档位以图标 + 底色 + 文字提供冗余线索；neutral 的文字本身完整。
    */
   it("默认三件齐：有图标、有语气底色类、有文字", () => {
     const { container } = render(
@@ -91,6 +98,15 @@ describe("StatusBadge · 三件一体", () => {
     );
     expect(shapesIn(container)).toContain(shapeOf("timer"));
     expect(shapesIn(container)).not.toContain(shapeOf(toneIcons.warning));
+  });
+
+  it("neutral 也可显式补充准确的业务图标", () => {
+    const { container } = render(
+      <StatusBadge tone="neutral" icon="timer">
+        等待中
+      </StatusBadge>,
+    );
+    expect(shapesIn(container)).toContain(shapeOf("timer"));
   });
 
   it("icon={false} 明确关掉图标", () => {

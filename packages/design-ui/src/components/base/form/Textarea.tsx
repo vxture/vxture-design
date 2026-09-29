@@ -24,7 +24,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         className={cn(
           "flex field-sizing-content min-h-row-4xl w-full rounded-md border border-control-border px-sm py-xs",
           "bg-transparent shadow-raised dark:bg-input/30",
-          "text-body-lg md:text-body-md text-foreground placeholder:text-muted-foreground",
+          "text-body text-foreground placeholder:text-muted-foreground",
           interactive,
           invalid,
           "disabled:cursor-not-allowed",

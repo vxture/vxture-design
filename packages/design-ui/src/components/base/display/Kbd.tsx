@@ -5,7 +5,7 @@
  * @category Components - Display
  *
  * 结构承上游 Kbd / KbdGroup。取值差异：上游的 text-[0.7rem]、px-1.5 等裸数值
- * 不跟随，改绑 T2（text-code-sm / px-2xs）——键位本质是代码字面量，走 code 族
+ * 不跟随，改绑 T2（text-code / px-2xs）——键位本质是代码字面量，走 code 族
  * 等宽字体，Ctrl 和 K 才一样宽。
  *
  * 只做标示不做交互：真正的快捷键由 Command 面板与产品侧注册，Kbd 只负责
@@ -24,7 +24,7 @@ export function Kbd({ className, ...props }: KbdProps) {
       className={cn(
         "inline-flex h-control-3xs w-fit min-w-control-3xs select-none",
         "items-center justify-center gap-2xs rounded-sm px-2xs",
-        "bg-muted text-code-sm text-muted-foreground",
+        "bg-muted font-mono text-code text-muted-foreground",
         "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-icon-xs",
         className,
       )}

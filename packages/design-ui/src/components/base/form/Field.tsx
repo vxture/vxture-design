@@ -267,7 +267,7 @@ export function FieldValue({
       data-empty={isEmpty || undefined}
       className={cn(
         "flex min-h-control-md min-w-0 items-center",
-        "text-body-lg md:text-body-md",
+        "text-body",
         isEmpty ? "text-muted-foreground" : "text-foreground",
         className,
       )}
@@ -287,7 +287,7 @@ export function FieldDescription({
   return (
     <p
       data-slot="field-description"
-      className={cn("text-body-sm text-muted-foreground", className)}
+      className={cn("text-body-small text-muted-foreground", className)}
       {...props}
     />
   );
@@ -309,7 +309,7 @@ export function FieldError({
     <p
       role="alert"
       data-slot="field-error"
-      className={cn("text-body-sm text-destructive-text", className)}
+      className={cn("text-body-small text-destructive-text", className)}
       {...props}
     >
       {children}

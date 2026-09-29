@@ -16,7 +16,7 @@
  * 结果是**整个设计系统里，任何加在按钮或输入框上的 text-* 类全部静默失效**：
  * 类名在 DOM 上、规则也生成了，只是永远不被采用。
  *
- * 实测判据：`<div class="text-label-sm">` 是 12px，`<button class="text-label-sm">`
+ * 实测判据：`<div class="text-label-small">` 是 12px，`<button class="text-label-small">`
  * 是 14px，而裸 `<button>` 也是 14px——加不加那个类毫无区别。
  *
  * 进 base 层后这些规则仍然压得住 UA 样式（UA 在所有作者层之下），但让位给
@@ -58,14 +58,14 @@
  * 没写角色类的文字（组件内部的普通文本、产品页面里的裸 <p>）会退回浏览器默认的
  * 16px，与用户的字号偏好完全脱钩——而且看不出错，只是"切了没反应"。
  *
- * 取 body-md 作基线：它是正文角色，三档分别落在 text-xs / text-sm / text-base。
+ * 取 body 作基线：它是常规正文角色，三档分别落在 text-xs / text-sm / text-base。
  */
   body {
-    font-family: var(--body-md-font-family);
-    font-size: var(--body-md-font-size);
-    font-weight: var(--body-md-font-weight);
-    line-height: var(--body-md-line-height);
-    letter-spacing: var(--body-md-letter-spacing);
+    font-family: var(--body-font-family);
+    font-size: var(--body-font-size);
+    font-weight: var(--body-font-weight);
+    line-height: var(--body-line-height);
+    letter-spacing: var(--body-letter-spacing);
   }
 
   /* 表单控件的 UA 样式不继承字体，逐个拉回文档基线。 */

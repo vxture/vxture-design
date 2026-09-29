@@ -1,7 +1,7 @@
 # Design System 内部工程规范
 
-适用版本：**DS 14.0.0**
-更新：2026-09-25
+适用版本：**DS 15.0.0**
+更新：2026-09-29
 范围：本仓 DS 三包的维护者与守卫脚本
 
 > **对外使用规范已随包发布**，见 `packages/design-system/docs/`（01 使用契约 / 02 视觉规格 / 03 模式选用 / 04 token 契约 / 05 内容规范 / 06 无障碍达标线），随 `@vxture/design-system` 的 `files` 一同发包。本文只保留内部工程内容：token 管线决策、守卫机制、偏离登记与历史判据。消费方规则一律以包内 docs 为准，本文不得复述。
@@ -14,7 +14,8 @@ L0–L5 组件归属与 T1–T4 token 分层的对外定义见包内 `docs/01-us
 
 **T1 是镜像，不是差分**。命名空间、分组、挡位、名称、取值与 Tailwind v4 逐项一致，由 `scripts/design-tokens/generate-primitive.mjs` 读上游 `theme.css` 生成，一致性由构造保证。全部偏离登记在 `scripts/design-tokens/primitive-policy.mjs`，逐条带理由，生成时打印：
 
-- **扩展**（Tailwind 没有的挡位）：`breakpoint-xs/3xl/4xl/5xl`、`font-brand/cjk`（字号档无扩展，最小档即上游的 `xs`=12px）
+- **扩展**（Tailwind 没有的挡位）：`breakpoint-xs/3xl/4xl/5xl`、`font-brand/cjk`、
+  `text-3xs/2xs`（9 / 10px，只供微型非正文角色）
 - **覆盖**（Tailwind 有、DS 判定要改）：`font-sans` / `font-mono` 的字体栈
 - **减法**：色板只留 neutral / red / amber / emerald / sky / purple 六个色相（完整色阶）加品牌色
 

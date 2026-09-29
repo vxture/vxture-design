@@ -166,22 +166,22 @@ export function FilterPanel({
               className="flex flex-col gap-sm"
             >
               <div className="flex items-center justify-between gap-sm">
-                <span id={legendId} className="text-label-md text-foreground">
+                <span id={legendId} className="text-label text-foreground">
                   {facet.label}
                 </span>
                 {chosen.length > 0 ? (
-                  <span className="text-label-sm tabular-nums text-muted-foreground">
+                  <span className="text-label-small tabular-nums text-muted-foreground">
                     {chosen.length}
                   </span>
                 ) : null}
               </div>
               {facet.description ? (
-                <span className="text-body-sm text-muted-foreground">
+                <span className="text-body-small text-muted-foreground">
                   {facet.description}
                 </span>
               ) : null}
               {facet.options.length === 0 ? (
-                <span className="text-body-sm text-muted-foreground">
+                <span className="text-body-small text-muted-foreground">
                   {emptyLabel}
                 </span>
               ) : (
@@ -205,12 +205,12 @@ export function FilterPanel({
                         />
                         <Label
                           htmlFor={id}
-                          className="min-w-0 flex-1 text-body-md"
+                          className="min-w-0 flex-1 text-body"
                         >
                           <span className="truncate">{option.label}</span>
                         </Label>
                         {option.count !== undefined ? (
-                          <span className="text-label-sm tabular-nums text-muted-foreground">
+                          <span className="text-label-small tabular-nums text-muted-foreground">
                             {option.count}
                           </span>
                         ) : null}
@@ -260,7 +260,7 @@ export const FilterPanelTrigger = React.forwardRef<
       {activeCount > 0 ? (
         <span
           data-slot="filter-panel-count"
-          className="inline-flex min-w-control-2xs items-center justify-center rounded-full bg-primary px-2xs text-label-sm tabular-nums text-primary-foreground"
+          className="inline-flex min-w-control-2xs items-center justify-center rounded-full bg-primary px-2xs text-label-small tabular-nums text-primary-foreground"
         >
           {activeCount}
         </span>

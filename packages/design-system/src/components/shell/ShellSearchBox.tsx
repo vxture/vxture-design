@@ -175,7 +175,7 @@ export function ShellSearchBox({
           <div
             className={cn(
               "flex h-control-md w-full max-w-panel-sm items-center gap-xs rounded-lg px-sm",
-              "bg-muted/60 text-body-sm text-muted-foreground",
+              "bg-muted/60 text-body-small text-muted-foreground",
               "transition-colors duration-fast",
               "focus-within:bg-card focus-within:ring-ring focus-within:ring-2",
             )}
@@ -229,7 +229,7 @@ export function ShellSearchBox({
           <CommandList id={listId}>
             {loading ? (
               <div
-                className="flex items-center justify-center gap-xs py-md text-body-sm text-muted-foreground"
+                className="flex items-center justify-center gap-xs py-md text-body-small text-muted-foreground"
                 role="status"
               >
                 <Spinner size="sm" />
@@ -262,17 +262,17 @@ export function ShellSearchBox({
                         <Icon name={item.icon} size="sm" className="shrink-0" />
                       ) : null}
                       <span className="flex min-w-0 flex-1 flex-col gap-0">
-                        <span className="truncate text-label-md">
+                        <span className="truncate text-label">
                           {item.label}
                         </span>
                         {item.description ? (
-                          <span className="truncate text-body-sm text-muted-foreground">
+                          <span className="truncate text-body-small text-muted-foreground">
                             {item.description}
                           </span>
                         ) : null}
                       </span>
                       {item.meta ? (
-                        <span className="shrink-0 text-body-sm text-muted-foreground">
+                        <span className="shrink-0 text-body-small text-muted-foreground">
                           {item.meta}
                         </span>
                       ) : null}

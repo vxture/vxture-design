@@ -1,6 +1,6 @@
 # 04 Token 契约（T2 全族）
 
-适用版本：**DS 14.0.0** ｜ 更新：2026-09-25 ｜ 事实来源：`@vxture/design-tokens` 的 `styles/semantic/*`（生成物，本文与之核对）
+适用版本：**DS 15.0.0** ｜ 更新：2026-09-29 ｜ 事实来源：`@vxture/design-tokens` 的 `styles/semantic/*`（生成物，本文与之核对）
 
 T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md) §2）。每族都产出真工具类，取值一律走工具类。
 
@@ -9,7 +9,7 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 | 族              | T2 名 → 工具类                                                                | 命名空间                               | 模式轴                       |
 | --------------- | ----------------------------------------------------------------------------- | -------------------------------------- | ---------------------------- |
 | 色彩            | `--primary` → `bg-primary`                                                    | `--color-*`                            | 明暗（`.dark`）              |
-| 排版角色        | `--body-md-*` → `text-body-md`                                                | `--text-*`                             | 字号三档（`html.vx-font-*`） |
+| 排版角色        | `--body-*` → `text-body`                                                      | `--text-*`                             | 字号三档（`html.vx-font-*`） |
 | 间距 / 控件高度 | `--space-md` → `p-md`、`h-control-lg`                                         | `--spacing-*`                          | 密度三档（`.density-*`）     |
 | 图标 / 媒体尺寸 | `--spacing-icon-md` → `size-icon-md`                                          | `--spacing-*`                          | 无                           |
 | 圆角            | `--radius-md` → `rounded-md`                                                  | `--radius-*`                           | 无                           |
@@ -54,19 +54,18 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 
 ## 3. 排版角色
 
-七族十九档，每档五个属性变量（family/size/weight/line-height/letter-spacing），工具类 `text-{族}-{档}`。默认字号档取值：
+六族十三个角色，每个角色包含 family / size / weight / line-height / letter-spacing 五项属性。字号三档如下：
 
-| 族       | 档位（px）                            |
-| -------- | ------------------------------------- |
-| display  | `lg` 72 / `md` 60 / `sm` 48           |
-| heading  | `1` 36 / `2` 30 / `3` 24              |
-| title    | `xl` 20 / `lg` 18 / `md` 16 / `sm` 14 |
-| body     | `xl` 18 / `lg` 16 / `md` 14 / `sm` 12 |
-| label    | `xl` 18 / `lg` 16 / `md` 14 / `sm` 12 |
-| code     | `md` 14 / `sm` 12                     |
-| overline | 单档 12                               |
+| 族       | 角色                      | Small / Default / Large（px）             |
+| -------- | ------------------------- | ----------------------------------------- |
+| display  | `xs` / `sm` / `md` / `lg` | 24/30/36 · 36/48/60 · 48/60/72 · 60/72/96 |
+| heading  | `1` / `2` / `3`           | 16/18/20 · 14/16/18 · 12/14/16            |
+| body     | `body` / `body-small`     | 12/14/16 · 10/12/14                       |
+| label    | `label` / `label-small`   | 12/14/16 · 10/12/14                       |
+| code     | `code`                    | 10/12/14                                  |
+| overline | `overline`                | 9/10/12                                   |
 
-字号三档（`vx-font-small/default/large`）对全族整体平移一档；任何档下最小 12px。
+字号模式由 `vx-font-small/default/large` 控制。9–10px 只用于眉标、键位、短代码和辅助文字；常规正文、控件标签与结构标题不进入这一范围。
 
 ## 4. 间距与控件高度（密度轴）
 

@@ -46,13 +46,13 @@ function FactList({ facts, className }: FactListProps) {
             {/* 带语气时键与值同色：语气标的是这条事实整体，只染值会读成两件事。 */}
             <dt
               className={cn(
-                "text-body-sm",
+                "text-body-small",
                 tone === "neutral" && "text-muted-foreground",
               )}
             >
               {fact.label}
             </dt>
-            <dd className="text-body-sm">{fact.value}</dd>
+            <dd className="text-body-small">{fact.value}</dd>
           </div>
         );
       })}

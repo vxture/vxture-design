@@ -145,11 +145,7 @@ const FONT_SIZE_MODES = [
  * typography-policy。越界一律夹到端点而不是报错——阶梯两端本来就是硬边界。
  */
 function shiftFor(role, modeIndex) {
-  const flag = role[6];
-  let shift = SIZE_MODE_SHIFT[modeIndex];
-  if (flag === "noShrink" && shift < 0) shift = 0;
-  if (flag === "noGrow" && shift > 0) shift = 0;
-  return shift;
+  return SIZE_MODE_SHIFT[modeIndex];
 }
 
 function stepFor(role, shift) {

@@ -62,9 +62,28 @@ export const EXTENSIONS = {
       "中文优先栈，用于需强制中文字形的场合（正文栈里中文是回退位）",
     ],
   ],
-  /* 字号档不再有扩展：最小档回到上游的 xs=12px。曾有 3xs=8 / 2xs=10 两档，随
-     body-xs / label-xs 一并删除——10px 以下的汉字读不了，而字号偏好是无障碍设置，
-     不该把文字推到读不了。扩展答不上"为什么上游挡位不够用"就不是扩展。 */
+  text: [
+    [
+      "3xs",
+      "0.5625rem",
+      "9px 兼容档，用于空间受限且不承担正文阅读的微型标记；Tailwind 最小只到 12px",
+    ],
+    [
+      "3xs--line-height",
+      "calc(1 / 0.5625)",
+      "3xs 配套 16px 行盒，避免微型文字裁切；只进入 overline 的 Small 模式",
+    ],
+    [
+      "2xs",
+      "0.625rem",
+      "10px 兼容档，用于徽标、元信息等短文本；Tailwind 最小只到 12px",
+    ],
+    [
+      "2xs--line-height",
+      "calc(1 / 0.625)",
+      "2xs 配套 16px 行盒，保证小字形完整；只进入最低语义角色",
+    ],
+  ],
   // v4 的 duration-* 是裸数值工具类，theme.css 里没有这一族，T2 的 fast / base /
   // slow 因此无 T1 可指。档位表本身是 Tailwind 文档给定的封闭集合，照录即可。
   "transition-duration": [

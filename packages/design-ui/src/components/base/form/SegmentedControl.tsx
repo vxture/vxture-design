@@ -28,12 +28,12 @@ export type SegmentedControlSize = "sm" | "md";
  * `h-control-*` 是多少，控件就是多少。
  */
 const BY_SIZE: Record<SegmentedControlSize, { root: string; item: string }> = {
-  // 两档都用 label-sm。档位在这里只决定**高度**，不连带改字号——md 档原先用
-  // label-md（= text-sm），比同尺寸 NativeSelect 的 text-body-sm（= text-xs）
+  // 两档都用 label-small。档位在这里只决定**高度**，不连带改字号——md 档原先用
+  // 默认 label，比同尺寸 NativeSelect 的 text-body-small
   // 大一号，两个控件上下排在同一栏里字号明显不一致。控件里的选项文字是标签
   // 不是正文，不该比它旁边的下拉更抢眼。
-  sm: { root: "h-control-sm", item: "min-w-control-sm px-xs text-label-sm" },
-  md: { root: "h-control-md", item: "min-w-control-md px-sm text-label-sm" },
+  sm: { root: "h-control-sm", item: "min-w-control-sm px-xs text-label-small" },
+  md: { root: "h-control-md", item: "min-w-control-md px-sm text-label-small" },
 };
 
 export interface SegmentedControlItem<TValue extends string | number> {
@@ -169,7 +169,7 @@ function SegmentedControl<TValue extends string | number>({
             {item.count !== undefined ? (
               <span
                 className={cn(
-                  "rounded-full px-2xs text-label-sm tabular-nums",
+                  "rounded-full px-2xs text-label-small tabular-nums",
                   // 滑块底改浅色后，徽标不再需要反白——淡主色底 + 主色字。
                   active
                     ? "bg-primary/10 text-primary"

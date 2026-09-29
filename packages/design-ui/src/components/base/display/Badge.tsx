@@ -8,7 +8,7 @@
  * - 增 `asChild`，使 Badge 能直接渲染成 <a>（上游 2024 后的版本已有此能力）。
  * - 保留 `forwardRef`：上游新版把它去掉是因为面向 React 19（ref 作为普通 prop
  *   传递），本包的 peer 范围仍含 React 18，去掉会让 StatusBadge 这类包装件拿不到 ref。
- * - 尺度走 T2（min-h-control-2xs / px-sm / text-label-sm），跟随密度与字号三档；
+ * - 尺度走 T2（min-h-control-2xs / px-sm / text-label-small），跟随密度与字号三档；
  *   上游的裸数值 px-2.5 / py-0.5 / text-xs 不跟随，故不用。
  * - **缺省是 `outline` 而非 `default`**（2026-08-05 owner 定，理由见下）。
  * - 增 `size`：`md`（缺省，即此前唯一的尺寸）与 `sm`（紧凑，挂在标题上的角标用，
@@ -54,7 +54,7 @@ const badgeVariants = cva(
     // 决定；同一字号下仍然等高，Large 字体档也不会被 Compact 密度裁掉。
     "inline-flex w-fit shrink-0 items-center justify-center gap-2xs",
     "overflow-hidden rounded-4xl border border-transparent",
-    "text-label-sm whitespace-nowrap",
+    "text-label-small whitespace-nowrap",
     interactive,
     invalid,
     iconInset,
@@ -81,7 +81,7 @@ const badgeVariants = cva(
       },
       size: {
         md: "min-h-control-2xs px-sm",
-        // leading-none 必须跟在 text-label-sm 之后（base 里），才压得住角色自带的行高。
+        // leading-none 必须跟在 text-label-small 之后（base 里），才压得住角色自带的行高。
         sm: "min-h-control-3xs px-2xs leading-none",
       },
     },

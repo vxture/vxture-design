@@ -113,7 +113,7 @@ function Pagination({
       {...props}
     >
       {/* 左侧计数语（admin 翻页惯例）：总数常驻，筛选生效时补一段。 */}
-      <div className="text-body-sm text-muted-foreground">
+      <div className="text-body-small text-muted-foreground">
         {countLabel ??
           (typeof total === "number"
             ? `${total} records${

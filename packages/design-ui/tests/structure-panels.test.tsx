@@ -23,14 +23,13 @@ import { ViewHeader } from "../src/components/composite/structure/ViewHeader";
 
 describe("SectionHeader · level 同时定语义元素与排版角色", () => {
   /**
-   * 层级不是「多大的字」，是**语义元素**：读屏器靠 h1–h4 建立文档大纲，
+   * 层级不是「多大的字」，是**语义元素**：读屏器靠 h1–h3 建立文档大纲，
    * 用对了字号但用错了标签，视觉上一样、结构上是平的。level 的数字就是 h 的
    * 数字；第 1 级（h1）归 ViewHeader（owner 2026-09-26）。
    */
   it.each([
-    [2, "h2", "text-title-lg"],
-    [3, "h3", "text-title-md"],
-    [4, "h4", "text-title-sm"],
+    [2, "h2", "text-heading-2"],
+    [3, "h3", "text-heading-3"],
   ] as const)("level=%i → <%s> + %s", (level, tag, type) => {
     const { container } = render(<SectionHeader level={level} title="标题" />);
     const el = container.querySelector(tag) as HTMLElement;
@@ -51,7 +50,6 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
   it.each([
     [2, "pb-md"],
     [3, "pb-sm"],
-    [4, "pb-xs"],
   ] as const)("level %i 缺省带虚线，距离 %s", (level, pad) => {
     const { container } = render(<SectionHeader level={level} title="标题" />);
     const cls = (container.firstElementChild as HTMLElement).className.split(
@@ -62,7 +60,7 @@ describe("SectionHeader · level 同时定语义元素与排版角色", () => {
     );
   });
 
-  it.each([2, 3, 4] as const)("level %i 给 divider={false} 就关掉", (level) => {
+  it.each([2, 3] as const)("level %i 给 divider={false} 就关掉", (level) => {
     const { container } = render(
       <SectionHeader level={level} title="标题" divider={false} />,
     );
@@ -270,16 +268,16 @@ describe("PanelCard · 语气只染顶缘", () => {
     ).toBe(brandCls);
   });
 
-  /** 头部复用 `SectionHeader` level 4（h4 · title-sm），不自己再渲染一遍标题。 */
-  it("标题是 h4，并带虚线", () => {
+  /** 头部复用 `SectionHeader` level 3（h3 · heading-3），不自己再渲染一遍标题。 */
+  it("标题是 h3，并带虚线", () => {
     const { container } = render(
       <PanelCard title="产品排行">
         <p>内容</p>
       </PanelCard>,
     );
-    const h4 = container.querySelector("h4") as HTMLElement;
-    expect(h4.textContent).toBe("产品排行");
-    expect(h4.closest("div[class*='border-b']") as HTMLElement).not.toBeNull();
+    const h3 = container.querySelector("h3") as HTMLElement;
+    expect(h3.textContent).toBe("产品排行");
+    expect(h3.closest("div[class*='border-b']") as HTMLElement).not.toBeNull();
   });
 
   it("四个可选槽都透传得下去", () => {
@@ -429,15 +427,12 @@ describe("ViewHeader · 页面级标题", () => {
     ).toBeInTheDocument();
   });
 
-  /**
-   * 页头用页头文本 heading-3（owner 2026-09-26），title 族整族留给板块。
-   * font-brand 必须单独挂：text-heading-3 不带字体族，漏了落回正文体。
-   */
-  it("标题用 heading-3 + 品牌体，不用 title 族", () => {
+  /** 产品界面标题只用 heading；font-brand 单独挂，避免落回正文体。 */
+  it("标题用 heading-1 + 品牌体，不用已删除的 title 族", () => {
     render(<ViewHeader title="租户详情" />);
     const cls = screen.getByRole("heading", { level: 1 }).className.split(" ");
     expect(cls).toEqual(
-      expect.arrayContaining(["text-heading-3", "font-brand"]),
+      expect.arrayContaining(["text-heading-1", "font-brand"]),
     );
     expect(cls.some((c) => c.startsWith("text-title-"))).toBe(false);
   });

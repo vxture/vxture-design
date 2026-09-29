@@ -8,6 +8,19 @@
 
 ---
 
+## 4.0.0 — 2026-09-29
+
+**破坏性**：排版角色收口并重命名。删除 `title-*`，将 body / label / code 的多档
+角色改为按用途命名的 `body`、`body-small`、`label`、`label-small` 与 `code`；使用者
+须迁移旧的 `text-title-*`、`text-body-*`、`text-label-*`、`text-code-*` 工具类。
+
+- `heading-1/2/3` 成为产品界面唯一标题族，默认字号为 18 / 16 / 14px；Small 为
+  16 / 14 / 12px，Large 为 20 / 18 / 16px。
+- `display` 新增 `display-xs`，大字继续只服务营销、首屏与展示场景。
+- T1 新增 `3xs=9px`、`2xs=10px` 兼容档，仅供眉标、短代码和辅助文字的最低模式；
+  常规正文与控件标签不进入 9–10px。
+- 排版生成器、Tailwind 工具类注册与守卫同步更新。
+
 ## 3.4.0 — 2026-09-25
 
 新增 `code-lg` 排版角色；`title` 与 `overline` 字重从 600 降到 500（minor：

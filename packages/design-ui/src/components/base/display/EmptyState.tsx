@@ -53,9 +53,9 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
           </span>
         ) : null}
         <div className="flex flex-col gap-2xs">
-          <strong className="text-label-lg text-foreground">{title}</strong>
+          <strong className="text-label text-foreground">{title}</strong>
           {description ? (
-            <p className="max-w-content-narrow-lg text-body-sm text-muted-foreground">
+            <p className="max-w-content-narrow-lg text-body-small text-muted-foreground">
               {description}
             </p>
           ) : null}

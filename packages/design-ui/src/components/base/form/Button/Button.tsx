@@ -39,7 +39,7 @@ const buttonVariants = cva(
     // 尺度一律走 T2 语义名产出的工具类，不用裸数值：p-lg 之类不跟随密度三档，
     // 而 gap-xs / h-control-md 会。任意值语法（gap-(--gap-xs)）仍然禁止。
     "gap-xs rounded-md border border-transparent bg-clip-padding",
-    "text-label-md",
+    "text-label",
     interactive,
     pressable,
     invalid,
@@ -98,8 +98,8 @@ const buttonVariants = cva(
        * 并存是同一类毛病，一并收掉。 */
       size: {
         // 小档另行封顶圆角：`rounded-md` 在基数调大后会让 24–32px 的按钮发胖。
-        xs: cn("h-control-xs px-xs text-label-sm", radiusClamp),
-        sm: cn("h-control-sm px-sm text-label-sm", radiusClamp),
+        xs: cn("h-control-xs px-xs text-label-small", radiusClamp),
+        sm: cn("h-control-sm px-sm text-label-small", radiusClamp),
         md: cn("h-control-md px-md", radiusClamp),
         lg: "h-control-lg px-lg",
         xl: "h-control-xl px-lg",

@@ -95,9 +95,7 @@ const EntryCard = React.forwardRef<HTMLAnchorElement, EntryCardProps>(
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-2xs">
           <span className="flex items-baseline justify-between gap-sm">
-            <span className="truncate text-title-sm text-foreground">
-              {title}
-            </span>
+            <span className="truncate text-label text-foreground">{title}</span>
             {meta ? (
               <span className="shrink-0 text-overline text-primary-text">
                 {meta}
@@ -105,7 +103,7 @@ const EntryCard = React.forwardRef<HTMLAnchorElement, EntryCardProps>(
             ) : null}
           </span>
           {description ? (
-            <span className="text-body-sm text-muted-foreground">
+            <span className="text-body-small text-muted-foreground">
               {description}
             </span>
           ) : null}

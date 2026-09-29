@@ -81,9 +81,9 @@ function RowReadout({
   return (
     /* 底对齐：读数比单位高一截，顶对齐会让单位浮在半空。 */
     <span className="flex shrink-0 items-end gap-2xs">
-      <span className="text-label-xl tabular-nums">{value}</span>
+      <span className="text-lg font-medium tabular-nums">{value}</span>
       {unit !== undefined && unit !== null ? (
-        <span className="text-label-sm text-muted-foreground">{unit}</span>
+        <span className="text-label-small text-muted-foreground">{unit}</span>
       ) : null}
     </span>
   );
@@ -242,7 +242,7 @@ export function ShellPanelSectionTitle({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <p className={cn(ROW_INSET, "text-label-sm text-muted-foreground")}>
+    <p className={cn(ROW_INSET, "text-label-small text-muted-foreground")}>
       {children}
     </p>
   );
@@ -347,7 +347,7 @@ export function ShellPanelHeader({
         <div className="flex items-center justify-between gap-sm">
           <p
             className={cn(
-              "truncate text-label-lg",
+              "truncate text-label",
               tone === "muted" ? "text-muted-foreground" : "text-foreground",
             )}
           >
@@ -358,7 +358,7 @@ export function ShellPanelHeader({
         {metaRows.map((row) => (
           <p
             key={row.key}
-            className="flex min-w-0 items-center gap-2xs text-body-sm text-muted-foreground"
+            className="flex min-w-0 items-center gap-2xs text-body-small text-muted-foreground"
           >
             {row.icon ? (
               <Icon name={row.icon} size="xs" className="shrink-0" />
@@ -389,7 +389,7 @@ export interface ShellPanelRowProps {
    * 值的语气：
    * - `"muted"`（默认）——小一号的灰字，用在「顺带说一下」的值上（当前语言、
    *   已选项）。
-   * - `"strong"`——大号纯数字读数（label-xl），用在「这一行就是为了让人看这个数」
+   * - `"strong"`——大号纯数字读数（18px 原子字号），用在「这一行就是为了让人看这个数」
    *   的行上（账户余额、本月账单）。与 `ShellPanelMeterRow` 的读数**同一份渲染**，
    *   同一块面板里余额与存储的数字高度、单位、对齐一模一样。不套底色块
    *   （owner 2026-09-25）。
@@ -456,9 +456,9 @@ export function ShellPanelRow({
     <>
       <RowLead icon={icon} danger={danger} />
       <span className="flex min-w-0 flex-1 flex-col items-start gap-0 text-left">
-        <span className="w-full truncate text-label-md">{label}</span>
+        <span className="w-full truncate text-label">{label}</span>
         {description ? (
-          <span className="w-full truncate text-body-sm text-muted-foreground">
+          <span className="w-full truncate text-body-small text-muted-foreground">
             {description}
           </span>
         ) : null}
@@ -469,11 +469,11 @@ export function ShellPanelRow({
         ) : (
           /* 底对齐：数值比单位高一截，顶对齐会让单位浮在半空。 */
           <span className="flex shrink-0 items-end gap-2xs">
-            <span className="text-body-sm text-muted-foreground tabular-nums">
+            <span className="text-body-small text-muted-foreground tabular-nums">
               {value}
             </span>
             {unit !== undefined && unit !== null ? (
-              <span className="text-label-sm text-muted-foreground">
+              <span className="text-label-small text-muted-foreground">
                 {unit}
               </span>
             ) : null}
@@ -719,9 +719,9 @@ export function ShellPanelMeterRow({
     >
       <RowLead icon={icon} />
       <span className="flex min-w-0 flex-1 flex-col items-start text-left">
-        <span className="w-full truncate text-label-md">{label}</span>
+        <span className="w-full truncate text-label">{label}</span>
         {description ? (
-          <span className="w-full truncate text-body-sm text-muted-foreground">
+          <span className="w-full truncate text-body-small text-muted-foreground">
             {description}
           </span>
         ) : null}
@@ -732,7 +732,7 @@ export function ShellPanelMeterRow({
         ) : null}
         <Progress value={safe} className="w-full" />
         {valueLabel !== undefined && valueLabel !== null ? (
-          <span className="text-body-sm text-muted-foreground tabular-nums">
+          <span className="text-body-small text-muted-foreground tabular-nums">
             {valueLabel}
           </span>
         ) : null}
@@ -974,13 +974,13 @@ export function ShellScopePanel({
                         />
                       ) : null}
                       <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
-                        <span className="w-full truncate text-label-md">
+                        <span className="w-full truncate text-label">
                           {option.label}
                         </span>
                         {option.description ? (
                           <span
                             className={cn(
-                              "w-full truncate text-body-sm",
+                              "w-full truncate text-body-small",
                               selected
                                 ? "opacity-subtle"
                                 : "text-muted-foreground",
@@ -1080,7 +1080,7 @@ export const ShellScopeButton = React.forwardRef<
           撑到 320px——三个元素全挤在左端(justify-start),右边空出百来像素,
           下拉角标落在控件中部(owner 2026-09-20 实看)。
           常态 192px 上限下行为不变:那时余量为 0,truncate 照旧生效。 */}
-      <span className="min-w-0 flex-1 truncate text-left text-label-md">
+      <span className="min-w-0 flex-1 truncate text-left text-label">
         {label}
       </span>
       {caret ? (

@@ -111,14 +111,15 @@ describe("LabeledValue · 主角是数字", () => {
    * 本件是标签小、读数大（主角是数字）。朝向搞反了不会报错，只是面板里的重点
    * 整个错位。
    */
-  it("读数比标签重：标签走 label 族，读数走 title 族", () => {
+  it("读数比标签重：标签走 label 族，读数使用原子字号", () => {
     const { container } = render(
       <LabeledValue label="本月用量" value="1,284" />,
     );
     const label = screen.getByText("本月用量");
     const value = screen.getByText("1,284");
     expect(label.closest("[class*='text-label']")).not.toBeNull();
-    expect(value.className).toContain("text-title");
+    expect(value.className).toContain("text-lg");
+    expect(value.className).toContain("font-bold");
     expect(container.querySelector("h1,h2,h3,h4")).toBeNull();
   });
 

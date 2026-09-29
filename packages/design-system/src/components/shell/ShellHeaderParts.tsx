@@ -12,10 +12,10 @@
  *
  * 本文件只收 header 左侧**此前没有对应件**的四样：
  * - `ShellHeaderMark`：平台标识，32px 版位里放 24px 图形
- * - `ShellHeaderTitle`：品牌字体 24px 的标题（vxture.ai / Workspace Console），
+ * - `ShellHeaderTitle`：品牌字体的标题（vxture.ai / Workspace Console），
  *   可带一枚徽标（管理员视角）
  * - `ShellHeaderDivider`：20px 高的竖线，分隔「平台」与「范围 / 产品 / 域」
- * - `ShellHeaderDomain`：当前域名（弱化色 label-lg）
+ * - `ShellHeaderDomain`：当前域名（弱化色 label）
  * - `ShellProductTitle`：单产品视角的产品标题组（标识 + 名称 + 类型 + 等级）
  *
  * 其余零件沿用既有：九宫格 `ShellLauncher`、范围 `ShellScopeButton`、侧栏开关
@@ -82,7 +82,7 @@ export interface ShellHeaderTitleProps {
 }
 
 /**
- * 品牌字体 24px 粗体标题：平台名（官网与两种工作台都写 vxture.ai，Figma 09-26
+ * 品牌字体 heading-3 粗体标题：平台名（官网与两种工作台都写 vxture.ai，Figma 09-26
  * 定稿；两种工作台靠徽标与分隔线后的内容分视角，不靠标题）。
  */
 export function ShellHeaderTitle({
@@ -169,7 +169,7 @@ export function ShellHeaderDomain({
     <span
       data-slot="header-domain"
       className={cn(
-        "min-w-0 truncate whitespace-nowrap text-label-lg text-content-tertiary",
+        "min-w-0 truncate whitespace-nowrap text-label text-content-tertiary",
         className,
       )}
     >
@@ -195,8 +195,8 @@ export interface ShellProductTitleProps {
 }
 
 /**
- * 单产品视角的产品标题组：标识 + 名称 + 类型 + 等级。名称与类型同为 20px，
- * 靠字体（品牌体 / 正文体）与颜色（前景 / 弱化）分主次。
+ * 单产品视角的产品标题组：标识 + 名称 + 类型 + 等级。名称用 heading-3；类型只是
+ * 同字号限定语，显式取原子字号 xl。两者靠字体（品牌体 / 正文体）与颜色分主次。
  */
 export function ShellProductTitle({
   logoSrc,
@@ -222,11 +222,11 @@ export function ShellProductTitle({
           className="size-icon-lg shrink-0"
         />
       ) : null}
-      <span className="truncate whitespace-nowrap font-brand text-title-xl font-semibold text-foreground">
+      <span className="truncate whitespace-nowrap font-brand text-xl font-semibold text-foreground">
         {name}
       </span>
       {type ? (
-        <span className="truncate whitespace-nowrap text-title-xl font-semibold text-muted-foreground">
+        <span className="truncate whitespace-nowrap text-xl font-semibold text-muted-foreground">
           {type}
         </span>
       ) : null}

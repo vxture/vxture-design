@@ -127,7 +127,7 @@ const CommandInput = React.forwardRef<HTMLInputElement, CommandInputProps>(
         <CommandPrimitive.Input
           ref={ref}
           className={cn(
-            "flex h-control-xl w-full bg-transparent py-sm text-body-sm outline-none",
+            "flex h-control-xl w-full bg-transparent py-sm text-body-small outline-none",
             "placeholder:text-muted-foreground",
             "disabled:cursor-not-allowed disabled:opacity-disabled",
             className,
@@ -162,7 +162,7 @@ const CommandEmpty = React.forwardRef<HTMLDivElement, CommandEmptyProps>(
       <CommandPrimitive.Empty
         ref={ref}
         className={cn(
-          "py-lg text-center text-body-sm text-muted-foreground",
+          "py-lg text-center text-body-small text-muted-foreground",
           className,
         )}
         {...props}
@@ -180,7 +180,7 @@ const CommandGroup = React.forwardRef<HTMLDivElement, CommandGroupProps>(
           "overflow-hidden p-2xs text-foreground",
           // 组标题是 cmdk 渲染的内部节点，只能从外面用属性选择器够到。
           "[&_[cmdk-group-heading]]:px-sm [&_[cmdk-group-heading]]:py-xs",
-          "[&_[cmdk-group-heading]]:text-label-sm [&_[cmdk-group-heading]]:text-muted-foreground",
+          "[&_[cmdk-group-heading]]:text-label-small [&_[cmdk-group-heading]]:text-muted-foreground",
           className,
         )}
         {...props}
@@ -195,7 +195,7 @@ const CommandItem = React.forwardRef<HTMLDivElement, CommandItemProps>(
       <CommandPrimitive.Item
         ref={ref}
         className={cn(
-          "relative flex cursor-default select-none items-center gap-xs rounded-sm px-sm py-xs text-body-sm outline-none transition-colors",
+          "relative flex cursor-default select-none items-center gap-xs rounded-sm px-sm py-xs text-body-small outline-none transition-colors",
           inlineIcon,
           // ⚠ cmdk 发的是带值属性：data-selected="true" / data-disabled="true"。
           "data-[selected=true]:bg-accent data-[selected=true]:text-foreground",
@@ -228,7 +228,7 @@ const CommandShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-body-sm tracking-widest opacity-subtle",
+        "ml-auto text-body-small tracking-widest opacity-subtle",
         className,
       )}
       {...props}

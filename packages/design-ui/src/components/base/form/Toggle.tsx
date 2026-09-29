@@ -50,7 +50,7 @@ export type ToggleSize = (typeof TOGGLE_SIZES)[number];
 const toggleVariants = cva(
   cn(
     "inline-flex shrink-0 items-center justify-center gap-xs whitespace-nowrap select-none",
-    "rounded-md text-label-md text-foreground",
+    "rounded-md text-label text-foreground",
     "hover:bg-accent",
     interactive,
     inlineIcon,
@@ -67,8 +67,8 @@ const toggleVariants = cva(
       // 档位表与 Button 逐档相同，理由见那边的注释。
       size: {
         // 小档同 Button：另行封顶圆角，基数调大时不发胖。
-        xs: cn("h-control-xs px-xs text-label-sm", radiusClamp),
-        sm: cn("h-control-sm px-sm text-label-sm", radiusClamp),
+        xs: cn("h-control-xs px-xs text-label-small", radiusClamp),
+        sm: cn("h-control-sm px-sm text-label-small", radiusClamp),
         md: cn("h-control-md px-md", radiusClamp),
         lg: "h-control-lg px-lg",
         xl: "h-control-xl px-lg",

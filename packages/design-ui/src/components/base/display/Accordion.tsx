@@ -61,7 +61,7 @@ const AccordionTrigger = React.forwardRef<
         ref={ref}
         className={cn(
           "group flex flex-1 items-center justify-between gap-md rounded-sm py-md",
-          "text-left text-label-md",
+          "text-left text-label",
           interactive,
           "hover:underline",
           className,
@@ -93,7 +93,7 @@ const AccordionContent = React.forwardRef<
   return (
     <AccordionPrimitive.Content
       ref={ref}
-      className="overflow-hidden text-body-sm"
+      className="overflow-hidden text-body-small"
       {...props}
     >
       <div className={cn("pb-md", className)}>{children}</div>

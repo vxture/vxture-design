@@ -42,6 +42,7 @@ function Banner({
   dismissLabel = "Dismiss",
   className,
 }: BannerProps) {
+  const iconName = toneIcons[tone];
   return (
     <div
       role="status"
@@ -51,16 +52,18 @@ function Banner({
         className,
       )}
     >
-      <Icon
-        name={toneIcons[tone]}
-        size={16}
-        aria-hidden="true"
-        className="mt-2xs shrink-0"
-      />
+      {iconName ? (
+        <Icon
+          name={iconName}
+          size={16}
+          aria-hidden="true"
+          className="mt-2xs shrink-0"
+        />
+      ) : null}
       <div className="flex min-w-0 flex-1 flex-col gap-2xs">
-        <span className="text-label-md">{title}</span>
+        <span className="text-label">{title}</span>
         {description ? (
-          <span className="text-body-sm opacity-muted">{description}</span>
+          <span className="text-body-small opacity-muted">{description}</span>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

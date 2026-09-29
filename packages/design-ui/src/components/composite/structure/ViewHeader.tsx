@@ -19,10 +19,8 @@
  * 视觉语法对齐 admin 页头（workplan §1 V6），2026-08-02 owner 定稿：
  * - icon 裸色无底块、48px（2xl；admin 的 40 不在刻度上，取上档）——顶部与标题
  *   光学对齐（mt-2xs 抵消标题行高的上半距），下部随内容自然。
- * - 标题用**页头文本** `heading-3`（24px 品牌体，owner 2026-09-26 定，取代 2026-08-02 的
- *   title-xl 20）：页头是标题阶梯的第 1 级（level 1 = h1），`title` 族的 18 / 16 / 14
- *   整族留给 `SectionHeader` 的 level 2–4，每一级字号都不同。原先页头也用 title 族，
- *   板块只剩三档，第四级只能去别的族借一个同值的档，三、四级因此看不出差别。
+ * - 标题用 `heading-1`（默认 18px 品牌体）：角色编号与 HTML 层级一致，不再
+ *   通过较小的另一套 title 角色补救过大的 heading。
  * - 无 eyebrow：页头只有标题与描述两行（原 eyebrow 行随定稿删除）。
  * - 底部虚线下边框，缺省开、可关（`divider={false}`）——与 `SectionHeader` 每一级
  *   同一条线（owner 2026-09-26：每级都有下划线，可显隐）。
@@ -89,15 +87,15 @@ const ViewHeader = React.forwardRef<HTMLElement, PageHeaderProps>(
         ) : null}
         <div className="flex min-w-0 flex-1 flex-col gap-sm">
           <div className="flex flex-wrap items-center gap-sm">
-            {/* font-brand 必须单独写：`text-heading-3` 只带字号 / 行高 / 字距 / 字重，
+            {/* font-brand 必须单独写：`text-heading-1` 只带字号 / 行高 / 字距 / 字重，
                 不带字体族，漏了就落回正文体（同 ShellHeaderTitle）。 */}
-            <h1 className="font-brand text-heading-3 text-foreground">
+            <h1 className="font-brand text-heading-1 text-foreground">
               {title}
             </h1>
             {secondary}
           </div>
           {description ? (
-            <p className="text-body-md text-muted-foreground">{description}</p>
+            <p className="text-body text-muted-foreground">{description}</p>
           ) : null}
         </div>
         {action ? (

@@ -44,7 +44,7 @@ export function SectionPage({ slug }: { readonly slug: string }) {
 
   return (
     <>
-      {/* 页头用 DS 的 ViewHeader：工作界面的页标题是 title-xl，不是营销页的展示体。
+      {/* 页头用 DS 的 ViewHeader：工作界面的页标题是 heading-1，不是营销页的展示体。
           大类（基础 / 组件）作为标题旁的徽标，不另起一行眉标——ViewHeader 定稿无眉标。 */}
       <ViewHeader
         title={section.label}
@@ -227,7 +227,7 @@ function EntrySection({ entry }: { readonly entry: Entry }) {
           {entry.axes?.map((axis) => (
             <span
               key={axis.name}
-              className="inline-flex items-center gap-2xs rounded-4xl bg-accent px-sm py-2xs text-label-sm text-muted-foreground"
+              className="inline-flex items-center gap-2xs rounded-4xl bg-accent px-sm py-2xs text-label-small text-muted-foreground"
               title={axis.values.join(" / ")}
             >
               {axis.name}
@@ -235,7 +235,7 @@ function EntrySection({ entry }: { readonly entry: Entry }) {
             </span>
           ))}
           {entry.deviation ? (
-            <span className="text-body-sm text-muted-foreground">
+            <span className="text-body-small text-muted-foreground">
               {entry.deviation}
             </span>
           ) : null}
@@ -249,7 +249,9 @@ function EntrySection({ entry }: { readonly entry: Entry }) {
 
 function Stats({ children }: { readonly children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-2 gap-md lg:grid-cols-5">{children}</div>
+    <div className="grid min-w-0 grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-5">
+      {children}
+    </div>
   );
 }
 
@@ -290,7 +292,7 @@ function Stat({
   readonly tone?: "default" | "warning";
 }) {
   return (
-    <div className="flex flex-col gap-2xs rounded-lg border border-border bg-card p-lg shadow-flat">
+    <div className="flex min-w-0 flex-col gap-2xs rounded-lg border border-border bg-card p-lg shadow-flat">
       <span
         className={
           tone === "warning"
@@ -300,9 +302,9 @@ function Stat({
       >
         {value}
       </span>
-      <span className="text-label-md text-foreground">{label}</span>
+      <span className="text-label text-foreground">{label}</span>
       {note ? (
-        <span className="flex flex-wrap items-center gap-2xs text-body-sm text-muted-foreground">
+        <span className="flex min-w-0 flex-wrap items-center gap-2xs text-body-small text-muted-foreground">
           {note}
         </span>
       ) : null}

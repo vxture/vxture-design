@@ -168,8 +168,8 @@ export function InputOTPSlot({
         "border-control-border text-foreground shadow-raised",
         "outline-none transition-all duration-fast ease-standard",
         size === "lg"
-          ? "h-control-3xl w-control-3xl text-body-xl"
-          : "h-control-md w-control-md text-body-md",
+          ? "h-control-3xl w-control-3xl text-lg"
+          : "h-control-md w-control-md text-body",
         variant === "separate"
           ? // 独立方格：四边自带框、自带圆角，不参与 first/last 的连体收边。
             ["border", size === "lg" ? "rounded-xl" : "rounded-md"]
@@ -201,8 +201,8 @@ export function InputOTPSlot({
 }
 
 /**
- * 分组连接符（1234-5678 中间那一杠）。字号跟随档位：lg 的格子里是 body-xl 的
- * 数字，一杠还是正文字号就会细得像没画。
+ * 分组连接符（1234-5678 中间那一杠）。大格数字直接使用 18px 原子字号，
+ * 一杠还是默认正文字号就会细得像没画。
  */
 export function InputOTPSeparator({
   className,
@@ -215,7 +215,7 @@ export function InputOTPSeparator({
       data-slot="input-otp-separator"
       className={cn(
         "px-2xs text-muted-foreground",
-        size === "lg" ? "text-body-xl" : "text-body-md",
+        size === "lg" ? "text-lg" : "text-body",
         className,
       )}
       {...props}

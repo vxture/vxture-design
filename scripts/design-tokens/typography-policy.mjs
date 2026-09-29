@@ -20,6 +20,8 @@
 
 /** T1 字号阶梯，字号三档沿此表平移。 */
 export const TEXT_LADDER = [
+  "3xs",
+  "2xs",
   "xs",
   "sm",
   "base",
@@ -35,7 +37,7 @@ export const TEXT_LADDER = [
   "9xl",
 ];
 
-/** 字号三档 = 默认档在阶梯上 −1 / 0 / +1。两处例外由角色自己声明。 */
+/** 字号三档 = 默认档在阶梯上 −1 / 0 / +1。 */
 export const SIZE_MODE_SHIFT = [-1, 0, 1];
 
 /**
@@ -85,12 +87,10 @@ export const CJK_SELECTOR = ":lang(zh)";
 export const CJK_LEADING_ADD = 0.15;
 
 /**
- * 排版角色。列依次为：角色名, 字体族, 字重, 默认字号档, 例外标记。
+ * 排版角色。列依次为：角色名, 字体族, 字重, 默认字号档。
  *
- * 例外标记（字号三档的边界）：
- *   noGrow    大号档不再放大。当前无角色使用；越界由阶梯两端夹取兜底，不靠此标记。
- *   noShrink  小号档不再缩小。代码与元信息低于 12px 失去可读性；字号偏好是无障碍
- *             设置，不该把这类文字推到读不了。
+ * 3xs / 2xs 只作为最低语义角色的 Small / Default：普通正文与控件标签的默认角色
+ * 分别从 sm 起步，不会落入 9–10px。极小字号只服务短元信息、键位与眉标。
  */
 export const TYPE_ROLES = [
   /* 顶档留一格余量（默认 6xl，大号档用掉 7xl），三档才都跟随字号轴。曾经 display 的
@@ -98,52 +98,34 @@ export const TYPE_ROLES = [
   ["display-lg", "brand", "bold", "7xl"],
   ["display-md", "brand", "bold", "6xl"],
   ["display-sm", "brand", "bold", "5xl"],
+  ["display-xs", "brand", "bold", "3xl"],
 
-  /* heading 与 title 是两族不是一族的大小档。原先五档 heading 在中间同时换了字号与
-     字体（brand → sans），一条坡从中间断开而名字上看不出来。Material 的 Headline /
-     Title、Fluent 的 Title / Subtitle 都是分开命名的，断点该有名字。
+  /* display 已承担营销与首屏大字，heading 只负责产品界面的 h1 / h2 / h3。
+     默认 18 / 16 / 14，避免标题压过页面内容；每个角色仍沿原子阶梯提供
+     Small / Default / Large 三个字号偏好。删除 title 家族，避免使用者在两套
+     近义标题角色之间猜选。 */
+  ["heading-1", "brand", "semibold", "lg"],
+  ["heading-2", "brand", "semibold", "base"],
+  ["heading-3", "brand", "semibold", "sm"],
 
-     heading 最小档 24px 是展示体的下限：再小 Funnel Display 的字形细节就糊了，
-     而 24 也正是 Material 与 Fluent 切到正文体的那一档。 */
-  ["heading-1", "brand", "semibold", "4xl"],
-  ["heading-2", "brand", "semibold", "3xl"],
-  ["heading-3", "brand", "semibold", "2xl"],
+  /* 正文与标签只保留默认 / 辅助两种用途，不为视觉对称制造 xl / lg / md / sm
+     四级矩阵。需要强调的数字、OTP、品牌名直接使用原子字号。 */
+  ["body", "sans", "normal", "sm"],
+  ["body-small", "sans", "normal", "xs"],
 
-  /* title 与 body / label 同为四档、同用 t-shirt 档名——三者在 14–20 这一段并排，
-     档名对得上才能一眼看出「同字号、不同字重」的那三层。
+  ["label", "sans", "medium", "sm"],
+  ["label-small", "sans", "medium", "xs"],
 
-     title 字重 500（medium），不是 600（owner 2026-09-25）。与 label 同重，
-     两族在同字号上靠用途与所在位置区分，不再靠字重。 */
-  ["title-xl", "sans", "medium", "xl"],
-  ["title-lg", "sans", "medium", "lg"],
-  ["title-md", "sans", "medium", "base"],
-  ["title-sm", "sans", "medium", "sm"],
+  /* 目前只有键位、短代码和技术标识的真实用例；代码编辑器出现后再按需加档。 */
+  ["code", "mono", "normal", "xs"],
 
-  ["body-xl", "sans", "normal", "lg"],
-  ["body-lg", "sans", "normal", "base"],
-  ["body-md", "sans", "normal", "sm"],
-  ["body-sm", "sans", "normal", "xs"],
-
-  ["label-xl", "sans", "medium", "lg"],
-  ["label-lg", "sans", "medium", "base"],
-  ["label-md", "sans", "medium", "sm"],
-  ["label-sm", "sans", "medium", "xs"],
-
-  /* code-lg：代码字号偏好「较大」一档要有地方落（owner 2026-09-25）。
-     三档 sm / md / lg 默认 12 / 14 / 16，与 body 的下三档同字号。 */
-  ["code-lg", "mono", "normal", "base"],
-  ["code-md", "mono", "normal", "sm"],
-  ["code-sm", "mono", "normal", "xs", "noShrink"],
-
-  /* 字重 500，与 title 同步从 600 降下来（owner 2026-09-25）。 */
-  ["overline", "sans", "medium", "xs", "noShrink"],
+  ["overline", "sans", "medium", "2xs"],
 ];
 
 /** 产物里的分组顺序，与角色名前缀一致。 */
 export const TYPE_GROUP_ORDER = [
   "display",
   "heading",
-  "title",
   "body",
   "label",
   "code",

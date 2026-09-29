@@ -45,9 +45,9 @@ const EXPECTED = [
   ["text-foreground", "T2 色彩"],
   ["border-border", "T2 色彩"],
   ["dark:bg-card", "T2 色彩 · 暗色变体"],
-  ["text-body-md", "T2 排版角色"],
+  ["text-body", "T2 排版角色"],
   ["text-heading-1", "T2 排版角色"],
-  ["text-title-md", "T2 排版角色"],
+  ["text-heading-3", "T2 排版角色"],
   ["p-md", "T2 间距（密度轴）"],
   ["gap-lg", "T2 间距"],
   // 栏间沟那一档:它是 2026-09-11 新加的,而本清单是**取样**的——不进样就等于
@@ -78,7 +78,8 @@ const EXPECTED = [
   // T1 偏离：扩展档与覆盖值
   ["font-brand", "T1 扩展 · 品牌字体族"],
   ["font-cjk", "T1 扩展 · 中文字体栈"],
-
+  ["text-3xs", "T1 扩展 · 9px 兼容字号"],
+  ["text-2xs", "T1 扩展 · 10px 兼容字号"],
   ["3xl:p-4", "T1 扩展 · 断点变体"],
   ["font-sans", "T1 覆盖 · 正文字体栈"],
   ["font-mono", "T1 覆盖 · 等宽字体栈"],
@@ -224,15 +225,29 @@ if (missing.length > 0) {
 
 // `--text-*` 的修饰子键写错时工具类仍会生成，只是少落几个属性——
 // 只断言类名存在会漏掉这种半哑火，故单独校验属性齐备。
-const roleOut = compiled.build(["text-body-md"]);
+const roleOut = compiled.build(["text-body"]);
 const roleCss = roleOut.slice(roleOut.indexOf("@layer utilities {"));
 const lacking = TEXT_ROLE_PROPS.filter((p) => !roleCss.includes(`${p}:`));
 if (lacking.length > 0) {
-  console.error(`text-body-md 只落了部分属性，缺：${lacking.join(" / ")}`);
+  console.error(`text-body 只落了部分属性，缺：${lacking.join(" / ")}`);
   console.error(
     "检查 generate-theme.mjs 的 `--text-<role>--<modifier>` 子键拼写。",
   );
   process.exit(1);
+}
+
+// 小字号是 T1 扩展，不走角色生成器；除类名外还要守住字号配套行高。
+for (const util of ["text-3xs", "text-2xs"]) {
+  const out = compiled.build([util]);
+  const css = out.slice(out.indexOf(`.${cssIdent(util)} {`));
+  const block = css.slice(0, css.indexOf("}"));
+  const missingProps = ["font-size", "line-height"].filter(
+    (prop) => !block.includes(`${prop}:`),
+  );
+  if (missingProps.length > 0) {
+    console.error(`${util} 缺：${missingProps.join(" / ")}`);
+    process.exit(1);
+  }
 }
 
 /**

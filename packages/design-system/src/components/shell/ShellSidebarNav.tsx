@@ -369,7 +369,7 @@ function NavItemRow({
         "flex min-h-control-xl items-center gap-xs rounded-md",
         /* 有外链图标时右侧留位，否则长标签会钻到图标底下。 */
         item.external ? "pr-2xl" : undefined,
-        "text-label-md transition-colors duration-fast ease-standard",
+        "text-label transition-colors duration-fast ease-standard",
         active
           ? "bg-surface-selected text-primary-text"
           : "text-muted-foreground hover:bg-accent hover:text-foreground",
@@ -394,7 +394,7 @@ function NavItemRow({
                   一起高亮会让主名失去重音。 */}
               <span
                 className={cn(
-                  "truncate font-mono text-label-sm leading-tight text-muted-foreground",
+                  "truncate font-mono text-label-small leading-tight text-muted-foreground",
                   revealOnDemand &&
                     "hidden group-hover/nav-item:block group-focus-visible/nav-item:block",
                 )}
@@ -663,7 +663,7 @@ export function ShellSidebarNav({
             </NavRail>
             {!collapsed &&
               (domainName ? (
-                <NavLabel className="text-label-md font-medium text-foreground">
+                <NavLabel className="text-label font-medium text-foreground">
                   {domainName}
                 </NavLabel>
               ) : (

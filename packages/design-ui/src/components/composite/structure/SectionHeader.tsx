@@ -6,23 +6,18 @@
  *
  * 层级由 `level` 给出，同时决定语义元素、排版角色、图标档与间距，几样不会各说各话。
  *
- * ## 标题阶梯（owner 2026-09-26 定稿，取代 2026-08-02 的四档）
+ * ## 标题阶梯
  *
  * **level 的数字就是 h 的数字**，整页一套：
  *
- *   level 1 → ViewHeader    <h1> + heading-3 (24px 品牌体) + icon 48   页头（另一件）
- *   level 2 → SectionHeader <h2> + title-lg  (18px)          + icon 32   大板块（缺省）
- *   level 3 → SectionHeader <h3> + title-md  (16px)          + icon 24   板块
- *   level 4 → SectionHeader <h4> + title-sm  (14px)          + icon 20   分组
+ *   level 1 → ViewHeader    <h1> + heading-1 (18px) + icon 48   页头（另一件）
+ *   level 2 → SectionHeader <h2> + heading-2 (16px) + icon 32   大板块（缺省）
+ *   level 3 → SectionHeader <h3> + heading-3 (14px) + icon 24   板块
  *
- * 所以本件只有 2 / 3 / 4 三档——第 1 级是页头，归 `ViewHeader`，一页一个 h1。
+ * 所以本件只有 2 / 3 两档——第 1 级是页头，归 `ViewHeader`，一页一个 h1。
  *
- * **为什么这样排**（owner 2026-09-26「四级标题样式混乱」）：
- * - 原 level 4 用 `label-md`，与 level 3 的 `title-sm` 取值完全相同（14px / 500 /
- *   同行高），三、四两级看上去一模一样。根因在 token：`title` 族只有四档，页头
- *   也用 `title-xl`，板块只剩三档，第四档只能去别的族借。
- * - 页头改用 `heading` 族（页头文本），`title` 族四档里的 18 / 16 / 14 全留给板块，
- *   每一级字号都不同。
+ * display 已负责营销与首屏大字。产品界面只保留 heading-1/2/3；角色编号、h 元素
+ * 与视觉层级一一对应，不再维护一套重叠的 title 家族。
  * - 原 level 1 也是 h1、level 与 h 错位一格；现在 level 与 h 一一对齐。
  *
  * **一行对齐**（owner 2026-09-26）：图标 | 标题 | 动作在同一行、垂直居中，动作靠右；
@@ -56,8 +51,8 @@ import type { IconName, IconSize } from "../../../icons";
 import { hairline } from "../../../styles/recipes";
 import { cn } from "../../../utils/cn";
 
-/** 2 / 3 / 4，数字即 h 的数字；第 1 级是页头 `ViewHeader`。 */
-export type SectionHeaderLevel = 2 | 3 | 4;
+/** 2 / 3，数字即 h 的数字；第 1 级是页头 `ViewHeader`。 */
+export type SectionHeaderLevel = 2 | 3;
 
 export interface SectionHeaderProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -72,7 +67,7 @@ export interface SectionHeaderProps extends Omit<
    * （2026-08-05）。同 `TableTitleCell.titleSuffix` 的先例。
    */
   readonly titleSuffix?: React.ReactNode;
-  /** 2–4，即 h2–h4；同时决定排版角色、图标档与间距。缺省 2。 */
+  /** 2–3，即 h2–h3；同时决定排版角色、图标档与间距。缺省 2。 */
   readonly level?: SectionHeaderLevel;
   readonly description?: React.ReactNode;
   /** 板块级动作，通常是一个 ghost / outline 按钮。 */
@@ -86,33 +81,25 @@ export interface SectionHeaderProps extends Omit<
 
 /**
  * 每档一行，几样属性一起定——分开定就会出现「字是三级、间距是一级」。
- * 第 1 级（h1 / heading-3 / icon 48）属 ViewHeader。
+ * 第 1 级（h1 / heading-1 / icon 48）属 ViewHeader。
  * ⚠ 类名必须是完整字面量：Tailwind 扫源码文本，拼接出来的类不会生成、也不报错。
  */
 const BY_LEVEL = {
   2: {
     tag: "h2",
-    type: "text-title-lg",
+    type: "text-heading-2 font-brand",
     iconSize: "xl",
     lead: "gap-x-md",
-    description: "text-body-md",
+    description: "text-body",
     rule: "pb-md",
   },
   3: {
     tag: "h3",
-    type: "text-title-md",
+    type: "text-heading-3 font-brand",
     iconSize: "lg",
     lead: "gap-x-sm",
-    description: "text-body-sm",
+    description: "text-body-small",
     rule: "pb-sm",
-  },
-  4: {
-    tag: "h4",
-    type: "text-title-sm",
-    iconSize: "md",
-    lead: "gap-x-xs",
-    description: "text-body-sm",
-    rule: "pb-xs",
   },
 } as const;
 

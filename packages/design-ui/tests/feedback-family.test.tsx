@@ -167,19 +167,30 @@ describe("Avatar · 兜底在图片起不来时接管", () => {
 
 /* ── ResultPageTemplate ───────────────────────────────────────────────────── */
 
-describe("ResultPageTemplate · 图标缺省跟着语气走", () => {
+describe("ResultPageTemplate · neutral 无缺省图标", () => {
   /**
    * 结果页的图标不该让每个调用点自己挑——同一个「成功」在五个门户里挑出五个
    * 不同的对勾，用户会以为它们是不同的事。缺省从 `toneIcons` 取，一个语气一个图标。
    */
-  it.each([...TONES])("tone=%s 时用该语气的缺省图标", (tone) => {
+  it("neutral 默认不画图标", () => {
     const { container } = render(
-      <ResultPageTemplate tone={tone} title="完成" />,
+      <ResultPageTemplate tone="neutral" title="完成" />,
     );
-    const svg = container.querySelector("svg");
-    expect(svg).not.toBeNull();
-    expect(toneIcons[tone]).toBeTruthy();
+    expect(container.querySelector("svg")).toBeNull();
+    expect(toneIcons.neutral).toBe(false);
   });
+
+  it.each(TONES.filter((tone) => tone !== "neutral"))(
+    "tone=%s 时用该语气的缺省图标",
+    (tone) => {
+      const { container } = render(
+        <ResultPageTemplate tone={tone} title="完成" />,
+      );
+      const svg = container.querySelector("svg");
+      expect(svg).not.toBeNull();
+      expect(toneIcons[tone]).toBeTruthy();
+    },
+  );
 
   /** 不同语气必须画出不同的图标——否则这个缺省就没有意义。 */
   it("不同语气画出不同的图标", () => {
@@ -205,6 +216,13 @@ describe("ResultPageTemplate · 图标缺省跟着语气走", () => {
     expect(
       (manual.container.querySelector("svg") as SVGElement).innerHTML,
     ).not.toBe(autoSvg);
+  });
+
+  it("neutral 可显式补充业务图标", () => {
+    const { container } = render(
+      <ResultPageTemplate tone="neutral" icon="settings" title="完成" />,
+    );
+    expect(container.querySelector("svg")).not.toBeNull();
   });
 
   it("不给 tone 时是 neutral", () => {

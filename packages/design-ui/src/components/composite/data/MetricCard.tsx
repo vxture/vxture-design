@@ -4,8 +4,8 @@
  * @layer Presentation
  * @category Components - Pattern
  *
- * 读数 20px（title-xl）而非展示体大字——指标卡成排出现，36px 的读数会让四张卡
- * 各自都在喊。读数不是标题，落在 `<span>` 上。
+ * 读数固定取原子字号 xl（20px），不占用 heading / title 语义角色——指标卡成排
+ * 出现，大展示字会让四张卡各自都在喊。读数不是标题，落在 `<span>` 上。
  *
  * **尺寸按头部统计定**（owner 2026-08-06，取自 service-monitor 的既有实现）：
  * 内边距 16/24 而非 32/32。这类卡永远是"页头下面那一排"，占地小才排得开；
@@ -133,7 +133,7 @@ function MetricCard({
             />
           ) : null}
           <div className="flex min-w-0 flex-col gap-xs">
-            <span className="flex min-w-0 items-center gap-xs text-label-md text-muted-foreground">
+            <span className="flex min-w-0 items-center gap-xs text-label text-muted-foreground">
               <span className="truncate">{label}</span>
               {help ? (
                 <Button
@@ -152,7 +152,7 @@ function MetricCard({
                   继承色是 muted-foreground，读数会跟标签一个灰，退回 foreground。 */}
               <span
                 className={cn(
-                  "text-title-xl font-bold",
+                  "text-xl font-bold",
                   tone === "neutral" && "text-foreground",
                 )}
               >
@@ -169,7 +169,7 @@ function MetricCard({
                 </StatusBadge>
               ))}
               {description ? (
-                <span className="min-w-0 text-body-sm text-muted-foreground">
+                <span className="min-w-0 text-body-small text-muted-foreground">
                   {description}
                 </span>
               ) : null}

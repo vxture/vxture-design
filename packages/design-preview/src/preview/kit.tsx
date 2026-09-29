@@ -12,10 +12,10 @@
  * 页标题用了营销页的展示体、分组与条目两个 h2 字号倒挂）。预览面自己就是 DS
  * 标题阶梯的第一个消费方：
  *
- *   页（大类）   ViewHeader          level 1 · h1 · heading-3
- *   分组 / 基础  Section level 2     h2 · title-lg
- *   条目（组件） Section level 3     h3 · title-md
- *   示例行说明   Row label           不是标题，label-sm 弱化色
+ *   页（大类）   ViewHeader          level 1 · h1 · heading-1
+ *   分组 / 基础  Section level 2     h2 · heading-2
+ *   条目（组件） Section level 3     h3 · heading-3
+ *   示例行说明   Row label           不是标题，label-small 弱化色
  */
 
 import * as React from "react";
@@ -66,11 +66,13 @@ export function Section({
       level={level}
       title={title}
       description={note}
-      className="scroll-mt-xl"
+      className="min-w-0 scroll-mt-xl"
     >
       <div
         className={
-          level === 2 ? "flex flex-col gap-xl" : "flex flex-col gap-lg"
+          level === 2
+            ? "flex min-w-0 flex-col gap-xl"
+            : "flex min-w-0 flex-col gap-lg"
         }
       >
         {children}
@@ -90,7 +92,7 @@ export function Row({ label, stack = false, children }: RowProps) {
   return (
     <div className="flex flex-col gap-xs">
       {label ? (
-        <span className="text-label-sm text-muted-foreground">{label}</span>
+        <span className="text-label-small text-muted-foreground">{label}</span>
       ) : null}
       <div
         className={
@@ -108,7 +110,7 @@ export function Row({ label, stack = false, children }: RowProps) {
 /** 待重写组件的警示条。这些件还挂着已退役的类名，渲染无样式是预期内的。 */
 export function PendingNote() {
   return (
-    <p className="rounded-md border border-warning-border bg-warning-muted px-sm py-xs text-body-sm text-warning-text">
+    <p className="rounded-md border border-warning-border bg-warning-muted px-sm py-xs text-body-small text-warning-text">
       以下组件尚未重写，仍依赖已退役的遗留类名——
       <strong>渲染无样式是预期结果</strong>， 它们的存在是为了让重写进度可见。
     </p>
