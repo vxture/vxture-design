@@ -142,7 +142,7 @@ export function FilterPopover({
           {active > 0 ? (
             <span
               data-slot="filter-popover-count"
-              className="inline-flex min-w-control-2xs items-center justify-center rounded-full bg-primary px-2xs text-label-small tabular-nums text-primary-foreground"
+              className="inline-flex min-w-control-sm items-center justify-center rounded-full bg-primary px-2xs text-label-small tabular-nums text-primary-foreground"
             >
               {active}
             </span>

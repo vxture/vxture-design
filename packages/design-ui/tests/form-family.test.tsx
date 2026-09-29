@@ -576,11 +576,7 @@ describe("SegmentedControl · 槽与滑块", () => {
     expect(screen.getByRole("radiogroup")).not.toHaveAttribute("aria-label");
   });
 
-  /**
-   * **只有两档**，不是三档。档位在这里只决定高度，不连带改字号——md 档原先用
-   * 默认 label，比同尺寸 NativeSelect 大一号，两个控件上下排在同一栏里字号明显
-   * 不一致。控件里的选项文字是标签不是正文。
-   */
+  /** 组件只开放所需的两档，但同名档的高度与全局控件刻度一致。 */
   it.each([
     ["sm", "h-control-sm"],
     ["md", "h-control-md"],

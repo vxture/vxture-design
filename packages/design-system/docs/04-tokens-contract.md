@@ -10,7 +10,7 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 | --------------- | ----------------------------------------------------------------------------- | -------------------------------------- | ---------------------------- |
 | 色彩            | `--primary` → `bg-primary`                                                    | `--color-*`                            | 明暗（`.dark`）              |
 | 排版角色        | `--body-*` → `text-body`                                                      | `--text-*`                             | 字号三档（`html.vx-font-*`） |
-| 间距 / 控件高度 | `--space-md` → `p-md`、`h-control-lg`                                         | `--spacing-*`                          | 密度三档（`.density-*`）     |
+| 间距 / 控件高度 | `--space-md` → `p-md`、`h-control-lg`                                         | `--spacing-*`                          | 间距随密度；控件高度稳定     |
 | 图标 / 媒体尺寸 | `--spacing-icon-md` → `size-icon-md`                                          | `--spacing-*`                          | 无                           |
 | 圆角            | `--radius-md` → `rounded-md`                                                  | `--radius-*`                           | 无                           |
 | 视觉高度        | `--shadow-raised` → `shadow-raised`                                           | `--shadow-*`                           | 无                           |
@@ -67,7 +67,7 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 
 字号模式由 `vx-font-small/default/large` 控制。9–10px 只用于眉标、键位、短代码和辅助文字；常规正文、控件标签与结构标题不进入这一范围。
 
-## 4. 间距与控件高度（密度轴）
+## 4. 间距与控件高度
 
 默认档取值（`--vx-spacing` = 4px 基数）：
 
@@ -75,15 +75,15 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | inset `space-*`           | `none` 0 / `2xs` 4 / `xs` 8 / `sm` 10 / `md` 16 / `lg` 24 / `xl` 32 / `2xl` 40 / `3xl` 48 / `4xl` 56 / `5xl` 64 / `6xl` 80 / `7xl` 128 |
 | row `space-row-*`         | `sm` 48 / `md` 56 / `lg` 64 / `xl` 80 / `2xl` 96 / `3xl` 112 / `4xl` 128                                                               |
-| control `space-control-*` | `3xs` 16 / `2xs` 20 / `xs` 24 / `sm` 28 / `md` 32 / `lg` 36 / `xl` 40 / `2xl` 48 / `3xl` 56                                            |
+| control `space-control-*` | `xs` 16 / `sm` 20 / `md` 24 / `lg` 28 / `xl` 32 / `2xl` 40 / `3xl` 48                                                                  |
 
-密度三档（`.density-compact/default/comfortable`）是档位平移而非等比缩放，三组都随密度变化，且除 `none` 外每一档三档取值严格递增：
+密度三档（`.density-compact/default/comfortable`）只作用于 inset 与 row，按档位平移而非等比缩放；控件高度是独立尺寸轴：
 
 | 组      | 紧凑                                       | 宽松                                            |
 | ------- | ------------------------------------------ | ----------------------------------------------- |
 | inset   | 沿阶梯下挪两格，约减半（`md` 8 / `lg` 12） | 上挪一格（`md` 24 / `lg` 32；`2xs` 例外只到 6） |
 | row     | 低端 −16、高端 −32（`row-md` 40）          | +8 到 +16（`row-md` 64）                        |
-| control | −1 档（`control-md` 28）                   | +1 档（`control-md` 36）                        |
+| control | 不变（`control-md` 恒为 24）               | 不变（`control-md` 恒为 24）                    |
 
 逐档取值见生成物 `spacing-semantic.css`，事实来源是 `scripts/design-tokens/semantic-policy.mjs` 的 `SPACING_SCALE`。
 

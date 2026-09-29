@@ -22,7 +22,7 @@ export function Kbd({ className, ...props }: KbdProps) {
     <kbd
       data-slot="kbd"
       className={cn(
-        "inline-flex h-control-3xs w-fit min-w-control-3xs select-none",
+        "inline-flex h-control-xs w-fit min-w-control-xs select-none leading-none",
         "items-center justify-center gap-2xs rounded-sm px-2xs",
         "bg-muted font-mono text-code text-muted-foreground",
         "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-icon-xs",

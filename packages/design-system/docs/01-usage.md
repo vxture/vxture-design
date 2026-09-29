@@ -48,7 +48,7 @@ T2 全族清单与档位见 [`04-tokens-contract.md`](./04-tokens-contract.md)�
 | 上下文尺寸：工具栏 sm、英雄区 lg                       | 设计，放置时  | 单个放置点            | cva `size` variant        |
 | 意图与状态：primary/destructive、hover/active/disabled | 设计，放置时  | 单个实例              | T2 语义色 + cva `variant` |
 
-相乘是自动的：cva 给出 `h-control-md`，密度类改写变量取值。**组件不需要知道密度存在**，故密度不做成 cva variant。
+组合是自动的：cva 给出稳定的 `h-control-md=24px`；密度类只改写留白与行高，字号模式只改写文字角色。**组件不需要知道这些用户偏好轴存在**，故它们不做成 cva variant。
 
 ## 4. 包与层映射
 

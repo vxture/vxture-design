@@ -39,7 +39,7 @@
  * 图标带 `fallback="placeholder"`：这里的图标名多半由业务数据映射而来，取不到
  * 时要出占位而不是留一个塌掉的空位。
  *
- * 两行都以控制高度为下限（主 `control-2xs`、辅 `control-3xs`，行距 `gap-2xs`），
+ * 两行都以控制高度为下限（主 `control-sm`、辅 `control-xs`，行距 `gap-2xs`），
  * 同时允许字体行盒把行撑高：密度与字号是独立轴，Compact 不能裁掉 Large 字体。
  * 一行数据仍可横向连读——主信息与同行主信息对齐，辅助信息与辅助信息对齐；标题
  * 后挂自适应高度的 `titleSuffix` 时，主行会作为整体保持垂直居中。
@@ -179,7 +179,7 @@ function TableTitleCell({
         />
       ) : null}
       <span className="flex min-w-0 flex-col gap-2xs">
-        <span className="flex min-h-control-2xs min-w-0 flex-wrap items-center gap-xs">
+        <span className="flex min-h-control-sm min-w-0 flex-wrap items-center gap-xs">
           {onTitleClick ? (
             <button
               type="button"
@@ -210,7 +210,7 @@ function TableTitleCell({
         {description ? (
           <span
             className={cn(
-              "flex min-h-control-3xs items-center truncate text-muted-foreground",
+              "flex min-h-control-xs items-center truncate text-muted-foreground",
               type.description,
             )}
           >

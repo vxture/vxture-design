@@ -53,7 +53,7 @@ export const SHELL_PANEL_HAIRLINE =
 const ROW_INSET = "px-sm";
 const ROW_LEAD_WIDTH = "w-icon-sm";
 const ROW_GAP = "gap-md";
-/** 行高统一档：与 `Button size="sm"`（h-control-md）同值。 */
+/** 行高统一档：与默认 `Button size="md"` 同值。 */
 const ROW_HEIGHT = "h-control-md";
 /** 行内图标一律走弱化色，与文字拉开层级——各行自己染色是不一致的来源。 */
 const ROW_ICON_TONE = "text-muted-foreground";

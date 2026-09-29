@@ -5,8 +5,8 @@
  * @category Components - Form
  *
  * 结构承上游四件：InputOTP / Group / Slot / Separator。取值差异：
- * - 槽位尺寸绑控件刻度（md 档 control-md、lg 档 control-3xl），跟随密度三档；
- *   上游的 size-9 裸数值不跟随。
+ * - 槽位尺寸绑稳定控件刻度（md 档 control-md、lg 档 control-3xl）；上游的
+ *   size-9 裸数值不属于统一尺寸轴。
  * - 假光标用 `animate-pulse`：上游的 caret-blink 是自定义 keyframes，
  *   DS 不为单个组件开全局 keyframes（060 判据），脉动表达"此处待输入"已够。
  * - 激活槽的高亮走 interactive 同款 ring 三件，与全体控件的焦点语言一致。

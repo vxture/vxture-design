@@ -130,7 +130,7 @@ function Pagination({
           /* 按钮化的每页条数（承旧 PageSizePicker，载体为 SegmentedControl）：
              纯数字、不带标签文字——档位一眼即懂；语义留给 aria-label。 */
           <SegmentedControl
-            /* md(32) 而不是 sm(28)：它与右侧翻页按钮同处一行，翻页按钮是
+            /* md(24) 而不是 sm(20)：它与右侧翻页按钮同处一行，翻页按钮是
                control-md。差 4px 时两组数字按钮的基线对不齐，一眼能看出来
                （2026-08-04 opera/atlas/router 实测）。 */
             size="md"

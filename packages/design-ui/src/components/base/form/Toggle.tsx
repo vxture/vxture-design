@@ -9,7 +9,7 @@
  * 结构照 shadcn 官方 Toggle（cva），取值换成 T2 语义类。按下态用 `bg-accent`
  * 不用品牌色：它表达的是"当前生效"，与菜单展开、Tabs 未选中同族，满色品牌底
  * 会让一排格式开关看起来像一排主按钮。尺寸档映射与 Button 一致
- * （xs 24 / sm 28 / md 32 / lg 36 / xl 40）。
+ * （xs 16 / sm 20 / md 24 / lg 28 / xl 32）。
  *
  * 变体族导出为**运行时数组**（同 Button.types 的做法）：预览面遍历全部挡位时
  * 引它，手抄清单加了挡位不会跟着加，且不报错。
@@ -19,14 +19,19 @@ import * as React from "react";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
-import { inlineIcon, interactive, radiusClamp } from "../../../styles/recipes";
+import {
+  controlContent,
+  inlineIconBase,
+  interactive,
+  radiusClamp,
+} from "../../../styles/recipes";
 
 export const TOGGLE_VARIANTS = ["default", "outline"] as const;
 
 export type ToggleVariant = (typeof TOGGLE_VARIANTS)[number];
 
 /**
- * 档名与 Button **同名同映射**（xs 24 · sm 28 · md 32 · lg 36 · xl 40，加同名
+ * 档名与 Button **同名同映射**（xs 16 · sm 20 · md 24 · lg 28 · xl 32，加同名
  * 的 icon 正方档）。两件档名一致，换件时不用重学一套。
  *
  * 只装一个图标的开关必须用 `icon-*` 档：用 `sm` 这类带横向内距的档会得到
@@ -50,10 +55,10 @@ export type ToggleSize = (typeof TOGGLE_SIZES)[number];
 const toggleVariants = cva(
   cn(
     "inline-flex shrink-0 items-center justify-center gap-xs whitespace-nowrap select-none",
-    "rounded-md text-label text-foreground",
+    "rounded-md text-foreground",
     "hover:bg-accent",
     interactive,
-    inlineIcon,
+    inlineIconBase,
     // ⚠ Toggle 发的是 `data-state="on|off"`，不是 checked——选择器必须写
     //   `data-[state=on]`，`data-on:` 编译得出但永远匹配不上。
     "data-[state=on]:bg-accent",
@@ -67,16 +72,16 @@ const toggleVariants = cva(
       // 档位表与 Button 逐档相同，理由见那边的注释。
       size: {
         // 小档同 Button：另行封顶圆角，基数调大时不发胖。
-        xs: cn("h-control-xs px-xs text-label-small", radiusClamp),
-        sm: cn("h-control-sm px-sm text-label-small", radiusClamp),
-        md: cn("h-control-md px-md", radiusClamp),
-        lg: "h-control-lg px-lg",
-        xl: "h-control-xl px-lg",
-        "icon-xs": cn("size-control-xs p-0", radiusClamp),
-        "icon-sm": cn("size-control-sm p-0", radiusClamp),
-        "icon-md": cn("size-control-md p-0", radiusClamp),
-        "icon-lg": "size-control-lg p-0",
-        "icon-xl": "size-control-xl p-0",
+        xs: cn("h-control-xs px-xs", controlContent.xs, radiusClamp),
+        sm: cn("h-control-sm px-sm", controlContent.sm, radiusClamp),
+        md: cn("h-control-md px-md", controlContent.md, radiusClamp),
+        lg: cn("h-control-lg px-lg", controlContent.lg),
+        xl: cn("h-control-xl px-lg", controlContent.xl),
+        "icon-xs": cn("size-control-xs p-0", controlContent.xs, radiusClamp),
+        "icon-sm": cn("size-control-sm p-0", controlContent.sm, radiusClamp),
+        "icon-md": cn("size-control-md p-0", controlContent.md, radiusClamp),
+        "icon-lg": cn("size-control-lg p-0", controlContent.lg),
+        "icon-xl": cn("size-control-xl p-0", controlContent.xl),
       },
     },
     defaultVariants: {

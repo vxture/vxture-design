@@ -15,7 +15,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
-import { interactive } from "../../../styles/recipes";
+import { controlContent, interactive } from "../../../styles/recipes";
 import { Icon, type IconName } from "../../../icons";
 
 export type SegmentedControlSize = "sm" | "md";
@@ -23,17 +23,19 @@ export type SegmentedControlSize = "sm" | "md";
 /**
  * 高度挂在**容器**上、分段 `h-full` 撑满，而不是给每个分段定高再靠容器内边距
  * 撑开。后者会让控件的实际高度变成"分段高 + 2×内边距"这样一个算出来的数
- * （sm 档 28+8=36px），跟同处一行的 Button（`size="sm"` = 32px）与
- * NativeSelect（32px）永远差几个像素，排在一起参差不齐。定在容器上之后，
+ * （例如分段高再叠两侧内边距），跟同处一行的 Button 与 NativeSelect
+ * 永远差几个像素，排在一起参差不齐。定在容器上之后，
  * `h-control-*` 是多少，控件就是多少。
  */
 const BY_SIZE: Record<SegmentedControlSize, { root: string; item: string }> = {
-  // 两档都用 label-small。档位在这里只决定**高度**，不连带改字号——md 档原先用
-  // 默认 label，比同尺寸 NativeSelect 的 text-body-small
-  // 大一号，两个控件上下排在同一栏里字号明显不一致。控件里的选项文字是标签
-  // 不是正文，不该比它旁边的下拉更抢眼。
-  sm: { root: "h-control-sm", item: "min-w-control-sm px-xs text-label-small" },
-  md: { root: "h-control-md", item: "min-w-control-md px-sm text-label-small" },
+  sm: {
+    root: "h-control-sm",
+    item: `min-w-control-sm px-xs ${controlContent.sm}`,
+  },
+  md: {
+    root: "h-control-md",
+    item: `min-w-control-md px-sm ${controlContent.md}`,
+  },
 };
 
 export interface SegmentedControlItem<TValue extends string | number> {
@@ -128,7 +130,7 @@ function SegmentedControl<TValue extends string | number>({
         // 槽只需要"这里是个凹处"的一点点暗示，muted 那一档在白卡片上已经是
         // 一块明确的灰色面，比它承载的滑块还抢眼。暗色档 surface-3 比 card
         // 亮一级，凹陷感在两个模式下都成立。
-        "flex items-stretch rounded-lg border border-control-border bg-surface-3 p-2xs",
+        "flex items-stretch overflow-hidden rounded-lg border border-control-border bg-surface-3",
         fill ? "w-full" : "inline-flex",
         BY_SIZE[size].root,
         className,
@@ -163,7 +165,11 @@ function SegmentedControl<TValue extends string | number>({
             )}
           >
             {item.icon ? (
-              <Icon name={item.icon} size={16} aria-hidden="true" />
+              <Icon
+                name={item.icon}
+                size={size === "sm" ? "xs" : "sm"}
+                aria-hidden="true"
+              />
             ) : null}
             {item.label}
             {item.count !== undefined ? (

@@ -214,7 +214,7 @@ export function FieldLabel({
               data-slot="field-hint"
               className={cn(
                 interactive,
-                "inline-flex size-control-2xs shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground",
+                "inline-flex size-control-sm shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground",
               )}
             >
               <Icon name="help" size="sm" aria-hidden="true" />

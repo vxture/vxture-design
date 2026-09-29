@@ -277,16 +277,19 @@ function assertFluidOrdered() {
   }
 }
 
-/** 同一行三档非递减、同一档沿族内递增——挡的是改表时把某一档写反。 */
+/** 同一行模式值合法、同一档沿族内递增——挡的是改表时把某一档写反。 */
 function assertSpacingMonotonic() {
   const last = {};
   for (const [step, ...mults] of SPACING_SCALE) {
     const kind = SPACING_KINDS.find((k) => step.startsWith(`${k}-`)) ?? "inset";
-    /* 严格递增而非非递减：两档相等就是那一档在用户眼里「切了没变化」（#59）。
-       `none` 三档都是 0，是唯一合法的例外。 */
+    /* inset / row 严格递增：两档相等就是密度切换没变化（#59）。control 是稳定的
+       组件尺寸轴，刻意不随密度变化；none 三档都是 0。 */
     for (let i = 1; i < mults.length; i++) {
-      if (step !== "none" && mults[i] <= mults[i - 1]) {
+      if (step !== "none" && kind !== "control" && mults[i] <= mults[i - 1]) {
         errors.push(`间距 ${step}：密度三档须严格递增（${mults.join(" / ")}）`);
+      }
+      if (kind === "control" && mults[i] !== mults[0]) {
+        errors.push(`控件 ${step}：尺寸不得随密度变化（${mults.join(" / ")}）`);
       }
     }
     const prev = last[kind];
@@ -551,10 +554,10 @@ const outputs = [
       `
  *
  * 密度三档是**用户偏好轴**，与组件自身的尺寸变体（cva size）正交：前者由祖先
- * 类重定向变量、任意深度生效，后者由类名逐处指定。组件不需要知道密度存在。
+ * 类重定向留白与行距、任意深度生效，后者由类名逐处指定稳定控件高度。
  *
- * 三档之间是档位平移而非等比缩放（比值 1.0–1.5 不等），故必须逐档列表，
- * 不能靠一个乘数推导。
+ * inset / row 三档之间是档位平移而非等比缩放；control 三列刻意相同，密度切换
+ * 不改变控件高度。两类规则都由生成器断言。
  *
  * 末尾的流体档三块各写一遍且文本相同：它的上下界引用同块内的固定档，自定义
  * 属性在使用处求值，所以三档密度各自拿到自己的边界。`,

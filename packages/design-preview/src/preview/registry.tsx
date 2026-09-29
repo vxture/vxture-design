@@ -2568,7 +2568,7 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["shadcn", "vxture"],
     covers: ["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"],
     deviation:
-      "槽位绑控件刻度（md 档 control-md、lg 档 control-3xl）随密度三档；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。尺寸 size（md / lg）与形态 variant（joined 连体 / separate 独立方格）是两根轴，不传 variant 时 md 连体、lg 独立；独立方格格间 gap-xs 照 Figma 2232:10415。档位定在根件经 context 下发。数字不是结构标题；需要 24px 时直接使用 2xl 原子字号，不借 heading 角色。",
+      "槽位绑稳定控件刻度（md 档 control-md、lg 档 control-3xl）；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。尺寸 size（md / lg）与形态 variant（joined 连体 / separate 独立方格）是两根轴，不传 variant 时 md 连体、lg 独立；独立方格格间 gap-xs 照 Figma 2232:10415。档位定在根件经 context 下发。数字不是结构标题；需要 24px 时直接使用 2xl 原子字号，不借 heading 角色。",
     render: () => <InputOTPDemo />,
   },
   {

@@ -202,7 +202,7 @@ export function ToastProvider({
                 onClick={() => dismiss(item.id)}
                 aria-label={dismissLabel}
                 className={cn(
-                  "inline-flex size-control-2xs shrink-0 items-center justify-center rounded-sm",
+                  "inline-flex size-control-sm shrink-0 items-center justify-center rounded-sm",
                   "text-muted-foreground hover:bg-accent hover:text-foreground",
                   interactive,
                 )}

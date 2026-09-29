@@ -11,8 +11,8 @@
  * 1. **不建 T3。** 治理门槛规定 Button 直接绑 T2，故不引用任何 --button-* 组件层
  *    token（既有 --vx-button-height / --vx-button-radius 属伪 T3，不消费）。
  * 2. **尺度走 T2 语义名。** 颜色用 bg-primary / text-primary-foreground，尺寸用
- *    h-control-lg / px-md / gap-xs / size-icon-sm——都是 T2 注册出的真工具类，
- *    且跟随密度三档；裸数值（h-9 / px-4）不跟随，故不用。任意值语法一律禁止。
+ *    h-control-lg / px-md / gap-xs / size-icon-sm——都是 T2 注册出的真工具类。
+ *    高度是稳定尺寸轴，留白跟随密度；裸数值会绕过两者，故不用。任意值语法一律禁止。
  *
  * 原先由 Tailwind 工具类与 .vx-btn 两套机制同时驱动的实现已被本文件取代：
  * 遗留样式层退役后 .vx-btn 无定义，两套并行的前提消失。
@@ -23,9 +23,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../../utils/cn";
 import {
+  controlContent,
   expandable,
   iconInset,
-  inlineIcon,
+  inlineIconBase,
   interactive,
   invalid,
   pressable,
@@ -36,14 +37,13 @@ import type { ButtonVariant, ButtonSize } from "./Button.types";
 const buttonVariants = cva(
   cn(
     "inline-flex shrink-0 items-center justify-center whitespace-nowrap select-none",
-    // 尺度一律走 T2 语义名产出的工具类，不用裸数值：p-lg 之类不跟随密度三档，
-    // 而 gap-xs / h-control-md 会。任意值语法（gap-(--gap-xs)）仍然禁止。
+    // 尺度一律走 T2 语义名产出的工具类，不用裸数值：gap-xs 跟随密度，
+    // h-control-md 保持稳定尺寸。任意值语法（gap-(--gap-xs)）仍然禁止。
     "gap-xs rounded-md border border-transparent bg-clip-padding",
-    "text-label",
     interactive,
     pressable,
     invalid,
-    inlineIcon,
+    inlineIconBase,
     iconInset,
   ),
   {
@@ -83,13 +83,13 @@ const buttonVariants = cva(
         link: "text-link underline-offset-4 hover:underline hover:text-link-hover",
       },
       /* 档名 = token 名，一一对应，没有第二套记法：
-       *   xs 24 · sm 28 · md 32 · lg 36 · xl 40   （= --space-control-*）
+       *   xs 16 · sm 20 · md 24 · lg 28 · xl 32   （= --space-control-*）
        * `md` 是默认档，与外壳（header / 面板 / 侧栏）同高。
        *
        * 这套对应是 2026-08-04 补的。此前档名与 token 名整体错位一格
        * （`sm` 指的是 control-md、`default` 也是 control-md、`lg` 是
-       * control-xl），于是同一个 32px 有两个名字、而 control-sm(28) 与
-       * control-lg(36) 根本叫不出来。错位本身不产生视觉问题，产生的是
+       * control-xl），于是同一个高度有两个名字、而相邻 control 档根本叫不出来。
+       * 错位本身不产生视觉问题，产生的是
        * "读代码算不出高度"——每次都要回来查表。
        *
        * 横向内距跟着档位走（px-xs / px-sm / px-md / px-lg），不再由调用方
@@ -97,17 +97,17 @@ const buttonVariants = cva(
        * 两者高度同为 32 却胖瘦不同，排在一行里能看出参差。这跟当初 32/36
        * 并存是同一类毛病，一并收掉。 */
       size: {
-        // 小档另行封顶圆角：`rounded-md` 在基数调大后会让 24–32px 的按钮发胖。
-        xs: cn("h-control-xs px-xs text-label-small", radiusClamp),
-        sm: cn("h-control-sm px-sm text-label-small", radiusClamp),
-        md: cn("h-control-md px-md", radiusClamp),
-        lg: "h-control-lg px-lg",
-        xl: "h-control-xl px-lg",
-        "icon-xs": cn("size-control-xs p-0", radiusClamp),
-        "icon-sm": cn("size-control-sm p-0", radiusClamp),
-        "icon-md": cn("size-control-md p-0", radiusClamp),
-        "icon-lg": "size-control-lg p-0",
-        "icon-xl": "size-control-xl p-0",
+        // 小档另行封顶圆角：`rounded-md` 在基数调大后会让 16–24px 的按钮发胖。
+        xs: cn("h-control-xs px-xs", controlContent.xs, radiusClamp),
+        sm: cn("h-control-sm px-sm", controlContent.sm, radiusClamp),
+        md: cn("h-control-md px-md", controlContent.md, radiusClamp),
+        lg: cn("h-control-lg px-lg", controlContent.lg),
+        xl: cn("h-control-xl px-lg", controlContent.xl),
+        "icon-xs": cn("size-control-xs p-0", controlContent.xs, radiusClamp),
+        "icon-sm": cn("size-control-sm p-0", controlContent.sm, radiusClamp),
+        "icon-md": cn("size-control-md p-0", controlContent.md, radiusClamp),
+        "icon-lg": cn("size-control-lg p-0", controlContent.lg),
+        "icon-xl": cn("size-control-xl p-0", controlContent.xl),
       },
     },
     defaultVariants: {

@@ -221,7 +221,7 @@ const spaceLines = declaredVars("spacing-semantic.css")
   .filter((step) => !SPACING_UNREGISTERED.has(step))
   .map((step) => `  --spacing-${step}: var(--space-${step});`);
 inlineBlocks.push(
-  `  /* p-* / gap-* / h-control-* / h-row-*（跟随密度三档）\n` +
+  `  /* p-* / gap-* / h-row-* 跟随密度三档；h-control-* 是稳定尺寸轴\n` +
     `   * 不含 none 档：字面词 none 登记进 spacing 会让 leading-none / max-w-none\n` +
     `   * 一并被解析成 0。判据见 generate-theme.mjs 的 SPACING_UNREGISTERED。 */\n` +
     spaceLines.join("\n"),

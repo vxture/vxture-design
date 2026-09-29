@@ -718,9 +718,8 @@ export function ShellPreferencePanel({
 
       <ShellPanelControlRow icon="sun" label={labels?.theme}>
         <SegmentedControl
-          // md 而非 sm：档位在这里决定的是**高度**（sm=h-control-sm 28px，
-          // md=h-control-md 32px），而同一栏里的 NativeSelect 与上下相邻的
-          // 链接/动作按钮都是 32px。取 sm 会让偏好区三行整体矮 4px，看着像
+          // md 而非 sm：md=h-control-md 24px，与同一栏里的 NativeSelect 及
+          // 上下相邻的链接/动作按钮同档。取 sm=20px 会让偏好区三行整体矮 4px，看着像
           // 陷下去一块。
           size="md"
           fill

@@ -73,8 +73,7 @@ describe("StatusBadge · 三件一体", () => {
   it("Badge 以控制高度为下限，文字行盒可把组件撑高", () => {
     const { container } = render(<Badge>标签</Badge>);
     const badge = container.firstElementChild;
-    expect(badge?.className).toContain("min-h-control-2xs");
-    expect(badge?.className).not.toMatch(/(?:^|\s)h-control-2xs(?:\s|$)/);
+    expect(badge?.className).toContain("h-control-sm");
     expect(badge?.className).not.toContain("py-2xs");
   });
 
@@ -159,26 +158,23 @@ describe("Banner · 常驻，不自动消失", () => {
 });
 
 /**
- * 尺寸两档（2026-09-26 owner：tag 高度要压缩）。`sm` 是挂在标题上的角标：下限
- * 收到 control-3xs、行高收成 1、左右内距收一档；缺省 `md` 与加 size 之前一致。
+ * 使用统一控件五档；缺省 `sm=20px`，`xs=16px` 用于标题旁短角标。
  */
 describe("Badge · 尺寸", () => {
   const cls = (text: string) => screen.getByText(text).className.split(" ");
 
-  it("缺省 md：control-2xs 下限、px-sm，与加 size 之前一致", () => {
-    render(<Badge>md</Badge>);
-    const c = cls("md");
-    expect(c).toEqual(expect.arrayContaining(["min-h-control-2xs", "px-sm"]));
+  it("缺省 sm：control-sm 高度、px-xs", () => {
+    render(<Badge>default</Badge>);
+    const c = cls("default");
+    expect(c).toEqual(expect.arrayContaining(["h-control-sm", "px-xs"]));
     expect(c).not.toContain("leading-none");
   });
 
-  it("sm：control-3xs 下限、行高 1、px-2xs", () => {
-    render(<Badge size="sm">sm</Badge>);
-    const c = cls("sm");
-    expect(c).toEqual(
-      expect.arrayContaining(["min-h-control-3xs", "leading-none", "px-2xs"]),
-    );
-    expect(c).not.toContain("min-h-control-2xs");
+  it("xs：control-xs 高度、px-2xs", () => {
+    render(<Badge size="xs">xs</Badge>);
+    const c = cls("xs");
+    expect(c).toEqual(expect.arrayContaining(["h-control-xs", "px-2xs"]));
+    expect(c).not.toContain("h-control-sm");
     expect(c).not.toContain("px-sm");
   });
 
@@ -189,6 +185,6 @@ describe("Badge · 尺寸", () => {
       </StatusBadge>,
     );
     const badge = screen.getByText("Pro").closest("span.inline-flex")!;
-    expect(badge.className.split(" ")).toContain("min-h-control-3xs");
+    expect(badge.className.split(" ")).toContain("h-control-sm");
   });
 });

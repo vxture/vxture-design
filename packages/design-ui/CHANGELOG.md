@@ -11,6 +11,12 @@
 `2 | 3 | 4` 收窄为 `2 | 3`。原 level 4 的调用方应重新判断信息结构，提升为
 level 3 或改用正文 / 标签语义，不再用第四级标题补密度。
 
+- 单行控件统一为 `xs/sm/md/lg/xl = 16/20/24/28/32px`；默认 Button / Input 为
+  `md=24px`。同名档在 Button、Toggle、Badge、SegmentedControl、Tabs 等组件中使用
+  同一字号与默认图标尺寸。
+- Badge 补齐五档并将默认档收为 `sm=20px`；`xs=16px` 用于标题旁短角标。
+  `2xl/3xl=40/48px` 只保留为特殊页面 token，不进入通用 Button API。
+
 - `EntryCard` 标题从等值的原子组合 `text-sm + font-medium` 改为语义
   `text-label`；默认视觉不变，并会随 Small / Default / Large 字号模式切换。
 - 六种语气的缺省图标收口：`neutral` 不再用短横占位，默认无图标；`brand`、

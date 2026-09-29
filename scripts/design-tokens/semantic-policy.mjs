@@ -313,9 +313,8 @@ export const PANEL_WIDTHS = [
  *   这条解析链的活证。新族要进 container 命名空间，档名必须与 `--spacing-*` 下的族
  *   全局互斥。
  *
- * ⚠ **不随密度轴变化**，与 `--space-control-*`（控件高度，随密度）刻意不对称。
- *   密度收紧的是纵向节奏与留白；字号本来就不随密度变，控件变窄只会截断文字。
- *   这个不对称是决策不是遗漏，别"顺手补齐"。
+ * ⚠ **不随密度轴变化**，与稳定的 `--space-control-*` 同属尺寸轴。
+ *   密度收紧的是行距与留白；控件变窄只会截断文字。
  *
  */
 export const OVERLAY_WIDTHS = [
@@ -406,8 +405,8 @@ export const HEADER_HEIGHTS = [
  * ⚠ 三档之间是**档位平移**而非等比缩放：
  *   - inset：紧凑沿本族阶梯往下挪两格（约减半），宽松往上挪一格。
  *   - row：紧凑低端 −16px、高端 −32px；宽松 +8 到 +16px。
- *   - control：±1 档（±4px）。密度也调控件高度，但只动一档——点击目标与文字
- *     可读性不能跟着留白一起大起大落（owner 2026-09-25，#59）。
+ *   - control：2026-09-29 起不再随密度变化。xs / sm / md / lg / xl 是跨组件稳定的
+ *     16 / 20 / 24 / 28 / 32px；2xl / 3xl 只供特殊页面形态使用。
  *   曾试图用单一乘数推导，实测比值在 1.0–1.5 之间浮动，推不出来——故必须逐档
  *   列表。这也是密度轴不能做成 `--spacing` 单乘数的原因。
  *
@@ -456,15 +455,15 @@ export const SPACING_SCALE = [
   ["row-3xl", 20, 28, 32],
   ["row-4xl", 24, 32, 36],
   /* control */
-  ["control-3xs", 3, 4, 5],
-  ["control-2xs", 4, 5, 6],
-  ["control-xs", 5, 6, 7],
-  ["control-sm", 6, 7, 8],
-  ["control-md", 7, 8, 9],
-  ["control-lg", 8, 9, 10],
-  ["control-xl", 9, 10, 11],
-  ["control-2xl", 10, 12, 14],
-  ["control-3xl", 12, 14, 16],
+  // 单行控件五档：所有组件按同名档共享高度、字号与图标规格。
+  // 2xl / 3xl 是特殊页面形态的尺寸 token，不进入通用 Button size API。
+  ["control-xs", 4, 4, 4],
+  ["control-sm", 5, 5, 5],
+  ["control-md", 6, 6, 6],
+  ["control-lg", 7, 7, 7],
+  ["control-xl", 8, 8, 8],
+  ["control-2xl", 10, 10, 10],
+  ["control-3xl", 12, 12, 12],
 ];
 
 /** 高度族的前缀 → 注册后的工具类中缀（`--space-control-md` → `h-control-md`）。 */

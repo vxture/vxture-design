@@ -62,9 +62,9 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
       <SelectPrimitive.Trigger
         ref={ref}
         className={cn(
-          // 高度与 Input 对齐到 control-lg：同一表单行里 40 配 36 是肉眼可见的不齐。
+          // 高度与 Input 对齐到 control-md：同一 size 的单行控件必须完全等高。
           "flex h-control-md w-full items-center justify-between gap-xs",
-          "rounded-md border border-control-border px-sm py-2xs",
+          "rounded-md border border-control-border px-sm",
           "bg-transparent shadow-raised dark:bg-input/30",
           "text-body placeholder:text-muted-foreground",
           interactive,

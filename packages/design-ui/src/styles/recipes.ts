@@ -59,8 +59,21 @@ export const invalid = [
 /**
  * 内联图标的通用处理：不吃指针事件、不被压缩、未显式指定尺寸时随控件档走。
  */
-export const inlineIcon =
-  "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon-sm";
+export const inlineIconBase = "[&_svg]:pointer-events-none [&_svg]:shrink-0";
+
+export const inlineIcon = `${inlineIconBase} [&_svg:not([class*='size-'])]:size-icon-sm`;
+
+/**
+ * 单行控件的内容规格。size 同名即同字号、同默认图标尺寸；高度由各组件同名的
+ * `h-control-*` / `size-control-*` 类承担。
+ */
+export const controlContent = {
+  xs: "text-label-small leading-none [&_svg:not([class*='size-'])]:size-icon-xs",
+  sm: "text-label-small [&_svg:not([class*='size-'])]:size-icon-xs",
+  md: "text-label [&_svg:not([class*='size-'])]:size-icon-sm",
+  lg: "text-label [&_svg:not([class*='size-'])]:size-icon-sm",
+  xl: "text-label [&_svg:not([class*='size-'])]:size-icon-sm",
+} as const;
 
 /**
  * 带图标时该侧内边距收紧。

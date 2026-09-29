@@ -51,7 +51,7 @@
  * L3 group：p-2xs(4，四周——纵向是 py，横向缩进对齐 title)。组间距不用
  *   显式 gap，靠相邻两个 group 自己的 pt/pb(4+4) 叠成 8。
  * L4 group 内部：title→items 用 gap-xs(8)。
- * L5 item：h-control-xl(40)，padding=0，gap-xs(8)（图标导轨到标签）。
+ * L5 item：h-control-xl(32)，padding=0，gap-xs(8)（图标导轨到标签）。
  *
  * 图标行容器一律不用 justify-center（曾经用过，踩过坑）：justify-center
  * 是动态的，每帧按容器*当前*宽度重算；标签是条件渲染，collapsed 一变就
@@ -91,9 +91,9 @@
  * title 区域的全局分组收合按钮：常态 opacity-0，hover 或键盘 focus 命中
  * title 整行（group/group-hover）才显示并可点击，避免常驻占视觉噪音。
  *
- * 图标："图标板块"（导轨盒）统一 size-control-xl(40×40)，与 item/title 的
+ * 图标："图标板块"（导轨盒）统一 size-control-xl(32×32)，与 item/title 的
  * 行高同源，天然对齐、居中；group-title 的 chevron 用比例更小的
- * size-control-md(32×32)，因为它所在的行只有 32 高。图标本身：侧栏收合/
+ * size-control-md(24×24)，因为它所在的行只有 24 高。图标本身：侧栏收合/
  * 展开按钮 20px（Icon size="md"，绕开 ShellIconButton 内置的 size="sm"，
  * 直接传 children）；其余全部 16px（size="sm"，ShellIconButton 默认值）。
  *
@@ -247,7 +247,7 @@ export interface ShellSidebarNavProps {
    *
    * 两处与 `"always"` 不同，都是为了**展开时不挤动下面的项**：
    * - 双行不再加 `py-2xs`。三档字号下两行内容高 30 / 32.5 / 37.5px，都落在
-   *   `min-h-control-xl`（默认密度 40）以内，展开前后行高不变；加了 py 大字号档
+   *   `min-h-control-xl`（稳定 32px）以内，展开前后行高不变；加了 py 大字号档
    *   会撑到 45.5，悬停一下整列往下跳 5px。紧凑密度（行高 36）+ 大字号是唯一
    *   仍会撑高 1.5px 的组合。
    * - 副名对读屏**始终可读**：可视的那行在收起时 `display:none`，会从链接的
@@ -505,19 +505,19 @@ function splitBrandTitle(
 }
 
 /**
- * 分组标题行：恒占一行（h-control-md=32），标题在左、开合图标在行尾
+ * 分组标题行：恒占一行（h-control-md=24），标题在左、开合图标在行尾
  * （右侧）；不受 collapsed 影响行数——行和它的 chevron 收起态也照常渲染，
  * 只是标题文字不渲染，图标落回与导航项同一左侧列。
  *
  * 用 DS 的 `Button variant="ghost" size="sm"`（原生 <button> 违反
- * ds/no-native-primitive）。size="sm" 已经是 h-control-md(32)，圆角
+ * ds/no-native-primitive）。显式高度与同栏输入统一为 h-control-md(24)，圆角
  * radiusClamp 在默认基数下等值于 rounded-md；其余三处配方默认值必须显式
  * 抵消，否则会改变既有视觉：
  * - `px-0` 抵消 size="sm" 的 px-sm——本行零内边距，缩进由 NavLabel 的
  *   pl-xs 与 chevron 导轨的 ml-2xs 负责。
  * - `justify-start` 抵消 Button 基类的 justify-center——见头部"图标行容器
  *   一律不用 justify-center"那段，收起态会在宽度过渡中途跳一下。
- * - `border-none` 抵消基类的 1px 透明描边，内容盒回到整 32×32，chevron
+ * - `border-none` 抵消基类的 1px 透明描边，内容盒保持完整，chevron
  *   导轨不被挤掉 1px。
  * - `aria-expanded:*` 抵消 ghost 变体里的 expandable 配方：那是给"展开时
  *   保持高亮"的菜单触发器用的，本行的 aria-expanded 表达的是分组开合，
