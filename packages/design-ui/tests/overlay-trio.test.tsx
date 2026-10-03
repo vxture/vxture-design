@@ -35,6 +35,7 @@ import {
   TooltipTrigger,
   TOOLTIP_VARIANTS,
 } from "../src/components/base/overlay/Tooltip";
+import { Drawer } from "../src/components/base/overlay/Drawer";
 
 function openDialog(onOpenChange = vi.fn()) {
   render(
@@ -66,6 +67,40 @@ function openAlert(onOpenChange = vi.fn()) {
   );
   return onOpenChange;
 }
+
+describe("浮层标题 · h 层级与 heading 角色同号", () => {
+  function expectLevelTwoTitle(name: string) {
+    const title = screen.getByRole("heading", { level: 2, name });
+    const classes = title.className.split(" ");
+    expect(classes).toEqual(
+      expect.arrayContaining(["font-brand", "text-heading-2"]),
+    );
+    expect(
+      classes.some(
+        (className) =>
+          className.startsWith("text-title-") ||
+          className.startsWith("text-display-"),
+      ),
+    ).toBe(false);
+  }
+
+  it("Dialog / AlertDialog / Drawer 都是 h2 + heading-2", () => {
+    openDialog();
+    expectLevelTwoTitle("编辑通道");
+    cleanup();
+
+    openAlert();
+    expectLevelTwoTitle("确定要删除吗？");
+    cleanup();
+
+    render(
+      <Drawer open onClose={vi.fn()} title="编辑资料">
+        正文
+      </Drawer>,
+    );
+    expectLevelTwoTitle("编辑资料");
+  });
+});
 
 describe("Dialog vs AlertDialog · 谁能随手关掉", () => {
   /**

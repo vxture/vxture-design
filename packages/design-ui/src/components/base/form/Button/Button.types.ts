@@ -22,7 +22,7 @@ export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 
 /**
  * 档名 = `--space-control-*` 的档名，默认密度下：
- * **xs 24 · sm 28 · md 32 · lg 36 · xl 40**。默认档是 `md`。
+ * **xs 16 · sm 20 · md 24 · lg 28 · xl 32**。默认档是 `md`。
  * 五个 icon 档是同高的正方形，用于只有图标没有文字的按钮。
  *
  * 想知道一个按钮多高，读档名即可，不用回来查表——这正是 2026-08-04 那次

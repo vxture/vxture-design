@@ -41,4 +41,10 @@
   --vx-text-8xl--line-height: 1;
   --vx-text-9xl: 8rem;
   --vx-text-9xl--line-height: 1;
+
+  /* DS 扩展（Tailwind 无此挡位）。 */
+  --vx-text-3xs: 0.5625rem; /* 9px 兼容档，用于空间受限且不承担正文阅读的微型标记；Tailwind 最小只到 12px */
+  --vx-text-3xs--line-height: calc(1 / 0.5625); /* 3xs 配套 16px 行盒，避免微型文字裁切；只进入 overline 的 Small 模式 */
+  --vx-text-2xs: 0.625rem; /* 10px 兼容档，用于徽标、元信息等短文本；Tailwind 最小只到 12px */
+  --vx-text-2xs--line-height: calc(1 / 0.625); /* 2xs 配套 16px 行盒，保证小字形完整；只进入最低语义角色 */
 }

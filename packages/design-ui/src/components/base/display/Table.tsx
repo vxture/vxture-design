@@ -41,7 +41,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(function Table(
       <table
         ref={ref}
         className={cn(
-          "w-full caption-bottom border-collapse text-body-sm",
+          "w-full caption-bottom border-collapse text-body-small",
           className,
         )}
         {...props}
@@ -124,7 +124,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       <th
         ref={ref}
         className={cn(
-          "whitespace-nowrap px-md py-sm text-left align-middle text-label-sm",
+          "whitespace-nowrap px-md py-sm text-left align-middle text-label-small",
           "first:pl-0 last:pr-0",
           className,
         )}
@@ -157,7 +157,7 @@ const TableCaption = React.forwardRef<
   return (
     <caption
       ref={ref}
-      className={cn("mt-md text-body-sm text-muted-foreground", className)}
+      className={cn("mt-md text-body-small text-muted-foreground", className)}
       {...props}
     />
   );

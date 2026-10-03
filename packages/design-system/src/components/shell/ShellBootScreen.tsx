@@ -69,10 +69,10 @@ export function ShellBootScreen({
         <>
           <Spinner size="lg" />
           {label ? (
-            <span className="text-title-sm text-foreground">{label}</span>
+            <span className="text-label text-foreground">{label}</span>
           ) : null}
           {description ? (
-            <span className="text-body-sm text-muted-foreground">
+            <span className="text-body-small text-muted-foreground">
               {description}
             </span>
           ) : null}

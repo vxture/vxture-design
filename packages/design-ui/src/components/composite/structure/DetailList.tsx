@@ -133,14 +133,14 @@ const DetailRow = React.forwardRef<HTMLDivElement, DetailRowProps>(
       >
         <dt
           className={cn(
-            "text-label-md text-muted-foreground",
+            "text-label text-muted-foreground",
             !stacked && "sm:w-media-3xl sm:shrink-0",
           )}
         >
           {label}
         </dt>
         <dd className="flex min-w-0 flex-1 flex-wrap items-center gap-md">
-          <span className="flex min-w-0 flex-1 flex-wrap items-center gap-xs text-body-md text-foreground">
+          <span className="flex min-w-0 flex-1 flex-wrap items-center gap-xs text-body text-foreground">
             {children}
           </span>
           {actions ? (

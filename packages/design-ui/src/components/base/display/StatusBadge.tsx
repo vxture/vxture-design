@@ -9,16 +9,12 @@
  *
  * 语气刻度见 `./tone`——与 `Banner` 共用一份。
  *
- * **三件一体：表意图标 + 语气底色 + 文字**（2026-08-05 owner 定）。图标缺省随
- * 语气取自 `toneIcons`，因此不必每处各配一张：成功=对勾、危险=叉、警告=感叹、
- * 中性/信息=信息符，五档都是**圆形**图标——圆形在一列状态标里外形一致，尺寸
- * 与视重不随语气跳动，方形/异形混排会让整列看起来忽大忽小。（`brand` 是唯一
- * 例外，它的图是 sparkles：那是"有新东西"的语气，本就不是一种状态；状态列
- * 真要用 brand，显式传一个圆形图标。）
+ * 有明确语义的五档默认采用**表意图标 + 语气底色 + 文字**；`neutral` 只保留底色
+ * 与文字，不用无语义的短横占位。图标缺省随语气取自 `toneIcons`，因此不必每处
+ * 各配一张：成功=对勾、危险=叉、警告=感叹、信息=信息符；`brand` 用 sparkles。
  *
- * 三件里少哪一件都退化：只有底色 = 得靠记颜色；只有文字 = 一屏扫不出来；
- * 只有图标 = 同一张图在不同业务里含义不同。表格的业务语气全靠这一列表达
- * （行不染色，见 `DataTable` 文件头），所以这一列必须自己说清楚。
+ * 图标是有语义档位的冗余线索，不替代文字；`neutral` 的文字本身就是完整表达。
+ * 表格的业务语气全靠这一列表达（行不染色，见 `DataTable` 文件头）。
  *
  * `dot` 是**密集场景的降级**：一行里并排四五个标时圆点比图标省宽。给了 `dot`
  * 就不出图标，两个前导记号不叠。
@@ -28,7 +24,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
-import { Badge, type BadgeProps } from "./Badge";
+import { Badge, type BadgeProps, type BadgeSize } from "./Badge";
 import { Icon, type IconName } from "../../../icons";
 import { toneIcons, toneSurfaceClasses, type Tone } from "../../tone";
 
@@ -45,9 +41,26 @@ export interface StatusBadgeProps extends Omit<BadgeProps, "variant"> {
   readonly dot?: boolean;
 }
 
+/** 与 controlContent 的五档图标规格一致；缺省 Badge 尺寸是 sm。 */
+const iconSizeByBadgeSize: Record<BadgeSize, "xs" | "sm"> = {
+  xs: "xs",
+  sm: "xs",
+  md: "sm",
+  lg: "sm",
+  xl: "sm",
+};
+
 const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
   function StatusBadge(
-    { className, tone = "neutral", icon, dot = false, children, ...props },
+    {
+      className,
+      tone = "neutral",
+      icon,
+      dot = false,
+      size,
+      children,
+      ...props
+    },
     ref,
   ) {
     const iconName = dot ? false : (icon ?? toneIcons[tone]);
@@ -55,6 +68,7 @@ const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
       <Badge
         ref={ref}
         variant="outline"
+        size={size}
         className={cn(toneSurfaceClasses[tone], className)}
         {...props}
       >
@@ -64,7 +78,11 @@ const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
             aria-hidden="true"
           />
         ) : iconName ? (
-          <Icon name={iconName} size="xs" aria-hidden="true" />
+          <Icon
+            name={iconName}
+            size={iconSizeByBadgeSize[size ?? "sm"]}
+            aria-hidden="true"
+          />
         ) : null}
         {children}
       </Badge>

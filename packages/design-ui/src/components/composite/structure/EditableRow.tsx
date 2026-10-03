@@ -130,7 +130,7 @@ export function EditableRow({
         ) : (
           <span
             className={cn(
-              "text-body-md",
+              "text-body",
               isEmpty(value) ? "text-muted-foreground" : "text-foreground",
             )}
           >
@@ -138,7 +138,7 @@ export function EditableRow({
           </span>
         )}
         {hint ? (
-          <span className="text-body-sm text-muted-foreground">{hint}</span>
+          <span className="text-body-small text-muted-foreground">{hint}</span>
         ) : null}
       </span>
     </DetailRow>

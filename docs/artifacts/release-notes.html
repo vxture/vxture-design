@@ -223,9 +223,9 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">14.0.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖，装这个</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">11.0.0</td><td><span class="tag t-bad">major</span> 标题阶梯重排：level 即 h、页头改 heading-3、每级虚线（§02a）；删除每页条数的 auto 档（§02）；新增 <span class="mono">FieldValue</span> 与三列 <span class="mono">FieldGroup</span>（§05m）；<span class="mono">InputOTP</span> 新增形态轴（§05n）；<span class="mono">ShellHeader</span> 新增 layout / surface（§05p），10.4.0 槽间距统一 8px、<span class="mono">Badge</span> 新增 size（§05q）； 由伞包精确钉版，不要直接装；新增图标 <span class="mono">check-circle</span> / <span class="mono">workspace</span>（§05k）、<span class="mono">caret-line-left</span> / <span class="mono">caret-line-right</span>；<span class="mono">Pagination</span> 翻页改图标（§05l）</td></tr>
-<tr><td class="mono">@vxture/design-tokens</td><td class="mono">3.4.0</td><td><span class="tag t-ok">minor</span> 宽松密度重排（§05i）；title / overline 字重 500、新增 code-lg（§05j）</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">15.0.0</td><td><span class="tag t-bad">major</span> 应用侧主依赖；同步排版 token 与组件公开 API 的破坏性调整</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.0.0</td><td><span class="tag t-bad">major</span> 全组件迁移到六族排版角色；<span class="mono">SectionHeader</span> 只保留 level 2 / 3；neutral 默认无图标</td></tr>
+<tr><td class="mono">@vxture/design-tokens</td><td class="mono">4.0.0</td><td><span class="tag t-bad">major</span> 删除 title 族并收口 body / label / code；新增 display-xs 与 3xs / 2xs 兼容档</td></tr>
 </tbody></table></div>
 <div class="note danger"><strong>三个包必须一起升。</strong>伞包对另两包钉的是精确版本，装 12.8.1 就会带上 ui 9.5.1 与 tokens 3.3.0；<strong>不要单独升其中一个</strong>。<br><br><strong>从 10.x 上来是跨 major 的</strong>：伞包 12.2.0 本身相对 12.1.0 是 minor，但 11.0.0 与 12.0.0 各有一条破坏性变更，见 §02。两条都<strong>不报错</strong>——一条静默改变已有表格的列对齐，一条把一个联合成员的名字挪给了另一个含义。</div></section>
 
@@ -541,7 +541,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 14.0.0 · design-tokens 3.4.0 / design-ui 11.0.0 / design-system 14.0.0 · 2026-09-20</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 15.0.0 · design-tokens 4.0.0 / design-ui 12.0.0 / design-system 15.0.0 · 2026-09-29</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>
@@ -567,4 +567,3 @@ It was passed a child from AccountDetailPage.
   apply();
 })();
 </script>
-

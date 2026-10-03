@@ -35,7 +35,7 @@ export interface TooltipProviderProps extends React.ComponentPropsWithoutRef<
  */
 const tooltipVariants = cva(
   cn(
-    "z-tooltip w-fit max-w-content-narrow-lg overflow-hidden rounded-md px-sm py-2xs text-body-sm",
+    "z-tooltip w-fit max-w-content-narrow-lg overflow-hidden rounded-md px-sm py-2xs text-body-small",
     overlayMotion,
   ),
   {

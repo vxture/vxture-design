@@ -10,8 +10,8 @@
  *
  * tone 走 tone.ts 的六档语气刻度，表达方式与 MetricCard 同一条判据：语义色
  * 只走顶缘 2px 色条（toneEdgeClasses + border-t-medium），永不填底——整页
- * 染色会把"发生了什么"盖成"到处都是红"。图标缺省随语气（toneIcons），
- * 同一语气在各处配不同的图就散了；调用方可显式换图。
+ * 染色会把"发生了什么"盖成"到处都是红"。有语义的五档图标缺省随语气
+ * （toneIcons），neutral 默认无图标；调用方可显式换图。
  *
  * 垂直居中靠 `min-h-full`：占多高由外层容器决定（外壳给内容区多高，结果页
  * 就在多高里居中），模板不猜视口高度。窄屏无断点——单列居中的形状在任何
@@ -44,6 +44,7 @@ export function ResultPageTemplate({
   actions,
   className,
 }: ResultPageTemplateProps) {
+  const iconName = icon ?? toneIcons[tone];
   return (
     <div
       className={cn(
@@ -56,7 +57,7 @@ export function ResultPageTemplate({
           "w-full max-w-content-narrow-lg border-t-medium",
           toneEdgeClasses[tone],
         )}
-        icon={icon ?? toneIcons[tone]}
+        {...(iconName ? { icon: iconName } : {})}
         title={title}
         {...(description !== undefined ? { description } : {})}
         {...(actions !== undefined ? { action: actions } : {})}

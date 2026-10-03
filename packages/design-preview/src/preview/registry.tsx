@@ -273,6 +273,10 @@ import {
   ShellSidebarFrame,
   ShellSidebarNav,
   ShellViewport,
+  TenantInfoOneline,
+  TenantInfoSimple,
+  UserInfoOneline,
+  UserInfoSimple,
   ViewModeSwitch,
 } from "@vxture/design-system";
 import { Row } from "./kit";
@@ -760,11 +764,11 @@ export const ENTRIES: readonly Entry[] = [
           <CardHeader>
             <CardTitle>卡片标题（surface=base 68%）</CardTitle>
             <CardDescription>
-              描述文字，用 body-sm 与弱化前景色。
+              描述文字，用 body-small 与弱化前景色。
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-body-sm text-muted-foreground">
+            <p className="text-body-small text-muted-foreground">
               透明模式：卡片是叠在页面唯一实色底上的半透明表面，层次由发丝线
               描边与透明度表达，无阴影。
             </p>
@@ -817,9 +821,9 @@ export const ENTRIES: readonly Entry[] = [
       <div className="flex w-full max-w-content-base-xl flex-col gap-md">
         <Separator />
         <div className="flex h-media-xs items-center gap-md">
-          <span className="text-body-sm">左</span>
+          <span className="text-body-small">左</span>
           <Separator orientation="vertical" />
-          <span className="text-body-sm">右</span>
+          <span className="text-body-small">右</span>
         </div>
       </div>
     ),
@@ -895,7 +899,7 @@ export const ENTRIES: readonly Entry[] = [
       <ScrollArea className="h-media-2xl w-media-3xl rounded-md border border-border">
         <div className="flex flex-col gap-xs p-sm">
           {Array.from({ length: 20 }, (_, i) => (
-            <span key={i} className="text-body-sm text-muted-foreground">
+            <span key={i} className="text-body-small text-muted-foreground">
               审计记录 #{String(i + 1).padStart(2, "0")}
             </span>
           ))}
@@ -914,7 +918,7 @@ export const ENTRIES: readonly Entry[] = [
           ratio={16 / 9}
           className="flex items-center justify-center rounded-md bg-accent"
         >
-          <span className="text-body-sm text-muted-foreground">16 : 9</span>
+          <span className="text-body-small text-muted-foreground">16 : 9</span>
         </AspectRatio>
       </div>
     ),
@@ -998,10 +1002,10 @@ export const ENTRIES: readonly Entry[] = [
           </TabsTrigger>
         </TabsList>
         <TabsContent value="a">
-          <p className="text-body-sm text-muted-foreground">概览内容。</p>
+          <p className="text-body-small text-muted-foreground">概览内容。</p>
         </TabsContent>
         <TabsContent value="b">
-          <p className="text-body-sm text-muted-foreground">配额内容。</p>
+          <p className="text-body-small text-muted-foreground">配额内容。</p>
         </TabsContent>
       </Tabs>
     ),
@@ -1113,7 +1117,7 @@ export const ENTRIES: readonly Entry[] = [
             <Button variant="outline">Popover</Button>
           </PopoverTrigger>
           <PopoverContent>
-            <p className="text-body-sm text-foreground">
+            <p className="text-body-small text-foreground">
               定位与碰撞处理由 Radix 承担。
             </p>
           </PopoverContent>
@@ -1220,8 +1224,8 @@ export const ENTRIES: readonly Entry[] = [
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="flex flex-col gap-2xs">
-              <span className="text-label-md">Vxture 平台</span>
-              <span className="text-body-sm text-muted-foreground">
+              <span className="text-label">Vxture 平台</span>
+              <span className="text-body-small text-muted-foreground">
                 悬停出预览面。只对指针设备生效，关键信息不能只放这里。
               </span>
             </div>
@@ -1237,7 +1241,7 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["shadcn", "origin"],
     render: () => (
       <ContextMenu>
-        <ContextMenuTrigger className="flex h-media-lg w-full max-w-content-base-xl items-center justify-center rounded-md border border-dashed border-border text-body-sm text-muted-foreground">
+        <ContextMenuTrigger className="flex h-media-lg w-full max-w-content-base-xl items-center justify-center rounded-md border border-dashed border-border text-body-small text-muted-foreground">
           在这块区域里右键
         </ContextMenuTrigger>
         <ContextMenuContent className="w-56">
@@ -1284,7 +1288,7 @@ export const ENTRIES: readonly Entry[] = [
     group: "反馈",
     tags: ["shadcn", "vxture"],
     deviation:
-      "整套 API 自有：上游现行方案是 sonner，迁移要动产品侧 16 处 useToast，需单独立项。tone 已收敛到共用六档（error→danger，ai 档移除，AI 语气由 AI 组件族自身承载）",
+      "整套 API 自有：上游现行方案是 sonner，迁移要动产品侧 16 处 useToast，需单独立项。tone 已收敛到共用六档；neutral 默认无图标，其余五档保留语义图标",
     axes: [{ name: "tone", values: [...TONES] }],
     render: () => <ToastDemo />,
   },
@@ -1295,7 +1299,7 @@ export const ENTRIES: readonly Entry[] = [
     group: "反馈",
     tags: ["vxture", "patterns"],
     deviation:
-      "与 Toast 分工：Toast 说刚才那一下成了没有，说完就走；Banner 说这个页面现在处于什么状态，状态还在就一直在。tone 改用共用的六档语气（原为含 ai 的自有五值），图标由语气决定",
+      "与 Toast 分工：Toast 说刚才那一下成了没有，说完就走；Banner 说这个页面现在处于什么状态，状态还在就一直在。tone 使用共用六档；neutral 默认无图标，其余五档图标由语气决定",
     axes: [{ name: "tone", values: [...TONES] }],
     render: () => <BannerDemo />,
   },
@@ -1520,7 +1524,7 @@ export const ENTRIES: readonly Entry[] = [
     group: "图案",
     tags: ["vxture", "patterns"],
     deviation:
-      "在 Badge 之上加语气与圆点。tone 只表达严重度，没有 overdue / suspended 这类业务值",
+      "在 Badge 之上加语气与圆点。tone 只表达严重度，没有 overdue / suspended 这类业务值；neutral 默认无图标，密集列表可显式使用 dot",
     axes: [{ name: "tone", values: [...TONES] }],
     render: () => (
       <>
@@ -1567,43 +1571,37 @@ export const ENTRIES: readonly Entry[] = [
     group: "图案",
     tags: ["vxture", "patterns"],
     deviation:
-      "ViewHeader / SectionHeader(level 2–4) / Section / ViewLayout 是一族，层级与间距节奏一次定齐。标题阶梯（owner 2026-09-26 定稿）：level 的数字就是 h 的数字——level 1 是页头 ViewHeader（h1 · heading-3 24 品牌体），SectionHeader 只有 level 2 / 3 / 4（h2 / h3 / h4 · title-lg 18 / title-md 16 / title-sm 14）；图标 48 / 32 / 24 / 20，图标与标题的间距、描述字级随档收；每一级都带虚线下边框（可用 divider={false} 关掉），虚线距离随档收。原四档里 level 4 借 label-md，与 title-sm 取值相同、看不出差别；页头改用 heading 族后 title 族三档整族留给板块",
+      "ViewHeader / SectionHeader(level 2–3) / Section / ViewLayout 是一族。产品界面只保留 heading-1/2/3，对应 h1/h2/h3；display 只服务营销与首屏，title 家族已删除。图标 48 / 32 / 24，间距与描述字级随档收；每一级都带可关闭的虚线下边框。",
     axes: [
-      { name: "level", values: ["1(ViewHeader)", "2", "3", "4"] },
+      { name: "level", values: ["1(ViewHeader)", "2", "3"] },
       { name: "divider", values: ["on(缺省)", "off"] },
       { name: "tone", values: ["default", "raised", "glass"] },
     ],
     render: () => (
       <div className="flex w-full flex-col gap-xl">
         <Row
-          label="整页阶梯：level 1（页头）→ 2 → 3 → 4，数字即 h 的数字，逐级递减"
+          label="整页阶梯：level 1（页头）→ 2 → 3，数字即 h 的数字，逐级递减"
           stack
         >
           <ViewLayout className="w-full rounded-lg border border-dashed border-border p-lg">
             <ViewHeader
               icon="squares-four"
-              title="level 1 · 页头 ViewHeader（h1 · heading-3 24 · 图标 48）"
+              title="level 1 · 页头 ViewHeader（h1 · heading-1 18 · 图标 48）"
               description="一页一个，页面的路标。"
               action={<Button>页面动作</Button>}
             />
             <SectionHeader
               level={2}
               icon="database"
-              title="level 2 · 大板块（h2 · title-lg 18 · 图标 32）"
-              description="页头之下的大板块，SectionHeader / Section 的缺省。描述 body-md。"
+              title="level 2 · 大板块（h2 · heading-2 16 · 图标 32）"
+              description="页头之下的大板块，SectionHeader / Section 的缺省。描述 body。"
             />
             <SectionHeader
               level={3}
               icon="stack"
-              title="level 3 · 板块（h3 · title-md 16 · 图标 24）"
-              description="板块。描述 body-sm。"
+              title="level 3 · 板块（h3 · heading-3 14 · 图标 24）"
+              description="板块。描述 body-small。"
               action={<Button variant="outline">板块动作</Button>}
-            />
-            <SectionHeader
-              level={4}
-              icon="list"
-              title="level 4 · 分组（h4 · title-sm 14 · 图标 20）"
-              description="板块内的分组。图标与标题间距收到 8px。"
             />
           </ViewLayout>
         </Row>
@@ -1626,7 +1624,7 @@ export const ENTRIES: readonly Entry[] = [
               action={<Button variant="outline">动作</Button>}
             />
             <SectionHeader
-              level={4}
+              level={3}
               title="无图标、无描述"
               action={
                 <Button variant="outline" size="sm">
@@ -1640,7 +1638,6 @@ export const ENTRIES: readonly Entry[] = [
           <div className="flex w-full flex-col gap-md">
             <SectionHeader level={2} title="level 2 标题" />
             <SectionHeader level={3} title="level 3 标题" />
-            <SectionHeader level={4} title="level 4 标题" />
             <SectionHeader
               level={3}
               divider={false}
@@ -1657,12 +1654,14 @@ export const ENTRIES: readonly Entry[] = [
               title="Section · default"
               description="不托起，靠留白与标题分层。绝大多数板块用这个。"
             >
-              <p className="text-body-sm text-muted-foreground">板块内容。</p>
+              <p className="text-body-small text-muted-foreground">
+                板块内容。
+              </p>
             </Section>
             <Section
               tone="raised"
-              level={4}
-              title="Section · raised（level 4）"
+              level={3}
+              title="Section · raised（level 3）"
               description="描边 + 卡片底色，用于需要与周围明确切开的块。"
               action={
                 <Button
@@ -1673,7 +1672,7 @@ export const ENTRIES: readonly Entry[] = [
                 </Button>
               }
             >
-              <p className="text-body-sm text-muted-foreground">
+              <p className="text-body-small text-muted-foreground">
                 raised 对应视觉高度阶梯那一档，不叫
                 muted——后者在色彩语义里已表示弱化。
               </p>
@@ -1683,7 +1682,9 @@ export const ENTRIES: readonly Entry[] = [
               title="Section · glass"
               description="与 Card 同一张卡面，用在信息陈列的长页面上。"
             >
-              <p className="text-body-sm text-muted-foreground">板块内容。</p>
+              <p className="text-body-small text-muted-foreground">
+                板块内容。
+              </p>
             </Section>
           </div>
         </Row>
@@ -1702,9 +1703,13 @@ export const ENTRIES: readonly Entry[] = [
         className="w-full rounded-lg border border-dashed border-border p-lg"
         navigation={
           <div className="flex flex-col gap-2xs rounded-md border border-border p-sm">
-            <span className="text-label-sm text-foreground">导航项一</span>
-            <span className="text-body-sm text-muted-foreground">导航项二</span>
-            <span className="text-body-sm text-muted-foreground">导航项三</span>
+            <span className="text-label-small text-foreground">导航项一</span>
+            <span className="text-body-small text-muted-foreground">
+              导航项二
+            </span>
+            <span className="text-body-small text-muted-foreground">
+              导航项三
+            </span>
           </div>
         }
         content={
@@ -1712,7 +1717,7 @@ export const ENTRIES: readonly Entry[] = [
             title="右侧内容"
             description="min-w-0 flex-1，不被导航挤压。"
           >
-            <p className="text-body-sm text-muted-foreground">内容区。</p>
+            <p className="text-body-small text-muted-foreground">内容区。</p>
           </Section>
         }
       />
@@ -1968,7 +1973,7 @@ export const ENTRIES: readonly Entry[] = [
         }
         aside={
           <Section tone="raised" level={3} title="摘要">
-            <div className="flex flex-col gap-xs text-body-sm">
+            <div className="flex flex-col gap-xs text-body-small">
               <div className="flex justify-between gap-sm">
                 <span className="text-muted-foreground">编号</span>
                 <span className="text-foreground">A-0001</span>
@@ -1986,12 +1991,12 @@ export const ENTRIES: readonly Entry[] = [
         }
       >
         <Section title="基本信息" description="主列由 Section 阶梯自组。">
-          <p className="text-body-sm text-muted-foreground">
+          <p className="text-body-small text-muted-foreground">
             这里是对象的基本属性区。
           </p>
         </Section>
         <Section title="变更历史">
-          <p className="text-body-sm text-muted-foreground">
+          <p className="text-body-small text-muted-foreground">
             这里是对象的历史记录区。
           </p>
         </Section>
@@ -2091,7 +2096,7 @@ export const ENTRIES: readonly Entry[] = [
         }
       >
         <Section title="最近动态">
-          <p className="text-body-sm text-muted-foreground">
+          <p className="text-body-small text-muted-foreground">
             其余板块经 children 排在入口区之后。
           </p>
         </Section>
@@ -2116,7 +2121,7 @@ export const ENTRIES: readonly Entry[] = [
             <ResultPageTemplate
               tone={tone}
               title={`${tone} 语气的结果页`}
-              description="图标缺省随语气，动作区放返回 / 重试一类按钮。"
+              description="neutral 默认无图标，其余五档随语气取图标；动作区放返回 / 重试一类按钮。"
               actions={
                 <>
                   <Button variant="outline">返回</Button>
@@ -2150,8 +2155,8 @@ export const ENTRIES: readonly Entry[] = [
         {(["xs", "sm", "md", "lg"] as const).map((gap) => (
           <Row key={gap} label={`Stack gap=${gap}`}>
             <Stack gap={gap} className="w-full">
-              <div className="rounded-md bg-accent p-sm text-body-md">一</div>
-              <div className="rounded-md bg-accent p-sm text-body-md">二</div>
+              <div className="rounded-md bg-accent p-sm text-body">一</div>
+              <div className="rounded-md bg-accent p-sm text-body">二</div>
             </Stack>
           </Row>
         ))}
@@ -2162,7 +2167,7 @@ export const ENTRIES: readonly Entry[] = [
               gap="sm"
               className="h-media-sm w-full rounded-md border border-dashed border-border p-sm"
             >
-              <div className="rounded-md bg-accent px-sm py-2xs text-body-md">
+              <div className="rounded-md bg-accent px-sm py-2xs text-body">
                 {align}
               </div>
             </Stack>
@@ -2172,7 +2177,7 @@ export const ENTRIES: readonly Entry[] = [
           <Row key={columns} label={`Grid columns=${columns}`}>
             <Grid columns={columns} gap="sm" className="w-full">
               {Array.from({ length: columns }, (_, i) => (
-                <div key={i} className="rounded-md bg-accent p-sm text-body-md">
+                <div key={i} className="rounded-md bg-accent p-sm text-body">
                   {i + 1}
                 </div>
               ))}
@@ -2183,7 +2188,7 @@ export const ENTRIES: readonly Entry[] = [
           <Row key={size} label={`Container size=${size}`}>
             <Container
               size={size}
-              className="w-full rounded-md border border-dashed border-border p-sm text-body-md"
+              className="w-full rounded-md border border-dashed border-border p-sm text-body"
             >
               {size}
             </Container>
@@ -2210,9 +2215,7 @@ export const ENTRIES: readonly Entry[] = [
             id="preview-fullscreen-target"
             className="flex w-full items-center justify-between rounded-md border border-dashed border-border p-sm"
           >
-            <span className="text-body-md text-muted-foreground">
-              可全屏区域
-            </span>
+            <span className="text-body text-muted-foreground">可全屏区域</span>
             <ShellFullscreenToggle
               targetId="preview-fullscreen-target"
               mode="pseudo"
@@ -2227,9 +2230,7 @@ export const ENTRIES: readonly Entry[] = [
             id="preview-fullscreen-native-target"
             className="flex w-full items-center justify-between rounded-md border border-dashed border-border p-sm"
           >
-            <span className="text-body-md text-muted-foreground">
-              可全屏区域
-            </span>
+            <span className="text-body text-muted-foreground">可全屏区域</span>
             <ShellFullscreenToggle
               targetId="preview-fullscreen-native-target"
               mode="native"
@@ -2269,11 +2270,11 @@ export const ENTRIES: readonly Entry[] = [
     render: () => (
       <Row label="mode=narrow（外壳右缘停靠列，此处限高演示）" stack>
         <div className="flex h-media-3xl w-full overflow-hidden rounded-lg border border-border">
-          <div className="flex flex-1 items-center justify-center text-body-sm text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center text-body-small text-muted-foreground">
             内容区（被停靠列挤压）
           </div>
           <ShellDock mode="narrow" className="h-full">
-            <div className="flex flex-1 items-center justify-center text-body-sm text-muted-foreground">
+            <div className="flex flex-1 items-center justify-center text-body-small text-muted-foreground">
               停靠内容（如 VardaChat inline）
             </div>
           </ShellDock>
@@ -2301,7 +2302,7 @@ export const ENTRIES: readonly Entry[] = [
         </Row>
         <Row label="带播报文案（sr-only）">
           <Spinner size="sm" label="正在提交" />
-          <span className="text-body-sm text-muted-foreground">
+          <span className="text-body-small text-muted-foreground">
             role=status，读屏播报“正在提交”
           </span>
         </Row>
@@ -2315,7 +2316,7 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["shadcn", "vxture"],
     covers: ["KbdGroup"],
     deviation:
-      "上游的 text-[0.7rem] / px-1.5 裸数值不跟随，改绑 T2（text-code-sm / px-2xs），走 code 族等宽字体",
+      "上游的 text-[0.7rem] / px-1.5 裸数值不跟随，改绑 T2（text-code / px-2xs），走 code 族等宽字体",
     render: () => (
       <div className="flex flex-col gap-md">
         <Row label="单键">
@@ -2326,7 +2327,7 @@ export const ENTRIES: readonly Entry[] = [
         <Row label="组合键（KbdGroup）">
           <KbdGroup>
             <Kbd>Ctrl</Kbd>
-            <span className="text-body-sm text-muted-foreground">+</span>
+            <span className="text-body-small text-muted-foreground">+</span>
             <Kbd>K</Kbd>
           </KbdGroup>
         </Row>
@@ -2571,7 +2572,7 @@ export const ENTRIES: readonly Entry[] = [
     tags: ["shadcn", "vxture"],
     covers: ["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"],
     deviation:
-      "槽位绑控件刻度（md 档 control-md、lg 档 control-3xl）随密度三档；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。尺寸 size（md / lg）与形态 variant（joined 连体 / separate 独立方格）是两根轴，不传 variant 时 md 连体、lg 独立；独立方格格间 gap-xs 照 Figma 2232:10415。档位定在根件经 context 下发。与 Figma 的偏差：数字字号 body-xl——Figma 是 24px 常规字重的 Inter，DS 排版角色里 24px 只有品牌展示体的 heading-3",
+      "槽位绑稳定控件刻度（md 档 control-md、lg 档 control-3xl）；假光标用 animate-pulse——不为单组件开全局 keyframes；激活槽高亮与 interactive 同款 ring。尺寸 size（md / lg）与形态 variant（joined 连体 / separate 独立方格）是两根轴，不传 variant 时 md 连体、lg 独立；独立方格格间 gap-xs 照 Figma 2232:10415。档位定在根件经 context 下发。数字不是结构标题；需要 24px 时直接使用 2xl 原子字号，不借 heading 角色。",
     render: () => <InputOTPDemo />,
   },
   {
@@ -2586,13 +2587,13 @@ export const ENTRIES: readonly Entry[] = [
       <div className="h-row-4xl w-full max-w-content-narrow-lg">
         <ResizablePanelGroup>
           <ResizablePanel defaultSize="40%" minSize="20%">
-            <div className="flex h-full items-center justify-center text-body-sm text-muted-foreground">
+            <div className="flex h-full items-center justify-center text-body-small text-muted-foreground">
               导航栏
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel>
-            <div className="flex h-full items-center justify-center text-body-sm text-muted-foreground">
+            <div className="flex h-full items-center justify-center text-body-small text-muted-foreground">
               内容区
             </div>
           </ResizablePanel>
@@ -2696,12 +2697,21 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ShellScopePanelDemo />,
   },
   {
+    name: "IdentityInfo",
+    layer: "pattern",
+    group: "外壳与登录",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "列表、下拉选择和正文中的身份摘要。simple 显示名称 + 副身份信息；oneline 只显示名称。oneline 的 sm 为 20px 正文行高、16px 身份图形，md 保留 24px Figma 形态。组件不携带选择或导航行为。",
+    render: () => <IdentityInfoDemo />,
+  },
+  {
     name: "ShellPanel",
     layer: "pattern",
     group: "外壳与登录",
     tags: ["vxture", "patterns"],
     deviation:
-      "header 各类浮层面板的公共骨架：Content（定宽/留白/打开时不抢焦点）+ Header + Section + 四种行（信息行 / 控件行 / 计量行 / 可进入行）。四种行共用同一套列与行高，所以图标严格同列——这件事由组件保证，不靠调用方拼 flex 时自觉对齐。左侧那块是照 Figma 的 TenantPanel（194:428）**整块搭出来的**，作为原语的验收面：搭不出来就是零件缺了一块。面板本身没做成组件——额度/存储/余额/账单是产品信息架构，DS 收了它，每个门户改一次账单口径就要发一次 DS 版本",
+      "header 各类浮层面板的公共骨架：Content（定宽/留白/打开时不抢焦点）+ Header + Section + 四种行（信息行 / 控件行 / 计量行 / 可进入行）。四种行共用同一套列与行高，所以图标严格同列——这件事由组件保证，不靠调用方拼 flex 时自觉对齐。左侧租户面板是由 design-system 原语整块组装的验收面；Figma 应按这里的组件契约和示例同步。面板本身没做成组件——额度/存储/余额/账单是产品信息架构，DS 收了它，每个门户改一次账单口径就要发一次 DS 版本",
     render: () => <ShellPanelDemo />,
   },
   {
@@ -2762,7 +2772,7 @@ function CollapsibleDemo() {
       className="flex w-full max-w-content-base-xl flex-col gap-xs"
     >
       <div className="flex items-center justify-between">
-        <span className="text-label-md">已挂载能力（3）</span>
+        <span className="text-label">已挂载能力（3）</span>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="icon-md" aria-label="展开或收起">
             <Icon name={open ? "chevron-up" : "chevron-down"} />
@@ -2773,7 +2783,7 @@ function CollapsibleDemo() {
         {["模型接入", "调用审计", "配额管理"].map((item) => (
           <span
             key={item}
-            className="rounded-md border border-border px-sm py-xs text-body-sm"
+            className="rounded-md border border-border px-sm py-xs text-body-small"
           >
             {item}
           </span>
@@ -2844,7 +2854,7 @@ function RatingDemo() {
           labels={RATING_LABELS}
           optionLabels={["很差", "较差", "一般", "满意", "很满意"]}
         />
-        <span className="text-body-sm text-muted-foreground">
+        <span className="text-body-small text-muted-foreground">
           {product === null ? "未评" : `${product} 分`}
         </span>
       </span>
@@ -3006,7 +3016,7 @@ function InputOTPDemo() {
             >
               <div className="flex flex-col gap-xs">
                 <p className="text-heading-3 text-foreground">{d.title}</p>
-                <p className="text-body-sm text-muted-foreground">
+                <p className="text-body-small text-muted-foreground">
                   {d.description}
                 </p>
               </div>
@@ -3019,7 +3029,7 @@ function InputOTPDemo() {
                 验证
               </Button>
               <Separator />
-              <p className="flex items-center justify-center gap-2xs text-body-sm text-muted-foreground">
+              <p className="flex items-center justify-center gap-2xs text-body-small text-muted-foreground">
                 {d.footer}
               </p>
             </div>
@@ -3037,7 +3047,7 @@ const OTP_DIALOGS = [
     footer: (
       <>
         没有收到验证码？
-        <a href="#resend" className="text-label-md text-primary-text">
+        <a href="#resend" className="text-label text-primary-text">
           重新发送
         </a>
       </>
@@ -3129,7 +3139,7 @@ function ShellToolboxDemo() {
           {TOOLBOX_TOOLS.map((t) => (
             <label
               key={t.key}
-              className="flex items-center gap-xs text-body-sm text-foreground"
+              className="flex items-center gap-xs text-body-small text-foreground"
             >
               <Switch
                 checked={shown[t.key] ?? false}
@@ -3176,7 +3186,7 @@ function useHeaderTools(scope: "visitor" | "account") {
       label: "消息",
       unread: true,
       children: (
-        <p className="text-body-sm text-muted-foreground">
+        <p className="text-body-small text-muted-foreground">
           消息列表由产品给，这里只演示抽屉。
         </p>
       ),
@@ -4386,7 +4396,7 @@ function DrawerDemo() {
           </>
         }
       >
-        <p className="text-body-sm text-muted-foreground">
+        <p className="text-body-small text-muted-foreground">
           页眉页脚结构固定，内容区由 children 承担。
         </p>
       </Drawer>
@@ -4635,14 +4645,18 @@ function PanelCardDemo() {
             lead={<LevelMarker level={2} size="sm" />}
             main="调整网关限流阈值"
             trail={
-              <span className="text-body-sm text-muted-foreground">08-05</span>
+              <span className="text-body-small text-muted-foreground">
+                08-05
+              </span>
             }
           />
           <PanelItem
             lead={<LevelMarker level={4} size="sm" />}
             main="主库只读演练"
             trail={
-              <span className="text-body-sm text-muted-foreground">08-03</span>
+              <span className="text-body-small text-muted-foreground">
+                08-03
+              </span>
             }
           />
         </PanelList>
@@ -4680,21 +4694,25 @@ function ShellLayoutDemo() {
         header={
           <ShellHeader
             height="xl"
-            leading={<span className="text-label-md">标识区</span>}
+            leading={<span className="text-label">标识区</span>}
             center={
-              <span className="text-body-sm text-muted-foreground">中槽</span>
+              <span className="text-body-small text-muted-foreground">
+                中槽
+              </span>
             }
-            trailing={<span className="text-label-md">工具区</span>}
+            trailing={<span className="text-label">工具区</span>}
           />
         }
         sidebar={
           <ShellSidebarFrame mode="expanded">
-            <div className="p-md text-body-sm text-muted-foreground">侧栏</div>
+            <div className="p-md text-body-small text-muted-foreground">
+              侧栏
+            </div>
           </ShellSidebarFrame>
         }
       >
         <ShellPageContainer width="wide-2xl">
-          <div className="rounded-md border border-dashed border-border p-lg text-body-sm text-muted-foreground">
+          <div className="rounded-md border border-dashed border-border p-lg text-body-small text-muted-foreground">
             内容区：封顶行宽 + clamp 留白
           </div>
         </ShellPageContainer>
@@ -4799,7 +4817,7 @@ const TENANT_CONSOLE = "#/console/tenant";
 function ShellPanelDemo() {
   const { userPanel } = useFigmaUserPanel();
   /*
-   * 这不是零件抽样，是**照 Figma 的 TenantPanel（194:428）整块搭出来的**——
+   * 这不是零件抽样，而是由 design-system 原语整块搭出的验收面——
    * 面板原语的验收面：搭不出来就说明零件还缺一块，而不是"示例写得简单些"。
    *
    * 面板本身没有做成组件：额度、存储、余额、账单是产品信息架构，DS 收了它，
@@ -4822,7 +4840,7 @@ function ShellPanelDemo() {
             { key: "code", content: "T-2222888885" },
           ]}
         />
-        <ShellPanelSection title="资源">
+        <ShellPanelSection title="资源" divided={false}>
           <ShellPanelMeterRow
             icon="sparkles"
             label="AI Credits"
@@ -4873,7 +4891,7 @@ function ShellPanelDemo() {
             icon="buildings"
             label="租户信息"
             href={`${TENANT_CONSOLE}/profile`}
-            description="说明信息"
+            description="查看资料与认证"
           />
           <ShellPanelRow
             icon="arrow-left-right"
@@ -4890,6 +4908,42 @@ function ShellPanelDemo() {
        * 两块对照看，面板原语在两种主体（组织 / 人）上是否一致一眼可见。
        */}
       <ShellUserPanel {...userPanel} />
+    </div>
+  );
+}
+
+function IdentityInfoDemo() {
+  return (
+    <div className="flex flex-col gap-lg">
+      <div className="grid gap-sm sm:grid-cols-2">
+        <div className="flex flex-col gap-xs">
+          <span className="text-label-small text-muted-foreground">
+            TenantInfo_simple
+          </span>
+          <TenantInfoSimple name="Tenant Name" tenantId="T-2222888885" />
+        </div>
+        <div className="flex flex-col gap-xs">
+          <span className="text-label-small text-muted-foreground">
+            UserInfo_simple
+          </span>
+          <UserInfoSimple name="User Name" phone="18022228888" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-sm">
+        <span className="text-label-small text-muted-foreground">
+          Oneline · md / sm
+        </span>
+        <p className="text-body">
+          Tenant <TenantInfoOneline name="Tenant Name" /> and User{" "}
+          <UserInfoOneline name="User Name" /> remain available in the 24px
+          identity row.
+        </p>
+        <p className="text-body">
+          Tenant <TenantInfoOneline name="Tenant Name" size="sm" /> and User{" "}
+          <UserInfoOneline name="User Name" size="sm" /> stay aligned with body
+          text.
+        </p>
+      </div>
     </div>
   );
 }

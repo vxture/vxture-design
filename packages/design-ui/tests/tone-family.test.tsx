@@ -1,9 +1,8 @@
 /**
  * Banner 与 StatusBadge：语气六档共用一份刻度。
  *
- * 两个件的图标**都不开 prop 的默认口**（StatusBadge 可换但不必配），一律取自
- * `toneIcons`——「同一个语气在两处有两套名字迟早对不上」是它们合并刻度的理由。
- * 这条约定没有任何类型能表达，只有断言得到。
+ * 五个有语义的档位默认取自 `toneIcons`，neutral 默认无图标。StatusBadge 可按
+ * 业务状态显式换图；这套跨组件约定没有类型能完整表达，只有断言得到。
  */
 
 import { render, screen } from "@testing-library/react";
@@ -14,6 +13,8 @@ import { Badge } from "../src/components/base/display/Badge";
 import { StatusBadge } from "../src/components/base/display/StatusBadge";
 import { TONES, toneIcons } from "../src/components/tone";
 import { Icon, type IconName } from "../src/icons";
+
+const ICON_TONES = TONES.filter((tone) => tone !== "neutral");
 
 /**
  * Icon 不落任何标识属性（它直接把 Phosphor 组件渲染出来），所以认图只能**比对
@@ -33,13 +34,20 @@ function shapeOf(name: IconName) {
   return shape;
 }
 
-describe("语气六档 · 图标由语气决定", () => {
-  it.each([...TONES])("Banner 的 %s 档取 toneIcons 里那一张", (tone) => {
+describe("语气六档 · neutral 无图标，其余由语气决定", () => {
+  it("Banner 与 StatusBadge 的 neutral 档默认都没有图标", () => {
+    const banner = render(<Banner tone="neutral" title="t" />);
+    const badge = render(<StatusBadge tone="neutral">状态</StatusBadge>);
+    expect(shapesIn(banner.container)).toHaveLength(0);
+    expect(shapesIn(badge.container)).toHaveLength(0);
+  });
+
+  it.each(ICON_TONES)("Banner 的 %s 档取 toneIcons 里那一张", (tone) => {
     const { container } = render(<Banner tone={tone} title="t" />);
     expect(shapesIn(container)).toContain(shapeOf(toneIcons[tone]));
   });
 
-  it.each([...TONES])("StatusBadge 的 %s 档取同一张", (tone) => {
+  it.each(ICON_TONES)("StatusBadge 的 %s 档取同一张", (tone) => {
     const { container } = render(<StatusBadge tone={tone}>状态</StatusBadge>);
     expect(shapesIn(container)).toContain(shapeOf(toneIcons[tone]));
   });
@@ -49,7 +57,7 @@ describe("语气六档 · 图标由语气决定", () => {
    * 这条断言在「有人给其中一个件单独换图」时会红。
    */
   it("同一档在两个件里是同一张图", () => {
-    for (const tone of TONES) {
+    for (const tone of ICON_TONES) {
       const a = render(<Banner tone={tone} title="t" />);
       const b = render(<StatusBadge tone={tone}>状态</StatusBadge>);
       const want = shapeOf(toneIcons[tone]);
@@ -65,14 +73,12 @@ describe("StatusBadge · 三件一体", () => {
   it("Badge 以控制高度为下限，文字行盒可把组件撑高", () => {
     const { container } = render(<Badge>标签</Badge>);
     const badge = container.firstElementChild;
-    expect(badge?.className).toContain("min-h-control-2xs");
-    expect(badge?.className).not.toMatch(/(?:^|\s)h-control-2xs(?:\s|$)/);
+    expect(badge?.className).toContain("h-control-sm");
     expect(badge?.className).not.toContain("py-2xs");
   });
 
   /**
-   * 表意图标 + 语气底色 + 文字，少哪一件都退化：只有底色 = 得靠记颜色；
-   * 只有文字 = 一屏扫不出来；只有图标 = 同一张图在不同业务里含义不同。
+   * 有明确语义的档位以图标 + 底色 + 文字提供冗余线索；neutral 的文字本身完整。
    */
   it("默认三件齐：有图标、有语气底色类、有文字", () => {
     const { container } = render(
@@ -91,6 +97,15 @@ describe("StatusBadge · 三件一体", () => {
     );
     expect(shapesIn(container)).toContain(shapeOf("timer"));
     expect(shapesIn(container)).not.toContain(shapeOf(toneIcons.warning));
+  });
+
+  it("neutral 也可显式补充准确的业务图标", () => {
+    const { container } = render(
+      <StatusBadge tone="neutral" icon="timer">
+        等待中
+      </StatusBadge>,
+    );
+    expect(shapesIn(container)).toContain(shapeOf("timer"));
   });
 
   it("icon={false} 明确关掉图标", () => {
@@ -143,26 +158,23 @@ describe("Banner · 常驻，不自动消失", () => {
 });
 
 /**
- * 尺寸两档（2026-09-26 owner：tag 高度要压缩）。`sm` 是挂在标题上的角标：下限
- * 收到 control-3xs、行高收成 1、左右内距收一档；缺省 `md` 与加 size 之前一致。
+ * 使用统一控件五档；缺省 `sm=20px`，`xs=16px` 用于标题旁短角标。
  */
 describe("Badge · 尺寸", () => {
   const cls = (text: string) => screen.getByText(text).className.split(" ");
 
-  it("缺省 md：control-2xs 下限、px-sm，与加 size 之前一致", () => {
-    render(<Badge>md</Badge>);
-    const c = cls("md");
-    expect(c).toEqual(expect.arrayContaining(["min-h-control-2xs", "px-sm"]));
+  it("缺省 sm：control-sm 高度、px-xs", () => {
+    render(<Badge>default</Badge>);
+    const c = cls("default");
+    expect(c).toEqual(expect.arrayContaining(["h-control-sm", "px-xs"]));
     expect(c).not.toContain("leading-none");
   });
 
-  it("sm：control-3xs 下限、行高 1、px-2xs", () => {
-    render(<Badge size="sm">sm</Badge>);
-    const c = cls("sm");
-    expect(c).toEqual(
-      expect.arrayContaining(["min-h-control-3xs", "leading-none", "px-2xs"]),
-    );
-    expect(c).not.toContain("min-h-control-2xs");
+  it("xs：control-xs 高度、px-2xs", () => {
+    render(<Badge size="xs">xs</Badge>);
+    const c = cls("xs");
+    expect(c).toEqual(expect.arrayContaining(["h-control-xs", "px-2xs"]));
+    expect(c).not.toContain("h-control-sm");
     expect(c).not.toContain("px-sm");
   });
 
@@ -173,6 +185,23 @@ describe("Badge · 尺寸", () => {
       </StatusBadge>,
     );
     const badge = screen.getByText("Pro").closest("span.inline-flex")!;
-    expect(badge.className.split(" ")).toContain("min-h-control-3xs");
+    expect(badge.className.split(" ")).toContain("h-control-sm");
+  });
+
+  it.each([
+    ["xs", "size-icon-xs"],
+    ["sm", "size-icon-xs"],
+    ["md", "size-icon-sm"],
+    ["lg", "size-icon-sm"],
+    ["xl", "size-icon-sm"],
+  ] as const)("StatusBadge %s 档使用同档控件图标", (size, iconClass) => {
+    const { container } = render(
+      <StatusBadge tone="success" size={size}>
+        状态
+      </StatusBadge>,
+    );
+    expect(container.querySelector("svg")?.classList.contains(iconClass)).toBe(
+      true,
+    );
   });
 });

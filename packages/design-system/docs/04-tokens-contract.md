@@ -1,6 +1,6 @@
 # 04 Token 契约（T2 全族）
 
-适用版本：**DS 14.0.0** ｜ 更新：2026-09-25 ｜ 事实来源：`@vxture/design-tokens` 的 `styles/semantic/*`（生成物，本文与之核对）
+适用版本：**DS 15.0.0** ｜ 更新：2026-09-29 ｜ 事实来源：`@vxture/design-tokens` 的 `styles/semantic/*`（生成物，本文与之核对）
 
 T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md) §2）。每族都产出真工具类，取值一律走工具类。
 
@@ -9,8 +9,8 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 | 族              | T2 名 → 工具类                                                                | 命名空间                               | 模式轴                       |
 | --------------- | ----------------------------------------------------------------------------- | -------------------------------------- | ---------------------------- |
 | 色彩            | `--primary` → `bg-primary`                                                    | `--color-*`                            | 明暗（`.dark`）              |
-| 排版角色        | `--body-md-*` → `text-body-md`                                                | `--text-*`                             | 字号三档（`html.vx-font-*`） |
-| 间距 / 控件高度 | `--space-md` → `p-md`、`h-control-lg`                                         | `--spacing-*`                          | 密度三档（`.density-*`）     |
+| 排版角色        | `--body-*` → `text-body`                                                      | `--text-*`                             | 字号三档（`html.vx-font-*`） |
+| 间距 / 控件高度 | `--space-md` → `p-md`、`h-control-lg`                                         | `--spacing-*`                          | 间距随密度；控件高度稳定     |
 | 图标 / 媒体尺寸 | `--spacing-icon-md` → `size-icon-md`                                          | `--spacing-*`                          | 无                           |
 | 圆角            | `--radius-md` → `rounded-md`                                                  | `--radius-*`                           | 无                           |
 | 视觉高度        | `--shadow-raised` → `shadow-raised`                                           | `--shadow-*`                           | 无                           |
@@ -54,21 +54,20 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 
 ## 3. 排版角色
 
-七族十九档，每档五个属性变量（family/size/weight/line-height/letter-spacing），工具类 `text-{族}-{档}`。默认字号档取值：
+六族十四个角色，每个角色包含 family / size / weight / line-height / letter-spacing 五项属性。字号三档如下：
 
-| 族       | 档位（px）                            |
-| -------- | ------------------------------------- |
-| display  | `lg` 72 / `md` 60 / `sm` 48           |
-| heading  | `1` 36 / `2` 30 / `3` 24              |
-| title    | `xl` 20 / `lg` 18 / `md` 16 / `sm` 14 |
-| body     | `xl` 18 / `lg` 16 / `md` 14 / `sm` 12 |
-| label    | `xl` 18 / `lg` 16 / `md` 14 / `sm` 12 |
-| code     | `md` 14 / `sm` 12                     |
-| overline | 单档 12                               |
+| 族       | 角色                                    | Small / Default / Large（px）             |
+| -------- | --------------------------------------- | ----------------------------------------- |
+| display  | `xs` / `sm` / `md` / `lg`               | 24/30/36 · 36/48/60 · 48/60/72 · 60/72/96 |
+| heading  | `1` / `2` / `3`                         | 16/18/20 · 14/16/18 · 12/14/16            |
+| body     | `body` / `body-small`                   | 12/14/16 · 10/12/14                       |
+| label    | `label` / `label-small` / `label-micro` | 12/14/16 · 10/12/14 · 10/10/12            |
+| code     | `code`                                  | 10/12/14                                  |
+| overline | `overline`                              | 9/10/12                                   |
 
-字号三档（`vx-font-small/default/large`）对全族整体平移一档；任何档下最小 12px。
+字号模式由 `vx-font-small/default/large` 控制。`label-micro` 在 Small 模式下锁在 10px，供 16px 高的极小控件；9px 只用于眉标等短信息，正文与结构标题不进入 9–10px。
 
-## 4. 间距与控件高度（密度轴）
+## 4. 间距与控件高度
 
 默认档取值（`--vx-spacing` = 4px 基数）：
 
@@ -76,15 +75,17 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | inset `space-*`           | `none` 0 / `2xs` 4 / `xs` 8 / `sm` 10 / `md` 16 / `lg` 24 / `xl` 32 / `2xl` 40 / `3xl` 48 / `4xl` 56 / `5xl` 64 / `6xl` 80 / `7xl` 128 |
 | row `space-row-*`         | `sm` 48 / `md` 56 / `lg` 64 / `xl` 80 / `2xl` 96 / `3xl` 112 / `4xl` 128                                                               |
-| control `space-control-*` | `3xs` 16 / `2xs` 20 / `xs` 24 / `sm` 28 / `md` 32 / `lg` 36 / `xl` 40 / `2xl` 48 / `3xl` 56                                            |
+| control `space-control-*` | `xs` 16 / `sm` 20 / `md` 24 / `lg` 28 / `xl` 32 / `2xl` 40 / `3xl` 48                                                                  |
 
-密度三档（`.density-compact/default/comfortable`）是档位平移而非等比缩放，三组都随密度变化，且除 `none` 外每一档三档取值严格递增：
+通用单行控件的内容映射为：`xs=label-micro/10px/icon-12`、`sm=label-small/12px/icon-12`、`md=label-small/12px/icon-16`、`lg/xl=label/14px/icon-16`。
+
+密度三档（`.density-compact/default/comfortable`）只作用于 inset 与 row，按档位平移而非等比缩放；控件高度是独立尺寸轴：
 
 | 组      | 紧凑                                       | 宽松                                            |
 | ------- | ------------------------------------------ | ----------------------------------------------- |
 | inset   | 沿阶梯下挪两格，约减半（`md` 8 / `lg` 12） | 上挪一格（`md` 24 / `lg` 32；`2xs` 例外只到 6） |
 | row     | 低端 −16、高端 −32（`row-md` 40）          | +8 到 +16（`row-md` 64）                        |
-| control | −1 档（`control-md` 28）                   | +1 档（`control-md` 36）                        |
+| control | 不变（`control-md` 恒为 24）               | 不变（`control-md` 恒为 24）                    |
 
 逐档取值见生成物 `spacing-semantic.css`，事实来源是 `scripts/design-tokens/semantic-policy.mjs` 的 `SPACING_SCALE`。
 
@@ -108,19 +109,19 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 
 `0–99` 归局部堆叠自由使用；超过 99 一律取语义档（逐档互异是硬要求——同值时叠放次序取决于 DOM 顺序而非设计意图）：
 
-| 档                | 值     | 依据                                        |
-| ----------------- | ------ | ------------------------------------------- |
-| `base` / `raised` | 0 / 10 | 文档流基线 / 同层轻微抬起                   |
-| `sticky`          | 100    | 让位给 portal 化的 dropdown                 |
-| `dropdown`        | 200    | Radix portal 菜单须压过粘性表头，否则被裁切 |
-| `overlay`         | 300    | 浮层遮罩                                    |
-| `drawer`          | 400    | 低于 modal——模态可从抽屉内唤起              |
-| `modal`           | 500    |                                             |
-| `popover`         | 600    | 高于 modal——气泡可用在模态内                |
-| `toast`           | 700    | 全局反馈，不应被浮层遮挡                    |
-| `notification`    | 800    | 常驻更久且可堆叠，压在 toast 之上           |
-| `tooltip`         | 900    | 必须最高，否则被它所描述的元素遮挡          |
-| `max`             | 9999   | 逃生档，新增使用需在 PR 说明                |
+| 档                | 值     | 依据                                            |
+| ----------------- | ------ | ----------------------------------------------- |
+| `base` / `raised` | 0 / 10 | 文档流基线 / 同层轻微抬起                       |
+| `sticky`          | 100    | 让位给 portal 化的 dropdown                     |
+| `overlay`         | 300    | 浮层遮罩                                        |
+| `drawer`          | 400    | 低于 modal——模态可从抽屉内唤起                  |
+| `modal`           | 500    |                                                 |
+| `popover`         | 600    | 高于 modal——气泡可用在模态内                    |
+| `dropdown`        | 650    | Portal 菜单可从抽屉或模态内唤起，须高于 popover |
+| `toast`           | 700    | 全局反馈，不应被浮层遮挡                        |
+| `notification`    | 800    | 常驻更久且可堆叠，压在 toast 之上               |
+| `tooltip`         | 900    | 必须最高，否则被它所描述的元素遮挡              |
+| `max`             | 9999   | 逃生档，新增使用需在 PR 说明                    |
 
 ## 9. 时长 / 缓动
 

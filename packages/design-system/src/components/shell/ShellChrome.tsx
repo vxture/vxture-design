@@ -166,11 +166,11 @@ export interface ShellUserStatusTag {
   /** Tag text, e.g. 已认证 / 未认证. */
   label: ReactNode;
   /**
-   * 认证与否，决定贴标的**语气**——`success`（自带圆形对勾）对 `neutral`。
+   * 认证与否，决定贴标的**语气**——`success`（自带圆形对勾）对 `neutral`
+   * （默认无图标）。
    *
-   * 前导图标不在这里另配：`StatusBadge` 的图标缺省就随语气来（见它的文件头
-   * ——「不必每处各配一张」）。这里曾经额外画过一个 `check`，于是「已认证」
-   * 前面并排两个对勾。
+   * 前导图标不在这里另配：有语义的五档由 `StatusBadge` 提供缺省图标；这里曾经
+   * 额外画过一个 `check`，于是「已认证」前面并排两个对勾。
    */
   verified?: boolean | undefined;
 }
@@ -337,16 +337,16 @@ export function LocaleSelectPanel({
             onClick={() => onSelect(option.locale)}
           >
             {option.flag ? (
-              <span className="shrink-0 text-body-lg" aria-hidden="true">
+              <span className="shrink-0 text-body" aria-hidden="true">
                 {option.flag}
               </span>
             ) : null}
             <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
-              <span className="text-label-md">
+              <span className="text-label">
                 {option.nativeName ?? option.label ?? option.locale}
               </span>
               {option.label && option.label !== option.nativeName ? (
-                <span className="text-body-sm text-muted-foreground">
+                <span className="text-body-small text-muted-foreground">
                   {option.label}
                 </span>
               ) : null}
@@ -390,7 +390,7 @@ export function ShellBrand({
           draggable={false}
         />
       ) : null}
-      {/* 不挂 `text-title-lg`：那是个**完整排版角色**（字族/字号/字重/行高/
+      {/* 不挂语义标题类：那是个**完整排版角色**（字族/字号/字重/行高/
           字距五项一起来），只为了收字号却把 .vx-brand-name 的字重 700 压成了
           600，且工具类层压 components 层，压得静默。字号已归到 brand.css 的
           品牌基线里。 */}
@@ -511,7 +511,7 @@ export interface ShellAgentButtonProps {
   label: string;
   active?: boolean;
   disabled?: boolean;
-  /** 图标视觉尺寸，默认 "xl"（32px，跟其余 header 工具图标同档）。 */
+  /** 素材视觉尺寸，默认 "xl"（32px）；独立于其余 24px header 控件高度。 */
   size?: ShellAgentButtonSize;
   onClick?: () => void;
   className?: string | undefined;
@@ -704,7 +704,7 @@ export function ShellPreferencePanel({
       ) : null}
       <ShellPanelControlRow icon="globe" label={labels?.locale}>
         <NativeSelect
-          className="h-control-md text-body-md md:text-body-sm"
+          className="h-control-md text-body md:text-body-small"
           value={locale}
           onChange={(event) => onLocaleChange(event.target.value)}
         >
@@ -718,9 +718,8 @@ export function ShellPreferencePanel({
 
       <ShellPanelControlRow icon="sun" label={labels?.theme}>
         <SegmentedControl
-          // md 而非 sm：档位在这里决定的是**高度**（sm=h-control-sm 28px，
-          // md=h-control-md 32px），而同一栏里的 NativeSelect 与上下相邻的
-          // 链接/动作按钮都是 32px。取 sm 会让偏好区三行整体矮 4px，看着像
+          // md 而非 sm：md=h-control-md 24px，与同一栏里的 NativeSelect 及
+          // 上下相邻的链接/动作按钮同档。取 sm=20px 会让偏好区三行整体矮 4px，看着像
           // 陷下去一块。
           size="md"
           fill
@@ -1038,7 +1037,7 @@ export function ShellLegalFooter({
       className={cn(
         // 区块级分隔用实线发丝线（02-visual-spec.md §3）。
         "border-t border-primary/10 dark:border-primary/20",
-        "px-lg py-md text-body-sm text-muted-foreground",
+        "px-lg py-md text-body-small text-muted-foreground",
         className,
       )}
     >

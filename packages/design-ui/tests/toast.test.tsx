@@ -71,6 +71,20 @@ describe("Toast · 播报强度", () => {
   });
 });
 
+describe("Toast · neutral 默认无语义图标", () => {
+  it("neutral 只保留关闭图标，不再画短横", async () => {
+    await fire("neutral", "已记录");
+    const toast = screen.getByText("已记录").closest('[role="status"]');
+    expect(toast?.querySelectorAll("svg")).toHaveLength(1);
+  });
+
+  it("info 保留语义图标与关闭图标", async () => {
+    await fire("info", "请注意");
+    const toast = screen.getByText("请注意").closest('[role="status"]');
+    expect(toast?.querySelectorAll("svg")).toHaveLength(2);
+  });
+});
+
 describe("Toast · 通知区与关闭", () => {
   it("通知区的可访问名可覆盖", async () => {
     const user = userEvent.setup();

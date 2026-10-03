@@ -51,14 +51,12 @@ function LabeledValue({
 }: LabeledValueProps) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-2xs", className)}>
-      <span className="flex min-w-0 items-center gap-xs text-label-sm text-muted-foreground">
+      <span className="flex min-w-0 items-center gap-xs text-label-small text-muted-foreground">
         <span className="truncate">{label}</span>
         {labelSuffix ? <span className="shrink-0">{labelSuffix}</span> : null}
       </span>
       <span className="flex min-w-0 items-baseline gap-xs">
-        <span
-          className={cn("truncate text-title-lg font-bold", VALUE_TONE[tone])}
-        >
+        <span className={cn("truncate text-lg font-bold", VALUE_TONE[tone])}>
           {value}
         </span>
         {valueTag ? (

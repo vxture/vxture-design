@@ -466,13 +466,13 @@ function DataTable<TRow>({
   return (
     <div className={cn("border-t", hairline.block, className)}>
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-body-sm">
+        <table className="w-full border-collapse text-body-small">
           <thead
             className={cn(
               "border-b",
               hairline.block,
               // 常规字重的正文字号：列名是框架信息，不该比它标注的数据更重。
-              "text-body-sm font-normal text-muted-foreground",
+              "text-body-small font-normal text-muted-foreground",
             )}
           >
             <tr>
@@ -704,7 +704,7 @@ function DataTable<TRow>({
                         <td
                           className={cn(
                             EDGE_COL,
-                            "py-md align-middle whitespace-nowrap text-body-sm text-muted-foreground",
+                            "py-md align-middle whitespace-nowrap text-body-small text-muted-foreground",
                             cellSurface,
                           )}
                         >

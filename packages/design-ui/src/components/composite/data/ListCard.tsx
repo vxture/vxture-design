@@ -58,7 +58,7 @@ function ListCard({
           ) : null}
         </div>
         {meta ? (
-          <div className="flex flex-wrap items-center gap-sm text-body-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-sm text-body-small text-muted-foreground">
             {meta}
           </div>
         ) : null}

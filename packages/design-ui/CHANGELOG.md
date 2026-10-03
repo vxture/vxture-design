@@ -5,6 +5,38 @@
 
 ---
 
+## 12.0.0 — 2026-10-04
+
+**破坏性**：组件全面迁移到收口后的六族排版角色；`SectionHeaderLevel` 从
+`2 | 3 | 4` 收窄为 `2 | 3`。原 level 4 的调用方应重新判断信息结构，提升为
+level 3 或改用正文 / 标签语义，不再用第四级标题补密度。
+
+- 单行控件统一为 `xs/sm/md/lg/xl = 16/20/24/28/32px`；默认 Button / Input 为
+  `md=24px`。同名档在 Button、Toggle、Badge、SegmentedControl、Tabs 等组件中使用
+  同一字号与默认图标尺寸。文字收口为 `xs=10px`、`sm/md=12px`、`lg/xl=14px`；
+  图标为 `xs/sm=12px`、`md/lg/xl=16px`。
+- Badge 补齐五档并将默认档收为 `sm=20px`；`xs=16px` 用于标题旁短角标。
+  `2xl/3xl=40/48px` 只保留为特殊页面 token，不进入通用 Button API。
+- `StatusBadge` 图标随五档尺寸同步；`ViewModeSwitch` 采用 Figma 定稿的轻量底槽与
+  选中态，并对齐当前单行控件尺寸。
+
+- `EntryCard` 标题从等值的原子组合 `text-sm + font-medium` 改为语义
+  `text-label`；默认视觉不变，并会随 Small / Default / Large 字号模式切换。
+- 六种语气的缺省图标收口：`neutral` 不再用短横占位，默认无图标；`brand`、
+  `info`、`success`、`warning`、`danger` 保留语义图标。StatusBadge 的 `dot`
+  与显式图标覆盖继续可用。
+
+**标题阶梯最终校正**：本节覆盖下方 11.0.0 记录的中间方案；历史记录保留用于追溯，
+当前实现与迁移一律以这里及 `@vxture/design-system/docs/02-visual-spec.md` 为准。
+
+- 产品界面只保留 `heading-1/2/3`，分别对应 `h1/h2/h3`；`title` 家族已删除，
+  `display` 只用于营销、首屏与大号展示。
+- `ViewHeader`：`h1 + heading-1`；`SectionHeader` 只保留 level 2–3，分别为
+  `h2 + heading-2`、`h3 + heading-3`。
+- `DialogTitle`、`AlertDialogTitle`、`Drawer` 标题按 Radix 实际输出统一为
+  `h2 + heading-2`；`CardTitle` 为 `h3 + heading-3`。
+- 默认字号为 18 / 16 / 14px；Small 为 16 / 14 / 12px，Large 为 20 / 18 / 16px。
+
 ## 11.0.0 — 2026-09-26
 
 **破坏性**：标题阶梯重排——level 的数字就是 h 的数字，页头改用页头文本（major）。

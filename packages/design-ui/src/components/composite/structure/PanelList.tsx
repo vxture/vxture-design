@@ -27,7 +27,7 @@ function PanelList({ children, empty, className }: PanelListProps) {
 
   if (isEmpty && empty) {
     return (
-      <p className="py-md text-center text-body-sm text-muted-foreground">
+      <p className="py-md text-center text-body-small text-muted-foreground">
         {empty}
       </p>
     );

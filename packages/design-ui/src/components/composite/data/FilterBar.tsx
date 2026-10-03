@@ -36,7 +36,7 @@ export type FilterBarView = ViewModeSwitchValue;
 /**
  * 右段控件（搜索 / 筛选下拉）比表单常规小一档。
  *
- * 表单控件默认字号 `body-lg` / `md:body-md`，放进密集筛选行显得偏大（owner
+ * 表单控件默认字号 `body`，放进密集筛选行显得偏大（owner
  * 2026-09-02）。但 Input / InputGroup / NativeSelect 是全平台共用件——官网、账户
  * 的消费级表单也用同一批，全局调小会连登录/结算表单一起缩。所以只在 FilterBar
  * 右段内、按 `data-slot` 命中这三类控件压字号，不动它们在别处的常规尺寸；只压
@@ -46,9 +46,9 @@ export type FilterBarView = ViewModeSwitchValue;
 // 三类控件各写一条(不用 `:is()`/逗号——那类带逗号的任意变体 Tailwind 可能
 // 静默丢掉,是踩过的 CSS 陷阱)。emit 的规则由平台构建产物核验,不看构建绿。
 const COMPACT_CONTROLS = [
-  "[&_[data-slot=input]]:text-body-md md:[&_[data-slot=input]]:text-body-sm",
-  "[&_[data-slot=input-group-input]]:text-body-md md:[&_[data-slot=input-group-input]]:text-body-sm",
-  "[&_[data-slot=native-select]]:text-body-md md:[&_[data-slot=native-select]]:text-body-sm",
+  "[&_[data-slot=input]]:text-body md:[&_[data-slot=input]]:text-body-small",
+  "[&_[data-slot=input-group-input]]:text-body md:[&_[data-slot=input-group-input]]:text-body-small",
+  "[&_[data-slot=native-select]]:text-body md:[&_[data-slot=native-select]]:text-body-small",
 ].join(" ");
 
 export interface FilterBarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -126,7 +126,7 @@ const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(
             />
           ) : null}
           {count !== undefined ? (
-            <span className="whitespace-nowrap text-label-md text-muted-foreground">
+            <span className="whitespace-nowrap text-label text-muted-foreground">
               {count}
             </span>
           ) : null}

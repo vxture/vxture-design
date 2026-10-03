@@ -50,7 +50,7 @@ function CalendarDayButton({
   return (
     <button
       className={cn(
-        "flex size-control-lg items-center justify-center rounded-md text-body-sm",
+        "flex size-control-lg items-center justify-center rounded-md text-body-small",
         interactive,
         "hover:bg-accent",
         // 今天的高亮只在未选中时出现——两个背景同时命中就要赌 CSS 顺序。
@@ -96,16 +96,17 @@ function Calendar({
           "text-muted-foreground",
         ),
         month_caption: "flex h-control-md items-center justify-center",
-        caption_label: "text-label-md",
+        caption_label: "text-label",
         month_grid: "w-full border-collapse",
         weekdays: "flex",
-        weekday: "w-control-lg text-label-sm font-normal text-muted-foreground",
+        weekday:
+          "w-control-lg text-label-small font-normal text-muted-foreground",
         week: "mt-xs flex w-full",
         day: "relative p-0 text-center",
         outside: "text-muted-foreground",
         disabled: "text-muted-foreground opacity-disabled",
         hidden: "invisible",
-        footer: "pt-sm text-body-sm text-muted-foreground",
+        footer: "pt-sm text-body-small text-muted-foreground",
         ...classNames,
       }}
       components={{

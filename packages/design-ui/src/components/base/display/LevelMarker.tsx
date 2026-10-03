@@ -29,8 +29,8 @@ const LEVEL_VARS: Record<Level, { fill: string; deep: string; fg: string }> = {
 };
 
 const BY_SIZE = {
-  sm: "size-control-2xs text-label-sm",
-  md: "size-control-sm text-label-md",
+  sm: "size-control-sm text-label-small",
+  md: "size-control-lg text-label",
 } as const;
 
 export interface LevelMarkerProps {

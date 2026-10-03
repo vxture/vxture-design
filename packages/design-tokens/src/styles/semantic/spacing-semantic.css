@@ -14,10 +14,10 @@
  * 构建规范见 docs/065-design-token-pipeline.md。
  *
  * 密度三档是**用户偏好轴**，与组件自身的尺寸变体（cva size）正交：前者由祖先
- * 类重定向变量、任意深度生效，后者由类名逐处指定。组件不需要知道密度存在。
+ * 类重定向留白与行距、任意深度生效，后者由类名逐处指定稳定控件高度。
  *
- * 三档之间是档位平移而非等比缩放（比值 1.0–1.5 不等），故必须逐档列表，
- * 不能靠一个乘数推导。
+ * inset / row 三档之间是档位平移而非等比缩放；control 三列刻意相同，密度切换
+ * 不改变控件高度。两类规则都由生成器断言。
  *
  * 末尾的流体档三块各写一遍且文本相同：它的上下界引用同块内的固定档，自定义
  * 属性在使用处求值，所以三档密度各自拿到自己的边界。
@@ -49,15 +49,13 @@
   --space-row-4xl: calc(var(--vx-spacing) * 32);
 
   /* control */
-  --space-control-3xs: calc(var(--vx-spacing) * 4);
-  --space-control-2xs: calc(var(--vx-spacing) * 5);
-  --space-control-xs: calc(var(--vx-spacing) * 6);
-  --space-control-sm: calc(var(--vx-spacing) * 7);
-  --space-control-md: calc(var(--vx-spacing) * 8);
-  --space-control-lg: calc(var(--vx-spacing) * 9);
-  --space-control-xl: calc(var(--vx-spacing) * 10);
-  --space-control-2xl: calc(var(--vx-spacing) * 12);
-  --space-control-3xl: calc(var(--vx-spacing) * 14);
+  --space-control-xs: calc(var(--vx-spacing) * 4);
+  --space-control-sm: calc(var(--vx-spacing) * 5);
+  --space-control-md: calc(var(--vx-spacing) * 6);
+  --space-control-lg: calc(var(--vx-spacing) * 7);
+  --space-control-xl: calc(var(--vx-spacing) * 8);
+  --space-control-2xl: calc(var(--vx-spacing) * 10);
+  --space-control-3xl: calc(var(--vx-spacing) * 12);
 
   /* fluid */
   --space-page-inset: clamp(var(--space-lg), 3.2vw, var(--space-3xl));  /* 内容区四周留白：窄屏贴到 lg，宽屏放开到 3xl */
@@ -89,13 +87,11 @@
   --space-row-4xl: calc(var(--vx-spacing) * 24);
 
   /* control */
-  --space-control-3xs: calc(var(--vx-spacing) * 3);
-  --space-control-2xs: calc(var(--vx-spacing) * 4);
-  --space-control-xs: calc(var(--vx-spacing) * 5);
-  --space-control-sm: calc(var(--vx-spacing) * 6);
-  --space-control-md: calc(var(--vx-spacing) * 7);
-  --space-control-lg: calc(var(--vx-spacing) * 8);
-  --space-control-xl: calc(var(--vx-spacing) * 9);
+  --space-control-xs: calc(var(--vx-spacing) * 4);
+  --space-control-sm: calc(var(--vx-spacing) * 5);
+  --space-control-md: calc(var(--vx-spacing) * 6);
+  --space-control-lg: calc(var(--vx-spacing) * 7);
+  --space-control-xl: calc(var(--vx-spacing) * 8);
   --space-control-2xl: calc(var(--vx-spacing) * 10);
   --space-control-3xl: calc(var(--vx-spacing) * 12);
 
@@ -129,15 +125,13 @@
   --space-row-4xl: calc(var(--vx-spacing) * 36);
 
   /* control */
-  --space-control-3xs: calc(var(--vx-spacing) * 5);
-  --space-control-2xs: calc(var(--vx-spacing) * 6);
-  --space-control-xs: calc(var(--vx-spacing) * 7);
-  --space-control-sm: calc(var(--vx-spacing) * 8);
-  --space-control-md: calc(var(--vx-spacing) * 9);
-  --space-control-lg: calc(var(--vx-spacing) * 10);
-  --space-control-xl: calc(var(--vx-spacing) * 11);
-  --space-control-2xl: calc(var(--vx-spacing) * 14);
-  --space-control-3xl: calc(var(--vx-spacing) * 16);
+  --space-control-xs: calc(var(--vx-spacing) * 4);
+  --space-control-sm: calc(var(--vx-spacing) * 5);
+  --space-control-md: calc(var(--vx-spacing) * 6);
+  --space-control-lg: calc(var(--vx-spacing) * 7);
+  --space-control-xl: calc(var(--vx-spacing) * 8);
+  --space-control-2xl: calc(var(--vx-spacing) * 10);
+  --space-control-3xl: calc(var(--vx-spacing) * 12);
 
   /* fluid */
   --space-page-inset: clamp(var(--space-lg), 3.2vw, var(--space-3xl));  /* 内容区四周留白：窄屏贴到 lg，宽屏放开到 3xl */

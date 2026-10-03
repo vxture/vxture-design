@@ -406,10 +406,10 @@ function Swatch({
       >
         <div className="size-full" style={{ background: `var(${name})` }} />
       </div>
-      <span className="truncate text-label-sm text-foreground" title={label}>
+      <span className="truncate text-label-small text-foreground" title={label}>
         {label}
       </span>
-      <code className="truncate text-body-sm text-muted-foreground">
+      <code className="truncate text-body-small text-muted-foreground">
         {toHex(value)}
       </code>
     </div>
@@ -475,7 +475,7 @@ export function SemanticColors() {
 
   return (
     <div className="flex w-full flex-col gap-3xl">
-      <p className="text-body-sm text-muted-foreground">
+      <p className="text-body-small text-muted-foreground">
         共 {semantic.length} 个语义角色，{all.length} 组，运行时从{" "}
         <code>:root</code>{" "}
         读出，非手写清单。切换右上角的主题，色块与色值同步变化。
@@ -483,9 +483,11 @@ export function SemanticColors() {
       {all.map((g) => (
         <div key={g.label} className="flex flex-col gap-xl">
           <div className="flex items-baseline gap-sm border-b border-border pb-xs">
-            <span className="text-label-lg text-foreground">{g.label}</span>
-            <span className="text-body-sm text-muted-foreground">{g.note}</span>
-            <span className="text-body-sm text-muted-foreground">
+            <span className="text-label text-foreground">{g.label}</span>
+            <span className="text-body-small text-muted-foreground">
+              {g.note}
+            </span>
+            <span className="text-body-small text-muted-foreground">
               {g.families.length}
             </span>
           </div>
@@ -512,11 +514,11 @@ function FamilyPanel({
   return (
     <div className="flex flex-col gap-md">
       <div className="flex items-baseline gap-sm">
-        <span className="text-label-md text-foreground">
+        <span className="text-label text-foreground">
           {FAMILY_LABEL[family] ?? family}
         </span>
-        <code className="text-body-sm text-muted-foreground">{family}</code>
-        <span className="text-body-sm text-muted-foreground">
+        <code className="text-body-small text-muted-foreground">{family}</code>
+        <span className="text-body-small text-muted-foreground">
           {items.length}
         </span>
       </div>
@@ -574,7 +576,7 @@ function GradientPairs({ items }: { readonly items: readonly ColorToken[] }) {
             key={name}
             className="flex flex-col gap-sm rounded-lg border border-border p-md"
           >
-            <code className="text-label-sm text-foreground">
+            <code className="text-label-small text-foreground">
               gradient-{name}
             </code>
             <SwatchRow columns={2}>
@@ -758,30 +760,30 @@ export function PrimitiveRamps() {
 
   return (
     <div className="flex w-full flex-col gap-2xl">
-      <p className="text-body-sm text-muted-foreground">
+      <p className="text-body-small text-muted-foreground">
         {byName.size} 条色阶，按用途分 {all.length}{" "}
         组。语义角色从这里取值，本身不参与明暗切换。
       </p>
       {all.map((g) => (
         <div key={g.label} className="flex flex-col gap-lg">
           <div className="flex items-baseline gap-sm border-b border-border pb-xs">
-            <span className="text-label-lg text-foreground">{g.label}</span>
-            <span className="text-body-sm text-muted-foreground">{g.note}</span>
-            <span className="text-body-sm text-muted-foreground">
+            <span className="text-label text-foreground">{g.label}</span>
+            <span className="text-body-small text-muted-foreground">
+              {g.note}
+            </span>
+            <span className="text-body-small text-muted-foreground">
               {g.items.length}
             </span>
           </div>
           {g.items.map((ramp) => (
             <div key={ramp.name} className="flex flex-col gap-sm">
               <div className="flex items-baseline gap-sm">
-                <span className="text-label-md text-foreground">
-                  {ramp.name}
-                </span>
-                <span className="text-body-sm text-muted-foreground">
+                <span className="text-label text-foreground">{ramp.name}</span>
+                <span className="text-body-small text-muted-foreground">
                   {ramp.steps.length} 阶
                 </span>
                 {ramp.consumers.length > 0 ? (
-                  <span className="text-body-sm text-muted-foreground">
+                  <span className="text-body-small text-muted-foreground">
                     → {ramp.consumers.join(" / ")}
                   </span>
                 ) : null}
@@ -821,8 +823,8 @@ export function PrimitiveRamps() {
           {g.singles.length > 0 ? (
             <div className="flex flex-col gap-sm">
               <div className="flex items-baseline gap-sm">
-                <span className="text-label-md text-foreground">基础色</span>
-                <span className="text-body-sm text-muted-foreground">
+                <span className="text-label text-foreground">基础色</span>
+                <span className="text-body-small text-muted-foreground">
                   无色阶，纯黑纯白本身就是一档
                 </span>
               </div>
@@ -868,21 +870,23 @@ export function IconGallery() {
   return (
     <div className="flex w-full flex-col gap-xl">
       <div className="flex flex-col gap-sm">
-        <span className="text-label-sm text-muted-foreground">
+        <span className="text-label-small text-muted-foreground">
           {ICON_SIZES.length} 档尺寸
         </span>
         <div className="flex flex-wrap items-end gap-lg">
           {ICON_SIZES.map((size) => (
             <span key={size} className="flex flex-col items-center gap-2xs">
               <Icon name="sparkles" size={size} />
-              <span className="text-body-sm text-muted-foreground">{size}</span>
+              <span className="text-body-small text-muted-foreground">
+                {size}
+              </span>
             </span>
           ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-2xs">
-        <span className="text-label-sm text-muted-foreground">
+        <span className="text-label-small text-muted-foreground">
           共 {iconDictionary.length} 个，{ICON_GROUPS.length} 组
           {q ? `，命中 ${matched} 个` : "，按名字筛选"}
         </span>
@@ -895,13 +899,15 @@ export function IconGallery() {
       </div>
 
       {groups.length === 0 ? (
-        <p className="text-body-sm text-muted-foreground">没有匹配的图标。</p>
+        <p className="text-body-small text-muted-foreground">
+          没有匹配的图标。
+        </p>
       ) : (
         groups.map((g) => (
           <div key={g.label} className="flex flex-col gap-md">
             <div className="flex items-baseline gap-sm border-b border-border pb-xs">
-              <span className="text-label-lg text-foreground">{g.label}</span>
-              <span className="text-body-sm text-muted-foreground">
+              <span className="text-label text-foreground">{g.label}</span>
+              <span className="text-body-small text-muted-foreground">
                 {g.icons.length}
               </span>
             </div>
@@ -912,7 +918,7 @@ export function IconGallery() {
                   className="flex flex-col items-center gap-xs rounded-md border border-border p-md"
                 >
                   <Icon name={name} size="2xl" />
-                  <span className="w-full truncate text-center text-body-sm text-foreground">
+                  <span className="w-full truncate text-center text-body-small text-foreground">
                     {name}
                   </span>
                 </div>
@@ -939,7 +945,7 @@ interface TypeRole {
  * 角色名从 `--<role>-font-size` 反推，同样不写清单。
  *
  * 一个角色一次落齐五项，v4 把它们注册成 `--text-<role>` 的修饰子键——所以
- * `text-body-md` 一个类同时管字号、行高、字距、字重，这也是这张表要把五项并排列出的
+ * `text-body` 一个类同时管字号、行高、字距、字重，这也是这张表要把五项并排列出的
  * 原因：它们是一体的，不该在调用处被拆开单点。
  */
 function readTypeRoles(): TypeRole[] {
@@ -964,15 +970,14 @@ function readTypeRoles(): TypeRole[] {
 const ROLE_FAMILIES = [
   "display",
   "heading",
-  "title",
   "body",
   "label",
   "code",
   "overline",
 ];
 
-/** 族内按大小降序。一份清单同时覆盖 heading-1..5 与 display-xl..xs 两种命名。 */
-const ROLE_STEPS = ["1", "2", "3", "xl", "lg", "md", "sm"];
+/** 族内按大小降序。一份清单覆盖 heading-1..3 与 display-lg..xs。 */
+const ROLE_STEPS = ["1", "2", "3", "lg", "md", "sm", "xs", "small"];
 
 function roleRank(role: string): number {
   const i = ROLE_FAMILIES.findIndex((f) => role.startsWith(f));
@@ -1003,12 +1008,11 @@ export function useTypeRoles(): TypeRole[] {
 
 /** 族的中文名与用途。没列到的族直接用族名，不会因为漏改这份表而没有标题。 */
 const FAMILY_NOTE: Record<string, readonly [string, string]> = {
-  display: ["展示", "营销页与大标题，非界面文本"],
-  heading: ["主标题", "页面主标题，品牌展示体"],
-  title: ["区块标题", "卡片头、区块名，正文体"],
-  body: ["正文", "段落、描述、说明"],
-  label: ["标签", "控件文字、字段名、元信息"],
-  code: ["代码", "等宽，代码与标识符"],
+  display: ["展示", "营销、首屏与大号展示文字"],
+  heading: ["标题", "产品界面的 h1 / h2 / h3"],
+  body: ["正文", "常规正文与辅助说明"],
+  label: ["标签", "控件文字与紧凑标签"],
+  code: ["代码", "等宽的键位、短代码与技术标识"],
   overline: ["眉标", "小字全大写，压在标题上方"],
 };
 
@@ -1031,14 +1035,20 @@ function TypeSample({ role }: { readonly role: string }) {
     fontFamily: `var(--${role}-font-family)`,
   };
   return (
-    <div className="grid grid-cols-1 gap-md md:grid-cols-2">
-      <div className="min-w-0 overflow-hidden">
-        <div className="truncate text-foreground" style={style}>
+    <div className="grid w-full min-w-0 grid-cols-1 gap-md overflow-hidden md:grid-cols-2">
+      <div className="w-full min-w-0 overflow-hidden">
+        <div
+          className="block w-full min-w-0 max-w-full overflow-hidden break-words whitespace-normal text-foreground md:truncate"
+          style={style}
+        >
           永和九年岁在癸丑暮春之初
         </div>
       </div>
-      <div className="min-w-0 overflow-hidden md:border-l md:border-border md:pl-md">
-        <div className="truncate text-foreground" style={style}>
+      <div className="w-full min-w-0 overflow-hidden md:border-l md:border-border md:pl-md">
+        <div
+          className="block w-full min-w-0 max-w-full overflow-hidden break-words whitespace-normal text-foreground md:truncate"
+          style={style}
+        >
           The quick brown fox 0123
         </div>
       </div>
@@ -1058,8 +1068,8 @@ export function TypographyScale() {
   const families = [...new Set(sorted.map((r) => r.role.split("-")[0] ?? ""))];
 
   return (
-    <div className="flex w-full flex-col gap-2xl">
-      <p className="text-body-sm text-muted-foreground">
+    <div className="flex w-full min-w-0 flex-col gap-2xl overflow-hidden">
+      <p className="text-body-small text-muted-foreground">
         共 {sorted.length} 个角色，{families.length} 族，运行时从{" "}
         <code>:root</code> 读出。切换右上角的字号，取值与样张一起变。
       </p>
@@ -1068,29 +1078,32 @@ export function TypographyScale() {
         const mine = sorted.filter((r) => r.role.split("-")[0] === family);
         const [label, note] = FAMILY_NOTE[family] ?? [family, ""];
         return (
-          <div key={family} className="flex flex-col gap-md">
-            <div className="flex items-baseline gap-sm border-b border-border pb-xs">
-              <span className="text-label-lg text-foreground">{label}</span>
-              <code className="text-body-sm text-muted-foreground">
+          <div key={family} className="flex min-w-0 flex-col gap-md">
+            <div className="flex min-w-0 flex-wrap items-baseline gap-sm border-b border-border pb-xs">
+              <span className="text-label text-foreground">{label}</span>
+              <code className="text-body-small text-muted-foreground">
                 {family}
               </code>
               {note ? (
-                <span className="text-body-sm text-muted-foreground">
+                <span className="text-body-small text-muted-foreground">
                   {note}
                 </span>
               ) : null}
-              <span className="text-body-sm text-muted-foreground">
+              <span className="text-body-small text-muted-foreground">
                 {mine.length}
               </span>
             </div>
-            <div className="flex flex-col divide-y divide-border">
+            <div className="flex min-w-0 flex-col divide-y divide-border">
               {mine.map((r) => (
-                <div key={r.role} className="flex flex-col gap-xs py-md">
+                <div
+                  key={r.role}
+                  className="flex min-w-0 flex-col gap-xs py-md"
+                >
                   <div className="flex flex-wrap items-baseline gap-sm">
-                    <span className="text-label-sm text-foreground">
+                    <span className="text-label-small text-foreground">
                       {r.role}
                     </span>
-                    <code className="text-body-sm text-muted-foreground">
+                    <code className="min-w-0 max-w-full break-all text-body-small text-muted-foreground">
                       {r.size} / {r.lineHeight} / {r.letterSpacing} / {r.weight}
                     </code>
                   </div>

@@ -140,6 +140,27 @@ describe("ViewModeSwitch · 视图必须始终有一个", () => {
       "off",
     );
   });
+
+  it("样式与 Figma 的 32px 控件、24px 图标和轻量槽一致", () => {
+    render(<ViewModeSwitch value="list" onChange={() => {}} />);
+
+    const group = screen.getByRole("radiogroup");
+    const list = screen.getByRole("radio", { name: "List view" });
+    const cards = screen.getByRole("radio", { name: "Card view" });
+
+    expect(group.className).toContain("inline-flex");
+    expect(group.className).toContain("rounded-lg");
+    expect(group.className).toContain("bg-background");
+    expect(list.className).toContain("size-control-xl");
+    expect(list.className).toContain(
+      "data-[state=on]:bg-surface-selected-hover",
+    );
+    expect(list.className).toContain("data-[state=on]:text-primary-hover");
+    expect(cards.className).toContain("size-control-xl");
+    expect(list.querySelector("svg")?.getAttribute("class")).toContain(
+      "size-icon-lg",
+    );
+  });
 });
 
 describe("ViewModeSwitch · 文案与停用", () => {

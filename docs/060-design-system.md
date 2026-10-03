@@ -1,7 +1,7 @@
 # Design System 内部工程规范
 
-适用版本：**DS 14.0.0**
-更新：2026-09-25
+适用版本：**DS 15.0.0**
+更新：2026-09-29
 范围：本仓 DS 三包的维护者与守卫脚本
 
 > **对外使用规范已随包发布**，见 `packages/design-system/docs/`（01 使用契约 / 02 视觉规格 / 03 模式选用 / 04 token 契约 / 05 内容规范 / 06 无障碍达标线），随 `@vxture/design-system` 的 `files` 一同发包。本文只保留内部工程内容：token 管线决策、守卫机制、偏离登记与历史判据。消费方规则一律以包内 docs 为准，本文不得复述。
@@ -14,7 +14,8 @@ L0–L5 组件归属与 T1–T4 token 分层的对外定义见包内 `docs/01-us
 
 **T1 是镜像，不是差分**。命名空间、分组、挡位、名称、取值与 Tailwind v4 逐项一致，由 `scripts/design-tokens/generate-primitive.mjs` 读上游 `theme.css` 生成，一致性由构造保证。全部偏离登记在 `scripts/design-tokens/primitive-policy.mjs`，逐条带理由，生成时打印：
 
-- **扩展**（Tailwind 没有的挡位）：`breakpoint-xs/3xl/4xl/5xl`、`font-brand/cjk`（字号档无扩展，最小档即上游的 `xs`=12px）
+- **扩展**（Tailwind 没有的挡位）：`breakpoint-xs/3xl/4xl/5xl`、`font-brand/cjk`、
+  `text-3xs/2xs`（9 / 10px，只供微型非正文角色）
 - **覆盖**（Tailwind 有、DS 判定要改）：`font-sans` / `font-mono` 的字体栈
 - **减法**：色板只留 neutral / red / amber / emerald / sky / purple 六个色相（完整色阶）加品牌色
 
@@ -43,8 +44,8 @@ L0–L5 组件归属与 T1–T4 token 分层的对外定义见包内 `docs/01-us
 - 组件视觉规格取 shadcn vega，原语基座保持 Radix。实测三个基座（radix / base / aria）的 vega 类名逐字相同——style 与基座正交，换基座不改变任何视觉。
 - 危险动作淡底取自 vega，但不照抄它的 `bg-destructive/10`——alpha 不自适应暗色，vega 必须补写 `dark:` 变体，而我们有十档 destructive 阶，实色结果确定。**采纳的是上游的判断，不是它缺 muted 阶时的将就手段。**
 - `destructive-strong` 上游没有，是因为它不发确认对话框图案，从未遇到这个问题。
-- 密度调控件高度，但只动 ±1 档（owner 2026-09-25，#59）。上游 shadcn 的 maia（generous）与 vega 控件高度完全相同（24/32/36/40），改密度不动控件高度；我们保留了 ±1 档的变化，没有照搬上游，幅度则刻意小于留白。
-- `SPACING_SCALE` 三列就是 compact / default / comfortable，三族按同一个列号取值。此前默认档的 `inset` / `row` 取了最宽那一列，宽松档在这两族上与默认逐字相同，切到宽松只看得到控件变高（#59）。生成器现在断言每一档三档严格递增。
+- 控件高度是稳定尺寸轴：`xs/sm/md/lg/xl = 16/20/24/28/32px`，不随密度变化；密度只调留白与行距。`2xl/3xl = 40/48px` 只服务特殊页面形态。
+- `SPACING_SCALE` 三列就是 compact / default / comfortable。inset / row 按列严格递增；control 三列必须相等，生成器分别断言这两条约束。
 - 透明模式的视觉权威 = admin 内容区语法。
 
 ### 1.2.2 配方层

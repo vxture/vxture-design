@@ -65,7 +65,7 @@ export function FieldTier({
 
   const header = (
     <div className="flex flex-col gap-2xs text-left">
-      <span className="flex items-center gap-2xs text-label-md text-foreground">
+      <span className="flex items-center gap-2xs text-label text-foreground">
         {collapsible ? (
           <Icon
             name={open ? "chevron-down" : "chevron-right"}
@@ -76,7 +76,7 @@ export function FieldTier({
         {title ?? TIER_LABEL[tier]}
       </span>
       {hint ? (
-        <span className="text-body-sm text-muted-foreground">{hint}</span>
+        <span className="text-body-small text-muted-foreground">{hint}</span>
       ) : null}
     </div>
   );

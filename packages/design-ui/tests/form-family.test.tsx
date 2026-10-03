@@ -576,11 +576,7 @@ describe("SegmentedControl · 槽与滑块", () => {
     expect(screen.getByRole("radiogroup")).not.toHaveAttribute("aria-label");
   });
 
-  /**
-   * **只有两档**，不是三档。档位在这里只决定高度，不连带改字号——md 档原先用
-   * label-md，比同尺寸 NativeSelect 大一号，两个控件上下排在同一栏里字号明显
-   * 不一致。控件里的选项文字是标签不是正文。
-   */
+  /** 组件只开放所需的两档，但同名档的高度与全局控件刻度一致。 */
   it.each([
     ["sm", "h-control-sm"],
     ["md", "h-control-md"],
@@ -721,8 +717,8 @@ describe("FieldValue · 只读展示", () => {
   it("字号与 Input 同档", () => {
     render(<FieldValue data-testid="v">x</FieldValue>);
     const cls = screen.getByTestId("v").className;
-    expect(cls).toContain("text-body-lg");
-    expect(cls).toContain("md:text-body-md");
+    expect(cls).toContain("text-body");
+    expect(cls).not.toContain("md:text-body");
   });
 
   it("空值显示占位 —，弱化色，可覆盖", () => {
@@ -840,12 +836,12 @@ describe("InputOTP · 形态轴 variant", () => {
     expect(sep).toHaveTextContent("-");
   });
 
-  /** 分隔符字号跟随档位：lg 格子里是 body-xl 的数字，一杠用正文字号会细得像没画。 */
+  /** 分隔符字号跟随档位：大格数字是 18px，一杠用默认正文字号会细得像没画。 */
   it("分隔符字号跟随档位", () => {
     const { unmount } = render(<Otp8 variant="separate" />);
-    expect(cls(screen.getByTestId("sep")).split(" ")).toContain("text-body-md");
+    expect(cls(screen.getByTestId("sep")).split(" ")).toContain("text-body");
     unmount();
     render(<Otp8 size="lg" />);
-    expect(cls(screen.getByTestId("sep")).split(" ")).toContain("text-body-xl");
+    expect(cls(screen.getByTestId("sep")).split(" ")).toContain("text-lg");
   });
 });

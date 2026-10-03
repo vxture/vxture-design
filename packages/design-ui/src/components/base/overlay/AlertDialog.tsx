@@ -163,16 +163,8 @@ const AlertDialogTitle = React.forwardRef<
   return (
     <AlertDialogPrimitive.Title
       ref={ref}
-      className={cn(
-        // `leading-none` 在 Tailwind 里就是 `line-height: 1`，这里是上游原样。
-        // 2026-08-28 之前它被解析成 0（tokens 把字面词 `none` 注册进了 spacing
-        // 命名空间，见 design-tokens `theme.css`），标题高度归零、与下面的
-        // `DialogDescription` 叠字；三个门户 18 处标题受影响。那一档已摘掉，
-        // 这行现在按原义生效——**不要**改写成 `leading-[1]` 之类来"绕开"，
-        // 那会把问题重新藏进调用点。
-        "text-lg font-semibold leading-none tracking-tight",
-        className,
-      )}
+      // Radix Title 渲染为 h2；视觉角色与语义层级保持同号。
+      className={cn("font-brand text-heading-2", className)}
       {...props}
     />
   );
@@ -185,7 +177,7 @@ const AlertDialogDescription = React.forwardRef<
   return (
     <AlertDialogPrimitive.Description
       ref={ref}
-      className={cn("text-body-sm text-muted-foreground", className)}
+      className={cn("text-body-small text-muted-foreground", className)}
       {...props}
     />
   );

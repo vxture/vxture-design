@@ -68,7 +68,7 @@ export function InputGroupAddon({
       data-align={align}
       className={cn(
         "flex shrink-0 select-none items-center gap-2xs",
-        "text-body-md text-muted-foreground",
+        "text-body text-muted-foreground",
         "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-icon-sm",
         ALIGN_CLASS[align],
         className,
@@ -89,7 +89,7 @@ export const InputGroupInput = React.forwardRef<
       data-slot="input-group-input"
       className={cn(
         "h-full w-full min-w-0 flex-1 bg-transparent px-sm outline-none",
-        "text-body-lg md:text-body-md text-foreground placeholder:text-muted-foreground",
+        "text-body text-foreground placeholder:text-muted-foreground",
         "disabled:cursor-not-allowed",
         className,
       )}

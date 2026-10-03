@@ -128,7 +128,7 @@ function BulkActionBar({
         )}
       >
         <div className="flex min-w-0 items-center gap-sm">
-          <span className="text-label-md">
+          <span className="text-label">
             {selectionTemplate
               .replaceAll("{count}", String(count))
               .replaceAll("{noun}", noun)}

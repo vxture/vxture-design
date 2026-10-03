@@ -62,11 +62,11 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
       <SelectPrimitive.Trigger
         ref={ref}
         className={cn(
-          // 高度与 Input 对齐到 control-lg：同一表单行里 40 配 36 是肉眼可见的不齐。
+          // 高度与 Input 对齐到 control-md：同一 size 的单行控件必须完全等高。
           "flex h-control-md w-full items-center justify-between gap-xs",
-          "rounded-md border border-control-border px-sm py-2xs",
+          "rounded-md border border-control-border px-sm",
           "bg-transparent shadow-raised dark:bg-input/30",
-          "text-body-lg md:text-body-md placeholder:text-muted-foreground",
+          "text-body placeholder:text-muted-foreground",
           interactive,
           invalid,
           expandable,
@@ -124,10 +124,7 @@ const SelectLabel = React.forwardRef<HTMLDivElement, SelectLabelProps>(
     return (
       <SelectPrimitive.Label
         ref={ref}
-        className={cn(
-          "py-xs pl-2xl pr-sm text-label-md font-semibold",
-          className,
-        )}
+        className={cn("py-xs pl-2xl pr-sm text-label font-semibold", className)}
         {...props}
       />
     );
@@ -140,7 +137,7 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
       <SelectPrimitive.Item
         ref={ref}
         className={cn(
-          "relative flex w-full cursor-default select-none items-center rounded-sm py-xs pl-2xl pr-sm text-body-sm outline-none focus:bg-accent focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-disabled",
+          "relative flex w-full cursor-default select-none items-center rounded-sm py-xs pl-2xl pr-sm text-body-small outline-none focus:bg-accent focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-disabled",
           className,
         )}
         {...props}

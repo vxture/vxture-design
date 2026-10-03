@@ -67,8 +67,8 @@ export function Shell({ children }: { readonly children: React.ReactNode }) {
       {/* 透明模式 V2：侧栏与内容同底、零分隔——预览外壳自己就是这条规则的活演示。 */}
       <aside className="sticky top-0 hidden h-screen w-sidebar-expanded shrink-0 flex-col gap-lg overflow-y-auto p-lg lg:flex">
         <div className="flex flex-col gap-2xs">
-          <span className="text-label-lg text-foreground">Design Preview</span>
-          <span className="text-body-sm text-muted-foreground">
+          <span className="text-label text-foreground">Design Preview</span>
+          <span className="text-body-small text-muted-foreground">
             仅开发用，不发布不部署
           </span>
         </div>
@@ -95,12 +95,12 @@ export function Shell({ children }: { readonly children: React.ReactNode }) {
                   }}
                   className={
                     here
-                      ? "flex items-center justify-between rounded-md bg-surface-selected px-sm py-xs text-label-md text-foreground"
-                      : "flex items-center justify-between rounded-md px-sm py-xs text-label-md text-muted-foreground transition-colors duration-fast ease-standard hover:bg-accent hover:text-foreground"
+                      ? "flex items-center justify-between rounded-md bg-surface-selected px-sm py-xs text-label text-foreground"
+                      : "flex items-center justify-between rounded-md px-sm py-xs text-label text-muted-foreground transition-colors duration-fast ease-standard hover:bg-accent hover:text-foreground"
                   }
                 >
                   <span className="flex min-w-0 items-baseline gap-xs">
-                    <span className="text-body-sm text-muted-foreground">
+                    <span className="text-body-small text-muted-foreground">
                       {s.realm}
                     </span>
                     <span className="truncate">{s.label}</span>
@@ -174,7 +174,7 @@ function SubNav({ slug }: { readonly slug: string }) {
             ) : null}
             <a
               href={`#c-${e.name}`}
-              className="flex items-center justify-between rounded-md px-sm py-2xs text-body-sm text-muted-foreground transition-colors duration-fast ease-standard hover:bg-accent hover:text-foreground"
+              className="flex items-center justify-between rounded-md px-sm py-2xs text-body-small text-muted-foreground transition-colors duration-fast ease-standard hover:bg-accent hover:text-foreground"
             >
               {e.name}
               {e.tags[0] === "vxture" || e.tags[1] === "vxture" ? (
@@ -204,7 +204,7 @@ function Axis({
 }) {
   return (
     <div className="flex flex-col gap-2xs">
-      <span className="text-body-sm text-muted-foreground">{label}</span>
+      <span className="text-body-small text-muted-foreground">{label}</span>
       <div className="flex items-center gap-2xs">
         {options.map((o) => (
           <button
@@ -213,8 +213,8 @@ function Axis({
             onClick={() => onChange(o)}
             className={
               o === value
-                ? "rounded-md bg-primary px-sm py-2xs text-label-sm text-primary-foreground"
-                : "rounded-md px-sm py-2xs text-label-sm text-muted-foreground transition-colors duration-fast ease-standard hover:bg-accent hover:text-foreground"
+                ? "rounded-md bg-primary px-sm py-2xs text-label-small text-primary-foreground"
+                : "rounded-md px-sm py-2xs text-label-small text-muted-foreground transition-colors duration-fast ease-standard hover:bg-accent hover:text-foreground"
             }
           >
             {o}

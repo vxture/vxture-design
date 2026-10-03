@@ -47,7 +47,7 @@ describe("ShellHeaderTitle", () => {
    * `text-heading-3` 只带字号 / 行高 / 字距 / 字重，**不带字体族**——品牌字体要
    * 单独挂 `font-brand`，漏了就落回正文体（2026-09-26 owner 实页发现）。
    */
-  it("品牌字体 24px 粗体：font-brand 必须单独挂", () => {
+  it("品牌字体 heading-3 粗体：font-brand 必须单独挂", () => {
     render(<ShellHeaderTitle>Workspace Console</ShellHeaderTitle>);
     const t = tokens(screen.getByText("Workspace Console"));
     expect(t).toContain("font-brand");
@@ -103,10 +103,10 @@ describe("ShellHeaderDivider", () => {
 });
 
 describe("ShellHeaderDomain", () => {
-  it("label-lg、弱化色", () => {
+  it("label、弱化色", () => {
     render(<ShellHeaderDomain>Domain Name</ShellHeaderDomain>);
     const t = tokens(screen.getByText("Domain Name"));
-    expect(t).toContain("text-label-lg");
+    expect(t).toContain("text-label");
     expect(t).toContain("text-content-tertiary");
     // Figma 09-26：域名不再自带内距，与前面竖线的距离全由槽间距 8px 决定。
     expect(t.some((c) => c.startsWith("px-"))).toBe(false);
@@ -114,13 +114,14 @@ describe("ShellHeaderDomain", () => {
 });
 
 describe("ShellProductTitle", () => {
-  it("名称品牌体、类型正文体弱化色，同为 title-xl", () => {
+  it("名称与类型使用同字号原子档，不占用结构标题角色", () => {
     render(<ShellProductTitle name="产品" type="产品类型" />);
     const name = tokens(screen.getByText("产品"));
     const type = tokens(screen.getByText("产品类型"));
     expect(name).toContain("font-brand");
-    expect(name).toContain("text-title-xl");
-    expect(type).toContain("text-title-xl");
+    expect(name).toContain("text-xl");
+    expect(type).toContain("text-xl");
+    expect(type.some((c) => c.startsWith("text-heading-"))).toBe(false);
     expect(type).toContain("text-muted-foreground");
     expect(type).not.toContain("font-brand");
   });

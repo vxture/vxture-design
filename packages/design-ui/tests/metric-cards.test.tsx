@@ -14,7 +14,7 @@ import { TONES, toneEdgeClasses } from "../src/components/tone";
 
 describe("MetricCard · 读数不是标题", () => {
   /**
-   * 读数 20px（title-xl）而非展示体大字——指标卡成排出现，36px 的读数会让四张卡
+   * 读数固定 20px（原子字号 xl）而非展示体大字——指标卡成排出现，大字号会让四张卡
    * 各自都在喊。而且**读数不是标题**，落在 span 上：一页四张卡不该产生四个
    * 标题层级。
    */

@@ -5,6 +5,32 @@
 
 ---
 
+## 15.0.0 — 2026-10-04
+
+跟随 `@vxture/design-tokens@4.0.0` 与 `@vxture/design-ui@12.0.0`：排版 token
+重命名、`title` 家族删除及 `SectionHeader level=4` 移除均为破坏性变化，因此伞包
+同步升级 major。
+
+- Shell 按钮、搜索框、选择器与面板行统一跟随收小后的控件高度阶梯，避免新字号体系下
+  外壳控件仍显得过厚。
+- 新增 `TenantInfoSimple`、`TenantInfoOneline`、`UserInfoSimple`、
+  `UserInfoOneline`，供列表、选择器及正文中的身份展示；单行组件提供与正文行高对齐的
+  `sm` 档。
+- `ShellPanelMeterRow` 收窄右栏进度区，为窄面板的长标签保留空间；槽位标识按 24px
+  行高缩为 20px。
+- 通用单行控件采用稳定五档 `16/20/24/28/32px`，不再受密度轴改写；同名档的字号与
+  图标规格一致。文字为 `10/12/12/14/14px`，图标为 `12/12/16/16/16px`；
+  `40/48px` 仅供特殊页面形态。
+
+- **标题阶梯最终校正**：本节覆盖下方 14.0.0 记录的中间方案；产品界面当前只使用
+  `heading-1/2/3`，分别对应 `h1/h2/h3`，默认字号为 18 / 16 / 14px，Small 为
+  16 / 14 / 12px，Large 为 20 / 18 / 16px。页头使用 `heading-1`；更大的文字统一
+  交给 `display`。历史记录保留用于追溯。
+- `ShellBootScreen` 标签从等值的原子组合 `text-sm + font-medium` 改为语义
+  `text-label`；默认视觉不变，并会随 Small / Default / Large 字号模式切换。
+- `ShellUserStatusTag` 的说明与当前 `StatusBadge` 规则对齐：`success` 默认带语义
+  对勾，`neutral` 默认无图标。
+
 ## 14.0.0 — 2026-09-26
 
 跟随 `@vxture/design-ui@11.0.0`（major：标题阶梯重排，level 即 h，页头改用 heading-3）。

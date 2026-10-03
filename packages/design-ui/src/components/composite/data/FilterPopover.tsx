@@ -142,7 +142,7 @@ export function FilterPopover({
           {active > 0 ? (
             <span
               data-slot="filter-popover-count"
-              className="inline-flex min-w-control-2xs items-center justify-center rounded-full bg-primary px-2xs text-label-sm tabular-nums text-primary-foreground"
+              className="inline-flex min-w-control-sm items-center justify-center rounded-full bg-primary px-2xs text-label-small tabular-nums text-primary-foreground"
             >
               {active}
             </span>
@@ -175,22 +175,22 @@ export function FilterPopover({
                 className="flex flex-col gap-xs"
               >
                 <div className="flex items-baseline gap-xs">
-                  <span id={legendId} className="text-label-md text-foreground">
+                  <span id={legendId} className="text-label text-foreground">
                     {facet.label}
                   </span>
                   {chosen.length > 0 ? (
-                    <span className="text-label-sm tabular-nums text-muted-foreground">
+                    <span className="text-label-small tabular-nums text-muted-foreground">
                       {chosen.length}
                     </span>
                   ) : null}
                   {facet.description ? (
-                    <span className="text-body-sm text-muted-foreground">
+                    <span className="text-body-small text-muted-foreground">
                       {facet.description}
                     </span>
                   ) : null}
                 </div>
                 {facet.options.length === 0 ? (
-                  <span className="text-body-sm text-muted-foreground">
+                  <span className="text-body-small text-muted-foreground">
                     {emptyLabel}
                   </span>
                 ) : (
@@ -206,7 +206,7 @@ export function FilterPopover({
                         <li key={option.value} className="min-w-0">
                           <label
                             htmlFor={id}
-                            className="flex min-w-0 cursor-pointer items-center gap-xs text-body-sm text-foreground"
+                            className="flex min-w-0 cursor-pointer items-center gap-xs text-body-small text-foreground"
                           >
                             <Checkbox
                               id={id}
@@ -217,7 +217,7 @@ export function FilterPopover({
                             />
                             <span className="truncate">{option.label}</span>
                             {option.count !== undefined ? (
-                              <span className="shrink-0 text-label-sm tabular-nums text-muted-foreground">
+                              <span className="shrink-0 text-label-small tabular-nums text-muted-foreground">
                                 {option.count}
                               </span>
                             ) : null}

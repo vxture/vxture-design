@@ -10,7 +10,12 @@
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { cn } from "../../../utils/cn";
-import { iconInset, interactive } from "../../../styles/recipes";
+import {
+  controlContent,
+  iconInset,
+  inlineIconBase,
+  interactive,
+} from "../../../styles/recipes";
 
 export interface TabsProps extends React.ComponentPropsWithoutRef<
   typeof TabsPrimitive.Root
@@ -53,7 +58,9 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         className={cn(
           cn(
             "relative inline-flex flex-1 items-center justify-center gap-xs whitespace-nowrap",
-            "rounded-md border border-transparent px-sm py-2xs text-label-md",
+            "h-full rounded-md border border-transparent px-sm",
+            controlContent.lg,
+            inlineIconBase,
             interactive,
             iconInset,
             // 未选中的标签压到 60% 而不是换成 muted-foreground：同一组标签里

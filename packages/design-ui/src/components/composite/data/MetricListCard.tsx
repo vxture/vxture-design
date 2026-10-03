@@ -144,11 +144,9 @@ const MetricListCard = React.forwardRef<HTMLElement, MetricListCardProps>(
             />
           ) : null}
           <div className="flex min-w-0 flex-1 flex-col gap-2xs">
-            <span className="truncate text-label-lg text-foreground">
-              {title}
-            </span>
+            <span className="truncate text-label text-foreground">{title}</span>
             {description ? (
-              <span className="truncate text-body-sm text-muted-foreground">
+              <span className="truncate text-body-small text-muted-foreground">
                 {description}
               </span>
             ) : null}
@@ -169,7 +167,7 @@ const MetricListCard = React.forwardRef<HTMLElement, MetricListCardProps>(
         ) : null}
 
         {note ? (
-          <div className="min-w-0 text-body-sm text-muted-foreground">
+          <div className="min-w-0 text-body-small text-muted-foreground">
             {note}
           </div>
         ) : null}
@@ -185,10 +183,10 @@ const MetricListCard = React.forwardRef<HTMLElement, MetricListCardProps>(
           >
             {metrics.map((m) => (
               <span key={m.key} className="flex min-w-0 flex-col gap-0">
-                <b className="truncate text-title-sm font-semibold text-foreground tabular-nums">
+                <b className="truncate text-sm font-semibold text-foreground tabular-nums">
                   {m.value}
                 </b>
-                <small className="truncate text-body-sm text-muted-foreground">
+                <small className="truncate text-body-small text-muted-foreground">
                   {m.label}
                 </small>
               </span>
@@ -197,7 +195,7 @@ const MetricListCard = React.forwardRef<HTMLElement, MetricListCardProps>(
         ) : null}
 
         {footer ? (
-          <footer className="flex min-w-0 items-center justify-between gap-sm text-body-sm text-muted-foreground">
+          <footer className="flex min-w-0 items-center justify-between gap-sm text-body-small text-muted-foreground">
             {footer}
           </footer>
         ) : null}

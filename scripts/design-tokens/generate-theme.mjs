@@ -10,7 +10,7 @@
  *
  * 因此需要注册的恰好是两类，且都是"上游没有"的：
  *   1. T1 相对基线的**偏离**——扩展档与覆盖值，清单在 primitive-policy.mjs
- *   2. T2 的**语义**——色彩角色、24 档排版角色、页面与内容宽度
+ *   2. T2 的**语义**——色彩角色、排版角色、页面与内容宽度
  *
  * 出：src/styles/theme.css
  *
@@ -46,7 +46,7 @@ const TARGET = path.join(PKG, "src/styles/theme.css");
 
 /**
  * 排版角色的修饰子键。v4 的 `--text-*` 支持 `--text-<name>--line-height` 这类子键，
- * 一个 `text-body-md` 工具类即同时落 font-size / line-height / letter-spacing /
+ * 一个 `text-body` 工具类即同时落 font-size / line-height / letter-spacing /
  * font-weight。font-family 不在子键之列（只有这三个），故角色的字体族仍由独立的
  * `font-*` 工具类承担。
  */
@@ -221,7 +221,7 @@ const spaceLines = declaredVars("spacing-semantic.css")
   .filter((step) => !SPACING_UNREGISTERED.has(step))
   .map((step) => `  --spacing-${step}: var(--space-${step});`);
 inlineBlocks.push(
-  `  /* p-* / gap-* / h-control-* / h-row-*（跟随密度三档）\n` +
+  `  /* p-* / gap-* / h-row-* 跟随密度三档；h-control-* 是稳定尺寸轴\n` +
     `   * 不含 none 档：字面词 none 登记进 spacing 会让 leading-none / max-w-none\n` +
     `   * 一并被解析成 0。判据见 generate-theme.mjs 的 SPACING_UNREGISTERED。 */\n` +
     spaceLines.join("\n"),

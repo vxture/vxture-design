@@ -133,7 +133,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
       >
         {/* 读数条：长显示的那个数字。右对齐——它是图的注脚不是标题。 */}
         {active ? (
-          <div className="flex items-baseline justify-end gap-xs text-body-sm">
+          <div className="flex items-baseline justify-end gap-xs text-body-small">
             <span className="min-w-0 truncate text-muted-foreground">
               {atPeak && peakLabel ? peakLabel : active.label}
             </span>
@@ -153,7 +153,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
             >
               {AXIS_STOPS.map((stop) => (
                 <span key={stop} className="flex items-center gap-xs">
-                  <span className="w-media-sm shrink-0 truncate text-right text-body-sm text-muted-foreground tabular-nums">
+                  <span className="w-media-sm shrink-0 truncate text-right text-body-small text-muted-foreground tabular-nums">
                     {fmt(max * stop)}
                   </span>
                   {/* 底档那条线由柱区的 border-b 画，这里只画上面两条 */}
@@ -221,7 +221,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
             <span
               key={d.key}
               className={cn(
-                "flex-1 overflow-hidden text-center whitespace-nowrap text-body-sm text-muted-foreground tabular-nums",
+                "flex-1 overflow-hidden text-center whitespace-nowrap text-body-small text-muted-foreground tabular-nums",
                 i % every !== 0 && "invisible",
               )}
             >

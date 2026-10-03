@@ -5,8 +5,8 @@
  * @category Components - Form
  *
  * 结构承上游四件：InputOTP / Group / Slot / Separator。取值差异：
- * - 槽位尺寸绑控件刻度（md 档 control-md、lg 档 control-3xl），跟随密度三档；
- *   上游的 size-9 裸数值不跟随。
+ * - 槽位尺寸绑稳定控件刻度（md 档 control-md、lg 档 control-3xl）；上游的
+ *   size-9 裸数值不属于统一尺寸轴。
  * - 假光标用 `animate-pulse`：上游的 caret-blink 是自定义 keyframes，
  *   DS 不为单个组件开全局 keyframes（060 判据），脉动表达"此处待输入"已够。
  * - 激活槽的高亮走 interactive 同款 ring 三件，与全体控件的焦点语言一致。
@@ -168,8 +168,8 @@ export function InputOTPSlot({
         "border-control-border text-foreground shadow-raised",
         "outline-none transition-all duration-fast ease-standard",
         size === "lg"
-          ? "h-control-3xl w-control-3xl text-body-xl"
-          : "h-control-md w-control-md text-body-md",
+          ? "h-control-3xl w-control-3xl text-lg"
+          : "h-control-md w-control-md text-body",
         variant === "separate"
           ? // 独立方格：四边自带框、自带圆角，不参与 first/last 的连体收边。
             ["border", size === "lg" ? "rounded-xl" : "rounded-md"]
@@ -201,8 +201,8 @@ export function InputOTPSlot({
 }
 
 /**
- * 分组连接符（1234-5678 中间那一杠）。字号跟随档位：lg 的格子里是 body-xl 的
- * 数字，一杠还是正文字号就会细得像没画。
+ * 分组连接符（1234-5678 中间那一杠）。大格数字直接使用 18px 原子字号，
+ * 一杠还是默认正文字号就会细得像没画。
  */
 export function InputOTPSeparator({
   className,
@@ -215,7 +215,7 @@ export function InputOTPSeparator({
       data-slot="input-otp-separator"
       className={cn(
         "px-2xs text-muted-foreground",
-        size === "lg" ? "text-body-xl" : "text-body-md",
+        size === "lg" ? "text-lg" : "text-body",
         className,
       )}
       {...props}

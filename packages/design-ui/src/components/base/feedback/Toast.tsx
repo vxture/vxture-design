@@ -19,7 +19,8 @@
  * - **tone 收敛到共用六档**（owner 拍板 2026-08-02，Banner 先例）：原自有五值
  *   （success/error/warning/info/ai）改为 tone.ts 的 `Tone`——同一严重度在 DS 内
  *   只有一个名字，`error` 即 `danger`；`ai` 档随收敛移除，AI 语气由 AI 组件族
- *   自身承载，不经全局通知表达。图标改由 `toneIcons` 给出，一语气一图标。
+ *   自身承载，不经全局通知表达。图标改由 `toneIcons` 给出；neutral 默认无图标，
+ *   其余五档各有一张语义图标。
  */
 
 import * as React from "react";
@@ -164,48 +165,53 @@ export function ToastProvider({
         role="region"
         aria-label={regionLabel}
       >
-        {toasts.map((item) => (
-          <div
-            key={item.id}
-            role="status"
-            aria-live={item.tone === "danger" ? "assertive" : "polite"}
-            className={cn(
-              // panel-sm 而非 content 宽度族：通知条是浮层面板，1024px 的行宽
-              // 会让一条提示横贯整屏（content 族是页面级行宽，见 Dialog 塌宽案）。
-              "pointer-events-auto flex w-full max-w-panel-sm items-start gap-sm",
-              "rounded-lg border bg-popover p-md shadow-notification",
-              "animate-in slide-in-from-bottom fade-in duration-base ease-enter",
-              TONE_CLS[item.tone],
-            )}
-          >
-            <Icon
-              name={toneIcons[item.tone]}
-              size={16}
-              className="mt-2xs shrink-0"
-              aria-hidden
-            />
-            <div className="flex min-w-0 flex-1 flex-col gap-2xs">
-              <div className="text-label-md text-foreground">{item.title}</div>
-              {item.description ? (
-                <div className="text-body-sm text-muted-foreground">
-                  {item.description}
-                </div>
-              ) : null}
-            </div>
-            <button
-              type="button"
-              onClick={() => dismiss(item.id)}
-              aria-label={dismissLabel}
+        {toasts.map((item) => {
+          const iconName = toneIcons[item.tone];
+          return (
+            <div
+              key={item.id}
+              role="status"
+              aria-live={item.tone === "danger" ? "assertive" : "polite"}
               className={cn(
-                "inline-flex size-control-2xs shrink-0 items-center justify-center rounded-sm",
-                "text-muted-foreground hover:bg-accent hover:text-foreground",
-                interactive,
+                // panel-sm 而非 content 宽度族：通知条是浮层面板，1024px 的行宽
+                // 会让一条提示横贯整屏（content 族是页面级行宽，见 Dialog 塌宽案）。
+                "pointer-events-auto flex w-full max-w-panel-sm items-start gap-sm",
+                "rounded-lg border bg-popover p-md shadow-notification",
+                "animate-in slide-in-from-bottom fade-in duration-base ease-enter",
+                TONE_CLS[item.tone],
               )}
             >
-              <Icon name="x" size={16} />
-            </button>
-          </div>
-        ))}
+              {iconName ? (
+                <Icon
+                  name={iconName}
+                  size={16}
+                  className="mt-2xs shrink-0"
+                  aria-hidden
+                />
+              ) : null}
+              <div className="flex min-w-0 flex-1 flex-col gap-2xs">
+                <div className="text-label text-foreground">{item.title}</div>
+                {item.description ? (
+                  <div className="text-body-small text-muted-foreground">
+                    {item.description}
+                  </div>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                onClick={() => dismiss(item.id)}
+                aria-label={dismissLabel}
+                className={cn(
+                  "inline-flex size-control-sm shrink-0 items-center justify-center rounded-sm",
+                  "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  interactive,
+                )}
+              >
+                <Icon name="x" size={16} />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );

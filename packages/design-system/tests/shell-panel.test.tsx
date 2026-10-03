@@ -497,7 +497,7 @@ describe("ShellPanelMeterRow · 百分比要夹紧", () => {
    * 大一号），后者是把这个数讲清楚的话（条下方）。合成一个槽位就只能同字号，
    * 而「300」和「已用 30% · 共 1000 分」本来就不该一样重。
    */
-  it("value 与 valueLabel 各有位置，读数用 label-xl", () => {
+  it("value 与 valueLabel 各有位置，数字读数使用原子字号", () => {
     const { container } = render(
       <ShellPanelMeterRow
         label="AI Credits"
@@ -508,9 +508,19 @@ describe("ShellPanelMeterRow · 百分比要夹紧", () => {
       />,
     );
     const read = screen.getByText("300");
-    expect(hasClass(read, "text-label-xl")).toBe(true);
+    expect(hasClass(read, "text-lg")).toBe(true);
+    expect(hasClass(read, "font-medium")).toBe(true);
     expect(screen.getByText("分")).toBeInTheDocument();
     expect(screen.getByText("已用 30% · 共 1000 分")).toBeInTheDocument();
+    expect(
+      hasClass(screen.getByText("已用 30% · 共 1000 分"), "whitespace-normal"),
+    ).toBe(true);
+    expect(
+      hasClass(screen.getByText("已用 30% · 共 1000 分"), "break-words"),
+    ).toBe(true);
+    expect(
+      hasClass(screen.getByText("已用 30% · 共 1000 分"), "text-right"),
+    ).toBe(true);
 
     /* 读数排在进度条**前面**，用量文案排在**后面**——顺序本身是判据。 */
     const bar = container.querySelector('[role="progressbar"]') as HTMLElement;
@@ -545,7 +555,8 @@ describe("ShellPanelMeterRow · 百分比要夹紧", () => {
     );
     const bar = container.querySelector('[role="progressbar"]') as HTMLElement;
     const col = bar.parentElement as HTMLElement;
-    expect(hasClass(col, "w-1/2")).toBe(true);
+    expect(hasClass(col, "w-2/5")).toBe(true);
+    expect(hasClass(col, "w-1/2")).toBe(false);
     expect(hasClass(col, "items-end")).toBe(true);
   });
 });
@@ -557,7 +568,7 @@ describe("ShellPanelRow · 值的单位与语气", () => {
   it("默认 muted：小灰字，不套底色块", () => {
     render(<ShellPanelRow label="语言" value="简体中文" />);
     const v = screen.getByText("简体中文");
-    expect(hasClass(v, "text-body-sm")).toBe(true);
+    expect(hasClass(v, "text-body-small")).toBe(true);
     expect(hasClass(v, "bg-primary-muted")).toBe(false);
   });
 
@@ -565,12 +576,12 @@ describe("ShellPanelRow · 值的单位与语气", () => {
    * `strong` 是给「这一行就是为了让人看这个数」的行用的（账户余额、本月账单）：
    * 大号纯数字，不套底色块。变异「strong 也走 muted 那支」时这条挂。
    */
-  it("strong：label-xl 纯数字，不套底色块", () => {
+  it("strong：18px 纯数字，不套底色块", () => {
     render(
       <ShellPanelRow label="账户余额" value="200.00" valueTone="strong" />,
     );
     const v = screen.getByText("200.00");
-    expect(hasClass(v, "text-label-xl")).toBe(true);
+    expect(hasClass(v, "text-lg")).toBe(true);
     expect(hasClass(v, "bg-primary-muted")).toBe(false);
   });
 
@@ -624,7 +635,7 @@ describe("ShellPanelRow · 值的单位与语气", () => {
     const v = screen.getByText("200.00");
     const u = screen.getByText("RMB");
     expect(v.contains(u)).toBe(false);
-    expect(hasClass(u, "text-label-sm")).toBe(true);
+    expect(hasClass(u, "text-label-small")).toBe(true);
   });
 
   it("不给 unit 就不渲染那一层", () => {
@@ -661,6 +672,15 @@ describe("ShellPanelSlots · 一排槽位", () => {
     expect(hasClass(earned, "text-primary")).toBe(true);
     expect(hasClass(unearned, "opacity-muted")).toBe(true);
     expect(hasClass(unearned, "text-primary")).toBe(false);
+  });
+
+  it("24px 面板行内使用 20px 槽位圆，保留上下留白", () => {
+    render(<ShellPanelSlots label="账户标识" slots={SLOTS} />);
+    const group = screen.getByRole("group", { name: "账户标识" });
+    const earned = screen.getByLabelText("已解锁的");
+    expect(hasClass(group, "h-control-md")).toBe(true);
+    expect(hasClass(earned, "size-icon-md")).toBe(true);
+    expect(hasClass(earned, "size-icon-lg")).toBe(false);
   });
 
   it("空槽位列表也渲染得出容器", () => {

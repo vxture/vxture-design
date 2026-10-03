@@ -195,7 +195,7 @@ function ConfirmDestructive({
               <li
                 key={item.label}
                 className={cn(
-                  "flex items-start gap-xs text-body-sm",
+                  "flex items-start gap-xs text-body-small",
                   /* 查不到走中性灰,不走红:红叉是「确认了没满足」,而这一条我们
                      没查到。unknown 优先于 met——即使调用方判了放行(met: true),
                      显示上仍要说清楚这是没查到,不能画成对勾。 */
@@ -215,7 +215,7 @@ function ConfirmDestructive({
                 <span className="min-w-0">
                   {item.label}
                   {item.note ? (
-                    <span className="block text-body-sm text-muted-foreground">
+                    <span className="block text-body-small text-muted-foreground">
                       {item.note}
                     </span>
                   ) : null}

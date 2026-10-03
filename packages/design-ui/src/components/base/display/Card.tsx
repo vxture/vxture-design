@@ -10,7 +10,7 @@
  *   层级越"实体化"越透（入口卡最实、大面积实体卡最透）。
  * - 无阴影：透明模式的层次由描边 + 透明度表达，阴影会把"贴在同一张纸上"的
  *   错觉打破。要浮起的是浮层（popover/dialog），不是卡片。
- * - 内边距走刻度、标题层次走 `text-title-sm`，跟随密度与字号三档；
+ * - 内边距走刻度、标题层次走最小界面标题 `heading-3`；
  *   上游的 p-6 / text-2xl 是裸数值，不跟随。
  * - 竖向节奏落在 Card 本体（`py-xl` + `gap-xl`），Header / Content 只管横向
  *   `px-xl`——上游现行 Card 即此模型。旧的 `pt-none`（假设内容永远跟在页头后）
@@ -67,7 +67,13 @@ const CardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(function CardTitle({ className, ...props }, ref) {
-  return <h3 ref={ref} className={cn("text-title-sm", className)} {...props} />;
+  return (
+    <h3
+      ref={ref}
+      className={cn("font-brand text-heading-3", className)}
+      {...props}
+    />
+  );
 });
 
 const CardDescription = React.forwardRef<
@@ -77,7 +83,7 @@ const CardDescription = React.forwardRef<
   return (
     <p
       ref={ref}
-      className={cn("text-body-sm text-muted-foreground", className)}
+      className={cn("text-body-small text-muted-foreground", className)}
       {...props}
     />
   );
