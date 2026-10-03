@@ -81,6 +81,11 @@
   --label-small-font-weight: var(--vx-font-weight-medium);
   --label-small-line-height: calc(var(--vx-text-xs--line-height) + var(--vx-cjk-leading-add));
   --label-small-letter-spacing: var(--vx-tracking-normal);
+  --label-micro-font-family: var(--vx-font-sans);
+  --label-micro-font-size: var(--vx-text-2xs);
+  --label-micro-font-weight: var(--vx-font-weight-medium);
+  --label-micro-line-height: calc(var(--vx-text-2xs--line-height) + var(--vx-cjk-leading-add));
+  --label-micro-letter-spacing: var(--vx-tracking-normal);
 
   /* code */
   --code-font-family: var(--vx-font-mono);
@@ -160,6 +165,11 @@ html.vx-font-small {
   --label-small-font-weight: var(--vx-font-weight-medium);
   --label-small-line-height: calc(var(--vx-text-2xs--line-height) + var(--vx-cjk-leading-add));
   --label-small-letter-spacing: var(--vx-tracking-normal);
+  --label-micro-font-family: var(--vx-font-sans);
+  --label-micro-font-size: var(--vx-text-2xs);
+  --label-micro-font-weight: var(--vx-font-weight-medium);
+  --label-micro-line-height: calc(var(--vx-text-2xs--line-height) + var(--vx-cjk-leading-add));
+  --label-micro-letter-spacing: var(--vx-tracking-normal);
 
   /* code */
   --code-font-family: var(--vx-font-mono);
@@ -239,6 +249,11 @@ html.vx-font-large {
   --label-small-font-weight: var(--vx-font-weight-medium);
   --label-small-line-height: calc(var(--vx-text-sm--line-height) + var(--vx-cjk-leading-add));
   --label-small-letter-spacing: var(--vx-tracking-normal);
+  --label-micro-font-family: var(--vx-font-sans);
+  --label-micro-font-size: var(--vx-text-xs);
+  --label-micro-font-weight: var(--vx-font-weight-medium);
+  --label-micro-line-height: calc(var(--vx-text-xs--line-height) + var(--vx-cjk-leading-add));
+  --label-micro-letter-spacing: var(--vx-tracking-normal);
 
   /* code */
   --code-font-family: var(--vx-font-mono);

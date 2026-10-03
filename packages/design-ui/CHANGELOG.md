@@ -5,7 +5,7 @@
 
 ---
 
-## 12.0.0 — 2026-09-29
+## 12.0.0 — 2026-10-04
 
 **破坏性**：组件全面迁移到收口后的六族排版角色；`SectionHeaderLevel` 从
 `2 | 3 | 4` 收窄为 `2 | 3`。原 level 4 的调用方应重新判断信息结构，提升为
@@ -13,9 +13,12 @@ level 3 或改用正文 / 标签语义，不再用第四级标题补密度。
 
 - 单行控件统一为 `xs/sm/md/lg/xl = 16/20/24/28/32px`；默认 Button / Input 为
   `md=24px`。同名档在 Button、Toggle、Badge、SegmentedControl、Tabs 等组件中使用
-  同一字号与默认图标尺寸。
+  同一字号与默认图标尺寸。文字收口为 `xs=10px`、`sm/md=12px`、`lg/xl=14px`；
+  图标为 `xs/sm=12px`、`md/lg/xl=16px`。
 - Badge 补齐五档并将默认档收为 `sm=20px`；`xs=16px` 用于标题旁短角标。
   `2xl/3xl=40/48px` 只保留为特殊页面 token，不进入通用 Button API。
+- `StatusBadge` 图标随五档尺寸同步；`ViewModeSwitch` 采用 Figma 定稿的轻量底槽与
+  选中态，并对齐当前单行控件尺寸。
 
 - `EntryCard` 标题从等值的原子组合 `text-sm + font-medium` 改为语义
   `text-label`；默认视觉不变，并会随 Small / Default / Large 字号模式切换。

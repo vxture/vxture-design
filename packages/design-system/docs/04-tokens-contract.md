@@ -54,18 +54,18 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 
 ## 3. 排版角色
 
-六族十三个角色，每个角色包含 family / size / weight / line-height / letter-spacing 五项属性。字号三档如下：
+六族十四个角色，每个角色包含 family / size / weight / line-height / letter-spacing 五项属性。字号三档如下：
 
-| 族       | 角色                      | Small / Default / Large（px）             |
-| -------- | ------------------------- | ----------------------------------------- |
-| display  | `xs` / `sm` / `md` / `lg` | 24/30/36 · 36/48/60 · 48/60/72 · 60/72/96 |
-| heading  | `1` / `2` / `3`           | 16/18/20 · 14/16/18 · 12/14/16            |
-| body     | `body` / `body-small`     | 12/14/16 · 10/12/14                       |
-| label    | `label` / `label-small`   | 12/14/16 · 10/12/14                       |
-| code     | `code`                    | 10/12/14                                  |
-| overline | `overline`                | 9/10/12                                   |
+| 族       | 角色                                    | Small / Default / Large（px）             |
+| -------- | --------------------------------------- | ----------------------------------------- |
+| display  | `xs` / `sm` / `md` / `lg`               | 24/30/36 · 36/48/60 · 48/60/72 · 60/72/96 |
+| heading  | `1` / `2` / `3`                         | 16/18/20 · 14/16/18 · 12/14/16            |
+| body     | `body` / `body-small`                   | 12/14/16 · 10/12/14                       |
+| label    | `label` / `label-small` / `label-micro` | 12/14/16 · 10/12/14 · 10/10/12            |
+| code     | `code`                                  | 10/12/14                                  |
+| overline | `overline`                              | 9/10/12                                   |
 
-字号模式由 `vx-font-small/default/large` 控制。9–10px 只用于眉标、键位、短代码和辅助文字；常规正文、控件标签与结构标题不进入这一范围。
+字号模式由 `vx-font-small/default/large` 控制。`label-micro` 在 Small 模式下锁在 10px，供 16px 高的极小控件；9px 只用于眉标等短信息，正文与结构标题不进入 9–10px。
 
 ## 4. 间距与控件高度
 
@@ -76,6 +76,8 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 | inset `space-*`           | `none` 0 / `2xs` 4 / `xs` 8 / `sm` 10 / `md` 16 / `lg` 24 / `xl` 32 / `2xl` 40 / `3xl` 48 / `4xl` 56 / `5xl` 64 / `6xl` 80 / `7xl` 128 |
 | row `space-row-*`         | `sm` 48 / `md` 56 / `lg` 64 / `xl` 80 / `2xl` 96 / `3xl` 112 / `4xl` 128                                                               |
 | control `space-control-*` | `xs` 16 / `sm` 20 / `md` 24 / `lg` 28 / `xl` 32 / `2xl` 40 / `3xl` 48                                                                  |
+
+通用单行控件的内容映射为：`xs=label-micro/10px/icon-12`、`sm=label-small/12px/icon-12`、`md=label-small/12px/icon-16`、`lg/xl=label/14px/icon-16`。
 
 密度三档（`.density-compact/default/comfortable`）只作用于 inset 与 row，按档位平移而非等比缩放；控件高度是独立尺寸轴：
 
@@ -107,19 +109,19 @@ T2 是唯一公开 token 契约（T1 禁引，见 [`01-usage.md`](./01-usage.md)
 
 `0–99` 归局部堆叠自由使用；超过 99 一律取语义档（逐档互异是硬要求——同值时叠放次序取决于 DOM 顺序而非设计意图）：
 
-| 档                | 值     | 依据                                        |
-| ----------------- | ------ | ------------------------------------------- |
-| `base` / `raised` | 0 / 10 | 文档流基线 / 同层轻微抬起                   |
-| `sticky`          | 100    | 让位给 portal 化的 dropdown                 |
-| `dropdown`        | 200    | Radix portal 菜单须压过粘性表头，否则被裁切 |
-| `overlay`         | 300    | 浮层遮罩                                    |
-| `drawer`          | 400    | 低于 modal——模态可从抽屉内唤起              |
-| `modal`           | 500    |                                             |
-| `popover`         | 600    | 高于 modal——气泡可用在模态内                |
-| `toast`           | 700    | 全局反馈，不应被浮层遮挡                    |
-| `notification`    | 800    | 常驻更久且可堆叠，压在 toast 之上           |
-| `tooltip`         | 900    | 必须最高，否则被它所描述的元素遮挡          |
-| `max`             | 9999   | 逃生档，新增使用需在 PR 说明                |
+| 档                | 值     | 依据                                            |
+| ----------------- | ------ | ----------------------------------------------- |
+| `base` / `raised` | 0 / 10 | 文档流基线 / 同层轻微抬起                       |
+| `sticky`          | 100    | 让位给 portal 化的 dropdown                     |
+| `overlay`         | 300    | 浮层遮罩                                        |
+| `drawer`          | 400    | 低于 modal——模态可从抽屉内唤起                  |
+| `modal`           | 500    |                                                 |
+| `popover`         | 600    | 高于 modal——气泡可用在模态内                    |
+| `dropdown`        | 650    | Portal 菜单可从抽屉或模态内唤起，须高于 popover |
+| `toast`           | 700    | 全局反馈，不应被浮层遮挡                        |
+| `notification`    | 800    | 常驻更久且可堆叠，压在 toast 之上               |
+| `tooltip`         | 900    | 必须最高，否则被它所描述的元素遮挡              |
+| `max`             | 9999   | 逃生档，新增使用需在 PR 说明                    |
 
 ## 9. 时长 / 缓动
 

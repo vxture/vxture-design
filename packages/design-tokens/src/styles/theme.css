@@ -153,7 +153,7 @@
   --color-gradient-glow-from: var(--gradient-glow-from);
   --color-gradient-glow-to: var(--gradient-glow-to);
 
-  /* text-*（13 档角色，含行高 / 字距 / 字重修饰） */
+  /* text-*（14 档角色，含行高 / 字距 / 字重修饰） */
   --text-display-lg: var(--display-lg-font-size);
   --text-display-lg--line-height: var(--display-lg-line-height);
   --text-display-lg--letter-spacing: var(--display-lg-letter-spacing);
@@ -198,6 +198,10 @@
   --text-label-small--line-height: var(--label-small-line-height);
   --text-label-small--letter-spacing: var(--label-small-letter-spacing);
   --text-label-small--font-weight: var(--label-small-font-weight);
+  --text-label-micro: var(--label-micro-font-size);
+  --text-label-micro--line-height: var(--label-micro-line-height);
+  --text-label-micro--letter-spacing: var(--label-micro-letter-spacing);
+  --text-label-micro--font-weight: var(--label-micro-font-weight);
   --text-code: var(--code-font-size);
   --text-code--line-height: var(--code-line-height);
   --text-code--letter-spacing: var(--code-letter-spacing);

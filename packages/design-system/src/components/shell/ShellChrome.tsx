@@ -511,7 +511,7 @@ export interface ShellAgentButtonProps {
   label: string;
   active?: boolean;
   disabled?: boolean;
-  /** 图标视觉尺寸，默认 "xl"（32px，跟其余 header 工具图标同档）。 */
+  /** 素材视觉尺寸，默认 "xl"（32px）；独立于其余 24px header 控件高度。 */
   size?: ShellAgentButtonSize;
   onClick?: () => void;
   className?: string | undefined;

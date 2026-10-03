@@ -23,11 +23,11 @@ import { extendTailwindMerge } from "tailwind-merge";
  * `text-label-small`，合并后蓝底按钮的文字变成深灰，而且只有这一档如此——
  * 其余档没写字号覆盖，所以没触发。
  *
- * 将 13 个角色登记进 Tailwind 自带的 font-size 主题后，裸角色与带档角色都归
+ * 将排版角色登记进 Tailwind 自带的 font-size 主题后，裸角色与带档角色都归
  * 字号组，其余 `text-*` 仍按颜色处理。
  */
 const isTypeRole = (value: string) =>
-  /^(display-(xs|sm|md|lg)|heading-[123]|body(-small)?|label(-small)?|code|overline)$/.test(
+  /^(display-(xs|sm|md|lg)|heading-[123]|body(-small)?|label(-(small|micro))?|code|overline)$/.test(
     value,
   );
 

@@ -10,9 +10,9 @@
  * 空串，而视图必须始终有一个。少写最后那一句，用户点两下当前项就会把列表切
  * 成"没有视图"。
  *
- * 质感取 header 三元图标组那套：常态无背景、hover 才上底、当前项用 accent
- * 标出。刻意**不**用 SegmentedControl（"槽 + 滑块"，常态就有一整条描边凹槽）
- * ——放在工具行左端会像一个填了色的控件块，比它右边的搜索框还重。
+ * 外层是一块无描边的页面底色槽，当前项用半透明品牌面标出。刻意**不**用
+ * SegmentedControl（描边凹槽 + 托起滑块）：它仍然是工具条里的轻量图标开关，
+ * 不是文字分段控件。
  *
  * 图标必须走 `icon-*` 正方档：只装图标的开关用带横向内距的档会被压成
  * "宽 28 高 20"的扁片（2026-08-04 实测）。
@@ -21,16 +21,17 @@
  */
 
 import { Icon } from "../../../icons";
+import { cn } from "../../../utils/cn";
 import { ToggleGroup, ToggleGroupItem } from "../../base/form/ToggleGroup";
 
 export type ViewModeSwitchValue = "list" | "cards";
 
-/* 选中态用品牌淡底而非实底：实底会压过同行的搜索框与主按钮（owner 2026-08-06）。 */
+/* Figma：selected/hover 半透明面 + primary/hover 图标；未选中仍用 muted 图标。 */
 const ITEM = [
   "text-muted-foreground",
-  "data-[state=on]:bg-primary-muted",
-  "data-[state=on]:text-primary-muted-foreground",
-  "data-[state=on]:hover:bg-primary-muted-hover",
+  "data-[state=on]:bg-surface-selected-hover",
+  "data-[state=on]:text-primary-hover",
+  "data-[state=on]:hover:bg-surface-selected-hover",
 ].join(" ");
 
 export interface ViewModeSwitchProps {
@@ -62,7 +63,7 @@ export function ViewModeSwitch({
   return (
     <ToggleGroup
       type="single"
-      size="icon-md"
+      size="icon-xl"
       aria-label={ariaLabel}
       value={value}
       // Radix 的单选组允许"取消选中"，会回空串；视图必须始终有一个，空值
@@ -70,7 +71,7 @@ export function ViewModeSwitch({
       onValueChange={(next) => {
         if (next) onChange(next as ViewModeSwitchValue);
       }}
-      {...(className ? { className } : {})}
+      className={cn("inline-flex rounded-lg bg-background", className)}
     >
       <ToggleGroupItem
         value="list"

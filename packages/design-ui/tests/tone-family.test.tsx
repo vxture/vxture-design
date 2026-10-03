@@ -187,4 +187,21 @@ describe("Badge · 尺寸", () => {
     const badge = screen.getByText("Pro").closest("span.inline-flex")!;
     expect(badge.className.split(" ")).toContain("h-control-sm");
   });
+
+  it.each([
+    ["xs", "size-icon-xs"],
+    ["sm", "size-icon-xs"],
+    ["md", "size-icon-sm"],
+    ["lg", "size-icon-sm"],
+    ["xl", "size-icon-sm"],
+  ] as const)("StatusBadge %s 档使用同档控件图标", (size, iconClass) => {
+    const { container } = render(
+      <StatusBadge tone="success" size={size}>
+        状态
+      </StatusBadge>,
+    );
+    expect(container.querySelector("svg")?.classList.contains(iconClass)).toBe(
+      true,
+    );
+  });
 });

@@ -87,10 +87,11 @@ export const CJK_SELECTOR = ":lang(zh)";
 export const CJK_LEADING_ADD = 0.15;
 
 /**
- * 排版角色。列依次为：角色名, 字体族, 字重, 默认字号档。
+ * 排版角色。列依次为：角色名, 字体族, 字重, 默认字号档, 可选模式边界。
  *
- * 3xs / 2xs 只作为最低语义角色的 Small / Default：普通正文与控件标签的默认角色
- * 分别从 sm 起步，不会落入 9–10px。极小字号只服务短元信息、键位与眉标。
+ * 3xs / 2xs 只服务极短文本。普通正文从 xs 起步；控件的最小标签另设
+ * `label-micro`，默认 10px 且声明 noShrink，字号模式切到 Small 时仍守住 10px。
+ * 9px 只留给眉标等不承担独立语义的短元信息。
  */
 export const TYPE_ROLES = [
   /* 顶档留一格余量（默认 6xl，大号档用掉 7xl），三档才都跟随字号轴。曾经 display 的
@@ -115,6 +116,7 @@ export const TYPE_ROLES = [
 
   ["label", "sans", "medium", "sm"],
   ["label-small", "sans", "medium", "xs"],
+  ["label-micro", "sans", "medium", "2xs", { noShrink: true }],
 
   /* 目前只有键位、短代码和技术标识的真实用例；代码编辑器出现后再按需加档。 */
   ["code", "mono", "normal", "xs"],

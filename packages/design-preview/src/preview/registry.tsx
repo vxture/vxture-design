@@ -273,6 +273,10 @@ import {
   ShellSidebarFrame,
   ShellSidebarNav,
   ShellViewport,
+  TenantInfoOneline,
+  TenantInfoSimple,
+  UserInfoOneline,
+  UserInfoSimple,
   ViewModeSwitch,
 } from "@vxture/design-system";
 import { Row } from "./kit";
@@ -2693,12 +2697,21 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ShellScopePanelDemo />,
   },
   {
+    name: "IdentityInfo",
+    layer: "pattern",
+    group: "外壳与登录",
+    tags: ["vxture", "patterns"],
+    deviation:
+      "列表、下拉选择和正文中的身份摘要。simple 显示名称 + 副身份信息；oneline 只显示名称。oneline 的 sm 为 20px 正文行高、16px 身份图形，md 保留 24px Figma 形态。组件不携带选择或导航行为。",
+    render: () => <IdentityInfoDemo />,
+  },
+  {
     name: "ShellPanel",
     layer: "pattern",
     group: "外壳与登录",
     tags: ["vxture", "patterns"],
     deviation:
-      "header 各类浮层面板的公共骨架：Content（定宽/留白/打开时不抢焦点）+ Header + Section + 四种行（信息行 / 控件行 / 计量行 / 可进入行）。四种行共用同一套列与行高，所以图标严格同列——这件事由组件保证，不靠调用方拼 flex 时自觉对齐。左侧那块是照 Figma 的 TenantPanel（194:428）**整块搭出来的**，作为原语的验收面：搭不出来就是零件缺了一块。面板本身没做成组件——额度/存储/余额/账单是产品信息架构，DS 收了它，每个门户改一次账单口径就要发一次 DS 版本",
+      "header 各类浮层面板的公共骨架：Content（定宽/留白/打开时不抢焦点）+ Header + Section + 四种行（信息行 / 控件行 / 计量行 / 可进入行）。四种行共用同一套列与行高，所以图标严格同列——这件事由组件保证，不靠调用方拼 flex 时自觉对齐。左侧租户面板是由 design-system 原语整块组装的验收面；Figma 应按这里的组件契约和示例同步。面板本身没做成组件——额度/存储/余额/账单是产品信息架构，DS 收了它，每个门户改一次账单口径就要发一次 DS 版本",
     render: () => <ShellPanelDemo />,
   },
   {
@@ -4804,7 +4817,7 @@ const TENANT_CONSOLE = "#/console/tenant";
 function ShellPanelDemo() {
   const { userPanel } = useFigmaUserPanel();
   /*
-   * 这不是零件抽样，是**照 Figma 的 TenantPanel（194:428）整块搭出来的**——
+   * 这不是零件抽样，而是由 design-system 原语整块搭出的验收面——
    * 面板原语的验收面：搭不出来就说明零件还缺一块，而不是"示例写得简单些"。
    *
    * 面板本身没有做成组件：额度、存储、余额、账单是产品信息架构，DS 收了它，
@@ -4827,7 +4840,7 @@ function ShellPanelDemo() {
             { key: "code", content: "T-2222888885" },
           ]}
         />
-        <ShellPanelSection title="资源">
+        <ShellPanelSection title="资源" divided={false}>
           <ShellPanelMeterRow
             icon="sparkles"
             label="AI Credits"
@@ -4878,7 +4891,7 @@ function ShellPanelDemo() {
             icon="buildings"
             label="租户信息"
             href={`${TENANT_CONSOLE}/profile`}
-            description="说明信息"
+            description="查看资料与认证"
           />
           <ShellPanelRow
             icon="arrow-left-right"
@@ -4895,6 +4908,42 @@ function ShellPanelDemo() {
        * 两块对照看，面板原语在两种主体（组织 / 人）上是否一致一眼可见。
        */}
       <ShellUserPanel {...userPanel} />
+    </div>
+  );
+}
+
+function IdentityInfoDemo() {
+  return (
+    <div className="flex flex-col gap-lg">
+      <div className="grid gap-sm sm:grid-cols-2">
+        <div className="flex flex-col gap-xs">
+          <span className="text-label-small text-muted-foreground">
+            TenantInfo_simple
+          </span>
+          <TenantInfoSimple name="Tenant Name" tenantId="T-2222888885" />
+        </div>
+        <div className="flex flex-col gap-xs">
+          <span className="text-label-small text-muted-foreground">
+            UserInfo_simple
+          </span>
+          <UserInfoSimple name="User Name" phone="18022228888" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-sm">
+        <span className="text-label-small text-muted-foreground">
+          Oneline · md / sm
+        </span>
+        <p className="text-body">
+          Tenant <TenantInfoOneline name="Tenant Name" /> and User{" "}
+          <UserInfoOneline name="User Name" /> remain available in the 24px
+          identity row.
+        </p>
+        <p className="text-body">
+          Tenant <TenantInfoOneline name="Tenant Name" size="sm" /> and User{" "}
+          <UserInfoOneline name="User Name" size="sm" /> stay aligned with body
+          text.
+        </p>
+      </div>
     </div>
   );
 }

@@ -512,6 +512,15 @@ describe("ShellPanelMeterRow · 百分比要夹紧", () => {
     expect(hasClass(read, "font-medium")).toBe(true);
     expect(screen.getByText("分")).toBeInTheDocument();
     expect(screen.getByText("已用 30% · 共 1000 分")).toBeInTheDocument();
+    expect(
+      hasClass(screen.getByText("已用 30% · 共 1000 分"), "whitespace-normal"),
+    ).toBe(true);
+    expect(
+      hasClass(screen.getByText("已用 30% · 共 1000 分"), "break-words"),
+    ).toBe(true);
+    expect(
+      hasClass(screen.getByText("已用 30% · 共 1000 分"), "text-right"),
+    ).toBe(true);
 
     /* 读数排在进度条**前面**，用量文案排在**后面**——顺序本身是判据。 */
     const bar = container.querySelector('[role="progressbar"]') as HTMLElement;
@@ -546,7 +555,8 @@ describe("ShellPanelMeterRow · 百分比要夹紧", () => {
     );
     const bar = container.querySelector('[role="progressbar"]') as HTMLElement;
     const col = bar.parentElement as HTMLElement;
-    expect(hasClass(col, "w-1/2")).toBe(true);
+    expect(hasClass(col, "w-2/5")).toBe(true);
+    expect(hasClass(col, "w-1/2")).toBe(false);
     expect(hasClass(col, "items-end")).toBe(true);
   });
 });
@@ -662,6 +672,15 @@ describe("ShellPanelSlots · 一排槽位", () => {
     expect(hasClass(earned, "text-primary")).toBe(true);
     expect(hasClass(unearned, "opacity-muted")).toBe(true);
     expect(hasClass(unearned, "text-primary")).toBe(false);
+  });
+
+  it("24px 面板行内使用 20px 槽位圆，保留上下留白", () => {
+    render(<ShellPanelSlots label="账户标识" slots={SLOTS} />);
+    const group = screen.getByRole("group", { name: "账户标识" });
+    const earned = screen.getByLabelText("已解锁的");
+    expect(hasClass(group, "h-control-md")).toBe(true);
+    expect(hasClass(earned, "size-icon-md")).toBe(true);
+    expect(hasClass(earned, "size-icon-lg")).toBe(false);
   });
 
   it("空槽位列表也渲染得出容器", () => {

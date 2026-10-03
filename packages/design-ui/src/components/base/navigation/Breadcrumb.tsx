@@ -127,7 +127,7 @@ const BreadcrumbEllipsis = React.forwardRef<
       )}
       {...props}
     >
-      <Icon name="placeholder" size={16} />
+      <Icon name="dots-three" size={16} />
       <span className="sr-only">More</span>
     </span>
   );

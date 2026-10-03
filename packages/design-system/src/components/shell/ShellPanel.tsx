@@ -697,8 +697,10 @@ export function ShellPanelMeterRow({
      * 对齐、长度可比，读的人扫一眼就知道哪个更满。横跨整行时每条的起点被各自
      * 标签的长度推着走，比不了。
      *
-     * 右栏取一半宽而不是定死像素：面板宽度本身有 sm/md/lg 三档，写死的块在窄档
-     * 里会把标签挤没。
+     * 右栏取 2/5 宽而不是一半：320px 面板里还要容纳左侧图标、三处间距和
+     * 可选的进入角标。取一半时，可点的「AI Credits」左栏只剩约 64px，标题
+     * 被截断；2/5 留出约 96px，同时让相邻度量行的进度条保持等宽、右缘对齐。
+     * 取比例而不是定死像素，面板宽度被调用方覆写时仍能跟随。
      *
      * 内部一律用 span：可点时外框是 <a> / <button>，里面放 div 不合法。
      */
@@ -726,13 +728,13 @@ export function ShellPanelMeterRow({
           </span>
         ) : null}
       </span>
-      <span className="flex w-1/2 shrink-0 flex-col items-end gap-2xs">
+      <span className="flex w-2/5 shrink-0 flex-col items-end gap-2xs">
         {value !== undefined && value !== null ? (
           <RowReadout value={value} unit={unit} />
         ) : null}
         <Progress value={safe} className="w-full" />
         {valueLabel !== undefined && valueLabel !== null ? (
-          <span className="text-body-small text-muted-foreground tabular-nums">
+          <span className="w-full whitespace-normal break-words text-right text-body-small text-muted-foreground tabular-nums">
             {valueLabel}
           </span>
         ) : null}
@@ -809,9 +811,9 @@ export function ShellPanelSlots({
             title={slot.label}
             aria-label={slot.label}
             className={cn(
-              // icon-lg（24px）而非 icon-xl（32px）：槽位要塞进统一的 32px 行高，
-              // 32px 的圆会顶满整行、上下没有呼吸。
-              "inline-grid size-icon-lg place-items-center rounded-full transition-colors duration-fast",
+              // control-md 行高为 24px；槽位圆取 icon-md（20px），上下各留
+              // 2px。icon-lg（24px）会顶满整行，没有呼吸空间。
+              "inline-grid size-icon-md place-items-center rounded-full transition-colors duration-fast",
               slot.earned
                 ? "bg-primary/10 text-primary dark:bg-primary/20"
                 : "bg-muted text-muted-foreground opacity-muted",

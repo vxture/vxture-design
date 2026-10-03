@@ -9,6 +9,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Pagination } from "../src/components/base/navigation/Pagination";
+import { BreadcrumbEllipsis } from "../src/components/base/navigation/Breadcrumb";
 import { Checkbox } from "../src/components/base/form/Checkbox";
 import { Icon } from "../src/icons";
 
@@ -190,6 +191,25 @@ describe("Pagination · 计数语与逃生口", () => {
       "50",
       "100",
     ]);
+  });
+});
+
+describe("Breadcrumb · 省略入口", () => {
+  it("使用三点图标，不回退到占位问号", () => {
+    const glyph = (name: "dots-three" | "placeholder") => {
+      const probe = render(<Icon name={name} />);
+      const html = probe.container.querySelector("svg")!.innerHTML;
+      probe.unmount();
+      return html;
+    };
+    const dots = glyph("dots-three");
+    const placeholder = glyph("placeholder");
+
+    const { container } = render(<BreadcrumbEllipsis />);
+    const icon = container.querySelector("svg")!;
+    expect(icon.innerHTML).toBe(dots);
+    expect(icon.innerHTML).not.toBe(placeholder);
+    expect(screen.getByText("More")).toHaveClass("sr-only");
   });
 });
 

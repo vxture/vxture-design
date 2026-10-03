@@ -46,6 +46,7 @@ const EXPECTED = [
   ["border-border", "T2 色彩"],
   ["dark:bg-card", "T2 色彩 · 暗色变体"],
   ["text-body", "T2 排版角色"],
+  ["text-label-micro", "T2 排版角色 · 10px 控件标签"],
   ["text-heading-1", "T2 排版角色"],
   ["text-heading-3", "T2 排版角色"],
   ["p-md", "T2 间距（密度轴）"],

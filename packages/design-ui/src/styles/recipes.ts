@@ -68,9 +68,9 @@ export const inlineIcon = `${inlineIconBase} [&_svg:not([class*='size-'])]:size-
  * `h-control-*` / `size-control-*` 类承担。
  */
 export const controlContent = {
-  xs: "text-label-small leading-none [&_svg:not([class*='size-'])]:size-icon-xs",
+  xs: "text-label-micro [&_svg:not([class*='size-'])]:size-icon-xs",
   sm: "text-label-small [&_svg:not([class*='size-'])]:size-icon-xs",
-  md: "text-label [&_svg:not([class*='size-'])]:size-icon-sm",
+  md: "text-label-small [&_svg:not([class*='size-'])]:size-icon-sm",
   lg: "text-label [&_svg:not([class*='size-'])]:size-icon-sm",
   xl: "text-label [&_svg:not([class*='size-'])]:size-icon-sm",
 } as const;

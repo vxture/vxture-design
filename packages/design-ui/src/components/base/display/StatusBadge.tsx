@@ -24,7 +24,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
-import { Badge, type BadgeProps } from "./Badge";
+import { Badge, type BadgeProps, type BadgeSize } from "./Badge";
 import { Icon, type IconName } from "../../../icons";
 import { toneIcons, toneSurfaceClasses, type Tone } from "../../tone";
 
@@ -41,9 +41,26 @@ export interface StatusBadgeProps extends Omit<BadgeProps, "variant"> {
   readonly dot?: boolean;
 }
 
+/** 与 controlContent 的五档图标规格一致；缺省 Badge 尺寸是 sm。 */
+const iconSizeByBadgeSize: Record<BadgeSize, "xs" | "sm"> = {
+  xs: "xs",
+  sm: "xs",
+  md: "sm",
+  lg: "sm",
+  xl: "sm",
+};
+
 const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
   function StatusBadge(
-    { className, tone = "neutral", icon, dot = false, children, ...props },
+    {
+      className,
+      tone = "neutral",
+      icon,
+      dot = false,
+      size,
+      children,
+      ...props
+    },
     ref,
   ) {
     const iconName = dot ? false : (icon ?? toneIcons[tone]);
@@ -51,6 +68,7 @@ const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
       <Badge
         ref={ref}
         variant="outline"
+        size={size}
         className={cn(toneSurfaceClasses[tone], className)}
         {...props}
       >
@@ -60,7 +78,11 @@ const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
             aria-hidden="true"
           />
         ) : iconName ? (
-          <Icon name={iconName} size="xs" aria-hidden="true" />
+          <Icon
+            name={iconName}
+            size={iconSizeByBadgeSize[size ?? "sm"]}
+            aria-hidden="true"
+          />
         ) : null}
         {children}
       </Badge>

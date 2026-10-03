@@ -51,24 +51,32 @@
 
 **控件五档**：`xs/sm/md/lg/xl = 16/20/24/28/32px`。同名 size 在 Button、Input、Select、Toggle、SegmentedControl、Tabs 等单行控件中必须使用相同高度、字号与图标规格。`2xl=40px`、`3xl=48px` 只供特殊页面形态使用，不加入通用 Button API。
 
+| 控件档 | 高度 | 文字角色      | 默认字号 | 图标 |
+| ------ | ---- | ------------- | -------- | ---- |
+| xs     | 16   | `label-micro` | 10px     | 12px |
+| sm     | 20   | `label-small` | 12px     | 12px |
+| md     | 24   | `label-small` | 12px     | 16px |
+| lg     | 28   | `label`       | 14px     | 16px |
+| xl     | 32   | `label`       | 14px     | 16px |
+
 留白与行高的密度档不能与相邻档取值相同；控件高度不属于密度反馈。
 
 ## 5. 排版
 
 **六族**：`display` / `heading` / `body` / `label` / `code` / `overline`。`display` 只用于营销与首屏；`heading` 是产品界面唯一的标题族，角色编号直接对应 h1 / h2 / h3。删除 `title` 族后，使用者不再需要在两套近义标题角色之间猜选。
 
-**角色按真实用途设置，不追求族间对称**：display 4 档、heading 3 档、body / label 各 2 档、code / overline 各 1 档，共 13 个角色。每个角色都有 Small / Default / Large 三个字号模式：
+**角色按真实用途设置，不追求族间对称**：display 4 档、heading 3 档、body 2 档、label 3 档、code / overline 各 1 档，共 14 个角色。每个角色都有 Small / Default / Large 三个字号模式：
 
-| 族       | 角色                              | Small / Default / Large（px）             |
-| -------- | --------------------------------- | ----------------------------------------- |
-| display  | `display-xs` / `sm` / `md` / `lg` | 24/30/36 · 36/48/60 · 48/60/72 · 60/72/96 |
-| heading  | `heading-1` / `2` / `3`           | 16/18/20 · 14/16/18 · 12/14/16            |
-| body     | `body` / `body-small`             | 12/14/16 · 10/12/14                       |
-| label    | `label` / `label-small`           | 12/14/16 · 10/12/14                       |
-| code     | `code`                            | 10/12/14                                  |
-| overline | `overline`                        | 9/10/12                                   |
+| 族       | 角色                                    | Small / Default / Large（px）             |
+| -------- | --------------------------------------- | ----------------------------------------- |
+| display  | `display-xs` / `sm` / `md` / `lg`       | 24/30/36 · 36/48/60 · 48/60/72 · 60/72/96 |
+| heading  | `heading-1` / `2` / `3`                 | 16/18/20 · 14/16/18 · 12/14/16            |
+| body     | `body` / `body-small`                   | 12/14/16 · 10/12/14                       |
+| label    | `label` / `label-small` / `label-micro` | 12/14/16 · 10/12/14 · 10/10/12            |
+| code     | `code`                                  | 10/12/14                                  |
+| overline | `overline`                              | 9/10/12                                   |
 
-`3xs=9px` 与 `2xs=10px` 只进入眉标、短代码和辅助文字的最低档；常规正文与控件标签不会落入 9–10px。数值、OTP、品牌名等特殊强调直接使用原子字号，不为它们增加正文或标签角色。
+`3xs=9px` 只进入眉标等不承担独立语义的短信息；`2xs=10px` 进入 `label-micro`，仅供 16px 高的极小控件。正文与结构标题不低于 12px。数值、OTP、品牌名等特殊强调直接使用原子字号，不为它们增加正文或标签角色。
 
 ## 6. 图标与媒体尺寸
 

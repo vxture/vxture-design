@@ -8,9 +8,9 @@ import { buttonVariants } from "../src/components/base/form/Button/Button";
 import { toggleVariants } from "../src/components/base/form/Toggle";
 
 const SIZES = [
-  ["xs", "text-label-small", "size-icon-xs"],
+  ["xs", "text-label-micro", "size-icon-xs"],
   ["sm", "text-label-small", "size-icon-xs"],
-  ["md", "text-label", "size-icon-sm"],
+  ["md", "text-label-small", "size-icon-sm"],
   ["lg", "text-label", "size-icon-sm"],
   ["xl", "text-label", "size-icon-sm"],
 ] as const;
