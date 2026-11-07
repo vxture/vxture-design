@@ -695,16 +695,14 @@ export function ShellPreferencePanel({
   onFontSizeChange,
 }: ShellPreferencePanelProps) {
   return (
-    // 行距比面板其余段落宽一档（gap-xs → gap-sm）：这几行每行都是一个带描边
-    // 的控件，边框本身就是视觉重量；沿用无边框行的紧凑行距会让这一段挤成一
-    // 坨方块。段落标题走 ShellPanelSection 的同款样式，左缘对齐各行图标。
-    <div className={cn("flex w-full flex-col gap-sm", className)}>
+    // Match the action section: 32px controls with 8px row gaps.
+    <div className={cn("flex w-full flex-col gap-xs", className)}>
       {labels?.title ? (
         <ShellPanelSectionTitle>{labels.title}</ShellPanelSectionTitle>
       ) : null}
       <ShellPanelControlRow icon="globe" label={labels?.locale}>
         <NativeSelect
-          className="h-control-md text-body md:text-body-small"
+          className="h-control-xl text-body md:text-body-small"
           value={locale}
           onChange={(event) => onLocaleChange(event.target.value)}
         >
@@ -718,10 +716,8 @@ export function ShellPreferencePanel({
 
       <ShellPanelControlRow icon="sun" label={labels?.theme}>
         <SegmentedControl
-          // md 而非 sm：md=h-control-md 24px，与同一栏里的 NativeSelect 及
-          // 上下相邻的链接/动作按钮同档。取 sm=20px 会让偏好区三行整体矮 4px，看着像
-          // 陷下去一块。
           size="md"
+          className="h-control-xl"
           fill
           value={theme}
           onChange={onThemeChange}
@@ -740,6 +736,7 @@ export function ShellPreferencePanel({
         <ShellPanelControlRow icon="rows" label={labels?.density}>
           <SegmentedControl
             size="md"
+            className="h-control-xl"
             fill
             value={density}
             onChange={(value) => onDensityChange?.(value)}
@@ -761,6 +758,7 @@ export function ShellPreferencePanel({
         <ShellPanelControlRow icon="text-t" label={labels?.fontSize}>
           <SegmentedControl
             size="md"
+            className="h-control-xl"
             fill
             value={fontSize}
             onChange={(value) => onFontSizeChange?.(value)}

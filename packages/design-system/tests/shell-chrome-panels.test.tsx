@@ -176,6 +176,25 @@ describe("ShellPreferencePanel · 四行偏好", () => {
     return { ...fns, ...view, user: userEvent.setup() };
   };
 
+  it("uses the same 32px controls and 8px gaps as panel actions", () => {
+    const { container } = setup();
+    expect(hasClass(container.firstElementChild, "gap-xs")).toBe(true);
+    const select = screen.getByRole("combobox");
+    expect(hasClass(select, "h-control-xl")).toBe(true);
+    expect(
+      hasClass(
+        select.parentElement?.parentElement?.parentElement ?? null,
+        "h-control-xl",
+      ),
+    ).toBe(true);
+    for (const group of screen.getAllByRole("radiogroup")) {
+      expect(hasClass(group, "h-control-xl")).toBe(true);
+      expect(
+        hasClass(group.parentElement?.parentElement ?? null, "h-control-xl"),
+      ).toBe(true);
+    }
+  });
+
   /**
    * ⚠ 数**元素**不数文字（070 §5.1.1）。把 `{labels?.title ? … : null}` 改成
    * 恒渲染，出来的是一个**空**标题行——既没有文字也没有角色，查文字查不出来，

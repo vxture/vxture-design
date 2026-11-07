@@ -670,17 +670,17 @@ describe("ShellPanelSlots · 一排槽位", () => {
     const earned = screen.getByLabelText("已解锁的");
     const unearned = screen.getByLabelText("没解锁的");
     expect(hasClass(earned, "text-primary")).toBe(true);
-    expect(hasClass(unearned, "opacity-muted")).toBe(true);
+    expect(hasClass(unearned, "opacity-muted")).toBe(false);
     expect(hasClass(unearned, "text-primary")).toBe(false);
   });
 
-  it("24px 面板行内使用 20px 槽位圆，保留上下留白", () => {
+  it("32px panel row uses a visible 24px medal base", () => {
     render(<ShellPanelSlots label="账户标识" slots={SLOTS} />);
     const group = screen.getByRole("group", { name: "账户标识" });
     const earned = screen.getByLabelText("已解锁的");
-    expect(hasClass(group, "h-control-md")).toBe(true);
-    expect(hasClass(earned, "size-icon-md")).toBe(true);
-    expect(hasClass(earned, "size-icon-lg")).toBe(false);
+    expect(hasClass(group, "h-control-xl")).toBe(true);
+    expect(hasClass(earned, "size-icon-lg")).toBe(true);
+    expect(hasClass(earned, "size-icon-md")).toBe(false);
   });
 
   it("空槽位列表也渲染得出容器", () => {
