@@ -5,6 +5,17 @@
 
 ---
 
+## 15.0.1 — 2026-11-07
+
+### Shell panel rhythm and medal visibility
+
+- ShellPanelRow, ShellPanelControlRow and ShellPanelSlots share 32px rows.
+- Preference controls use the same 32px height and 8px gaps as action rows.
+- Medal bases use 24px with 16px glyphs. Unearned medals stay neutral without
+  additional opacity, so their presence remains clear.
+- Affects all shell panels using these shared parts; description rows retain
+  their natural two-line height. No product-side overrides are required.
+
 ## 15.0.0 — 2026-10-04
 
 跟随 `@vxture/design-tokens@4.0.0` 与 `@vxture/design-ui@12.0.0`：排版 token

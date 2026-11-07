@@ -54,7 +54,7 @@ const ROW_INSET = "px-sm";
 const ROW_LEAD_WIDTH = "w-icon-sm";
 const ROW_GAP = "gap-md";
 /** 行高统一档：与默认 `Button size="md"` 同值。 */
-const ROW_HEIGHT = "h-control-md";
+const ROW_HEIGHT = "h-control-xl";
 /** 行内图标一律走弱化色，与文字拉开层级——各行自己染色是不一致的来源。 */
 const ROW_ICON_TONE = "text-muted-foreground";
 /**
@@ -811,12 +811,11 @@ export function ShellPanelSlots({
             title={slot.label}
             aria-label={slot.label}
             className={cn(
-              // control-md 行高为 24px；槽位圆取 icon-md（20px），上下各留
-              // 2px。icon-lg（24px）会顶满整行，没有呼吸空间。
-              "inline-grid size-icon-md place-items-center rounded-full transition-colors duration-fast",
+              // 32px row, 24px medal base and 16px glyph leave clear breathing room.
+              "inline-grid size-icon-lg place-items-center rounded-full transition-colors duration-fast",
               slot.earned
                 ? "bg-primary/10 text-primary dark:bg-primary/20"
-                : "bg-muted text-muted-foreground opacity-muted",
+                : "bg-muted text-muted-foreground",
             )}
           >
             <Icon name={slot.icon} size="sm" />

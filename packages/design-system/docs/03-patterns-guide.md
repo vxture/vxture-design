@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.0.0** ｜ 更新：2026-09-29
+适用版本：**DS 15.0.1** ｜ 更新：2026-09-29
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -191,3 +191,10 @@ DataTable 三态一次定齐：加载出骨架行（撑住高度）、空态出 
 | 需要系统选择器 / 表单原生提交 | NativeSelect；否则 Radix Select                                                                                                                       |
 | 同形状的分段选择（数字/图标） | SegmentedControl，不再各做一件                                                                                                                        |
 | 场景 vs 形状                  | 组件按形状命名复用（SplitViewLayout 不叫 SettingsSplitPage）——同一形状处处成立，绑死场景就要重写                                                      |
+
+### Shell panel rows and account medals (15.0.1)
+
+Single-line panel actions, control rows and medal rows use control-xl (32px).
+Preferences and action sections use gap-xs (8px). Medal bases are icon-lg
+(24px), with icon-sm (16px) glyphs; unearned slots remain visible in neutral
+colors. Rows carrying descriptions keep their natural two-line height.
