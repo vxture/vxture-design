@@ -31,8 +31,9 @@ describe("DialogForm · 骨架", () => {
     const scroller = field.parentElement;
     expect(scroller).toHaveClass("max-h-[70vh]");
     expect(scroller).toHaveClass("overflow-y-auto");
-    // pr-2xs 不是装饰：不留这一格，聚焦环会被裁掉半圈
-    expect(scroller).toHaveClass("pr-2xs");
+    // Reserve every edge, including compact density; preserve field alignment.
+    expect(scroller).toHaveClass("p-xs", "-m-xs", "scroll-p-xs");
+    expect(scroller).not.toHaveClass("pr-2xs");
   });
 
   it("没有 children 就不渲染滚动容器", () => {

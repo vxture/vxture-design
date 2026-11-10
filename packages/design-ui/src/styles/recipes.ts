@@ -33,6 +33,14 @@ export const interactive = [
 ].join(" ");
 
 /**
+ * Keep outer focus and validation rings inside a scrolling field region.
+ * `xs` remains at least 4px in compact density, clearing the 3px ring.
+ * Matching negative margins preserve the fields' alignment and usable width;
+ * scroll padding also protects a field brought into view by keyboard focus.
+ */
+export const focusSafeScroll = "-m-xs p-xs scroll-p-xs";
+
+/**
  * 按下时下沉 1px。
  *
  * `not-aria-[haspopup]` 把菜单触发器排除在外——它按下去要弹面板，位移会让面板

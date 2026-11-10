@@ -11,6 +11,7 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "../../../utils/cn";
 import { Icon } from "../../../icons";
+import { Button } from "../form/Button";
 import { overlayMotion, panel } from "../../../styles/recipes";
 import {
   overlayAnchorClass,
@@ -135,9 +136,16 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
           {...props}
         >
           {children}
-          <DialogPrimitive.Close className="absolute right-lg top-lg rounded-sm opacity-muted ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-            <Icon name="x" size={16} />
-            <span className="sr-only">Close</span>
+          <DialogPrimitive.Close asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-md"
+              className="absolute right-lg top-lg text-muted-foreground hover:text-foreground"
+            >
+              <Icon name="x" size={16} />
+              <span className="sr-only">Close</span>
+            </Button>
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>
       </DialogPortal>

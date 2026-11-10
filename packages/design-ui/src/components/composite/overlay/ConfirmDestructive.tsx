@@ -28,6 +28,7 @@ import * as React from "react";
 import { cn } from "../../../utils/cn";
 import { Icon } from "../../../icons";
 import { buttonVariants } from "../../base/form/Button";
+import { Banner } from "../../base/feedback/Banner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -112,8 +113,8 @@ export interface DestructiveConfirm {
    * 落锤。返回 Promise 时本件自己接管「处理中」态与关闭时机：成功才关，
    * 失败不关——用户得看见自己按的那一下没成。
    *
-   * 失败本身不吞也不自己发明错误 UI：错误被重新抛出，落到应用自己的上报里。
-   * 要出 Toast 就在 `onConfirm` 内部 catch 掉，那是产品的判断不是 DS 的。
+   * Rejections stay inside the open dialog and allow retry. Callers may report
+   * the error before rejecting; the component never creates an unhandled rejection.
    */
   readonly onConfirm: () => void | Promise<void>;
 }
@@ -137,6 +138,11 @@ function ConfirmDestructive({
   onConfirm,
 }: ConfirmDestructiveProps) {
   const [pending, setPending] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const running = React.useRef(false);
+  React.useEffect(() => {
+    if (!open) setError(null);
+  }, [open]);
 
   const blocked = preconditions?.some((item) => !item.met) ?? false;
 
@@ -151,26 +157,26 @@ function ConfirmDestructive({
       /* Radix 的 Action 默认是关闭触发器。异步落锤要等结果才能决定关不关，
          所以拦掉它的默认关闭，开合完全由本件的 open 受控。 */
       event.preventDefault();
-      if (blocked || pending) return;
-
-      const result = onConfirm();
-      if (!(result instanceof Promise)) {
-        onOpenChange(false);
-        return;
-      }
+      if (blocked || running.current) return;
+      running.current = true;
+      setError(null);
       setPending(true);
-      result.then(
-        () => {
+      void Promise.resolve()
+        .then(onConfirm)
+        .then(() => onOpenChange(false))
+        .catch((reason: unknown) => {
+          setError(
+            reason instanceof Error && reason.message
+              ? reason.message
+              : "Unable to complete this action. Please try again.",
+          );
+        })
+        .finally(() => {
+          running.current = false;
           setPending(false);
-          onOpenChange(false);
-        },
-        (error: unknown) => {
-          setPending(false);
-          throw error;
-        },
-      );
+        });
     },
-    [blocked, pending, onConfirm, onOpenChange],
+    [blocked, onConfirm, onOpenChange],
   );
 
   return (
@@ -224,6 +230,7 @@ function ConfirmDestructive({
             ))}
           </ul>
         ) : null}
+        {error ? <Banner tone="danger" title={error} /> : null}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>
             {cancelLabel}

@@ -193,7 +193,8 @@ export function InputOTPSlot({
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
-          <div className="h-icon-sm w-px animate-pulse bg-foreground" />
+          {/* One font-relative line keeps the caret aligned with enlarged digits. */}
+          <div className="h-lh w-px animate-pulse bg-foreground leading-none" />
         </div>
       ) : null}
     </div>
