@@ -84,36 +84,58 @@ describe("ConfirmDestructive · 落锤与失败", () => {
     await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
   });
 
-  /**
-   * 失败不关——用户得看见自己按的那一下没成。
-   * 这条只有跑起来才验得了：类型上 onConfirm 返回 Promise，成功失败一个样。
-   *
-   * 错误**不吞**：件在 rejection handler 里重新抛出，于是它变成一个未处理的
-   * Promise 拒绝，落到应用自己的上报里。这里用 Node 的 process 钩子接住它——
-   * 不接的话 vitest 会把它算成用例失败，那反而证明了它确实没被吞掉。
-   */
-  it("落锤失败时不关，且把错误抛出去而不是吞掉", async () => {
-    const user = userEvent.setup();
-    const onOpenChange = vi.fn();
-    const boom = new Error("upstream refused");
-    const seen: unknown[] = [];
-    const onRejection = (reason: unknown) => seen.push(reason);
-    process.on("unhandledRejection", onRejection);
-    try {
+  it.each(["async", "sync"])(
+    "keeps %s failure visible and allows retry",
+    async (mode) => {
+      const user = userEvent.setup();
+      const onOpenChange = vi.fn();
+      const onConfirm = vi.fn((): Promise<void> => {
+        if (mode === "sync") throw new Error("upstream refused");
+        return Promise.reject(new Error("upstream refused"));
+      });
       render(
         <ConfirmDestructive
           {...base}
           onOpenChange={onOpenChange}
-          onConfirm={() => Promise.reject(boom)}
+          onConfirm={onConfirm}
         />,
       );
       await user.click(screen.getByRole("button", { name: "Delete" }));
-      await waitFor(() => expect(seen).toContain(boom));
-      // 关键：抛了错，但**没有关**
+      expect(await screen.findByText("upstream refused")).toBeVisible();
       expect(onOpenChange).not.toHaveBeenCalledWith(false);
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    } finally {
-      process.off("unhandledRejection", onRejection);
-    }
+      expect(screen.getByRole("alertdialog")).toContainElement(
+        screen.getByText("upstream refused"),
+      );
+      onConfirm.mockImplementation(() => Promise.resolve());
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+      await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    },
+  );
+
+  it("locks cancellation and duplicate submission while pending", async () => {
+    const user = userEvent.setup();
+    let resolve!: () => void;
+    const onConfirm = vi.fn(
+      () =>
+        new Promise<void>((done) => {
+          resolve = done;
+        }),
+    );
+    const onOpenChange = vi.fn();
+    render(
+      <ConfirmDestructive
+        {...base}
+        onOpenChange={onOpenChange}
+        onConfirm={onConfirm}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Working…" })).toBeDisabled();
+    await user.keyboard("{Escape}");
+    expect(onOpenChange).not.toHaveBeenCalled();
+    resolve();
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 });

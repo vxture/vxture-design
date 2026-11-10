@@ -95,6 +95,21 @@ describe("FilterPopover · 即时生效", () => {
 });
 
 describe("FilterPopover · 版面", () => {
+  it("preserves rings on all scroll edges and the final checkbox hit area", async () => {
+    render(<Harness />);
+    await open();
+    const group = screen.getByRole("group", { name: /Provider/ });
+    const scroller = group.parentElement;
+    expect(scroller).toHaveClass(
+      "overflow-y-auto",
+      "p-xs",
+      "-m-xs",
+      "scroll-p-xs",
+      "pb-sm",
+    );
+    expect(scroller).not.toHaveClass("pr-2xs");
+  });
+
   it("数字跟在名称后面", async () => {
     render(<Harness />);
     await open();

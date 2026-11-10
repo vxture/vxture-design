@@ -27,6 +27,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
+import { focusSafeScroll } from "../../../styles/recipes";
 import { Icon } from "../../../icons";
 import { Button } from "../../base/form/Button";
 import { Checkbox } from "../../base/form/Checkbox";
@@ -162,7 +163,14 @@ export function FilterPopover({
       >
         {/* `pb-sm` 不是装饰：Checkbox 的命中区用绝对定位的伪元素上下各外扩 sm，最后一行会从
             滚动区底边探出去，内容不够高也冒出一条滚动条（2026-09-15 预览面实测 142 / 134）。 */}
-        <div className="flex min-h-0 flex-1 flex-col gap-md overflow-y-auto pr-2xs pb-sm">
+        <div
+          data-slot="filter-popover-body"
+          className={cn(
+            "flex min-h-0 flex-1 flex-col gap-md overflow-y-auto",
+            focusSafeScroll,
+            "pb-sm",
+          )}
+        >
           {facets.map((facet) => {
             const chosen = value[facet.id] ?? [];
             const legendId = `${baseId}-${facet.id}`;

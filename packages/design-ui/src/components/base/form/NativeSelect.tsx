@@ -37,6 +37,7 @@ export const NativeSelect = React.forwardRef<
 ) {
   return (
     <span
+      data-slot="native-select-wrapper"
       className={cn(
         "relative inline-flex w-full items-center",
         wrapperClassName,
@@ -53,6 +54,7 @@ export const NativeSelect = React.forwardRef<
           // pr-2xl 反倒白吃 8px 文字宽,把刚好放得下的值又挤出界(owner 2026-09-02 实测)。回 pr-xl。
           "flex h-control-md w-full min-w-0 appearance-none rounded-md border border-control-border pl-sm pr-xl",
           "bg-transparent shadow-raised dark:bg-input/30",
+          "scheme-light dark:scheme-dark [&_option]:bg-popover [&_option]:text-foreground [&_optgroup]:bg-popover [&_optgroup]:text-foreground",
           "text-body text-foreground",
           interactive,
           invalid,
