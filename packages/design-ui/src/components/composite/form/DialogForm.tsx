@@ -64,6 +64,8 @@ export interface DialogFormProps extends Omit<
   readonly children?: React.ReactNode;
   readonly submitLabel?: React.ReactNode;
   readonly cancelLabel?: React.ReactNode;
+  /** Supporting text placed before the standard actions in the fixed footer. */
+  readonly footerNote?: React.ReactNode;
   /** 提交动作是破坏性的（删除、停用），提交按钮用 destructive 语义色。 */
   readonly danger?: boolean;
   readonly submitting?: boolean;
@@ -80,6 +82,7 @@ function DialogForm({
   children,
   submitLabel = "Save",
   cancelLabel = "Cancel",
+  footerNote,
   danger = false,
   submitting = false,
   pendingLabel = "Working…",
@@ -95,6 +98,25 @@ function DialogForm({
     event.preventDefault();
     field.focus();
   }, []);
+  const actions = (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => onOpenChange?.(false)}
+        disabled={submitting}
+      >
+        {cancelLabel}
+      </Button>
+      <Button
+        type="submit"
+        variant={danger ? "destructive-strong" : "default"}
+        disabled={submitDisabled || submitting}
+      >
+        {submitting ? pendingLabel : submitLabel}
+      </Button>
+    </>
+  );
   return (
     <Dialog
       {...(onOpenChange !== undefined ? { onOpenChange } : {})}
@@ -135,22 +157,32 @@ function DialogForm({
               标题在上 / 内容区 / 分割线 / 操作区下对齐）。长表单滚动时它同时是
               "页脚钉住"的视觉边界——没有这条线，滚动内容会看起来直接顶着按钮。 */}
           <Separator />
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange?.(false)}
-              disabled={submitting}
-            >
-              {cancelLabel}
-            </Button>
-            <Button
-              type="submit"
-              variant={danger ? "destructive-strong" : "default"}
-              disabled={submitDisabled || submitting}
-            >
-              {submitting ? pendingLabel : submitLabel}
-            </Button>
+          <DialogFooter
+            data-slot="dialog-form-footer"
+            className={
+              footerNote
+                ? "flex-col gap-md sm:items-end sm:justify-between sm:space-x-0"
+                : undefined
+            }
+          >
+            {footerNote ? (
+              <>
+                <p
+                  data-slot="dialog-form-note"
+                  className="min-w-0 text-body-small text-muted-foreground"
+                >
+                  {footerNote}
+                </p>
+                <div
+                  data-slot="dialog-form-actions"
+                  className="flex shrink-0 items-center justify-end gap-sm self-end"
+                >
+                  {actions}
+                </div>
+              </>
+            ) : (
+              actions
+            )}
           </DialogFooter>
         </form>
       </DialogContent>
