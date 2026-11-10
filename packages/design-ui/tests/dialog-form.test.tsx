@@ -152,3 +152,57 @@ describe("DialogForm · 打开时的焦点", () => {
     expect(document.activeElement).not.toBe(document.body);
   });
 });
+
+describe("DialogForm footer note", () => {
+  it("keeps supporting text outside the field scroller and before the standard actions", () => {
+    render(
+      <DialogForm
+        open
+        title="Change password"
+        footerNote="Sign in again after changing your password"
+      >
+        <input aria-label="Password" />
+      </DialogForm>,
+    );
+    const note = screen.getByText("Sign in again after changing your password");
+    const footer = note.parentElement;
+    expect(footer).toHaveAttribute("data-slot", "dialog-form-footer");
+    expect(footer?.previousElementSibling).toHaveAttribute(
+      "data-orientation",
+      "horizontal",
+    );
+    expect(
+      screen.getByLabelText("Password").parentElement,
+    ).not.toContainElement(note);
+    const actions = footer?.querySelector('[data-slot="dialog-form-actions"]');
+    expect(actions).toContainElement(
+      screen.getByRole("button", { name: "Cancel" }),
+    );
+    expect(actions).toContainElement(
+      screen.getByRole("button", { name: "Save" }),
+    );
+    expect(note.nextElementSibling).toBe(actions);
+    expect(actions?.firstElementChild).toBe(
+      screen.getByRole("button", { name: "Cancel" }),
+    );
+  });
+  it("preserves pending and destructive behavior with a footer note", () => {
+    render(
+      <DialogForm
+        open
+        title="Delete"
+        danger
+        submitting
+        footerNote="Permanent change"
+        pendingLabel="Deleting"
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Deleting" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Deleting" })).toHaveAttribute(
+      "data-variant",
+      "destructive-strong",
+    );
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
+    expect(screen.getByText("Permanent change")).toBeVisible();
+  });
+});
