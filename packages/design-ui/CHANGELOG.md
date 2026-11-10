@@ -5,6 +5,22 @@
 
 ---
 
+## 12.1.0 — 2026-11-10
+
+### Dialog support text and overlay corrections
+
+- Add optional `DialogForm.footerNote` for persistent supporting text before the
+  standard footer actions, outside the field scroller. Existing forms retain their
+  button order, pending state, and destructive behavior.
+- Use the standard square icon button for dialog close controls and size the OTP
+  caret to the displayed digits.
+- Reserve focus-ring space around scrollable dialog and filter fields without
+  changing their alignment.
+- Keep native select arrows inside their wrapper and apply the current theme to
+  native option backgrounds and text.
+- Keep destructive confirmations open on failure, show the error, and prevent
+  duplicate submissions while an action is pending.
+
 ## 12.0.0 — 2026-10-04
 
 **破坏性**：组件全面迁移到收口后的六族排版角色；`SectionHeaderLevel` 从
