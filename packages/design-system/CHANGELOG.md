@@ -5,6 +5,19 @@
 
 ---
 
+## 15.1.0 — 2026-11-10
+
+### Dialog footer notes and shared overlay fixes
+
+- Re-export the compatible `DialogForm.footerNote` addition from
+  `@vxture/design-ui@12.1.0` for supporting text beside standard footer actions.
+- Include dialog close-button geometry, OTP caret sizing, focus-safe scrolling,
+  themed native selects, and destructive-confirmation failure feedback from the
+  shared UI layer.
+- Keep `@vxture/design-tokens@4.0.0` unchanged. This release adds no breaking
+  changes relative to 15.0.1; consumers upgrading from 12.x must still complete the
+  intervening major-version migrations.
+
 ## 15.0.1 — 2026-11-07
 
 ### Shell panel rhythm and medal visibility
