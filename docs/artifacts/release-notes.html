@@ -215,7 +215,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">本次 <strong>design-system 15.1.0</strong> 新增弹窗页脚说明插槽，并修正关闭按钮、验证码光标、焦点环、原生选择框和危险操作反馈。从 15.0.1 升级无需迁移；从 12.x 升级仍须完成中间版本的破坏性变更迁移。</p>
+    <p class="lede">本次 <strong>design-system 15.1.1</strong> 新增弹窗页脚说明插槽，并修正关闭按钮、验证码光标、焦点环、原生选择框和危险操作反馈。从 15.0.1 升级无需迁移；从 12.x 升级仍须完成中间版本的破坏性变更迁移。</p>
   </div>
 
 <section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-11-10 · minor</span></h2><div class="rule"></div>
@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">15.1.0</td><td><span class="tag t-good">minor</span> 应用侧主依赖；转发页脚说明插槽及共享浮层修复</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">15.1.1</td><td><span class="tag t-good">patch</span> 应用侧主依赖；修正导航分组弱化文字色与导航尺寸</td></tr>
 <tr><td class="mono">@vxture/design-ui</td><td class="mono">12.1.0</td><td><span class="tag t-good">minor</span> 新增可选 footerNote；修正关闭按钮、OTP 光标、焦点空间、选择框与危险操作反馈</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">4.0.0</td><td><span class="tag">不变</span> 沿用既有 token；本次不发布新版本</td></tr>
 </tbody></table></div>
-<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.1.0 会解析到 design-ui 12.1.0 与 design-tokens 4.0.0；无需直接添加下层包。此次相对 15.0.1 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
+<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.1.1 会解析到 design-ui 12.1.0 与 design-tokens 4.0.0；无需直接添加下层包。此次相对 15.0.1 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
 
 <section id="breaking14"><h2><span class="num">02a</span>必须改的：标题阶梯重排——level 即 h，页头改用页头文本<span class="h2-meta">design-ui 11.0.0 / 伞包 14.0.0 · major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">原四档里 level 4 用的 <span class="mono">label-md</span> 与 level 3 的 <span class="mono">title-sm</span> 取值完全相同，三、四级看上去一样；level 与 h 也错位（owner 2026-09-26）。现在 <strong>level 的数字就是 h 的数字</strong>：level 1 是页头 <span class="mono">ViewHeader</span>（改用 <span class="mono">heading-3</span>），<span class="mono">SectionHeader</span> 只有 level 2 / 3 / 4。<strong>每一级都带虚线下边框，可关。</strong></div>
@@ -541,7 +541,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 15.1.0 · design-tokens 4.0.0 / design-ui 12.1.0 / design-system 15.1.0 · 2026-11-10</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 15.1.1 · design-tokens 4.0.0 / design-ui 12.1.0 / design-system 15.1.1 · 2026-11-10</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

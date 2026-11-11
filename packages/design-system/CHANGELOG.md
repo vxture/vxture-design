@@ -5,6 +5,12 @@
 
 ---
 
+## 15.1.1 — 2026-11-11
+
+- Restore sidebar navigation rows to 40px, group headers to 32px and group labels to 12px after the Tokens 4 control-scale change.
+- Let group labels inherit the trigger’s semantic muted text color and interaction states; preserve branded title accents.
+- Keep content controls and the public component API unchanged.
+
 ## 15.1.0 — 2026-11-10
 
 ### Dialog footer notes and shared overlay fixes
