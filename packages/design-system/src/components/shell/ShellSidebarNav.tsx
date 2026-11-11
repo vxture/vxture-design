@@ -51,7 +51,7 @@
  * L3 group：p-2xs(4，四周——纵向是 py，横向缩进对齐 title)。组间距不用
  *   显式 gap，靠相邻两个 group 自己的 pt/pb(4+4) 叠成 8。
  * L4 group 内部：title→items 用 gap-xs(8)。
- * L5 item：h-control-xl(32)，padding=0，gap-xs(8)（图标导轨到标签）。
+ * L5 item：min-h-control-2xl(40)，padding=0，gap-xs(8)（图标导轨到标签）。
  *
  * 图标行容器一律不用 justify-center（曾经用过，踩过坑）：justify-center
  * 是动态的，每帧按容器*当前*宽度重算；标签是条件渲染，collapsed 一变就
@@ -247,7 +247,7 @@ export interface ShellSidebarNavProps {
    *
    * 两处与 `"always"` 不同，都是为了**展开时不挤动下面的项**：
    * - 双行不再加 `py-2xs`。三档字号下两行内容高 30 / 32.5 / 37.5px，都落在
-   *   `min-h-control-xl`（稳定 32px）以内，展开前后行高不变；加了 py 大字号档
+   *   `min-h-control-2xl`（稳定 40px）以内，展开前后行高不变；加了 py 大字号档
    *   会撑到 45.5，悬停一下整列往下跳 5px。紧凑密度（行高 36）+ 大字号是唯一
    *   仍会撑高 1.5px 的组合。
    * - 副名对读屏**始终可读**：可视的那行在收起时 `display:none`，会从链接的
@@ -364,9 +364,9 @@ function NavItemRow({
         /* 具名 group：副名的显隐只认本行的悬停/聚焦，不被外层别的 group 牵动。 */
         "group/nav-item",
         /* 两行项比单行高，所以行高由内容撑（min-h 而非固定 h）。不传 subLabel
-           时内容仍是一行，min-h 与原来的 h-control-xl 等值——单行项的高度、
+           时内容仍是一行，min-h 使用导航行高 control-2xl（40px）——单行项的高度、
            图标位置、间距全部不变，这是"纯增量"的具体含义。 */
-        "flex min-h-control-xl items-center gap-xs rounded-md",
+        "flex min-h-control-2xl items-center gap-xs rounded-md",
         /* 有外链图标时右侧留位，否则长标签会钻到图标底下。 */
         item.external ? "pr-2xl" : undefined,
         "text-label transition-colors duration-fast ease-standard",
@@ -505,12 +505,12 @@ function splitBrandTitle(
 }
 
 /**
- * 分组标题行：恒占一行（h-control-md=24），标题在左、开合图标在行尾
+ * 分组标题行：恒占一行（h-control-xl=32），标题在左、开合图标在行尾
  * （右侧）；不受 collapsed 影响行数——行和它的 chevron 收起态也照常渲染，
  * 只是标题文字不渲染，图标落回与导航项同一左侧列。
  *
  * 用 DS 的 `Button variant="ghost" size="sm"`（原生 <button> 违反
- * ds/no-native-primitive）。显式高度与同栏输入统一为 h-control-md(24)，圆角
+ * ds/no-native-primitive）。显式高度与同栏输入统一为 h-control-xl(32)，圆角
  * radiusClamp 在默认基数下等值于 rounded-md；其余三处配方默认值必须显式
  * 抵消，否则会改变既有视觉：
  * - `px-0` 抵消 size="sm" 的 px-sm——本行零内边距，缩进由 NavLabel 的
@@ -545,14 +545,14 @@ function NavGroupHeader({
       aria-expanded={open}
       className={cn(
         // 焦点环与 outline-none 不在此重复：Button 基类已含配方 `interactive`。
-        "flex h-control-md w-full items-center justify-start gap-xs px-0 border-none",
-        "text-overline transition-colors duration-fast ease-standard",
+        "flex h-control-xl w-full items-center justify-start gap-xs px-0 border-none",
+        "text-label-small transition-colors duration-fast ease-standard",
         "text-muted-foreground hover:bg-accent hover:text-foreground",
         "aria-expanded:bg-transparent aria-expanded:text-muted-foreground",
       )}
     >
       {!collapsed && (
-        <NavLabel className="pl-xs text-foreground">
+        <NavLabel className="pl-xs">
           {brandTitle ? (
             /* 品牌段恒用等宽 + 主色，位置由 brandFirst 决定谁先渲染——
                两种写法共用同一套样式，只是顺序不同。 */

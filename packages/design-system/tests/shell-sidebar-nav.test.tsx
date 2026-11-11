@@ -176,11 +176,9 @@ describe("复合标题的品牌段", () => {
       sections: [{ items: [], ...section } as ShellNavSection],
     });
 
-  /** 分组标题行——按它自己的字号类认，页面上还有另外两个按钮。 */
+  /** 分组标题行按展开语义识别，不依赖文字字号或图标按钮的样式。 */
   const headerText = (root: ParentNode) =>
-    [...root.querySelectorAll("button")].find((b) =>
-      hasClass(b, "text-overline"),
-    )?.textContent;
+    root.querySelector("button[aria-expanded]")?.textContent;
 
   /**
    * `"<子域> · <品牌>"` 读作**这块管理该品牌**——染色的是**后**半段。
