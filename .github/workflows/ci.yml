@@ -8,9 +8,9 @@ name: ci
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, codex/design-12-maintenance]
   push:
-    branches: [main]
+    branches: [main, codex/design-12-maintenance]
 
 concurrency:
   group: ci-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('push-{0}', github.ref_name) }}

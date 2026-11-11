@@ -26,6 +26,11 @@ on:
         required: true
         default: true
         type: boolean
+      dist_tag:
+        description: "可选 npm 发布通道；12.x 维护版使用 maintenance-12"
+        required: false
+        default: ""
+        type: string
   push:
     tags:
       - "ds-v*.*.*"
@@ -115,6 +120,7 @@ jobs:
         shell: bash
         env:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          DIST_TAG: ${{ github.event.inputs.dist_tag }}
         run: |
           set -euo pipefail
           summary=""
@@ -153,6 +159,19 @@ jobs:
               *-*) id="${version#*-}"; tag="${id%%.*}" ;;
               *)   tag="latest" ;;
             esac
+
+            # Maintenance releases must not replace the current major's latest tag.
+            if [ -n "${DIST_TAG:-}" ]; then
+              if [[ ! "${DIST_TAG}" =~ ^[a-z][a-z0-9-]*$ ]]; then
+                echo "::error::Invalid npm dist-tag"
+                exit 1
+              fi
+              tag="${DIST_TAG}"
+            fi
+            if [[ "${version}" == 12.* && "${tag}" != "maintenance-12" ]]; then
+              echo "::error::12.x maintenance releases require dist_tag=maintenance-12"
+              exit 1
+            fi
 
             if [ "${DRY_RUN}" = "true" ]; then
               echo "· ${name}@${version} 待发布（dry run，未推送）dist-tag=${tag}"

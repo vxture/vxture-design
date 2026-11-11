@@ -69,6 +69,7 @@ const BY_COLUMNS: Record<DetailListColumns, string> = {
 
 /** 列数由 DetailList 下传，DetailRow 据此选行内布局。 */
 const ColumnsContext = React.createContext<DetailListColumns>(1);
+const LabelWidthContext = React.createContext<"default" | "compact">("default");
 
 export interface DetailListProps extends React.HTMLAttributes<HTMLDListElement> {
   readonly children: React.ReactNode;
@@ -77,29 +78,36 @@ export interface DetailListProps extends React.HTMLAttributes<HTMLDListElement> 
    * 多列 = 网格（名上值下、无分隔线）。窄屏一律单列。
    */
   readonly columns?: DetailListColumns;
+  /** Compact labels keep narrow detail panels readable; existing layouts retain their width. */
+  readonly labelWidth?: "default" | "compact";
 }
 
 const DetailList = React.forwardRef<HTMLDListElement, DetailListProps>(
-  function DetailList({ className, children, columns = 1, ...props }, ref) {
+  function DetailList(
+    { className, children, columns = 1, labelWidth = "default", ...props },
+    ref,
+  ) {
     const grid = columns > 1;
     return (
       <ColumnsContext.Provider value={columns}>
-        <dl
-          ref={ref}
-          className={cn(
-            grid
-              ? cn("grid gap-x-xl gap-y-md", BY_COLUMNS[columns])
-              : cn(
-                  "flex flex-col",
-                  "[&>*+*]:border-t [&>*+*]:border-dashed [&>*+*]:border-primary/10",
-                  "dark:[&>*+*]:border-primary/20",
-                ),
-            className,
-          )}
-          {...props}
-        >
-          {children}
-        </dl>
+        <LabelWidthContext.Provider value={labelWidth}>
+          <dl
+            ref={ref}
+            className={cn(
+              grid
+                ? cn("grid gap-x-xl gap-y-md", BY_COLUMNS[columns])
+                : cn(
+                    "flex flex-col",
+                    "[&>*+*]:border-t [&>*+*]:border-dashed [&>*+*]:border-primary/10",
+                    "dark:[&>*+*]:border-primary/20",
+                  ),
+              className,
+            )}
+            {...props}
+          >
+            {children}
+          </dl>
+        </LabelWidthContext.Provider>
       </ColumnsContext.Provider>
     );
   },
@@ -121,6 +129,7 @@ const DetailRow = React.forwardRef<HTMLDivElement, DetailRowProps>(
   function DetailRow({ className, label, children, actions, ...props }, ref) {
     // 多列时保持名上值下：并排 + 12rem 定宽的名列在三分之一宽的格子里放不下。
     const stacked = React.useContext(ColumnsContext) > 1;
+    const compact = React.useContext(LabelWidthContext) === "compact";
     return (
       <div
         ref={ref}
@@ -134,7 +143,8 @@ const DetailRow = React.forwardRef<HTMLDivElement, DetailRowProps>(
         <dt
           className={cn(
             "text-label-md text-muted-foreground",
-            !stacked && "sm:w-media-3xl sm:shrink-0",
+            !stacked && "sm:shrink-0",
+            !stacked && (compact ? "sm:w-media-md" : "sm:w-media-3xl"),
           )}
         >
           {label}

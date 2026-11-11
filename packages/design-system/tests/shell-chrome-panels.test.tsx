@@ -22,6 +22,11 @@ import {
 } from "../src/components/shell/ShellChrome";
 import { ShellPanelRow } from "../src/components/shell/ShellPanel";
 
+import {
+  DetailList,
+  DetailRow,
+} from "../../design-ui/src/components/composite/structure/DetailList";
+
 const hasClass = (el: Element | null, token: string) =>
   ((el as HTMLElement)?.className ?? "")
     .split(" ")
@@ -364,6 +369,22 @@ describe("ShellUserMenu · 触发器", () => {
 });
 
 describe("ShellUserMenu · 头部", () => {
+  it("renders a rich phone line while preserving its text", async () => {
+    const { panel } = await openMenu({
+      user: {
+        ...USER,
+        uniqueLine: (
+          <>
+            <span className="text-muted-foreground">+86</span>{" "}
+            <span>133 3333 3333</span>
+          </>
+        ),
+      },
+    });
+    expect(within(panel).getByText("+86")).toHaveClass("text-muted-foreground");
+    expect(within(panel).getByText("133 3333 3333")).toBeInTheDocument();
+  });
+
   it("显示名与两条 meta 都在", async () => {
     const { panel } = await openMenu();
     expect(within(panel).getByText("某某")).toBeInTheDocument();
@@ -646,5 +667,35 @@ describe("ShellUserMenu · 回到来处", () => {
     await user.click(within(panel).getByRole("button", { name: "Close" }));
     expect(onDismiss).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+});
+
+// ============================================================================
+// Narrow detail panels
+// ============================================================================
+describe("DetailList label widths", () => {
+  it("keeps the existing width by default and scopes compact labels to their list", () => {
+    render(
+      <>
+        <DetailList labelWidth="compact">
+          <DetailRow label="Bank">Account</DetailRow>
+        </DetailList>
+        <DetailList>
+          <DetailRow label="Owner">Person</DetailRow>
+        </DetailList>
+      </>,
+    );
+    expect(screen.getByText("Bank")).toHaveClass("sm:w-media-md");
+    expect(screen.getByText("Owner")).toHaveClass("sm:w-media-3xl");
+    expect(screen.getByText("Bank")).not.toHaveClass("sm:w-media-3xl");
+  });
+  it("keeps multicolumn details stacked even when compact is requested", () => {
+    render(
+      <DetailList columns={2} labelWidth="compact">
+        <DetailRow label="Bank">Account</DetailRow>
+      </DetailList>,
+    );
+    expect(screen.getByText("Bank")).not.toHaveClass("sm:w-media-md");
+    expect(screen.getByText("Bank")).not.toHaveClass("sm:w-media-3xl");
   });
 });

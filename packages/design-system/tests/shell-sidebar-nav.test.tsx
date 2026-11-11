@@ -570,3 +570,11 @@ describe("无障碍名", () => {
     ).toBeInTheDocument();
   });
 });
+
+// Group labels remain secondary to the active navigation item.
+it("renders group labels using the muted foreground token", () => {
+  renderNav();
+  const label = screen.getByText("概览");
+  expect(hasClass(label, "text-muted-foreground")).toBe(true);
+  expect(hasClass(label, "text-foreground")).toBe(false);
+});
