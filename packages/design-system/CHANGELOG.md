@@ -5,6 +5,16 @@
 
 ---
 
+## 12.21.0 — 2026-11-12
+
+### Unified interface language selection
+
+- Add a current-language field variant and disabled state to `ShellLocaleSwitcher`.
+- Reuse the same locale panel in toolbar, preferences and nested user menus.
+- Focus the selected language on opening; support arrow keys, Home/End, selection
+  and focus restoration. Avoid duplicate labels when only `label` is supplied.
+- Preserve the platform-owned language catalog and existing icon-trigger API.
+
 ## 12.19.0 — 2026-11-11
 
 依赖 design-ui 9.13.0，确保消费方取得 DetailList 紧凑标签 API；修正 12.18.0 引用已被占用的 UI 版本。
