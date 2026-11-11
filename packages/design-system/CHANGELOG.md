@@ -5,6 +5,16 @@
 
 ---
 
+## 15.2.0 — 2026-11-12
+
+### Unified interface language selection
+
+- Add a current-language field variant and disabled state to `ShellLocaleSwitcher`.
+- Reuse the same locale panel in toolbar, preferences and nested user menus.
+- Focus the selected language on opening; support arrow keys, Home/End, selection
+  and focus restoration. Avoid duplicate labels when only `label` is supplied.
+- Preserve the platform-owned language catalog and existing icon-trigger API.
+
 ## 15.1.1 — 2026-11-11
 
 - Restore sidebar navigation rows to 40px, group headers to 32px and group labels to 12px after the Tokens 4 control-scale change.
