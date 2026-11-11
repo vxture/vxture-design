@@ -27,7 +27,6 @@ import {
   AvatarSilhouette,
   Button,
   Icon,
-  NativeSelect,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -97,6 +96,9 @@ export interface ShellBrandProps {
 }
 
 export interface ShellLocaleSwitcherProps {
+  /** Globe toolbar button or full-width current-language field. */
+  variant?: "icon" | "field" | undefined;
+  disabled?: boolean | undefined;
   currentLocale: string;
   options?: LocaleSelectOption[] | undefined;
   buttonLabel?: string | undefined;
@@ -323,8 +325,42 @@ export function LocaleSelectPanel({
   options = DEFAULT_LOCALE_OPTIONS,
   onSelect,
 }: LocaleSelectPanelProps) {
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const menu = menuRef.current;
+    const selected = menu?.querySelector<HTMLButtonElement>(
+      '[aria-checked="true"]',
+    );
+    (selected ?? menu?.querySelector<HTMLButtonElement>("button"))?.focus();
+  }, []);
   return (
-    <div className="flex flex-col gap-2xs" role="menu">
+    <div
+      ref={menuRef}
+      className="flex flex-col gap-2xs"
+      role="menu"
+      onKeyDown={(event) => {
+        const keys = ["ArrowDown", "ArrowUp", "Home", "End"];
+        if (!keys.includes(event.key)) return;
+        const items = Array.from(
+          event.currentTarget.querySelectorAll<HTMLButtonElement>("button"),
+        );
+        if (!items.length) return;
+        event.preventDefault();
+        const current = items.indexOf(
+          document.activeElement as HTMLButtonElement,
+        );
+        const index =
+          event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? items.length - 1
+              : (current +
+                  (event.key === "ArrowDown" ? 1 : -1) +
+                  items.length) %
+                items.length;
+        items[index]?.focus();
+      }}
+    >
       {options.map((option) => {
         const active = option.locale === activeLocale;
         return (
@@ -345,7 +381,9 @@ export function LocaleSelectPanel({
               <span className="text-label">
                 {option.nativeName ?? option.label ?? option.locale}
               </span>
-              {option.label && option.label !== option.nativeName ? (
+              {option.nativeName &&
+              option.label &&
+              option.label !== option.nativeName ? (
                 <span className="text-body-small text-muted-foreground">
                   {option.label}
                 </span>
@@ -564,6 +602,8 @@ export function ShellAgentButton({
 }
 
 export function ShellLocaleSwitcher({
+  variant = "icon",
+  disabled = false,
   currentLocale,
   options = DEFAULT_LOCALE_OPTIONS,
   buttonLabel = "Select language",
@@ -578,16 +618,46 @@ export function ShellLocaleSwitcher({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={cn("inline-flex", className)}>
+    <div
+      className={cn(
+        "inline-flex",
+        variant === "field" && "w-full min-w-0",
+        className,
+      )}
+    >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <ShellIconButton
-            icon="globe"
-            label={buttonLabel}
-            active={open}
-            className={buttonClassName}
-            activeClassName={activeButtonClassName}
-          />
+          {variant === "field" ? (
+            <Button
+              variant="outline"
+              size="md"
+              disabled={disabled}
+              aria-label={buttonLabel}
+              className={cn(
+                "h-control-xl w-full min-w-0 justify-between gap-sm",
+                buttonClassName,
+                open && activeButtonClassName,
+              )}
+            >
+              <span className="truncate">
+                {options.find((option) => option.locale === currentLocale)
+                  ?.nativeName ??
+                  options.find((option) => option.locale === currentLocale)
+                    ?.label ??
+                  currentLocale}
+              </span>
+              <Icon name="chevron-down" size="sm" />
+            </Button>
+          ) : (
+            <ShellIconButton
+              icon="globe"
+              label={buttonLabel}
+              active={open}
+              disabled={disabled}
+              className={buttonClassName}
+              activeClassName={activeButtonClassName}
+            />
+          )}
         </PopoverTrigger>
         <PopoverContent
           align={align}
@@ -701,17 +771,20 @@ export function ShellPreferencePanel({
         <ShellPanelSectionTitle>{labels.title}</ShellPanelSectionTitle>
       ) : null}
       <ShellPanelControlRow icon="globe" label={labels?.locale}>
-        <NativeSelect
-          className="h-control-xl text-body md:text-body-small"
-          value={locale}
-          onChange={(event) => onLocaleChange(event.target.value)}
-        >
-          {localeOptions.map((option) => (
-            <option key={option.locale} value={option.locale}>
-              {option.nativeName ?? option.label ?? option.locale}
-            </option>
-          ))}
-        </NativeSelect>
+        <ShellLocaleSwitcher
+          variant="field"
+          currentLocale={locale}
+          options={localeOptions}
+          buttonLabel={
+            typeof labels?.locale === "string"
+              ? labels.locale
+              : "Select language"
+          }
+          panelLabel={
+            typeof labels?.locale === "string" ? labels.locale : "Language"
+          }
+          onLocaleChange={onLocaleChange}
+        />
       </ShellPanelControlRow>
 
       <ShellPanelControlRow icon="sun" label={labels?.theme}>

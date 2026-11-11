@@ -115,6 +115,30 @@ describe("ShellLocaleSwitcher · 选完就关", () => {
     expect(trigger).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("字段入口显示当前语言，键盘选择后恢复触发器焦点", async () => {
+    const { user, onLocaleChange } = setup({ variant: "field" });
+    const trigger = screen.getByRole("button", { name: "Select language" });
+    expect(trigger).toHaveTextContent("简体中文");
+    await user.click(trigger);
+    expect(screen.getByRole("menuitemradio", { checked: true })).toHaveFocus();
+    await user.keyboard("{ArrowDown}{Enter}");
+    expect(onLocaleChange).toHaveBeenCalledWith("en-US");
+    await waitFor(() => expect(trigger).toHaveFocus());
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("字段入口支持禁用，并以代码回退未知语言", async () => {
+    const { user } = setup({
+      variant: "field",
+      currentLocale: "fr-FR",
+      disabled: true,
+    });
+    const trigger = screen.getByRole("button", { name: "Select language" });
+    expect(trigger).toHaveTextContent("fr-FR");
+    await user.click(trigger);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
   it("不给 options 时面板是空的，不是崩的", async () => {
     const onLocaleChange = vi.fn();
     const user = userEvent.setup();
@@ -179,7 +203,7 @@ describe("ShellPreferencePanel · 四行偏好", () => {
   it("uses the same 32px controls and 8px gaps as panel actions", () => {
     const { container } = setup();
     expect(hasClass(container.firstElementChild, "gap-xs")).toBe(true);
-    const select = screen.getByRole("combobox");
+    const select = screen.getByRole("button", { name: "Select language" });
     expect(hasClass(select, "h-control-xl")).toBe(true);
     expect(
       hasClass(
@@ -211,11 +235,12 @@ describe("ShellPreferencePanel · 四行偏好", () => {
   });
 
   /** 语言下拉的显示名与 `LocaleSelectPanel` 同一套回落：母语名 → 英文名 → 代码。 */
-  it("语言下拉的显示名逐级回落到语言代码", () => {
-    setup();
-    const options = screen.getAllByRole("option");
+  it("语言下拉的显示名逐级回落到语言代码", async () => {
+    const { user } = setup();
+    await user.click(screen.getByRole("button", { name: "Select language" }));
+    const options = screen.getAllByRole("menuitemradio");
     expect(options.map((o) => o.textContent)).toEqual([
-      "简体中文",
+      "简体中文Chinese",
       "English",
       "ja-JP",
     ]);
@@ -223,7 +248,8 @@ describe("ShellPreferencePanel · 四行偏好", () => {
 
   it("换语言回传选中的代码", async () => {
     const { user, onLocaleChange } = setup();
-    await user.selectOptions(screen.getByRole("combobox"), "en-US");
+    await user.click(screen.getByRole("button", { name: "Select language" }));
+    await user.click(screen.getByRole("menuitemradio", { name: "English" }));
     expect(onLocaleChange).toHaveBeenCalledWith("en-US");
   });
 

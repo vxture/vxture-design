@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.1.1** ｜ 更新：2026-11-10
+适用版本：**DS 15.2.0** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -198,3 +198,9 @@ Single-line panel actions, control rows and medal rows use control-xl (32px).
 Preferences and action sections use gap-xs (8px). Medal bases are icon-lg
 (24px), with icon-sm (16px) glyphs; unearned slots remain visible in neutral
 colors. Rows carrying descriptions keep their natural two-line height.
+
+### 统一语言选择
+
+界面语言入口统一使用 `ShellLocaleSwitcher`。工具栏使用默认 `variant="icon"`；偏好字段使用 `variant="field"`，显示当前语言和展开箭头。`ShellPreferencePanel` 内置相同字段，展开后共用 `LocaleSelectPanel`：语言标记、母语名称、末尾选中勾选。应用通过 `options` 传入平台语言目录，DS 不拥有语言清单。
+
+字段提供本地化 `buttonLabel` 和 `panelLabel`；请求期间可设置 `disabled`。面板打开时聚焦当前项，方向键及 Home/End 移动，Enter/Space 选择，Escape 关闭；选择后关闭并恢复入口焦点。国家、时区、业务内容语言不属于该界面偏好模式。
