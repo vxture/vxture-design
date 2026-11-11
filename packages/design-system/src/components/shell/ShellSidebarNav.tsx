@@ -501,7 +501,7 @@ function NavGroupHeader({
       )}
     >
       {!collapsed && (
-        <NavLabel className="pl-xs text-foreground">
+        <NavLabel className="pl-xs text-muted-foreground">
           {brandTitle ? (
             /* 品牌段恒用等宽 + 主色，位置由 brandFirst 决定谁先渲染——
                两种写法共用同一套样式，只是顺序不同。 */

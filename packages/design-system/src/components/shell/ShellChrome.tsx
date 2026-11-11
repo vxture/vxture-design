@@ -176,7 +176,7 @@ export interface ShellUserStatusTag {
 
 export interface ShellUserMenuUser {
   displayName: string;
-  uniqueLine?: string | undefined;
+  uniqueLine?: React.ReactNode | undefined;
   avatarSrc?: string | undefined;
   avatarAlt?: string | undefined;
   avatarFallback?: string | undefined;

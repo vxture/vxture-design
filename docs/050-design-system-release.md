@@ -1,6 +1,6 @@
 # Design System 版本发布规范
 
-适用版本：**DS 12.17.0**
+适用版本：**DS 12.18.0**
 更新：2026-08-27
 范围：`@vxture/design-tokens`、`@vxture/design-ui`、`@vxture/design-system`、`publish-design-system.yml`
 
@@ -61,6 +61,17 @@ token 层的破坏性判据与 CSS 不同于代码：**删掉一个 CSS 变量�
 pnpm 打包时把 `workspace:` 协议替换成真实版本号，所以 `design-ui` 发出去会声明 `"@vxture/design-tokens": "^x.y.z"`。若那一版还没进 registry，**消费方 install 直接失败，而流水线自己是绿的**——`pnpm publish` 不校验依赖可解析。
 
 流水线按此顺序逐包处理，每包各自判断该版本是否已存在，已存在即跳过。整条流水线因此幂等：同一个 tag 重跑不会失败，只发新版本的那些包。
+
+## 3.1 12.x 兼容维护通道
+
+2026-11-11 用户批准本次维护分支发布例外：当前应用仍钉在 12.17.0，主干已进入
+15.x。本批从 `d17a466` 建立 `codex/design-12-maintenance`，变更以 PR 合入该维护
+分支并通过同等 CI；不回退 `main`。此例外仅覆盖 checkout 与账号面板本批兼容改动。
+
+在维护分支同一提交上运行 `publish-design-system`，先 `dry_run=true`，成功后再
+`dry_run=false`，两次均显式传 `dist_tag=maintenance-12`。12.x 版本未指定该通道时
+workflow 拒绝发布，不能覆盖 15.x 的 `latest`。消费方显式钉版本，安装与构建验证后
+才允许平台上线。其余发布仍执行下文的 main 流程。
 
 ## 4. 发布准备
 
