@@ -57,9 +57,7 @@ export function ShellLauncher({
     <div className={cn("inline-flex", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <ShellIconButton icon="app-grid" label={buttonLabel} active={open}>
-            <Icon name="app-grid" size="lg" />
-          </ShellIconButton>
+          <ShellIconButton icon="app-grid" label={buttonLabel} active={open} />
         </PopoverTrigger>
         <PopoverContent
           align={align}
