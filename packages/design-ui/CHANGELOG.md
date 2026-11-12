@@ -5,6 +5,10 @@
 
 ---
 
+## 12.1.1 — 2026-11-12
+
+Expose the shared sidebar frame geometry scope for responsive navigation alignment.
+
 ## 12.1.0 — 2026-11-10
 
 ### Dialog support text and overlay corrections

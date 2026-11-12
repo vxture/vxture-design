@@ -1,0 +1,104 @@
+/**
+ * Sidebar geometry belongs to the frame, independently of control-size scales.
+ * @package @vxture/design-system
+ * @layer Presentation
+ * @category styles
+ * @author AI-Generated
+ * @date 2026-11-12
+ */
+@layer components {
+  [data-slot="shell-sidebar-frame"] {
+    --shell-sidebar-anchor-width: var(--spacing-sidebar-collapsed);
+    @variant max-sm {
+      --shell-sidebar-anchor-width: var(--spacing-sidebar-rail);
+    }
+  }
+
+  :root,
+  .density-default {
+    --shell-sidebar-inset: calc(var(--vx-spacing) * 2);
+    --shell-sidebar-inner-inset: var(--vx-spacing);
+    --shell-sidebar-safe-inset: calc(var(--vx-spacing) * 20);
+    --shell-sidebar-menu-height: calc(var(--vx-spacing) * 10);
+    --shell-sidebar-group-height: calc(var(--vx-spacing) * 8);
+  }
+
+  .density-compact {
+    --shell-sidebar-inset: var(--vx-spacing);
+    --shell-sidebar-inner-inset: calc(var(--vx-spacing) * 0.5);
+    --shell-sidebar-safe-inset: calc(var(--vx-spacing) * 14);
+    --shell-sidebar-menu-height: calc(var(--vx-spacing) * 9);
+    --shell-sidebar-group-height: calc(var(--vx-spacing) * 7);
+  }
+
+  .density-comfortable {
+    --shell-sidebar-inset: calc(var(--vx-spacing) * 2);
+    --shell-sidebar-inner-inset: var(--vx-spacing);
+    --shell-sidebar-safe-inset: calc(var(--vx-spacing) * 20);
+    --shell-sidebar-menu-height: calc(var(--vx-spacing) * 11);
+    --shell-sidebar-group-height: calc(var(--vx-spacing) * 9);
+  }
+
+  [data-slot="shell-sidebar-nav"] [data-rail="small"] {
+    width: var(--shell-sidebar-group-height);
+  }
+
+  /* Keep the collapsed-width anchor while expanded, including on small screens.
+     Use the same responsive variant as the frame, without a second breakpoint.
+     Resolve inset variables here so density changes cannot break centering. */
+  [data-slot="shell-sidebar-nav"] [data-rail="main"] {
+    width: calc(
+      var(--shell-sidebar-anchor-width) - 2 *
+        (var(--shell-sidebar-inset) + var(--shell-sidebar-inner-inset))
+    );
+  }
+}
+
+@utility h-sidebar-menu {
+  height: var(--shell-sidebar-menu-height);
+}
+
+@utility min-h-sidebar-menu {
+  min-height: var(--shell-sidebar-menu-height);
+}
+
+@utility h-sidebar-group {
+  height: var(--shell-sidebar-group-height);
+}
+
+@utility size-sidebar-group {
+  width: var(--shell-sidebar-group-height);
+  height: var(--shell-sidebar-group-height);
+}
+
+@utility p-sidebar-outer {
+  padding: var(--shell-sidebar-inset);
+}
+
+@utility p-sidebar-inner {
+  padding: var(--shell-sidebar-inner-inset);
+}
+
+@utility gap-sidebar {
+  gap: var(--shell-sidebar-inset);
+}
+
+@utility pl-sidebar-outer {
+  padding-left: var(--shell-sidebar-inset);
+}
+
+@utility pt-sidebar-inner {
+  padding-top: var(--shell-sidebar-inner-inset);
+}
+
+@utility mt-sidebar-inner {
+  margin-top: var(--shell-sidebar-inner-inset);
+}
+
+@utility pt-sidebar-outer {
+  padding-top: var(--shell-sidebar-inset);
+}
+
+@utility pb-sidebar-safe {
+  padding-bottom: var(--shell-sidebar-safe-inset);
+}

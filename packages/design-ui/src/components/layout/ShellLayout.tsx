@@ -209,6 +209,7 @@ export function ShellSidebarFrame({
 
   return (
     <div
+      data-slot="shell-sidebar-frame"
       className={cn(
         "flex shrink-0 flex-col",
         "transition-[width] duration-slow ease-standard motion-reduce:transition-none will-change-[width]",

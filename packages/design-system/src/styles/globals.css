@@ -26,6 +26,7 @@
  * 留着的唯一理由（"使既有 import 解析成功"）随各 portal 收敛完成而消失。 */
 @import "./fullscreen.css";
 @import "./globals-base.css";
+@import "./sidebar.css";
 
 /* @source 排在全部 @import 之后：CSS 规范只允许 @charset / @layer 领先于
  * @import，夹在中间会让后面的 @import 在按规范解析的工具里被丢弃。Tailwind
