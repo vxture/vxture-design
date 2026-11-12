@@ -5,6 +5,10 @@
 
 ---
 
+## 9.13.1 — 2026-11-12
+
+Expose the shared sidebar frame geometry scope for responsive navigation alignment.
+
 ## 9.13.0 — 2026-11-11
 
 新增 DetailList 的可选紧凑标签宽度，默认布局保持不变。9.12.0 已被 registry 中较早产物占用，本次使用新的 minor 版本交付。

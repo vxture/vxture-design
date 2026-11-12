@@ -162,3 +162,9 @@ DataTable 三态一次定齐：加载出骨架行（撑住高度）、空态出 
 界面语言入口统一使用 `ShellLocaleSwitcher`。工具栏使用默认 `variant="icon"`；偏好字段使用 `variant="field"`，显示当前语言和展开箭头。`ShellPreferencePanel` 内置相同字段，展开后共用 `LocaleSelectPanel`：语言标记、母语名称、末尾选中勾选。应用通过 `options` 传入平台语言目录，DS 不拥有语言清单。
 
 字段提供本地化 `buttonLabel` 和 `panelLabel`；请求期间可设置 `disabled`。面板打开时聚焦当前项，方向键及 Home/End 移动，Enter/Space 选择，Escape 关闭；选择后关闭并恢复入口焦点。国家、时区、业务内容语言不属于该界面偏好模式。
+
+### Sidebar geometry
+
+Pair `ShellSidebarNav` with `ShellSidebarFrame`. The frame provides the geometry scope; the navigation derives its icon rail from the current responsive collapsed width and density insets. Menu icons and the collapse control keep the same horizontal anchor in expanded and collapsed modes; collapsed group arrows share that anchor. Do not add application padding or centering overrides. At default density, the desktop frame is 64px wide, the icon center is 32px, menu rows are 40px and group rows are 32px. Small-screen frames remain 48px wide. Verify all three density settings and both modes after changing spacing or control tokens.
+
+Sidebar rows use their own layout utilities rather than generic control sizes. Menu/group heights are 40/32px at default density, 36/28px compact and 44/36px comfortable. The collapse button follows the group height. Keep this matrix consistent across supported DS versions when migrating control tokens.

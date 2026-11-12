@@ -5,6 +5,10 @@
 
 ---
 
+## 12.21.1 — 2026-11-12
+
+Fix sidebar geometry across desktop/mobile, expanded/collapsed states and all three densities. Preserve the Console reference layout independently of generic control-size migrations; align group arrows and collapse controls, and remove collapsed external-action padding.
+
 ## 12.21.0 — 2026-11-12
 
 ### Unified interface language selection
