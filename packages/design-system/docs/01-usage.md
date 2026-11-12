@@ -120,7 +120,14 @@ Accounts and Console opt into `.vx-shell-user-center` from `styles/workbench.css
 It supplies the shared light/dark gradient without decorative artwork. Cards retain
 the semantic `card` surface; consumers must not mix their own translucent card colors.
 `ShellPageContainer layout="user-center"` shares responsive content gutters.
-`ShellFooter` owns legal-footer geometry, while products supply translated content.
+`ShellFooter` owns legal-footer geometry. Pass `legal` with localized policy URLs,
+accessible labels, copyright owner/year and an optional `filings` list. It renders
+one copyright link on ©, followed by brand and Cookie policy icon links, then
+visible terms and privacy links. Icon links have hover/focus tooltips and 32px
+targets; the Cookie toggle icon links a policy, not an interactive consent switch.
+Public portals use `layout="centered"` and supply registrations; tenant user centers
+omit registrations. Keep upper site navigation separate from the legal footer.
+Existing custom `children` remain supported when `legal` is absent.
 In a viewport frame, keep header and footer outside the scrolling content, or pass
 `footer` and `surface="user-center"` to `ShellViewport`.
 

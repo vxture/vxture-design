@@ -21,6 +21,8 @@ import {
   // ==========================================================================
   // 通用交互 - 导航
   // ==========================================================================
+  TrademarkIcon,
+  ToggleLeftIcon,
   HouseIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -370,6 +372,8 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   spinner: CircleNotchIcon,
   "circle-dashed": CircleDashedIcon,
   flag: FlagIcon,
+  trademark: TrademarkIcon,
+  "toggle-left": ToggleLeftIcon,
   "seal-check": SealCheckIcon,
 
   // ==========================================================================
