@@ -24,50 +24,17 @@
  * `next`（package.json 里没有），因此不能 import `next/link`；产品侧有路由库时把
  * 自己的 Link 传进来即可。
  *
- * 结构分五层，间距只用两个 token：--space-xs(8) 与 --space-2xs(4)，叠加
- * 而不是新开档位：
- *
- * L1 容器：p-xs(8，四周)。
- * L2 title/content/footer 三块，横向都各自缩进 px-2xs(4)，与 aside 的
- *   px-xs(8) 叠加得到统一的 12px 图标列起点（title/group 的图标横坐标
- *   因此完全对齐）：
- *   - title：内层图标/标签行 h-header-sm(40) 不变，外层包一层 p-2xs(4，
- *     四周)，块总高 40+4+4=48。用 padding 包一层"外壳"而不是直接在 40 行
- *     上加 padding——40 行本身零内边距，图标盒 40×40 不会被压。
- *     叠加：aside pt-xs(8) + title 自己的 pt-2xs(4) = 12。
- *   - content：flex-1 可滚动，pt-2xs(4) + pb-6xl（只在纵向；横向缩进交给每个
- *     group 自己去对齐 title，content 自己不再重复缩进，否则会跟 group
- *     的缩进叠两次，图标列对不齐）。title→content 靠 title 的 pb-2xs(4)
- *     + content 的 pt-2xs(4) 叠成 8，不用额外的 gap 工具类。
- *   - footer：64px 块（h-header-xl），**只在传了 `footer` 时才存在**。
- *
- *     它原先是常驻空占位，理由写在测试里：「传不传都占同一格，否则导航项会
- *     因为底部有没有东西而上下跳」。那个理由成立，但它真正承担的是**底部安全
- *     区**——滚到底时最后一行不该贴着容器边缘，与内容区 `pb-6xl` 同一件事。
- *
- *     安全区改由 content 自己的 `pb-6xl` 提供之后，空 footer 就只剩 64px 空白
- *     了：既占掉可视高度，又让侧栏底部与内容区底部对不齐。于是不传就不渲染。
- *     间距契约没有破——它换了个更该负责的承担者（owner 2026-09-18）。
- * L3 group：p-2xs(4，四周——纵向是 py，横向缩进对齐 title)。组间距不用
- *   显式 gap，靠相邻两个 group 自己的 pt/pb(4+4) 叠成 8。
- * L4 group 内部：title→items 用 gap-xs(8)。
- * L5 item：h-control-xl(40)，padding=0，gap-xs(8)（图标导轨到标签）。
- *
- * 图标行容器一律不用 justify-center（曾经用过，踩过坑）：justify-center
- * 是动态的，每帧按容器*当前*宽度重算；标签是条件渲染，collapsed 一变就
- * 瞬间从 DOM 消失，跟 aside 的宽度过渡（300ms）完全不同步——结果是点击
- * 收起的瞬间标签先没了，图标被居中到"侧栏还没收窄之前"的宽行正中间，
- * 然后才跟着宽度平滑收窄，看起来就是"先跳一下再收起"。改回默认的
- * justify-start：图标锚定在 aside 不会动的左边缘上，宽度过渡全程原地
- * 不动，只有 label 那一截跟着宽度伸缩，符合"图标不变、内容展开收起"。
- * item/title 的导轨本来就等于收起态可用宽度（40=40），默认左对齐已经是
- * 对的。唯一例外是 group-title 的 chevron 导轨（32×32）比可用宽度（40）
- * 窄 4px——这个差值给它的 NavRail 加一个**静态** ml-2xs(4px) 抵消，
- * 不是动态居中，margin 不随宽度过渡重算，不会跳。
- *
- * group-title 文字额外缩进 pl-xs(8)（加在 NavLabel 上，只在展开态渲染时
- * 才存在，不影响收起态）——不加的话文字贴着按钮左边缘，hover/active
- * 背景一亮就很难看。
+ * Geometry contract:
+ * - ShellSidebarFrame owns width; sidebar.css owns its responsive icon anchor.
+ * - Nav outer/section insets follow density. Main rails derive their width from
+ *   the responsive collapsed width minus both inset pairs (sidebar.css).
+ * - Main icons and the collapse control share that anchor in
+ *   both states; collapsed group arrows also use the same column.
+ * - At default density: frame 64px, insets 12px per side, main rail 40px,
+ *   group row 32px and menu row 40px. The small-screen 48px frame is measured
+ *   with the same responsive variant as the frame.
+ * - Never center the entire row during width transitions. Only its rail centers
+ *   the icon. External-action padding is reserved only when expanded.
  *
  * 复合标题按 " · " 拆出**品牌段**单独染
  * text-primary-text（品牌主色）+ font-mono（等宽——品牌名长短不一，比例字体
@@ -90,18 +57,13 @@
  * title 区域的全局分组收合按钮：常态 opacity-0，hover 或键盘 focus 命中
  * title 整行（group/group-hover）才显示并可点击，避免常驻占视觉噪音。
  *
- * 图标："图标板块"（导轨盒）统一 size-control-xl(40×40)，与 item/title 的
- * 行高同源，天然对齐、居中；group-title 的 chevron 用比例更小的
- * size-control-md(32×32)，因为它所在的行只有 32 高。图标本身：侧栏收合/
- * 展开按钮 20px（Icon size="md"，绕开 ShellIconButton 内置的 size="sm"，
- * 直接传 children）；其余全部 16px（size="sm"，ShellIconButton 默认值）。
- *
- * title 行内顺序：图标 → 域名称 → 全局分组收合按钮（按钮居右，用
- * size-control-md 导轨——跟每个 group 自己的 chevron 同一个尺寸/同一条
- * 右侧列，"对齐分组按钮"）。
+ * 图标导轨的宽度由 sidebar.css 根据侧栏轨宽和密度内边距计算，不能借用控件
+ * 高度作为宽度。默认桌面图标轴线为 32px，窄屏为 24px；展开时保持同一轴线。
+ * 菜单行高 40px，分组行高 32px。收合按钮使用 20px 图标，其余图标为 16px。
+ * 展开态的分组按钮与全局收合按钮居右；收起态的分组按钮回到主图标轴线。
  *
  * 收起态：没有任何文字占位符——标签直接不渲染（条件渲染，不是 opacity
- * 隐藏），图标导轨盒本身固定尺寸不受影响，图标横坐标因此在两态间不跳动；
+ * 隐藏），图标导轨盒保持响应式锚点不受影响，图标横坐标因此在两态间不跳动；
  * 分组标题行本身（连同它的 chevron）仍然渲染，保证收起/展开切换时所有
  * 导航项的纵向位置不因为"标题行消失"而跳动。
  *
@@ -226,7 +188,7 @@ export interface ShellSidebarNavProps {
   readonly linkComponent?: React.ElementType;
   /**
    * 底部固定块（h-header-xl=64）的内容。**不传就整块不渲染**——底部安全区
-   * 已由 content 自己的 `pb-6xl` 提供，不再需要一个空块去占位。
+   * 已由 content 自己的 `pb-sidebar-safe` 提供，不再需要一个空块去占位。
    */
   readonly footer?: React.ReactNode;
   /**
@@ -271,21 +233,23 @@ function writeClosedGroups(storageKey: string, closed: Set<string>) {
   }
 }
 
-/** 导轨盒：固定方形，两态下图标横坐标不变。size 决定所在行的比例。 */
+/** Main rails inherit frame geometry; small rails are reserved for trailing controls. */
 function NavRail({
-  size = "control-xl",
+  size = "main",
   className,
   children,
 }: {
-  size?: "control-xl" | "control-md";
+  size?: "main" | "small";
   className?: string;
   children: ReactNode;
 }) {
   return (
     <span
+      data-slot="shell-sidebar-rail"
+      data-rail={size}
       className={cn(
         "flex shrink-0 items-center justify-center",
-        size === "control-xl" ? "size-control-xl" : "size-control-md",
+        size === "main" ? "h-sidebar-menu" : "h-sidebar-group",
         className,
       )}
     >
@@ -334,9 +298,9 @@ function NavItemRow({
         /* 两行项比单行高，所以行高由内容撑（min-h 而非固定 h）。不传 subLabel
            时内容仍是一行，min-h 与原来的 h-control-xl 等值——单行项的高度、
            图标位置、间距全部不变，这是"纯增量"的具体含义。 */
-        "flex min-h-control-xl items-center gap-xs rounded-md",
+        "flex min-h-sidebar-menu items-center gap-sidebar rounded-md",
         /* 有外链图标时右侧留位，否则长标签会钻到图标底下。 */
-        item.external ? "pr-2xl" : undefined,
+        item.external && !collapsed ? "pr-2xl" : undefined,
         "text-label-md transition-colors duration-fast ease-standard",
         active
           ? "bg-surface-selected text-primary-text"
@@ -463,7 +427,7 @@ function splitBrandTitle(
  * radiusClamp 在默认基数下等值于 rounded-md；其余三处配方默认值必须显式
  * 抵消，否则会改变既有视觉：
  * - `px-0` 抵消 size="sm" 的 px-sm——本行零内边距，缩进由 NavLabel 的
- *   pl-xs 与 chevron 导轨的 ml-2xs 负责。
+ *   pl-sidebar-outer 与共享的 chevron 导轨负责。
  * - `justify-start` 抵消 Button 基类的 justify-center——见头部"图标行容器
  *   一律不用 justify-center"那段，收起态会在宽度过渡中途跳一下。
  * - `border-none` 抵消基类的 1px 透明描边，内容盒回到整 32×32，chevron
@@ -494,14 +458,14 @@ function NavGroupHeader({
       aria-expanded={open}
       className={cn(
         // 焦点环与 outline-none 不在此重复：Button 基类已含配方 `interactive`。
-        "flex h-control-md w-full items-center justify-start gap-xs px-0 border-none",
+        "flex h-sidebar-group w-full items-center justify-start gap-sidebar px-0 border-none",
         "text-overline transition-colors duration-fast ease-standard",
         "text-muted-foreground hover:bg-accent hover:text-foreground",
         "aria-expanded:bg-transparent aria-expanded:text-muted-foreground",
       )}
     >
       {!collapsed && (
-        <NavLabel className="pl-xs text-muted-foreground">
+        <NavLabel className="pl-sidebar-outer text-muted-foreground">
           {brandTitle ? (
             /* 品牌段恒用等宽 + 主色，位置由 brandFirst 决定谁先渲染——
                两种写法共用同一套样式，只是顺序不同。 */
@@ -525,11 +489,8 @@ function NavGroupHeader({
           )}
         </NavLabel>
       )}
-      {/* 固定 4px 静态偏移（不是 justify-center）：32 宽的 chevron 导轨要在
-          40 宽的收起态可用列里跟 item 图标对中，差值是常量 (40-32)/2，用
-          margin 钉死比动态居中更安全——margin 不随 aside 的宽度过渡重算，
-          不会在收起/展开动画中途跳一下。 */}
-      <NavRail size="control-md" className="ml-2xs">
+      {/* Group arrows share the main icon anchor at every density. */}
+      <NavRail size={collapsed ? "main" : "small"} className="h-sidebar-group">
         <Icon name={open ? "chevron-down" : "chevron-right"} size="sm" />
       </NavRail>
     </Button>
@@ -596,13 +557,17 @@ export function ShellSidebarNav({
      * 实测踩到：console 全仓没有第二处 Tooltip 用法，外壳自然没包 Provider）。
      * Radix 的 Provider 可嵌套，已经在外层包过的消费方（opera）不受影响。 */
     <TooltipProvider delayDuration={300}>
-      <div className="flex h-full flex-col p-xs">
+      <div
+        data-slot="shell-sidebar-nav"
+        className="flex h-full flex-col p-sidebar-outer"
+      >
         {/* title */}
-        <div className="shrink-0 p-2xs">
-          <div className="group flex h-header-sm items-center gap-xs">
+        <div className="shrink-0 p-sidebar-inner">
+          <div className="group flex h-header-sm items-center gap-sidebar">
             <NavRail>
               <ShellIconButton
                 icon="sidebar"
+                className="size-sidebar-group"
                 label={collapsed ? text.expandNav : text.collapseNav}
                 onClick={onToggleCollapsed}
               >
@@ -622,7 +587,7 @@ export function ShellSidebarNav({
                 <span className="min-w-0 flex-1" aria-hidden="true" />
               ))}
             {!collapsed && (
-              <NavRail size="control-md">
+              <NavRail size="small">
                 <ShellIconButton
                   icon={allClosed ? "caret-double-down" : "caret-double-up"}
                   label={
@@ -630,7 +595,7 @@ export function ShellSidebarNav({
                   }
                   onClick={toggleAllGroups}
                   className={cn(
-                    "opacity-0 transition-opacity duration-fast ease-standard",
+                    "size-sidebar-group opacity-0 transition-opacity duration-fast ease-standard",
                     "group-hover:opacity-100 focus-visible:opacity-100",
                   )}
                 />
@@ -642,11 +607,9 @@ export function ShellSidebarNav({
         {/* content */}
         <div
           className={cn(
-            /* pb-6xl 与内容区（design-ui ShellLayout 的
-               `px-page-inset pt-page-inset pb-6xl`）同一个档：滚到底时最后一个
-               导航项不该贴着容器边缘，而侧栏与内容区是并排的两列，底部留白对
-               不齐会看得很清楚。原先这段留白由常驻的空 footer 块兼任。 */
-            "min-h-0 flex-1 overflow-y-auto pt-2xs pb-6xl",
+            /* Match the Console sidebar's safe inset at each density. Keep the
+               last item away from the bottom without mounting an empty footer. */
+            "min-h-0 flex-1 overflow-y-auto pt-sidebar-inner pb-sidebar-safe",
             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
           )}
         >
@@ -657,11 +620,11 @@ export function ShellSidebarNav({
                 <div
                   key={section.title}
                   className={cn(
-                    "flex flex-col gap-xs p-2xs",
+                    "flex flex-col gap-sidebar p-sidebar-inner",
                     /* 首组不画：顶上没有要分隔的东西，画了只是一条贴着容器边的线。 */
                     section.dividerBefore &&
                       sectionIndex > 0 &&
-                      "mt-2xs border-t border-border pt-xs",
+                      "mt-sidebar-inner border-t border-border pt-sidebar-outer",
                   )}
                 >
                   <NavGroupHeader
@@ -679,7 +642,7 @@ export function ShellSidebarNav({
                   >
                     <div className="overflow-hidden">
                       <nav
-                        className="flex flex-col gap-xs"
+                        className="flex flex-col gap-sidebar"
                         aria-label={section.title}
                       >
                         {section.items.map((item) => (
@@ -701,7 +664,7 @@ export function ShellSidebarNav({
         </div>
 
         {/* footer — 只在产品侧真的注入了内容时才存在；底部安全区由 content
-            自己的 pb-6xl 负责，不再用一个空块去占 */}
+            自己的 pb-sidebar-safe 负责，不再用一个空块去占 */}
         {footer ? <div className="h-header-xl shrink-0">{footer}</div> : null}
       </div>
     </TooltipProvider>
