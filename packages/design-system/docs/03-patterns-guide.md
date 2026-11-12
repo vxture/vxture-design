@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.2.2** ｜ 更新：2026-11-10
+适用版本：**DS 15.3.0** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -212,3 +212,7 @@ colors. Rows carrying descriptions keep their natural two-line height.
 Pair `ShellSidebarNav` with `ShellSidebarFrame`. The frame provides the geometry scope; the navigation derives its icon rail from the current responsive collapsed width and density insets. Menu icons and the collapse control keep the same horizontal anchor in expanded and collapsed modes; collapsed group arrows share that anchor. Do not add application padding or centering overrides. At default density, the desktop frame is 64px wide, the icon center is 32px, menu rows are 40px and group rows are 32px. Small-screen frames remain 48px wide. Verify all three density settings and both modes after changing spacing or control tokens.
 
 Sidebar rows use their own layout utilities rather than generic control sizes. Menu/group heights are 40/32px at default density, 36/28px compact and 44/36px comfortable. The collapse button follows the group height. Keep this matrix consistent across supported DS versions when migrating control tokens.
+
+### 顶栏尺寸与号码展示
+
+顶栏图标按钮、头像触发器及搜索框统一为 32px，品牌图形为 24px；这些尺寸不随通用控件尺寸或密度改变。独立工具组使用 `ShellHeaderActions`，组间为 16px（窄屏 8px），组内使用 `ShellIconGroup`，间距为 4px；不要在门户自行定义另一套高度或间距。`PhoneNumber` 只呈现调用方提供的 `callingCode` 与 `number`，区号使用弱化文字色；号码解析、国际区号识别与分组由平台负责。

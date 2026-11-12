@@ -1058,7 +1058,7 @@ export const ShellScopeButton = React.forwardRef<
         // media-3xl = 192px。名称过长时截断，但要留得下一个可读的名字——
         // media 刻度前几档是**图标级**尺寸（xs=32px），拿来当宽度上限会把
         // 整个按钮压成只剩图标。
-        "max-w-media-3xl justify-start gap-2xs text-muted-foreground hover:text-foreground",
+        "h-icon-xl max-w-media-3xl justify-start gap-2xs text-muted-foreground hover:text-foreground",
         /* 悬停 / 展开时撑到**与弹出面板同宽**（owner 2026-09-10）。
            常态维持 192px 上限——header 上还有搜索、通知、头像，
            让它长期占 320px 是拿别人的空间换一个多数时候用不上的完整名字。

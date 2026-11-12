@@ -694,6 +694,9 @@ describe("ShellPanelSlots · 一排槽位", () => {
 describe("ShellScopeButton · 当前范围", () => {
   it("ariaLabel 同时落成 aria-label 与 title", () => {
     render(<ShellScopeButton label="某某租户" ariaLabel="切换租户" />);
+    expect(screen.getByRole("button", { name: "切换租户" })).toHaveClass(
+      "h-icon-xl",
+    );
     const btn = screen.getByRole("button", { name: "切换租户" });
     expect(btn).toHaveAttribute("aria-label", "切换租户");
     expect(btn).toHaveAttribute("title", "切换租户");

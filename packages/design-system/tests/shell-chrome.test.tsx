@@ -681,3 +681,11 @@ describe("ShellLegalFooter · 法务链接", () => {
     expect(screen.getByText("© 2026 某某公司")).toBeInTheDocument();
   });
 });
+
+it("header icon buttons keep a 32px box independent of generic controls", () => {
+  render(<ShellIconButton icon="settings" label="Header settings" />);
+  expect(screen.getByRole("button", { name: "Header settings" })).toHaveClass(
+    "size-icon-xl",
+    "p-0",
+  );
+});

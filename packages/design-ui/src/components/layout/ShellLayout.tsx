@@ -100,23 +100,28 @@ export function ShellHeader({
      槽间 16px 是各自沿用的旧值，拼在一起节奏不齐。 */
   const slots = (
     <>
-      <div className="flex min-w-0 items-center gap-xs">{leading}</div>
+      <div className="flex min-w-0 items-center gap-(--spacing-icon-sm)">
+        {leading}
+      </div>
       {center ? (
         <div
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-xs",
+            "flex min-w-0 flex-1 items-center gap-(--spacing-icon-sm)",
             centerAlign === "end" ? "justify-end" : "justify-center",
           )}
         >
           {center}
         </div>
       ) : null}
-      <div className="flex shrink-0 items-center gap-xs">{trailing}</div>
+      <div className="flex shrink-0 items-center gap-(--spacing-icon-sm)">
+        {trailing}
+      </div>
     </>
   );
-  const row = "flex items-center justify-between gap-xs";
+  const row = "flex items-center justify-between gap-(--spacing-icon-sm)";
   return (
     <header
+      data-slot="shell-header"
       data-layout={layout}
       data-surface={surface}
       className={cn(
@@ -135,6 +140,27 @@ export function ShellHeader({
         slots
       )}
     </header>
+  );
+}
+
+/** Standard spacing between independent header action groups. */
+export function ShellHeaderActions({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string | undefined;
+}) {
+  return (
+    <div
+      data-slot="shell-header-actions"
+      className={cn(
+        "flex shrink-0 items-center gap-(--spacing-icon-sm) max-sm:gap-[calc(var(--vx-spacing)*2)]",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }
 

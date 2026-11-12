@@ -5,6 +5,10 @@
 
 ---
 
+## 12.2.0 — 2026-11-12
+
+Add ShellHeaderActions and PhoneNumber presentation components. Standardize header controls at 32px, brand marks at 24px, group spacing at 16px and tool spacing at 4px independently of density. Preserve responsive layout and international calling codes.
+
 ## 12.1.1 — 2026-11-12
 
 Expose the shared sidebar frame geometry scope for responsive navigation alignment.

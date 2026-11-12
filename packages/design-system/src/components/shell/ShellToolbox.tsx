@@ -5,7 +5,7 @@
  * @layer Presentation
  * @category Components - Shell
  *
- * 外观照 Figma HeaderToolbar（123:43）：圆角胶囊，图标 20px、图标间距 16px。
+ * 外观照 Figma HeaderToolbar（123:43）：圆角胶囊，图标 20px、控件 32px、控件间距 4px。
  *
  * **常态透明**（owner 2026-09-26 定，此前常驻 `bg-background` 底是 bug）：
  * 顶栏上常驻一条灰底会把工具箱读成一个输入框或分段控件，抢了标题的注意力。
@@ -69,16 +69,12 @@ export interface ShellToolboxProps {
 }
 
 /**
- * 单个工具的外观：20px 图标格，常态无底色；悬停时亮一块 `bg-card` 底并提到
- * 前景色，开启态（`aria-pressed`）只提前景色。
- *
- * 悬停底比图标外扩 4px（`box-content p-2xs`），再用等量负外边距（`-m-2xs`）
- * 抵掉——底块有了呼吸，胶囊的尺寸与图标间距仍是 Figma 的 20px / 16px，不因
- * 加了悬停底而变胖。
+ * 单个工具使用固定 32px 交互区域、20px 图标，常态无底色。
+ * 悬停时点亮背景，布局尺寸保持不变，不再用负外边距扩展命中区域。
  */
 const TOOL_CLASS = cn(
   interactive,
-  "relative -m-2xs box-content inline-flex size-icon-md shrink-0 items-center justify-center rounded-md p-2xs",
+  "relative inline-flex size-icon-xl shrink-0 items-center justify-center rounded-md",
   "text-muted-foreground transition-colors duration-fast",
   "hover:bg-card hover:text-foreground",
   "aria-pressed:text-foreground",
@@ -219,7 +215,7 @@ export function ShellToolbox({
       aria-label={label}
       data-slot="shell-toolbox"
       className={cn(
-        "inline-flex items-center gap-md rounded-lg px-xs py-2xs",
+        "inline-flex items-center gap-(--vx-spacing) rounded-lg",
         "transition-colors duration-fast hover:bg-accent focus-within:bg-accent",
         className,
       )}
