@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
   ShellHeader,
+  ShellFooter,
   ShellHeaderActions,
   ShellPageContainer,
   ShellSidebarFrame,
@@ -139,7 +140,14 @@ describe("ShellHeader · 三个插槽与中槽对齐", () => {
     expect(cls(header).split(" ")).not.toContain("px-lg");
     expect(header.children).toHaveLength(1);
     const inner = cls(header.children[0]).split(" ");
-    for (const t of ["mx-auto", "max-w-page-2xl", "px-xl", "justify-between"]) {
+    for (const t of [
+      "mx-auto",
+      "max-w-page-2xl",
+      "px-4",
+      "sm:px-6",
+      "lg:px-8",
+      "justify-between",
+    ]) {
       expect(inner).toContain(t);
     }
     expect(header.children[0]!.children).toHaveLength(2);
@@ -531,4 +539,54 @@ it("header actions own group spacing and preserve content", () => {
     container.querySelector('[data-slot="shell-header-actions"]'),
   ).toHaveClass("gap-(--spacing-icon-sm)");
   expect(screen.getByRole("button", { name: "Account" })).toBeInTheDocument();
+});
+
+// User centers retain stationary chrome while only their content scrolls.
+describe("user-center shell contract", () => {
+  it("places the footer outside the scroll region", () => {
+    const { container } = render(
+      <ShellViewport
+        header={<span>Header</span>}
+        sidebar={<span>Nav</span>}
+        sidebarMode="expanded"
+        surface="user-center"
+        footer={<ShellFooter>Legal</ShellFooter>}
+      >
+        <p>Content</p>
+      </ShellViewport>,
+    );
+    const main = container.querySelector("main")!;
+    const footer = container.querySelector("footer")!;
+    expect(main.contains(footer)).toBe(false);
+    expect(footer.parentElement).toBe(main.parentElement?.parentElement);
+    expect(footer.textContent).toBe("Legal");
+    expect(container.firstElementChild?.className).toContain(
+      "vx-shell-user-center",
+    );
+  });
+
+  it("removes the default header surface for transparent chrome", () => {
+    const { container } = render(
+      <ShellHeader
+        surface="transparent"
+        layout="centered"
+        leading="Brand"
+        trailing="Tools"
+      />,
+    );
+    const header = container.querySelector("header")!;
+    expect(header.className).not.toContain("shadow-sticky");
+    expect(header.className).not.toContain("bg-card");
+    expect(header.firstElementChild?.textContent).toBe("BrandTools");
+  });
+
+  it("preserves the content safety area in the shared user-center layout", () => {
+    const { container } = render(
+      <ShellPageContainer layout="user-center">Content</ShellPageContainer>,
+    );
+    expect(container.firstElementChild?.className).toContain("pb-6xl");
+    expect(container.firstElementChild?.className).not.toContain(
+      "px-page-inset",
+    );
+  });
 });

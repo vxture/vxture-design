@@ -251,6 +251,7 @@
       "ShellBootScreen",
       "ShellBrand",
       "ShellDock",
+      "ShellFooter",
       "ShellFullscreenToggle",
       "ShellHeader",
       "ShellHeaderActions",
