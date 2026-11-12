@@ -65,25 +65,51 @@ export function ShellHeader({
 }: ShellHeaderProps) {
   return (
     <header
+      data-slot="shell-header"
       className={cn(
-        "flex shrink-0 items-center justify-between gap-md bg-card px-lg shadow-sticky",
+        "flex shrink-0 items-center justify-between gap-(--spacing-icon-sm) bg-card px-lg shadow-sticky",
         HEADER_HEIGHT_CLASS[height],
         className,
       )}
     >
-      <div className="flex min-w-0 items-center gap-sm">{leading}</div>
+      <div className="flex min-w-0 items-center gap-(--spacing-icon-sm)">
+        {leading}
+      </div>
       {center ? (
         <div
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-sm",
+            "flex min-w-0 flex-1 items-center gap-(--spacing-icon-sm)",
             centerAlign === "end" ? "justify-end" : "justify-center",
           )}
         >
           {center}
         </div>
       ) : null}
-      <div className="flex shrink-0 items-center gap-2xs">{trailing}</div>
+      <div className="flex shrink-0 items-center gap-(--spacing-icon-sm)">
+        {trailing}
+      </div>
     </header>
+  );
+}
+
+/** Standard spacing between independent header action groups. */
+export function ShellHeaderActions({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string | undefined;
+}) {
+  return (
+    <div
+      data-slot="shell-header-actions"
+      className={cn(
+        "flex shrink-0 items-center gap-(--spacing-icon-sm) max-sm:gap-[calc(var(--vx-spacing)*2)]",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }
 

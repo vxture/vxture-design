@@ -5,6 +5,10 @@
 
 ---
 
+## 12.22.0 — 2026-11-12
+
+Add ShellHeaderActions and PhoneNumber presentation components. Standardize header controls at 32px, brand marks at 24px, group spacing at 16px and tool spacing at 4px independently of density. Preserve responsive layout and international calling codes.
+
 ## 12.21.2 — 2026-11-12
 
 Match field-triggered language panels to the trigger width while preserving icon-triggered panel sizing. Reuse the option marker and language names in the selected field value, with truncation for long labels and unchanged keyboard selection.

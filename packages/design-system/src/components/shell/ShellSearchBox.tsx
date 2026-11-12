@@ -174,7 +174,7 @@ export function ShellSearchBox({
         <PopoverAnchor asChild>
           <div
             className={cn(
-              "flex h-control-md w-full max-w-panel-sm items-center gap-xs rounded-lg px-sm",
+              "flex h-icon-xl w-full max-w-panel-sm items-center gap-xs rounded-lg px-sm",
               "bg-muted/60 text-body-sm text-muted-foreground",
               "transition-colors duration-fast",
               "focus-within:bg-card focus-within:ring-ring focus-within:ring-2",

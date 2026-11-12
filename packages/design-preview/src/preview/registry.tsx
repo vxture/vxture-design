@@ -19,6 +19,7 @@
 
 import * as React from "react";
 import {
+  PhoneNumber,
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -240,6 +241,7 @@ import {
   PanelList,
   ShellBootScreen,
   ShellHeader,
+  ShellHeaderActions,
   ShellLauncher,
   ShellPageContainer,
   ShellPanelControlRow,
@@ -2514,6 +2516,32 @@ export const ENTRIES: readonly Entry[] = [
     render: () => <ViewModeSwitchDemo />,
   },
   {
+    name: "PhoneNumber",
+    layer: "pattern",
+    group: "数据展示",
+    tags: ["vxture", "component"],
+    render: () => (
+      <Row>
+        <PhoneNumber callingCode="+86" number="188 8888 8888" />
+        <PhoneNumber callingCode="+1" number="415 555 2671" />
+        <PhoneNumber number="188****8888" />
+      </Row>
+    ),
+  },
+  {
+    name: "ShellHeaderActions",
+    layer: "pattern",
+    group: "布局",
+    tags: ["vxture", "component"],
+    deviation: "统一顶栏独立工具组的间距，窄屏自动收紧。",
+    render: () => (
+      <ShellHeaderActions>
+        <span>工具组</span>
+        <span>用户</span>
+      </ShellHeaderActions>
+    ),
+  },
+  {
     name: "ShellLayout",
     layer: "pattern",
     group: "布局",
@@ -3967,7 +3995,12 @@ function ShellLayoutDemo() {
             center={
               <span className="text-body-sm text-muted-foreground">中槽</span>
             }
-            trailing={<span className="text-label-md">工具区</span>}
+            trailing={
+              <ShellHeaderActions>
+                <span className="text-label-md">工具区</span>
+                <span className="text-label-md">用户</span>
+              </ShellHeaderActions>
+            }
           />
         }
         sidebar={

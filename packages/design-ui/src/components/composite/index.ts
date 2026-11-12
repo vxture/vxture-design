@@ -46,3 +46,5 @@ export * from "./structure/Section";
 export * from "./structure/SectionHeader";
 export * from "./structure/SectionNav";
 export * from "./structure/ViewHeader";
+
+export * from "./data/PhoneNumber";

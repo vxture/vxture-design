@@ -36,7 +36,8 @@
     display: inline-flex;
     align-items: center;
     min-width: 0;
-    gap: var(--space-sm);
+    height: var(--spacing-icon-xl);
+    gap: calc(var(--vx-spacing) * 2);
     color: var(--foreground);
     text-decoration: none;
   }
