@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.2.1** ｜ 更新：2026-11-10
+适用版本：**DS 15.2.2** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -200,6 +200,8 @@ Preferences and action sections use gap-xs (8px). Medal bases are icon-lg
 colors. Rows carrying descriptions keep their natural two-line height.
 
 ### 统一语言选择
+
+字段入口的面板与触发字段等宽；图标入口保留独立面板宽度。字段当前值与选项行共用标识、母语名和可选译名结构，标识由调用方的 `flag` 提供，未知语言回退到语言代码。
 
 界面语言入口统一使用 `ShellLocaleSwitcher`。工具栏使用默认 `variant="icon"`；偏好字段使用 `variant="field"`，显示当前语言和展开箭头。`ShellPreferencePanel` 内置相同字段，展开后共用 `LocaleSelectPanel`：语言标记、母语名称、末尾选中勾选。应用通过 `options` 传入平台语言目录，DS 不拥有语言清单。
 
