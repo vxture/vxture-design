@@ -5,6 +5,10 @@
 
 ---
 
+## 15.3.1 — 2026-11-12
+
+Keep portal brand text at 20px and secondary labels at 16px. Protect header buttons, groups and avatars from shrinking; keep scope trigger spacing stable on hover and menu open. Match compact header insets to Console.
+
 ## 15.3.0 — 2026-11-12
 
 Add ShellHeaderActions and PhoneNumber presentation components. Standardize header controls at 32px, brand marks at 24px, group spacing at 16px and tool spacing at 4px independently of density. Preserve responsive layout and international calling codes.

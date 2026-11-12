@@ -36,6 +36,7 @@
     display: inline-flex;
     align-items: center;
     min-width: 0;
+    flex-shrink: 0;
     height: var(--spacing-icon-xl);
     gap: calc(var(--vx-spacing) * 2);
     color: var(--foreground);
@@ -57,21 +58,18 @@
     object-fit: contain;
   }
 
-  /* 字号在这里定死，**不由调用方挂排版角色工具类来收**。字标的字重是品牌
-     基线的一部分，不该被一个只想改字号的完整角色类顺手换掉。 */
+  /* Brand typography stays fixed across portal font and density preferences. */
   .vx-brand-name {
     flex: 0 0 auto;
     font-family: var(--font-brand);
-    font-size: var(--vx-text-lg);
+    font-size: var(--vx-text-xl);
     font-weight: var(--vx-font-weight-bold);
     line-height: 1;
     letter-spacing: var(--vx-tracking-tight);
     color: var(--foreground);
   }
 
-  /* 子名与分隔符：比字标**略小一档**，不是小一大截。字标是 18px，
-     这里直接取 base（16px）——品牌组合不是正文角色，
-     子名会读成一句注脚而不是标识的组成部分。 */
+  /* Keep secondary brand labels at 16px below the shared 20px wordmark. */
   .vx-brand-local-name,
   .vx-brand-separator {
     flex: 0 0 auto;

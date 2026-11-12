@@ -104,7 +104,7 @@ export function ShellHeader({
       {center ? (
         <div
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-(--spacing-icon-sm)",
+            "hidden min-w-0 flex-1 items-center gap-(--spacing-icon-sm) sm:flex",
             centerAlign === "end" ? "justify-end" : "justify-center",
           )}
         >
@@ -126,7 +126,7 @@ export function ShellHeader({
         "shrink-0",
         HEADER_SURFACE_CLASS[surface],
         HEADER_HEIGHT_CLASS[height],
-        layout === "full" && [row, "px-lg"],
+        layout === "full" && [row, "px-lg max-sm:px-md"],
         className,
       )}
     >
