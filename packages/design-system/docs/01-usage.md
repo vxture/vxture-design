@@ -105,3 +105,22 @@ CI 安装私有包：`actions/setup-node` 配 `registry-url: https://npm.pkg.git
 ## 7. 品牌标识组合
 
 DS 提供 `.vx-brand-lockup` / `.vx-brand-mark` / `.vx-brand-name` / `.vx-brand-local-name` / `.vx-brand-separator` 五个组合类，只承载品牌字体、间距、颜色和图标尺寸基线。应用端可组合表达品牌上下文，不得重新定义其中任何基线；现有类不够先扩 DS。
+
+## 8. Portal and tenant user-center frames
+
+Public headers use `ShellHeader layout="centered"`: the outer measure is 1536px,
+with responsive 16px / 24px / 32px gutters. At 1536px, usable width is 1472px.
+Use `surface="transparent"` for a genuinely borderless, shadowless header;
+products that scroll the document must reconcile its surface after scroll restoration.
+
+Accounts and Console opt into `.vx-shell-user-center` from `styles/workbench.css`.
+It supplies the shared light/dark gradient without decorative artwork. Cards retain
+the semantic `card` surface; consumers must not mix their own translucent card colors.
+`ShellPageContainer layout="user-center"` shares responsive content gutters.
+`ShellFooter` owns legal-footer geometry, while products supply translated content.
+In a viewport frame, keep header and footer outside the scrolling content, or pass
+`footer` and `surface="user-center"` to `ShellViewport`.
+
+Session revalidation is separate from loading UI: keep the verified same-account
+view during transient checks, clear it on a confirmed identity change or sign-out,
+and never restart a failed top-level silent sign-in just because a tab gains focus.
