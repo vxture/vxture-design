@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
   ShellHeader,
+  ShellHeaderActions,
   ShellPageContainer,
   ShellSidebarFrame,
   ShellViewport,
@@ -448,4 +449,17 @@ describe("ContextMenu · 右键才开", () => {
     await screen.findByRole("menu");
     expect(screen.getAllByRole("menuitem")).toHaveLength(2);
   });
+});
+
+it("header actions own group spacing and preserve content", () => {
+  const { container } = render(
+    <ShellHeaderActions>
+      <button>Tools</button>
+      <button>Account</button>
+    </ShellHeaderActions>,
+  );
+  expect(
+    container.querySelector('[data-slot="shell-header-actions"]'),
+  ).toHaveClass("gap-(--spacing-icon-sm)");
+  expect(screen.getByRole("button", { name: "Account" })).toBeInTheDocument();
 });
