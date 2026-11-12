@@ -62,14 +62,14 @@
   .vx-brand-name {
     flex: 0 0 auto;
     font-family: var(--font-brand);
-    font-size: var(--vx-text-xl);
+    font-size: var(--vx-text-2xl);
     font-weight: var(--vx-font-weight-bold);
     line-height: 1;
     letter-spacing: var(--vx-tracking-tight);
     color: var(--foreground);
   }
 
-  /* Keep secondary brand labels at 16px below the shared 20px wordmark. */
+  /* Keep secondary brand labels at 16px below the shared 24px wordmark. */
   .vx-brand-local-name,
   .vx-brand-separator {
     flex: 0 0 auto;
@@ -103,7 +103,7 @@
        用的，这里整体覆盖。
 
        字号**不跟** heading 角色：heading 阶梯最小一档是 heading-3 = 24px，
-       比字标（20px）还大，贴片会反客为主。故字号仍取 body-lg
+       与字标（24px）同大，贴片会反客为主。故字号仍取 body-lg
        （16px），比字标小一档。 */
     font-family: var(--heading-3-font-family);
     font-weight: var(--vx-font-weight-bold);

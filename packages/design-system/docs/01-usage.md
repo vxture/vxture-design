@@ -108,8 +108,11 @@ DS 提供 `.vx-brand-lockup` / `.vx-brand-mark` / `.vx-brand-name` / `.vx-brand-
 
 ## 8. Portal and tenant user-center frames
 
-Public headers use `ShellHeader layout="centered"`: the outer measure is 1536px,
-with responsive 16px / 24px / 32px gutters. At 1536px, usable width is 1472px.
+Public headers use `ShellHeader layout="centered"`: usable width caps at 1536px.
+The outer frame caps at 1600px, including responsive 16px / 24px / 32px safety gutters.
+Body and footer retain a 1536px outer frame (1472px usable at desktop widths).
+At viewports of 1600px and wider, header endpoints extend 32px beyond the body on each side.
+Narrower viewports preserve safe gutters instead of forcing this offset.
 Use `surface="transparent"` for a genuinely borderless, shadowless header;
 products that scroll the document must reconcile its surface after scroll restoration.
 
