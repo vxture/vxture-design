@@ -5,6 +5,10 @@
 
 ---
 
+## 15.2.2 — 2026-11-12
+
+Match field-triggered language panels to the trigger width while preserving icon-triggered panel sizing. Reuse the option marker and language names in the selected field value, with truncation for long labels and unchanged keyboard selection.
+
 ## 15.2.1 — 2026-11-12
 
 Fix sidebar geometry across desktop/mobile, expanded/collapsed states and all three densities. Preserve the Console reference layout independently of generic control-size migrations; align group arrows and collapse controls, and remove collapsed external-action padding.
