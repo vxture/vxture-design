@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">15.4.0</td><td><span class="tag t-good">minor</span> 统一语言面板；新增当前语言字段与键盘选择</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.3.0</td><td><span class="tag t-good">minor</span> 新增可选 footerNote；修正关闭按钮、OTP 光标、焦点空间、选择框与危险操作反馈</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">15.4.1</td><td><span class="tag t-good">minor</span> 统一语言面板；新增当前语言字段与键盘选择</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.3.1</td><td><span class="tag t-good">minor</span> 新增可选 footerNote；修正关闭按钮、OTP 光标、焦点空间、选择框与危险操作反馈</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">4.0.0</td><td><span class="tag">不变</span> 沿用既有 token；本次不发布新版本</td></tr>
 </tbody></table></div>
-<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.4.0 会解析到 design-ui 12.3.0 与 design-tokens 4.0.0；无需直接添加下层包。此次相对 15.0.1 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
+<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.4.1 会解析到 design-ui 12.3.1 与 design-tokens 4.0.0；无需直接添加下层包。此次相对 15.0.1 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
 
 <section id="breaking14"><h2><span class="num">02a</span>必须改的：标题阶梯重排——level 即 h，页头改用页头文本<span class="h2-meta">design-ui 11.0.0 / 伞包 14.0.0 · major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">原四档里 level 4 用的 <span class="mono">label-md</span> 与 level 3 的 <span class="mono">title-sm</span> 取值完全相同，三、四级看上去一样；level 与 h 也错位（owner 2026-09-26）。现在 <strong>level 的数字就是 h 的数字</strong>：level 1 是页头 <span class="mono">ViewHeader</span>（改用 <span class="mono">heading-3</span>），<span class="mono">SectionHeader</span> 只有 level 2 / 3 / 4。<strong>每一级都带虚线下边框，可关。</strong></div>
@@ -541,7 +541,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 15.4.0 · design-tokens 4.0.0 / design-ui 12.3.0 / design-system 15.4.0 · 2026-11-10</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 15.4.1 · design-tokens 4.0.0 / design-ui 12.3.1 / design-system 15.4.1 · 2026-11-10</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

@@ -35,9 +35,8 @@ import { cn } from "../../utils/cn";
 export type ShellHeaderHeight = "sm" | "md" | "lg" | "xl";
 
 /**
- * 横向布局：`full`（缺省）铺满视口宽，工作台用；`centered` 内容居中封顶
- * （`max-w-page-2xl`，左右 16px / 24px / 32px），官网用——官网的标识与工具要和正文同列，
- * 超宽屏上贴着两边会离内容太远（owner 2026-09-25，Figma Header_website 2226:10298）。
+ * Full workspace chrome spans the viewport. Centered public chrome caps usable
+ * width at 1536px plus safety gutters, extending 32px beyond the desktop body.
  */
 export type ShellHeaderLayout = "full" | "centered";
 
@@ -137,7 +136,7 @@ export function ShellHeader({
         <div
           className={cn(
             row,
-            "mx-auto h-full w-full max-w-page-2xl px-4 sm:px-6 lg:px-8",
+            "mx-auto h-full w-full max-w-[calc(var(--container-page-2xl)+var(--vx-spacing)*16)] px-4 sm:px-6 lg:px-8",
           )}
         >
           {slots}

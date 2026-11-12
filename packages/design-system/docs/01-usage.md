@@ -1,6 +1,6 @@
 # 01 使用契约
 
-适用版本：**DS 15.4.0** ｜ 更新：2026-11-10 ｜ 适用：所有 `@vxture/design-system` 消费方
+适用版本：**DS 15.4.1** ｜ 更新：2026-11-10 ｜ 适用：所有 `@vxture/design-system` 消费方
 
 Design System（DS）是 UI 的规则层、基准层和通用能力层。应用端负责业务语义组装，不重新定义基础控件、UI 引擎、设计 token 或通用模式。
 
@@ -108,8 +108,11 @@ DS 提供 `.vx-brand-lockup` / `.vx-brand-mark` / `.vx-brand-name` / `.vx-brand-
 
 ## 8. Portal and tenant user-center frames
 
-Public headers use `ShellHeader layout="centered"`: the outer measure is 1536px,
-with responsive 16px / 24px / 32px gutters. At 1536px, usable width is 1472px.
+Public headers use `ShellHeader layout="centered"`: usable width caps at 1536px.
+The outer frame caps at 1600px, including responsive 16px / 24px / 32px safety gutters.
+Body and footer retain a 1536px outer frame (1472px usable at desktop widths).
+At viewports of 1600px and wider, header endpoints extend 32px beyond the body on each side.
+Narrower viewports preserve safe gutters instead of forcing this offset.
 Use `surface="transparent"` for a genuinely borderless, shadowless header;
 products that scroll the document must reconcile its surface after scroll restoration.
 

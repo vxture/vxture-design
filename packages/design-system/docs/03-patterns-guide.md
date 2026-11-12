@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.4.0** ｜ 更新：2026-11-10
+适用版本：**DS 15.4.1** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -217,6 +217,6 @@ Sidebar rows use their own layout utilities rather than generic control sizes. M
 
 顶栏图标按钮、头像触发器及搜索框统一为 32px，品牌图形为 24px；这些尺寸不随通用控件尺寸或密度改变。独立工具组使用 `ShellHeaderActions`，组间为 16px（窄屏 8px），组内使用 `ShellIconGroup`，间距为 4px；不要在门户自行定义另一套高度或间距。`PhoneNumber` 只呈现调用方提供的 `callingCode` 与 `number`，区号使用弱化文字色；号码解析、国际区号识别与分组由平台负责。
 
-Header brand words are fixed at 20px, secondary labels at 16px. Header tool glyphs are 16px inside protected 32px controls; groups use zero padding and 4px gaps. Scope triggers use 8px horizontal padding and a 4px content gap, with stable geometry on hover/open. Full-width administration headers share Console insets (`px-lg`, `max-sm:px-md`) across density preferences. Public portals retain their website content containers.
+Header brand words are fixed at 24px, secondary labels at 16px. Header tool glyphs are 16px inside protected 32px controls; groups use zero padding and 4px gaps. Scope triggers use 8px horizontal padding and a 4px content gap, with stable geometry on hover/open. Full-width administration headers share Console insets (`px-lg`, `max-sm:px-md`) across density preferences. Public headers cap their usable width at 1536px, extending beyond the 1472px body measure on wide screens.
 
 Administration header inset parity follows Console: desktop compact/default/comfortable = 12/24/24px; narrow-screen = 8/16/16px. The newer token line has a wider comfortable content inset, so full headers normalize that mode without changing content density.

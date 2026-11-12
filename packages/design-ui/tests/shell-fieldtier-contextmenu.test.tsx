@@ -127,7 +127,7 @@ describe("ShellHeader · 三个插槽与中槽对齐", () => {
     expect(header.children).toHaveLength(2);
   });
 
-  /** 官网：内容居中封顶，槽位包在一层 max-w-page-2xl 的内层里。 */
+  /** Public chrome preserves 1536px usable width outside the body measure. */
   it("layout=centered：内层居中封顶，外层不再挂横向内距", () => {
     const { container } = render(
       <ShellHeader
@@ -142,7 +142,7 @@ describe("ShellHeader · 三个插槽与中槽对齐", () => {
     const inner = cls(header.children[0]).split(" ");
     for (const t of [
       "mx-auto",
-      "max-w-page-2xl",
+      "max-w-[calc(var(--container-page-2xl)+var(--vx-spacing)*16)]",
       "px-4",
       "sm:px-6",
       "lg:px-8",
