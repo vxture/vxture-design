@@ -466,6 +466,90 @@ it("header actions own group spacing and preserve content", () => {
 });
 
 // User centers retain stationary chrome while only their content scrolls.
+describe("shared legal footer", () => {
+  const policy = (key: string) => ({
+    href: "/legal/" + key,
+    label: key + " policy",
+  });
+  const legal = {
+    copyright: { ...policy("copyright"), owner: "Example Studio", year: 2026 },
+    brand: policy("brand"),
+    cookies: policy("cookies"),
+    terms: policy("terms"),
+    privacy: policy("privacy"),
+    navigationLabel: "Legal information",
+  };
+  it("keeps copyright unique and icon links before visible policy names", () => {
+    render(<ShellFooter legal={legal} />);
+    const links = screen.getAllByRole("link");
+    expect(
+      links.map((link) => link.getAttribute("aria-label") || link.textContent),
+    ).toEqual([
+      "copyright policy",
+      "brand policy",
+      "cookies policy",
+      "terms policy",
+      "privacy policy",
+    ]);
+    expect(
+      screen.getByRole("link", { name: "copyright policy" }),
+    ).toHaveTextContent("©");
+    expect(screen.getByRole("link", { name: "brand policy" }).textContent).toBe(
+      "",
+    );
+    expect(
+      screen.getByRole("link", { name: "cookies policy" }).textContent,
+    ).toBe("");
+    expect(screen.getByText("2026 Example Studio")).toBeInTheDocument();
+    expect(screen.getAllByRole("navigation")).toHaveLength(1);
+    for (const link of links) {
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    }
+  });
+  it("adds registration only when supplied by a public portal", () => {
+    render(
+      <ShellFooter
+        legal={{
+          ...legal,
+          filingsLabel: "Site registration",
+          filings: [{ text: "ICP 123", link: "https://example.com/icp" }],
+        }}
+      />,
+    );
+    expect(
+      screen.getByRole("navigation", { name: "Site registration" }),
+    ).toContainElement(screen.getByRole("link", { name: "ICP 123" }));
+  });
+  it("exposes icon destinations to keyboard users without changing link order", async () => {
+    const user = userEvent.setup();
+    render(<ShellFooter legal={legal} />);
+    await user.tab();
+    expect(
+      screen.getByRole("link", { name: "copyright policy" }),
+    ).toHaveFocus();
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "copyright policy",
+    );
+    await user.tab();
+    expect(screen.getByRole("link", { name: "brand policy" })).toHaveFocus();
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "brand policy",
+    );
+  });
+  it("continues to support existing custom footer content", () => {
+    render(
+      <ShellFooter>
+        <a href="/help">Help</a>
+      </ShellFooter>,
+    );
+    expect(screen.getByRole("link", { name: "Help" })).toHaveAttribute(
+      "href",
+      "/help",
+    );
+  });
+});
+
 describe("user-center shell contract", () => {
   it("places the footer outside the scroll region", () => {
     const { container } = render(
