@@ -36,7 +36,7 @@ export type ShellHeaderHeight = "sm" | "md" | "lg" | "xl";
 
 /**
  * 横向布局：`full`（缺省）铺满视口宽，工作台用；`centered` 内容居中封顶
- * （`max-w-page-2xl`，左右 `px-xl`），官网用——官网的标识与工具要和正文同列，
+ * （`max-w-page-2xl`，左右 16px / 24px / 32px），官网用——官网的标识与工具要和正文同列，
  * 超宽屏上贴着两边会离内容太远（owner 2026-09-25，Figma Header_website 2226:10298）。
  */
 export type ShellHeaderLayout = "full" | "centered";
@@ -75,7 +75,7 @@ export interface ShellHeaderProps {
 const HEADER_SURFACE_CLASS: Record<ShellHeaderSurface, string> = {
   card: "bg-card shadow-sticky",
   background: "bg-background shadow-sticky",
-  transparent: "bg-transparent",
+  transparent: "bg-transparent shadow-none border-0",
 };
 
 const HEADER_HEIGHT_CLASS: Record<ShellHeaderHeight, string> = {
@@ -134,7 +134,12 @@ export function ShellHeader({
       )}
     >
       {layout === "centered" ? (
-        <div className={cn(row, "mx-auto h-full w-full max-w-page-2xl px-xl")}>
+        <div
+          className={cn(
+            row,
+            "mx-auto h-full w-full max-w-page-2xl px-4 sm:px-6 lg:px-8",
+          )}
+        >
           {slots}
         </div>
       ) : (
@@ -179,6 +184,8 @@ export interface ShellPageContainerProps {
   children: ReactNode;
   /** 内容最大行宽档。默认 `wide-2xl`（数据密集型面板）。 */
   width?: ShellContentWidth | undefined;
+  /** User centers share responsive portal gutters; other workspaces retain fluid insets. */
+  layout?: "workspace" | "user-center" | undefined;
   className?: string | undefined;
 }
 
@@ -199,6 +206,7 @@ export interface ShellPageContainerProps {
 export function ShellPageContainer({
   children,
   width = "wide-2xl",
+  layout = "workspace",
   className,
 }: ShellPageContainerProps) {
   return (
@@ -206,7 +214,9 @@ export function ShellPageContainer({
       className={cn(
         "mx-auto flex w-full flex-col",
         CONTENT_WIDTH_CLASS[width],
-        "px-page-inset pt-page-inset pb-6xl",
+        layout === "user-center"
+          ? "px-4 sm:px-6 lg:px-8 pt-page-inset pb-6xl"
+          : "px-page-inset pt-page-inset pb-6xl",
         className,
       )}
     >
@@ -253,6 +263,9 @@ export function ShellSidebarFrame({
 
 export interface ShellViewportProps {
   header: ReactNode;
+  /** Stationary footer outside the content scroll region. */
+  footer?: ReactNode;
+  surface?: "workspace" | "user-center" | undefined;
   sidebar: ReactNode;
   sidebarMode: ShellSidebarMode;
   /**
@@ -271,6 +284,8 @@ export interface ShellViewportProps {
 
 export function ShellViewport({
   header,
+  footer,
+  surface = "workspace",
   sidebar,
   sidebarMode,
   focusMode = false,
@@ -283,7 +298,8 @@ export function ShellViewport({
     return (
       <div
         className={cn(
-          "flex h-dvh flex-col bg-background text-foreground",
+          "flex h-dvh flex-col text-foreground",
+          surface === "user-center" ? "vx-shell-user-center" : "bg-background",
           className,
         )}
       >
@@ -295,7 +311,8 @@ export function ShellViewport({
   return (
     <div
       className={cn(
-        "flex h-dvh flex-col bg-background text-foreground",
+        "flex h-dvh flex-col text-foreground",
+        surface === "user-center" ? "vx-shell-user-center" : "bg-background",
         className,
       )}
     >
@@ -310,6 +327,36 @@ export function ShellViewport({
 
         {dock}
       </div>
+      {footer}
     </div>
+  );
+}
+
+/** Shared legal footer geometry for public portals and tenant user centers. */
+export function ShellFooter({
+  children,
+  layout = "full",
+  className,
+}: {
+  children: ReactNode;
+  layout?: ShellHeaderLayout | undefined;
+  className?: string | undefined;
+}) {
+  return (
+    <footer
+      data-slot="shell-footer"
+      className={cn("shrink-0 bg-transparent text-muted-foreground", className)}
+    >
+      <div
+        className={cn(
+          "flex min-h-12 w-full flex-wrap items-center justify-between gap-3 py-3 text-xs max-sm:justify-center",
+          layout === "centered"
+            ? "mx-auto max-w-page-2xl px-4 sm:px-6 lg:px-8"
+            : "px-lg max-sm:px-md [.density-comfortable_&]:px-[calc(var(--vx-spacing)*6)] [.density-comfortable_&]:max-sm:px-[calc(var(--vx-spacing)*4)]",
+        )}
+      >
+        {children}
+      </div>
+    </footer>
   );
 }

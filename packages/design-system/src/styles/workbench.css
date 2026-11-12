@@ -29,3 +29,39 @@
 :root {
   --background: var(--vx-color-brand-20);
 }
+
+/* Shared tenant user-center atmosphere; cards keep their standard DS surfaces. */
+:root {
+  --surface-user-center:
+    radial-gradient(
+      ellipse at 32% 90%,
+      color-mix(in srgb, var(--primary) 7%, transparent),
+      transparent 52%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--primary) 13%, var(--card)) 0%,
+      color-mix(in srgb, var(--primary) 6%, var(--card)) 22%,
+      var(--background) 52%,
+      var(--primary-muted) 100%
+    );
+}
+.dark {
+  --surface-user-center:
+    radial-gradient(
+      ellipse at 32% 90%,
+      color-mix(in srgb, var(--primary) 7%, transparent),
+      transparent 52%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--primary) 12%, var(--background)),
+      color-mix(in srgb, var(--primary) 5%, var(--background)) 38%,
+      var(--background) 78%
+    );
+}
+.vx-shell-user-center {
+  position: relative;
+  isolation: isolate;
+  background: var(--surface-user-center);
+}
