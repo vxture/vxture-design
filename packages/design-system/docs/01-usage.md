@@ -1,6 +1,6 @@
 # 01 使用契约
 
-适用版本：**DS 15.4.1** ｜ 更新：2026-11-10 ｜ 适用：所有 `@vxture/design-system` 消费方
+适用版本：**DS 15.5.0** ｜ 更新：2026-11-10 ｜ 适用：所有 `@vxture/design-system` 消费方
 
 Design System（DS）是 UI 的规则层、基准层和通用能力层。应用端负责业务语义组装，不重新定义基础控件、UI 引擎、设计 token 或通用模式。
 
@@ -120,7 +120,14 @@ Accounts and Console opt into `.vx-shell-user-center` from `styles/workbench.css
 It supplies the shared light/dark gradient without decorative artwork. Cards retain
 the semantic `card` surface; consumers must not mix their own translucent card colors.
 `ShellPageContainer layout="user-center"` shares responsive content gutters.
-`ShellFooter` owns legal-footer geometry, while products supply translated content.
+`ShellFooter` owns legal-footer geometry. Pass `legal` with localized policy URLs,
+accessible labels, copyright owner/year and an optional `filings` list. It renders
+one copyright link on ©, followed by brand and Cookie policy icon links, then
+visible terms and privacy links. Icon links have hover/focus tooltips and 32px
+targets; the Cookie toggle icon links a policy, not an interactive consent switch.
+Public portals use `layout="centered"` and supply registrations; tenant user centers
+omit registrations. Keep upper site navigation separate from the legal footer.
+Existing custom `children` remain supported when `legal` is absent.
 In a viewport frame, keep header and footer outside the scrolling content, or pass
 `footer` and `surface="user-center"` to `ShellViewport`.
 
