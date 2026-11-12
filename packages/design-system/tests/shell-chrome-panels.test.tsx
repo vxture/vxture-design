@@ -47,8 +47,8 @@ beforeAll(() => {
 });
 
 const LOCALES = [
-  { locale: "zh-CN", nativeName: "简体中文", label: "Chinese" },
-  { locale: "en-US", nativeName: "English" },
+  { locale: "zh-CN", nativeName: "简体中文", label: "Chinese", flag: "CN" },
+  { locale: "en-US", nativeName: "English", flag: "US" },
   { locale: "ja-JP" },
 ];
 
@@ -121,12 +121,44 @@ describe("ShellLocaleSwitcher · 选完就关", () => {
     const { user, onLocaleChange } = setup({ variant: "field" });
     const trigger = screen.getByRole("button", { name: "Select language" });
     expect(trigger).toHaveTextContent("简体中文");
+    expect(trigger).toHaveTextContent("CN");
+    expect(trigger).toHaveTextContent("Chinese");
     await user.click(trigger);
     expect(screen.getByRole("menuitemradio", { checked: true })).toHaveFocus();
     await user.keyboard("{ArrowDown}{Enter}");
     expect(onLocaleChange).toHaveBeenCalledWith("en-US");
     await waitFor(() => expect(trigger).toHaveFocus());
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it.each(["zh-CN", "en-US"])(
+    "字段和菜单复用 %s 的标识与名称",
+    async (currentLocale) => {
+      const { user } = setup({ variant: "field", currentLocale });
+      const trigger = screen.getByRole("button", { name: "Select language" });
+      await user.click(trigger);
+      const selected = screen.getByRole("menuitemradio", { checked: true });
+      const option = LOCALES.find((item) => item.locale === currentLocale)!;
+      for (const value of [option.flag, option.nativeName, option.label].filter(
+        Boolean,
+      )) {
+        expect(trigger).toHaveTextContent(value!);
+        expect(selected).toHaveTextContent(value!);
+      }
+      expect(screen.getByRole("dialog")).toHaveClass(
+        "w-(--radix-popover-trigger-width)",
+      );
+      expect(screen.getByRole("dialog")).not.toHaveClass("min-w-media-2xl");
+    },
+  );
+
+  it("图标入口保留独立面板宽度", async () => {
+    const { user } = setup();
+    await user.click(screen.getByRole("button", { name: "Select language" }));
+    expect(screen.getByRole("dialog")).toHaveClass("w-auto", "min-w-media-2xl");
+    expect(screen.getByRole("dialog")).not.toHaveClass(
+      "w-(--radix-popover-trigger-width)",
+    );
   });
 
   it("字段入口支持禁用，并以代码回退未知语言", async () => {
@@ -223,8 +255,8 @@ describe("ShellPreferencePanel · 四行偏好", () => {
     await user.click(screen.getByRole("button", { name: "Select language" }));
     const options = screen.getAllByRole("menuitemradio");
     expect(options.map((o) => o.textContent)).toEqual([
-      "简体中文Chinese",
-      "English",
+      "CN简体中文Chinese",
+      "USEnglish",
       "ja-JP",
     ]);
   });

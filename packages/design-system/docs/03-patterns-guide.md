@@ -159,6 +159,8 @@ DataTable 三态一次定齐：加载出骨架行（撑住高度）、空态出 
 
 ### 统一语言选择
 
+字段入口的面板与触发字段等宽；图标入口保留独立面板宽度。字段当前值与选项行共用标识、母语名和可选译名结构，标识由调用方的 `flag` 提供，未知语言回退到语言代码。
+
 界面语言入口统一使用 `ShellLocaleSwitcher`。工具栏使用默认 `variant="icon"`；偏好字段使用 `variant="field"`，显示当前语言和展开箭头。`ShellPreferencePanel` 内置相同字段，展开后共用 `LocaleSelectPanel`：语言标记、母语名称、末尾选中勾选。应用通过 `options` 传入平台语言目录，DS 不拥有语言清单。
 
 字段提供本地化 `buttonLabel` 和 `panelLabel`；请求期间可设置 `disabled`。面板打开时聚焦当前项，方向键及 Home/End 移动，Enter/Space 选择，Escape 关闭；选择后关闭并恢复入口焦点。国家、时区、业务内容语言不属于该界面偏好模式。
