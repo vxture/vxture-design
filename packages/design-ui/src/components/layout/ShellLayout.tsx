@@ -67,7 +67,7 @@ export function ShellHeader({
     <header
       data-slot="shell-header"
       className={cn(
-        "flex shrink-0 items-center justify-between gap-(--spacing-icon-sm) bg-card px-lg shadow-sticky",
+        "flex shrink-0 items-center justify-between gap-(--spacing-icon-sm) bg-card px-lg max-sm:px-md shadow-sticky",
         HEADER_HEIGHT_CLASS[height],
         className,
       )}
@@ -78,7 +78,7 @@ export function ShellHeader({
       {center ? (
         <div
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-(--spacing-icon-sm)",
+            "hidden min-w-0 flex-1 items-center gap-(--spacing-icon-sm) sm:flex",
             centerAlign === "end" ? "justify-end" : "justify-center",
           )}
         >

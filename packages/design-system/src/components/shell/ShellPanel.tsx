@@ -127,7 +127,7 @@ export const ShellPanelContent = React.forwardRef<
            **必须写成字面量**，不能抽成常量再模板拼接：类名由消费方的 Tailwind
            扫描本包源码生成，扫描器只认源码里出现过的完整串——拼出来的 `w-80`
            它看不见，于是那条规则根本不会被 emit，运行时表现为"宽度设了没生效"。
-           ShellScopeButton 的 `w-80` 同理，两处刻意重复。 */
+           Scope triggers keep their own compact width. */
         "flex w-80 flex-col gap-md p-md",
         className,
       )}
@@ -615,29 +615,15 @@ export const ShellScopeButton = React.forwardRef<
         // media-3xl = 192px。名称过长时截断，但要留得下一个可读的名字——
         // media 刻度前几档是**图标级**尺寸（xs=32px），拿来当宽度上限会把
         // 整个按钮压成只剩图标。
-        "h-icon-xl max-w-media-3xl justify-start gap-2xs text-muted-foreground hover:text-foreground",
-        /* 悬停 / 展开时撑到**与弹出面板同宽**（owner 2026-09-10）。
-           常态维持 192px 上限——header 上还有搜索、通知、头像，
-           让它长期占 320px 是拿别人的空间换一个多数时候用不上的完整名字。
-           想看全名的那一刻恰恰就是要展开面板的那一刻，所以两件事绑在一起。
-
-           `w-80` 与 ShellPanelContent 那处**刻意重复**、不抽常量：类名由消费方的
-           Tailwind 扫描源码生成，模板拼接出来的串扫描器看不见，规则不会被 emit，
-           症状是"设了宽度没生效"。
-
-           过渡加在 max-width 上：宽度突变会把右边那几个图标一格一格弹开。 */
-        "transition-[max-width] duration-150 hover:w-80 hover:max-w-none",
-        active && "w-80 max-w-none bg-accent text-foreground",
+        "h-icon-xl min-w-(--spacing-icon-xl) max-w-media-3xl justify-start gap-(--vx-spacing) px-[calc(var(--vx-spacing)*2)] py-0 text-muted-foreground hover:text-foreground",
+        // Opening the menu changes tone without displacing adjacent header tools.
+        active && "bg-accent text-foreground",
         className,
       )}
       {...passthrough}
     >
       {icon ? <Icon name={icon} size="sm" className="shrink-0" /> : null}
-      {/* `flex-1`：撑满图标与角标之间的余量，**把角标顶到右端**。
-          只写 `min-w-0 truncate` 时,名称只占自身宽度,而按钮在 hover/展开态被
-          撑到 320px——三个元素全挤在左端(justify-start),右边空出百来像素,
-          下拉角标落在控件中部(owner 2026-09-20 实看)。
-          常态 192px 上限下行为不变:那时余量为 0,truncate 照旧生效。 */}
+      {/* Labels yield space while the icon and caret keep their size. */}
       <span className="min-w-0 flex-1 truncate text-left text-label-md">
         {label}
       </span>
