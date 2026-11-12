@@ -109,6 +109,8 @@ export const ICON_GROUPS = [
       "spinner", // 加载中
       "circle-dashed", // 待定/排队态
       "flag",
+      "trademark", // 品牌政策
+      "toggle-left", // Cookie 政策
       "seal-check", // 已认证/官方
     ],
   },

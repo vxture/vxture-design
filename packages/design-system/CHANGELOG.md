@@ -5,6 +5,10 @@
 
 ---
 
+## 15.5.0 — 2026-11-13
+
+Add a shared legal footer with one copyright policy link on ©, brand and Cookie policy icon links, visible terms/privacy links and optional public registrations. Preserve localized destinations, keyboard tooltips, fixed 32px targets, responsive wrapping and user-center stationary geometry.
+
 ## 15.4.1 — 2026-11-12
 
 Correct public header usable width to 1536px plus responsive safety gutters, leaving body/footer at 1472px. Increase shared brand wordmarks to 24px while retaining 24px marks and 32px controls.
