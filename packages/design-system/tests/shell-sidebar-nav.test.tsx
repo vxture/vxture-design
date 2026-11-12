@@ -575,7 +575,7 @@ describe("底部块", () => {
   /**
    * 原先这里断言的是相反的事：「传不传 footer 都占同一格」。那条的理由是怕导航项
    * 因为底部有没有东西而上下跳，成立；但它真正承担的是**底部安全区**——而安全区
-   * 现在由 content 自己的 pb-6xl 提供（与内容区同档），空块就只剩 64px 空白，
+   * 现在由 content 自己的 pb-sidebar-safe 提供（与内容区同档），空块就只剩 64px 空白，
    * 既占掉可视高度，又让侧栏底部与内容区底部对不齐（owner 2026-09-18）。
    */
   it("不传 footer 时整块不渲染", () => {
@@ -590,11 +590,11 @@ describe("底部块", () => {
   });
 
   /** 安全区换了承担者，就得有人盯着新的承担者还在——否则这次改动等于净删留白。 */
-  it("滚动区自带底部安全留白（pb-6xl），与内容区同档", () => {
+  it("滚动区自带底部安全留白", () => {
     const { container } = renderNav();
     const scroll = container.querySelector(".overflow-y-auto") as HTMLElement;
     expect(scroll).not.toBeNull();
-    expect(scroll.className).toContain("pb-6xl");
+    expect(scroll.className).toContain("pb-sidebar-safe");
   });
 });
 
@@ -627,4 +627,59 @@ describe("无障碍名", () => {
       screen.getByRole("button", { name: "全部展开" }),
     ).toBeInTheDocument();
   });
+});
+
+/** The sidebar's 64px frame and 12px insets require a 40px rail in both modes. */
+describe("shared sidebar geometry", () => {
+  it.each([false, true])(
+    "preserves the 40px icon rail when collapsed=%s",
+    (collapsed) => {
+      renderNav({ collapsed });
+      for (const link of screen.getAllByRole("link")) {
+        expect(link).toHaveClass("min-h-sidebar-menu");
+        expect(link.firstElementChild).toHaveAttribute("data-rail", "main");
+        expect(link.firstElementChild).toHaveClass("h-sidebar-menu");
+        expect(link).not.toHaveClass("justify-center");
+      }
+      for (const button of screen
+        .getAllByRole("button")
+        .filter((button) => button.hasAttribute("aria-expanded"))) {
+        expect(button).toHaveClass("h-sidebar-group");
+        expect(button.lastElementChild).toHaveAttribute(
+          "data-rail",
+          collapsed ? "main" : "small",
+        );
+        expect(button.lastElementChild).toHaveClass("h-sidebar-group");
+      }
+      const toggle = screen.getByRole("button", {
+        name: collapsed ? "Expand navigation" : "Collapse navigation",
+      });
+      expect(toggle.parentElement).toHaveAttribute("data-rail", "main");
+      expect(toggle).toHaveClass("size-sidebar-group");
+    },
+  );
+});
+
+it("does not reserve external-action space when the sidebar is collapsed", () => {
+  renderNav({
+    collapsed: true,
+    sections: [
+      {
+        title: "Products",
+        items: [
+          {
+            href: "/product",
+            label: "Product",
+            icon: "home",
+            external: {
+              href: "https://example.com/docs",
+              label: "Product docs",
+            },
+          },
+        ],
+      },
+    ],
+  });
+  expect(screen.getByRole("link")).not.toHaveClass("pr-2xl");
+  expect(screen.queryByRole("link", { name: "Product docs" })).toBeNull();
 });

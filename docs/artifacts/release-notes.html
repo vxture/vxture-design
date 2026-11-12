@@ -215,7 +215,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">本次 <strong>design-system 15.2.0</strong> 新增弹窗页脚说明插槽，并修正关闭按钮、验证码光标、焦点环、原生选择框和危险操作反馈。从 15.0.1 升级无需迁移；从 12.x 升级仍须完成中间版本的破坏性变更迁移。</p>
+    <p class="lede">本次 <strong>design-system 15.2.1</strong> 新增弹窗页脚说明插槽，并修正关闭按钮、验证码光标、焦点环、原生选择框和危险操作反馈。从 15.0.1 升级无需迁移；从 12.x 升级仍须完成中间版本的破坏性变更迁移。</p>
   </div>
 
 <section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-11-10 · minor</span></h2><div class="rule"></div>
@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">15.2.0</td><td><span class="tag t-good">minor</span> 统一语言面板；新增当前语言字段与键盘选择</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.1.0</td><td><span class="tag t-good">minor</span> 新增可选 footerNote；修正关闭按钮、OTP 光标、焦点空间、选择框与危险操作反馈</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">15.2.1</td><td><span class="tag t-good">minor</span> 统一语言面板；新增当前语言字段与键盘选择</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.1.1</td><td><span class="tag t-good">minor</span> 新增可选 footerNote；修正关闭按钮、OTP 光标、焦点空间、选择框与危险操作反馈</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">4.0.0</td><td><span class="tag">不变</span> 沿用既有 token；本次不发布新版本</td></tr>
 </tbody></table></div>
-<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.2.0 会解析到 design-ui 12.1.0 与 design-tokens 4.0.0；无需直接添加下层包。此次相对 15.0.1 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
+<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.2.1 会解析到 design-ui 12.1.1 与 design-tokens 4.0.0；无需直接添加下层包。此次相对 15.0.1 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
 
 <section id="breaking14"><h2><span class="num">02a</span>必须改的：标题阶梯重排——level 即 h，页头改用页头文本<span class="h2-meta">design-ui 11.0.0 / 伞包 14.0.0 · major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">原四档里 level 4 用的 <span class="mono">label-md</span> 与 level 3 的 <span class="mono">title-sm</span> 取值完全相同，三、四级看上去一样；level 与 h 也错位（owner 2026-09-26）。现在 <strong>level 的数字就是 h 的数字</strong>：level 1 是页头 <span class="mono">ViewHeader</span>（改用 <span class="mono">heading-3</span>），<span class="mono">SectionHeader</span> 只有 level 2 / 3 / 4。<strong>每一级都带虚线下边框，可关。</strong></div>
@@ -270,16 +270,16 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p><span class="mono">DataTableColumn.align</span> 的缺省从<strong>一律 <span class="mono">left</span></strong> 改为<strong>随位置</strong>：首列 <span class="mono">left</span>、其余 <span class="mono">center</span>。</p>
 <div class="note warn"><strong>影响面是「所有没显式写 align 的非首列」。</strong>它们从左对齐变成居中，<strong>没有任何编译期信号</strong>——表格照常渲染，只是看起来不一样了。文本列尤其明显：一列居中的中文描述读起来比左对齐费劲得多。<br><br><strong>怎么处理：</strong>不是全部加回 <span class="mono">align:"left"</span>。新缺省对多数表是对的（短枚举、状态、数量居中更整齐），值得逐表看一眼；<strong>只有承载长文本的列需要显式写回 <span class="mono">left</span></strong>。</div>
 
-<h3>② <span class="mono">"numeric"</span> 这个名字换了含义（12.0.0 + 12.1.0）</h3>
+<h3>② <span class="mono">"numeric"</span> 这个名字换了含义（12.0.0 + 12.1.1）</h3>
 <p>这一条要连着两个版本一起读，单看任何一个都会得出错误结论：</p>
 <div class="tw"><table>
 <thead><tr><th>版本</th><th><span class="mono">align:"numeric"</span> 的含义</th></tr></thead>
 <tbody>
 <tr><td class="mono">11.x</td><td>金额档（定宽块）</td></tr>
 <tr><td class="mono">12.0.0</td><td><span class="tag t-bad">不存在</span> 改名为 <span class="mono">"money"</span>，写 <span class="mono">"numeric"</span> 编译失败</td></tr>
-<tr><td class="mono">12.1.0+</td><td><span class="tag t-warn">回来了，但换了意思</span> 纯数值档，与 <span class="mono">"money"</span> 并列</td></tr>
+<tr><td class="mono">12.1.1+</td><td><span class="tag t-warn">回来了，但换了意思</span> 纯数值档，与 <span class="mono">"money"</span> 并列</td></tr>
 </tbody></table></div>
-<div class="note danger"><strong>直接从 11.x 跳到 12.1.0+ 的，编译器帮不了你。</strong>12.0.0 那一步会报错（名字没了），所以只要中途在 12.0.0 停一下就一定会被发现；<strong>但一步跨到 12.1.0+，<span class="mono">"numeric"</span> 又是个合法值了</strong>——代码编过，金额列却按纯数值渲染。<br><br><strong>怎么找：</strong><br><span class="mono">grep -rn 'align: *"numeric"' src/</span><br>逐个判断它当初想表达的是<strong>金额</strong>还是<strong>数值</strong>：是金额就改成 <span class="mono">"money"</span>，是纯数值就原样留着。这一步只能人读，没有机械判据——两种意图在旧代码里长得一模一样。</div>
+<div class="note danger"><strong>直接从 11.x 跳到 12.1.1+ 的，编译器帮不了你。</strong>12.0.0 那一步会报错（名字没了），所以只要中途在 12.0.0 停一下就一定会被发现；<strong>但一步跨到 12.1.1+，<span class="mono">"numeric"</span> 又是个合法值了</strong>——代码编过，金额列却按纯数值渲染。<br><br><strong>怎么找：</strong><br><span class="mono">grep -rn 'align: *"numeric"' src/</span><br>逐个判断它当初想表达的是<strong>金额</strong>还是<strong>数值</strong>：是金额就改成 <span class="mono">"money"</span>，是纯数值就原样留着。这一步只能人读，没有机械判据——两种意图在旧代码里长得一模一样。</div>
 <p>另外 12.0.0 同批定稿了金额档的呈现（定宽块、居中不贴右缘）、操作列回定宽、排序标换成上下一对箭头；这些不需要调用方改动。</p>
 </section>
 
@@ -541,7 +541,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 15.2.0 · design-tokens 4.0.0 / design-ui 12.1.0 / design-system 15.2.0 · 2026-11-10</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 15.2.1 · design-tokens 4.0.0 / design-ui 12.1.1 / design-system 15.2.1 · 2026-11-10</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

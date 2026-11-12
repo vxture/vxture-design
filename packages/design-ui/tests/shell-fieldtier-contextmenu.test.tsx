@@ -220,6 +220,10 @@ describe("ShellSidebarFrame · 隐藏态是卸载，不是宽度归零", () => {
       </ShellSidebarFrame>,
     );
     expect(cls(container.firstElementChild)).toContain(expected);
+    expect(container.firstElementChild).toHaveAttribute(
+      "data-slot",
+      "shell-sidebar-frame",
+    );
     expect(screen.getByText("导航")).toBeInTheDocument();
   });
 
