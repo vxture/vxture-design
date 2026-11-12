@@ -459,7 +459,7 @@ export const ShellIconButton = React.forwardRef<
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "size-icon-xl p-0 text-muted-foreground hover:text-foreground",
+        "size-icon-xl shrink-0 p-0 text-muted-foreground hover:text-foreground",
         active && "bg-accent text-foreground",
         active && activeClassName,
         className,
@@ -501,7 +501,7 @@ export function ShellIconGroup({
       role="group"
       aria-label={label}
       className={cn(
-        "inline-flex items-center gap-(--vx-spacing) rounded-lg transition-colors duration-fast hover:bg-accent focus-within:bg-accent",
+        "inline-flex shrink-0 items-center gap-(--vx-spacing) rounded-lg transition-colors duration-fast hover:bg-accent focus-within:bg-accent",
         className,
       )}
     >
@@ -867,7 +867,7 @@ export function ShellUserMenu({
           aria-label={openLabel}
           title={openLabel}
           className={cn(
-            "relative size-icon-xl rounded-full p-0",
+            "relative size-icon-xl shrink-0 rounded-full p-0",
             triggerClassName,
           )}
         >
@@ -1114,7 +1114,7 @@ function ShellUserAvatar({ user }: { user: ShellUserMenuUser }) {
     // not keep a stale "loaded" status that would hide the silhouette fallback.
     <Avatar
       key={user.avatarSrc ?? "__default__"}
-      className="size-icon-xl text-muted-foreground"
+      className="size-icon-xl shrink-0 text-muted-foreground"
     >
       {user.avatarSrc ? (
         <AvatarImage
