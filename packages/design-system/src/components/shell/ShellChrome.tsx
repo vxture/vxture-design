@@ -296,6 +296,31 @@ const FONT_SIZE_OPTIONS: readonly ShellFontSizePreference[] = [
  */
 const HAIRLINE_FIELD = SHELL_PANEL_HAIRLINE;
 
+/** Shared option content keeps field values and menu rows visually identical. */
+function LocaleOptionContent({ option }: { option: LocaleSelectOption }) {
+  return (
+    <>
+      {option.flag ? (
+        <span className="shrink-0 text-body-md" aria-hidden="true">
+          {option.flag}
+        </span>
+      ) : null}
+      <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
+        <span className="max-w-full truncate text-label-md">
+          {option.nativeName ?? option.label ?? option.locale}
+        </span>
+        {option.nativeName &&
+        option.label &&
+        option.label !== option.nativeName ? (
+          <span className="max-w-full truncate text-body-sm text-muted-foreground">
+            {option.label}
+          </span>
+        ) : null}
+      </span>
+    </>
+  );
+}
+
 export function LocaleSelectPanel({
   activeLocale,
   options = DEFAULT_LOCALE_OPTIONS,
@@ -348,23 +373,7 @@ export function LocaleSelectPanel({
             className="h-auto w-full justify-start gap-sm px-sm py-xs text-left"
             onClick={() => onSelect(option.locale)}
           >
-            {option.flag ? (
-              <span className="shrink-0 text-body-md" aria-hidden="true">
-                {option.flag}
-              </span>
-            ) : null}
-            <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
-              <span className="text-label-md">
-                {option.nativeName ?? option.label ?? option.locale}
-              </span>
-              {option.nativeName &&
-              option.label &&
-              option.label !== option.nativeName ? (
-                <span className="text-body-sm text-muted-foreground">
-                  {option.label}
-                </span>
-              ) : null}
-            </span>
+            <LocaleOptionContent option={option} />
             {active ? <Icon name="check" size="sm" /> : null}
           </Button>
         );
@@ -592,6 +601,11 @@ export function ShellLocaleSwitcher({
   onLocaleChange,
 }: ShellLocaleSwitcherProps) {
   const [open, setOpen] = useState(false);
+  const currentOption = options.find(
+    (option) => option.locale === currentLocale,
+  ) ?? {
+    locale: currentLocale,
+  };
 
   return (
     <div
@@ -615,13 +629,7 @@ export function ShellLocaleSwitcher({
                 open && activeButtonClassName,
               )}
             >
-              <span className="truncate">
-                {options.find((option) => option.locale === currentLocale)
-                  ?.nativeName ??
-                  options.find((option) => option.locale === currentLocale)
-                    ?.label ??
-                  currentLocale}
-              </span>
+              <LocaleOptionContent option={currentOption} />
               <Icon name="chevron-down" size="sm" />
             </Button>
           ) : (
@@ -639,7 +647,13 @@ export function ShellLocaleSwitcher({
           align={align}
           sideOffset={8}
           aria-label={panelLabel}
-          className={cn("w-auto min-w-media-2xl p-xs", popoverClassName)}
+          className={cn(
+            "p-xs",
+            variant === "field"
+              ? "w-(--radix-popover-trigger-width)"
+              : "w-auto min-w-media-2xl",
+            popoverClassName,
+          )}
         >
           <LocaleSelectPanel
             activeLocale={currentLocale}
