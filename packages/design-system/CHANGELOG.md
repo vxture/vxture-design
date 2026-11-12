@@ -5,6 +5,10 @@
 
 ---
 
+## 15.4.1 — 2026-11-12
+
+Correct public header usable width to 1536px plus responsive safety gutters, leaving body/footer at 1472px. Increase shared brand wordmarks to 24px while retaining 24px marks and 32px controls.
+
 ## 15.3.1 — 2026-11-12
 
 Keep portal brand text at 20px and secondary labels at 16px. Protect header buttons, groups and avatars from shrinking; keep scope trigger spacing stable on hover and menu open. Match compact header insets to Console.

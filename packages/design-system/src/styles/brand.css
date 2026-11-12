@@ -62,14 +62,14 @@
   .vx-brand-name {
     flex: 0 0 auto;
     font-family: var(--font-brand);
-    font-size: var(--vx-text-xl);
+    font-size: var(--vx-text-2xl);
     font-weight: var(--vx-font-weight-bold);
     line-height: 1;
     letter-spacing: var(--vx-tracking-tight);
     color: var(--foreground);
   }
 
-  /* Keep secondary brand labels at 16px below the shared 20px wordmark. */
+  /* Keep secondary brand labels at 16px below the shared 24px wordmark. */
   .vx-brand-local-name,
   .vx-brand-separator {
     flex: 0 0 auto;
