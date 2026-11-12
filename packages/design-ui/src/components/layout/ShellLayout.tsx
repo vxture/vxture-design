@@ -31,13 +31,6 @@
 
 import type { ReactNode } from "react";
 import { cn } from "../../utils/cn";
-import { Icon } from "../../icons/Icon";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../base/overlay/Tooltip";
 
 export type ShellHeaderHeight = "sm" | "md" | "lg" | "xl";
 
@@ -341,8 +334,10 @@ export function ShellViewport({
 /** Legal destinations and localized names; policy ownership stays with consumers. */
 export interface ShellFooterLegal {
   copyright: { href: string; label: string; owner: string; year: number };
-  brand: { href: string; label: string };
-  cookies: { href: string; label: string };
+  /** @deprecated Brand policy links are no longer displayed in legal footers. */
+  brand?: { href: string; label: string } | undefined;
+  /** Omit for compact tenant-user footers. */
+  cookies?: { href: string; label: string } | undefined;
   terms: { href: string; label: string };
   privacy: { href: string; label: string };
   navigationLabel: string;
@@ -350,80 +345,58 @@ export interface ShellFooterLegal {
   filings?: readonly { text: string; link: string }[] | undefined;
 }
 
-/** Shared policy links preserve visible order, keyboard access and safe tap targets. */
+/** Keep copyright as plain text and right-align both wrapping navigation groups. */
 function FooterLegalContent({ legal }: { legal: ShellFooterLegal }) {
   const linkClass =
     "inline-flex min-h-icon-xl items-center rounded-sm hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
-  const iconLink = (
-    item: { href: string; label: string },
-    symbol: ReactNode,
-  ) => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <a
-          href={item.href}
-          aria-label={item.label}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(linkClass, "w-icon-xl justify-center")}
-        >
-          {symbol}
-        </a>
-      </TooltipTrigger>
-      <TooltipContent>{item.label}</TooltipContent>
-    </Tooltip>
-  );
+  const policies = [
+    ...(legal.cookies ? [legal.cookies] : []),
+    legal.terms,
+    legal.privacy,
+    legal.copyright,
+  ];
   return (
-    <TooltipProvider delayDuration={200}>
-      <span className="inline-flex shrink-0 items-center gap-1">
-        {iconLink(legal.copyright, <span aria-hidden="true">©</span>)}
-        <span>
-          {legal.copyright.year} {legal.copyright.owner}
-        </span>
+    <>
+      <span className="inline-flex min-h-icon-xl shrink-0 items-center">
+        © {legal.copyright.year} {legal.copyright.owner}
       </span>
-      <nav
-        aria-label={legal.navigationLabel}
-        className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1"
-      >
-        {iconLink(
-          legal.brand,
-          <Icon name="trademark" size="sm" aria-hidden="true" />,
-        )}
-        {iconLink(
-          legal.cookies,
-          <Icon name="toggle-left" size="sm" aria-hidden="true" />,
-        )}
-        {[legal.terms, legal.privacy].map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(linkClass, "px-1")}
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
-      {!!legal.filings?.length && (
+      <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-x-6 gap-y-1">
         <nav
-          aria-label={legal.filingsLabel}
-          className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1"
+          aria-label={legal.navigationLabel}
+          className="flex max-w-full flex-wrap items-center justify-end gap-x-4 gap-y-1"
         >
-          {legal.filings.map((item) => (
+          {policies.map((item) => (
             <a
-              key={item.link}
-              href={item.link}
+              key={item.href}
+              href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(linkClass, "break-words")}
+              className={cn(linkClass, "whitespace-nowrap")}
             >
-              {item.text}
+              {item.label}
             </a>
           ))}
         </nav>
-      )}
-    </TooltipProvider>
+        {!!legal.filings?.length && (
+          <nav
+            aria-label={legal.filingsLabel}
+            className="flex max-w-full flex-wrap items-center justify-end gap-x-4 gap-y-1"
+          >
+            {legal.filings.map((item) => (
+              <a
+                key={item.link}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(linkClass, "break-words")}
+              >
+                {item.text}
+              </a>
+            ))}
+          </nav>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -446,7 +419,8 @@ export function ShellFooter({
     >
       <div
         className={cn(
-          "flex min-h-12 w-full flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-xs max-sm:justify-center",
+          "flex min-h-12 w-full flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-xs",
+          !legal && "max-sm:justify-center",
           layout === "centered"
             ? "mx-auto max-w-page-2xl px-4 sm:px-6 lg:px-8"
             : "px-lg max-sm:px-md [.density-comfortable_&]:px-[calc(var(--vx-spacing)*6)] [.density-comfortable_&]:max-sm:px-[calc(var(--vx-spacing)*4)]",
