@@ -5,6 +5,10 @@
 
 ---
 
+## 12.4.1 — 2026-11-13
+
+Keep copyright plain on the left; right-align text-only policies and a separate registration group. Public footers show Cookie policy, terms, privacy and copyright; compact footers omit Cookie policy and registrations. Remove policy icons, tooltips and the brand link, preserving safe wrapping and keyboard focus.
+
 ## 12.4.0 — 2026-11-13
 
 Add a shared legal footer with one copyright policy link on ©, brand and Cookie policy icon links, visible terms/privacy links and optional public registrations. Preserve localized destinations, keyboard tooltips, fixed 32px targets, responsive wrapping and user-center stationary geometry.
