@@ -95,9 +95,7 @@ export function ShellHeader({
   surface = "card",
   className,
 }: ShellHeaderProps) {
-  /* 槽内、槽间统一 `gap-xs`（标准密度 8px）：Figma 四种 Header 的左 / 中 / 右三组
-     与组内零件都是 8px 一格（owner 2026-09-26 重排）。此前左槽 10px、右槽 4px、
-     槽间 16px 是各自沿用的旧值，拼在一起节奏不齐。 */
+  // Header slot spacing is shared across portals and independent of content density.
   const slots = (
     <>
       <div className="flex min-w-0 items-center gap-(--spacing-icon-sm)">
