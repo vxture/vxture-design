@@ -126,7 +126,10 @@ export function ShellHeader({
         "shrink-0",
         HEADER_SURFACE_CLASS[surface],
         HEADER_HEIGHT_CLASS[height],
-        layout === "full" && [row, "px-lg max-sm:px-md"],
+        layout === "full" && [
+          row,
+          "px-lg max-sm:px-md [.density-comfortable_&]:px-[calc(var(--vx-spacing)*6)] [.density-comfortable_&]:max-sm:px-[calc(var(--vx-spacing)*4)]",
+        ],
         className,
       )}
     >
