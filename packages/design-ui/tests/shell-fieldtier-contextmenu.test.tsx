@@ -473,69 +473,75 @@ describe("shared legal footer", () => {
   });
   const legal = {
     copyright: { ...policy("copyright"), owner: "Example Studio", year: 2026 },
-    brand: policy("brand"),
-    cookies: policy("cookies"),
     terms: policy("terms"),
     privacy: policy("privacy"),
     navigationLabel: "Legal information",
   };
-  it("keeps copyright unique and icon links before visible policy names", () => {
-    render(<ShellFooter legal={legal} />);
-    const links = screen.getAllByRole("link");
-    expect(
-      links.map((link) => link.getAttribute("aria-label") || link.textContent),
-    ).toEqual([
-      "copyright policy",
-      "brand policy",
-      "cookies policy",
-      "terms policy",
-      "privacy policy",
-    ]);
-    expect(
-      screen.getByRole("link", { name: "copyright policy" }),
-    ).toHaveTextContent("©");
-    expect(screen.getByRole("link", { name: "brand policy" }).textContent).toBe(
-      "",
+  it("keeps copyright plain and shows only the three compact text links", () => {
+    const { container } = render(<ShellFooter legal={legal} />);
+    const copyright = screen.getByText("© 2026 Example Studio");
+    expect(copyright.closest("a")).toBeNull();
+    expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
+      ["terms policy", "privacy policy", "copyright policy"],
     );
-    expect(
-      screen.getByRole("link", { name: "cookies policy" }).textContent,
-    ).toBe("");
-    expect(screen.getByText("2026 Example Studio")).toBeInTheDocument();
-    expect(screen.getAllByRole("navigation")).toHaveLength(1);
-    for (const link of links) {
+    expect(container.querySelector("svg")).toBeNull();
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    for (const link of screen.getAllByRole("link")) {
       expect(link).toHaveAttribute("target", "_blank");
       expect(link).toHaveAttribute("rel", "noopener noreferrer");
     }
   });
-  it("adds registration only when supplied by a public portal", () => {
+  it("puts Cookie policy first and filings in a separate group after policies", () => {
     render(
       <ShellFooter
         legal={{
           ...legal,
+          cookies: policy("cookies"),
           filingsLabel: "Site registration",
-          filings: [{ text: "ICP 123", link: "https://example.com/icp" }],
+          filings: [
+            { text: "ICP 123", link: "https://example.com/icp" },
+            { text: "Police 456", link: "https://example.com/police" },
+          ],
         }}
       />,
     );
+    expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
+      [
+        "cookies policy",
+        "terms policy",
+        "privacy policy",
+        "copyright policy",
+        "ICP 123",
+        "Police 456",
+      ],
+    );
     expect(
-      screen.getByRole("navigation", { name: "Site registration" }),
-    ).toContainElement(screen.getByRole("link", { name: "ICP 123" }));
+      screen
+        .getByRole("navigation", { name: "Legal information" })
+        .querySelectorAll("a"),
+    ).toHaveLength(4);
+    expect(
+      screen
+        .getByRole("navigation", { name: "Site registration" })
+        .querySelectorAll("a"),
+    ).toHaveLength(2);
   });
-  it("exposes icon destinations to keyboard users without changing link order", async () => {
+  it("ignores legacy brand input without restoring an icon or brand link", () => {
+    const { container } = render(
+      <ShellFooter legal={{ ...legal, brand: policy("brand") }} />,
+    );
+    expect(
+      screen.queryByRole("link", { name: "brand policy" }),
+    ).not.toBeInTheDocument();
+    expect(container.querySelector("svg")).toBeNull();
+  });
+  it("tabs through visible policy text in the approved order", async () => {
     const user = userEvent.setup();
     render(<ShellFooter legal={legal} />);
-    await user.tab();
-    expect(
-      screen.getByRole("link", { name: "copyright policy" }),
-    ).toHaveFocus();
-    expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "copyright policy",
-    );
-    await user.tab();
-    expect(screen.getByRole("link", { name: "brand policy" })).toHaveFocus();
-    expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "brand policy",
-    );
+    for (const name of ["terms policy", "privacy policy", "copyright policy"]) {
+      await user.tab();
+      expect(screen.getByRole("link", { name })).toHaveFocus();
+    }
   });
   it("continues to support existing custom footer content", () => {
     render(
