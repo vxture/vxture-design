@@ -483,7 +483,7 @@ export const ShellIconButton = React.forwardRef<
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "text-muted-foreground hover:text-foreground",
+        "size-icon-xl p-0 text-muted-foreground hover:text-foreground",
         active && "bg-accent text-foreground",
         active && activeClassName,
         className,
@@ -525,7 +525,7 @@ export function ShellIconGroup({
       role="group"
       aria-label={label}
       className={cn(
-        "inline-flex items-center gap-2xs rounded-lg transition-colors duration-fast hover:bg-accent focus-within:bg-accent",
+        "inline-flex items-center gap-(--vx-spacing) rounded-lg transition-colors duration-fast hover:bg-accent focus-within:bg-accent",
         className,
       )}
     >
@@ -1038,7 +1038,10 @@ export function ShellUserMenu({
           size="icon-md"
           aria-label={openLabel}
           title={openLabel}
-          className={cn("relative rounded-full", triggerClassName)}
+          className={cn(
+            "relative size-icon-xl rounded-full p-0",
+            triggerClassName,
+          )}
         >
           <ShellUserAvatar user={user} />
           {online ? (

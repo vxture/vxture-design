@@ -24,6 +24,7 @@ import productLogo from "@vxture/design-system/assets/examples/product-logo.png"
 // 2026-08-18 已从 DS 迁出归产品）。这里只复制一份给预览用。
 import aiAgentIcon from "./assets/ai-agent-icon-32.gif";
 import {
+  PhoneNumber,
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -249,6 +250,7 @@ import {
   PanelList,
   ShellBootScreen,
   ShellHeader,
+  ShellHeaderActions,
   ShellLauncher,
   ShellPageContainer,
   ShellPanelHeader,
@@ -2659,6 +2661,32 @@ export const ENTRIES: readonly Entry[] = [
     deviation:
       "列表/卡片切换。cardsDisabledReason 传了就把卡片档禁用并给出理由——卡片视图退役期间入口要保留可见（否则用户以为功能没了），但点不动且说得出为什么",
     render: () => <ViewModeSwitchDemo />,
+  },
+  {
+    name: "PhoneNumber",
+    layer: "pattern",
+    group: "数据展示",
+    tags: ["vxture", "component"],
+    render: () => (
+      <Row>
+        <PhoneNumber callingCode="+86" number="188 8888 8888" />
+        <PhoneNumber callingCode="+1" number="415 555 2671" />
+        <PhoneNumber number="188****8888" />
+      </Row>
+    ),
+  },
+  {
+    name: "ShellHeaderActions",
+    layer: "pattern",
+    group: "布局",
+    tags: ["vxture", "component"],
+    deviation: "统一顶栏独立工具组的间距，窄屏自动收紧。",
+    render: () => (
+      <ShellHeaderActions>
+        <span>工具组</span>
+        <span>用户</span>
+      </ShellHeaderActions>
+    ),
   },
   {
     name: "ShellLayout",

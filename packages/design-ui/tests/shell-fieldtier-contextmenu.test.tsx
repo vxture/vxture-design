@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
   ShellHeader,
+  ShellHeaderActions,
   ShellPageContainer,
   ShellSidebarFrame,
   ShellViewport,
@@ -94,10 +95,10 @@ describe("ShellHeader · 三个插槽与中槽对齐", () => {
       />,
     );
     const header = container.querySelector("header")!;
-    expect(cls(header).split(" ")).toContain("gap-xs");
+    expect(cls(header).split(" ")).toContain("gap-(--spacing-icon-sm)");
     for (const slot of header.children) {
       const c = cls(slot).split(" ");
-      expect(c).toContain("gap-xs");
+      expect(c).toContain("gap-(--spacing-icon-sm)");
       expect(c).not.toContain("gap-sm");
       expect(c).not.toContain("gap-2xs");
     }
@@ -517,4 +518,17 @@ describe("ContextMenu · 右键才开", () => {
     await screen.findByRole("menu");
     expect(screen.getAllByRole("menuitem")).toHaveLength(2);
   });
+});
+
+it("header actions own group spacing and preserve content", () => {
+  const { container } = render(
+    <ShellHeaderActions>
+      <button>Tools</button>
+      <button>Account</button>
+    </ShellHeaderActions>,
+  );
+  expect(
+    container.querySelector('[data-slot="shell-header-actions"]'),
+  ).toHaveClass("gap-(--spacing-icon-sm)");
+  expect(screen.getByRole("button", { name: "Account" })).toBeInTheDocument();
 });

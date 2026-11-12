@@ -38,7 +38,7 @@ describe("ShellToolbox · 外观", () => {
     const bar = screen.getByRole("toolbar", { name: "工具" });
     for (const c of [
       "rounded-lg",
-      "gap-md",
+      "gap-(--vx-spacing)",
       "hover:bg-accent",
       "focus-within:bg-accent",
     ]) {
@@ -48,10 +48,10 @@ describe("ShellToolbox · 外观", () => {
     expect(idle).toEqual([]);
   });
 
-  it("单个工具 20px 图标格，平时弱化色、无底；悬停亮 bg-card", () => {
+  it("单个工具 32px 控件格，平时弱化色、无底；悬停亮 bg-card", () => {
     render(<ShellToolbox label="工具" items={ITEMS} />);
     const bell = screen.getByRole("button", { name: "通知" });
-    expect(hasClass(bell, "size-icon-md")).toBe(true);
+    expect(hasClass(bell, "size-icon-xl")).toBe(true);
     expect(hasClass(bell, "text-muted-foreground")).toBe(true);
     expect(hasClass(bell, "hover:bg-card")).toBe(true);
     const idle = bell.className.split(" ").filter((c) => c.startsWith("bg-"));
@@ -60,11 +60,11 @@ describe("ShellToolbox · 外观", () => {
   });
 
   /** 悬停底外扩 4px，再用等量负外边距抵掉：胶囊尺寸与图标间距不变。 */
-  it("悬停底外扩与负外边距成对出现", () => {
+  it("悬停使用固定控件格，不通过负外边距扩张", () => {
     render(<ShellToolbox label="工具" items={ITEMS} />);
     const help = screen.getByRole("link", { name: "帮助" });
     for (const c of ["box-content", "p-2xs", "-m-2xs"]) {
-      expect(hasClass(help, c)).toBe(true);
+      expect(hasClass(help, c)).toBe(false);
     }
   });
 });
