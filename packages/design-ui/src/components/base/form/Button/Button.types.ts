@@ -29,12 +29,14 @@ export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
  * 对齐要解决的事（此前 `sm` 指 control-md、`lg` 指 control-xl，整体错位
  * 一格，而 control-sm/control-lg 叫不出名字）。理由见 Button.tsx 的尺寸表。
  */
+/** The action size is the shared 48px authentication and recovery target. */
 export const BUTTON_SIZES = [
   "xs",
   "sm",
   "md",
   "lg",
   "xl",
+  "action",
   "icon-xs",
   "icon-sm",
   "icon-md",

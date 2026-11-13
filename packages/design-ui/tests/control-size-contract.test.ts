@@ -33,12 +33,12 @@ describe("单行控件 size 契约", () => {
     },
   );
 
-  it("通用 Button 只开放 xs–xl 与对应图标档", () => {
+  it("通用 Button 开放 xs–xl、对应图标档与关键 action 档", () => {
     const expected: ButtonSize[] = SIZES.flatMap(([size]) => [
       size,
       `icon-${size}` as ButtonSize,
     ]);
-    expect(new Set(BUTTON_SIZES)).toEqual(new Set(expected));
+    expect(new Set(BUTTON_SIZES)).toEqual(new Set([...expected, "action"]));
     expect(BUTTON_SIZES).not.toContain("2xl" as ButtonSize);
     expect(BUTTON_SIZES).not.toContain("3xl" as ButtonSize);
   });
