@@ -136,3 +136,7 @@ In a viewport frame, keep header and footer outside the scrolling content, or pa
 Session revalidation is separate from loading UI: keep the verified same-account
 view during transient checks, clear it on a confirmed identity change or sign-out,
 and never restart a failed top-level silent sign-in just because a tab gains focus.
+
+### Key action buttons
+
+Use `Button size="action"` for authentication submissions and full-page recovery actions. At default density this is 48px high with the shared 12px `rounded-action` radius. Compact/comfortable density remains supported. Use full width in forms and content width in result pages; ordinary header and table controls keep their existing sizes. Do not override this size with `rounded-full`.

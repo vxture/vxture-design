@@ -38,7 +38,7 @@ const buttonVariants = cva(
     "inline-flex shrink-0 items-center justify-center whitespace-nowrap select-none",
     // 尺度一律走 T2 语义名产出的工具类，不用裸数值：p-lg 之类不跟随密度三档，
     // 而 gap-xs / h-control-md 会。任意值语法（gap-(--gap-xs)）仍然禁止。
-    "gap-xs rounded-md border border-transparent bg-clip-padding",
+    "gap-xs border border-transparent bg-clip-padding",
     "text-label-md",
     interactive,
     pressable,
@@ -103,6 +103,7 @@ const buttonVariants = cva(
         md: cn("h-control-md px-md", radiusClamp),
         lg: "h-control-lg px-lg",
         xl: "h-control-xl px-lg",
+        action: "h-control-2xl rounded-action px-xl text-body-md",
         "icon-xs": cn("size-control-xs p-0", radiusClamp),
         "icon-sm": cn("size-control-sm p-0", radiusClamp),
         "icon-md": cn("size-control-md p-0", radiusClamp),
@@ -110,6 +111,23 @@ const buttonVariants = cva(
         "icon-xl": "size-control-xl p-0",
       },
     },
+    compoundVariants: [
+      {
+        size: [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "icon-xs",
+          "icon-sm",
+          "icon-md",
+          "icon-lg",
+          "icon-xl",
+        ],
+        className: "rounded-md",
+      },
+    ],
     defaultVariants: {
       variant: "default",
       size: "md",
