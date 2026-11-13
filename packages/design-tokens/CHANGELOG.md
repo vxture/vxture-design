@@ -8,6 +8,10 @@
 
 ---
 
+## 4.1.0 — 2026-11-13
+
+Add the shared 48px key action size and 12px action radius. Preserve ordinary button sizes and support authentication submission and result-page recovery actions.
+
 ## 4.0.0 — 2026-10-04
 
 **破坏性**：排版角色收口并重命名。删除 `title-*`，将 body / label / code 的多档

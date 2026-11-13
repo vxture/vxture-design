@@ -5,6 +5,10 @@
 
 ---
 
+## 12.5.0 — 2026-11-13
+
+Add the shared 48px key action size and 12px action radius. Preserve ordinary button sizes and support authentication submission and result-page recovery actions.
+
 ## 12.4.1 — 2026-11-13
 
 Keep copyright plain on the left; right-align text-only policies and a separate registration group. Public footers show Cookie policy, terms, privacy and copyright; compact footers omit Cookie policy and registrations. Remove policy icons, tooltips and the brand link, preserving safe wrapping and keyboard focus.

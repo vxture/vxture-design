@@ -147,6 +147,7 @@ export const RADIUS_STEPS = [
   ["sm", 0.6],
   ["md", 0.8],
   ["lg", 1],
+  ["action", 1.2],
   ["xl", 1.4],
   ["2xl", 1.8],
   ["3xl", 2.2],
