@@ -8,6 +8,10 @@
 
 ---
 
+## 3.4.0 — 2026-11-13
+
+Add the shared 48px key action size and 12px action radius. Preserve ordinary button sizes and support authentication submission and result-page recovery actions.
+
 ## 3.0.0 — 2026-08-28
 
 **移除 `--spacing-none` 的 `@theme` 注册**（major：删 token 一律按 major）。
