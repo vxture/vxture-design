@@ -10,9 +10,8 @@
  * 空串，而视图必须始终有一个。少写最后那一句，用户点两下当前项就会把列表切
  * 成"没有视图"。
  *
- * 外层是一块无描边的页面底色槽，当前项用半透明品牌面标出。刻意**不**用
- * SegmentedControl（描边凹槽 + 托起滑块）：它仍然是工具条里的轻量图标开关，
- * 不是文字分段控件。
+ * A joined icon control: the group owns the outline and outer corners.
+ * Consumers only provide the selected view and localized labels.
  *
  * 图标必须走 `icon-*` 正方档：只装图标的开关用带横向内距的档会被压成
  * "宽 28 高 20"的扁片（2026-08-04 实测）。
@@ -26,12 +25,13 @@ import { ToggleGroup, ToggleGroupItem } from "../../base/form/ToggleGroup";
 
 export type ViewModeSwitchValue = "list" | "cards";
 
-/* Figma：selected/hover 半透明面 + primary/hover 图标；未选中仍用 muted 图标。 */
+/* DS owns joined geometry and selection styling for every consumer. */
 const ITEM = [
-  "text-muted-foreground",
-  "data-[state=on]:bg-surface-selected-hover",
-  "data-[state=on]:text-primary-hover",
-  "data-[state=on]:hover:bg-surface-selected-hover",
+  "rounded-none first:rounded-s-md last:rounded-e-md text-muted-foreground",
+  "hover:text-foreground",
+  "data-[state=on]:bg-primary-muted",
+  "data-[state=on]:text-primary-text",
+  "data-[state=on]:hover:bg-primary-muted",
 ].join(" ");
 
 export interface ViewModeSwitchProps {
@@ -39,7 +39,7 @@ export interface ViewModeSwitchProps {
   readonly onChange: (value: ViewModeSwitchValue) => void;
   /** 整组的无障碍名，例如"账单展示方式"。 */
   readonly ariaLabel?: string;
-  /** 两个选项各自的无障碍名。默认中文，做 i18n 的消费方传入。 */
+  /** 两个选项各自的无障碍名。默认英文，做 i18n 的消费方传入。 */
   readonly labels?: { list?: string; cards?: string };
   /**
    * 停用卡片档，并说明原因。
@@ -69,30 +69,35 @@ export function ViewModeSwitch({
       // Radix 的单选组允许"取消选中"，会回空串；视图必须始终有一个，空值
       // 直接忽略而不是把 value 设成 undefined。
       onValueChange={(next) => {
-        if (next) onChange(next as ViewModeSwitchValue);
+        if (next === "list" || next === "cards") onChange(next);
       }}
-      className={cn("inline-flex rounded-lg bg-background", className)}
+      data-slot="view-mode-switch"
+      className={cn(
+        "inline-flex shrink-0 h-control-xl gap-0 rounded-md bg-transparent inset-ring inset-ring-border/35",
+        className,
+      )}
     >
       <ToggleGroupItem
         value="list"
         aria-label={labels?.list ?? "List view"}
+        title={labels?.list ?? "List view"}
         className={ITEM}
       >
-        <Icon name="list" size="lg" />
+        <Icon name="list" size="md" />
       </ToggleGroupItem>
       <ToggleGroupItem
         value="cards"
         aria-label={labels?.cards ?? "Card view"}
+        title={cardsDisabledReason ?? labels?.cards ?? "Card view"}
         className={ITEM}
         {...(cardsDisabledReason
           ? {
               disabled: true,
-              title: cardsDisabledReason,
               "aria-description": cardsDisabledReason,
             }
           : {})}
       >
-        <Icon name="squares-four" size="lg" />
+        <Icon name="squares-four" size="md" />
       </ToggleGroupItem>
     </ToggleGroup>
   );

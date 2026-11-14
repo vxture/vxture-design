@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.6.0** ｜ 更新：2026-11-10
+适用版本：**DS 15.6.1** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -220,3 +220,7 @@ Sidebar rows use their own layout utilities rather than generic control sizes. M
 Header brand words are fixed at 24px, secondary labels at 16px. Header tool glyphs are 16px inside protected 32px controls; groups use zero padding and 4px gaps. Scope triggers use 8px horizontal padding and a 4px content gap, with stable geometry on hover/open. Full-width administration headers share Console insets (`px-lg`, `max-sm:px-md`) across density preferences. Public headers cap their usable width at 1536px, extending beyond the 1472px body measure on wide screens.
 
 Administration header inset parity follows Console: desktop compact/default/comfortable = 12/24/24px; narrow-screen = 8/16/16px. The newer token line has a wider comfortable content inset, so full headers normalize that mode without changing content density.
+
+### Joined list and card view control
+
+Use `ViewModeSwitch` from `@vxture/design-system` for list/card presentation. DS owns the joined outline, outer corners, zero gap, 32px targets and 20px icons. Pass `value`, `onChange`, localized `ariaLabel` and `labels`; use `cardsDisabledReason` to explain an unavailable card view. Clicking the selected view does not clear it. Keep data loading and layout rendering in the application; do not reconstruct the control from separate buttons or override its geometry.

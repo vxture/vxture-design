@@ -102,6 +102,23 @@ describe("Skeleton · 尺寸走内联，因为它是运行时数据", () => {
 /* ── ViewModeSwitch ───────────────────────────────────────────────────────── */
 
 describe("ViewModeSwitch · 视图必须始终有一个", () => {
+  it("supports keyboard navigation as one named control", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <ViewModeSwitch value="list" onChange={onChange} ariaLabel="Layout" />,
+    );
+    await user.tab();
+    expect(screen.getByRole("radio", { name: "List view" })).toHaveFocus();
+    await user.keyboard("{ArrowRight} ");
+    expect(screen.getByRole("radio", { name: "Card view" })).toHaveFocus();
+    expect(onChange).toHaveBeenCalledWith("cards");
+    expect(screen.getByRole("radiogroup", { name: "Layout" })).toHaveAttribute(
+      "data-slot",
+      "view-mode-switch",
+    );
+  });
+
   /**
    * **这一条是本件存在的理由之一**（见头注）。
    *
@@ -141,7 +158,7 @@ describe("ViewModeSwitch · 视图必须始终有一个", () => {
     );
   });
 
-  it("样式与 Figma 的 32px 控件、24px 图标和轻量槽一致", () => {
+  it("uses joined 32px controls with 20px icons", () => {
     render(<ViewModeSwitch value="list" onChange={() => {}} />);
 
     const group = screen.getByRole("radiogroup");
@@ -149,16 +166,14 @@ describe("ViewModeSwitch · 视图必须始终有一个", () => {
     const cards = screen.getByRole("radio", { name: "Card view" });
 
     expect(group.className).toContain("inline-flex");
-    expect(group.className).toContain("rounded-lg");
-    expect(group.className).toContain("bg-background");
+    expect(group.className).toContain("rounded-md");
+    expect(group.className).toContain("gap-0");
     expect(list.className).toContain("size-control-xl");
-    expect(list.className).toContain(
-      "data-[state=on]:bg-surface-selected-hover",
-    );
-    expect(list.className).toContain("data-[state=on]:text-primary-hover");
+    expect(list.className).toContain("data-[state=on]:bg-primary-muted");
+    expect(list.className).toContain("data-[state=on]:text-primary-text");
     expect(cards.className).toContain("size-control-xl");
     expect(list.querySelector("svg")?.getAttribute("class")).toContain(
-      "size-icon-lg",
+      "size-icon-md",
     );
   });
 });
@@ -216,9 +231,10 @@ describe("ViewModeSwitch · 文案与停用", () => {
   it("不给原因就不停用", () => {
     render(<ViewModeSwitch value="list" onChange={() => {}} />);
     expect(screen.getByRole("radio", { name: "Card view" })).not.toBeDisabled();
-    expect(
-      screen.getByRole("radio", { name: "Card view" }),
-    ).not.toHaveAttribute("title");
+    expect(screen.getByRole("radio", { name: "Card view" })).toHaveAttribute(
+      "title",
+      "Card view",
+    );
   });
 });
 
