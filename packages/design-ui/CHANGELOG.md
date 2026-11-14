@@ -5,6 +5,10 @@
 
 ---
 
+## 12.5.1 — 2026-11-14
+
+Make ViewModeSwitch a joined list/card control owned by DS: zero gap, one shared outline, outer corners, 32px square buttons and 20px icons. Preserve the controlled API, localized labels, keyboard navigation, disabled reasons and nonempty selection. Consumers no longer need wrapper components or control styling.
+
 ## 12.5.0 — 2026-11-13
 
 Add the shared 48px key action size and 12px action radius. Preserve ordinary button sizes and support authentication submission and result-page recovery actions.
