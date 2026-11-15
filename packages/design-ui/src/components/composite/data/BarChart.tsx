@@ -6,45 +6,24 @@
  * @layer Presentation
  * @category Components - Pattern
  *
- * DS 的第一件数据可视化原语（2026-08-21 owner 定：用量分析各板块"上图下表"，
- * 图为全宽柱状图——按 30 天逐日展开、或按 24 小时展开一天）。只做一件事：
- * 一组 `{label, value}` 按等宽柱子铺满容器宽度，高度按组内最大值归一。
- *
- * 取值全走 T2 语义类：柱体 `bg-primary`（与 Progress 填充同色——同一"量的
- * 表达"在 DS 内不能有两套颜色）、零值柱留 `bg-accent` 基线刻度（有数据的
- * 天与没数据的天要能分开）、基线用 hairline.block（与 DataTable 顶边同规）。
- * 柱高是运行时数据不是设计刻度，只能走内联 style（承自 Progress 的先例）。
- *
- * 横轴标签抽样显示（`labelEvery`，缺省按数据量自动取 ~6 个），未抽中的槽位
- * 以 `invisible` 占位保持网格对齐——标签是刻度不是数据，挤成一排反而不可读。
- *
- * ## 数值怎么读（2026-09-07 owner：「统计分析没有数字？长显示，还是鼠标浮动」）
- *
- * 原来图上一个数字都没有，唯一出口是柱子的原生 `title`——**触屏没有、键盘不可达、
- * 读屏器只拿到 `role="img"`**。所以不是"要不要浮动"的问题：浮动不能是唯一路径。
- * 现在三条路各司其职：
- *
- *   · **纵轴刻度（长显示）**——三档参考线 + 数值。解决"这根有多高"：没有它，同样
- *     形状的图可能是 1 万也可能是 100 万，只能翻到下面的表才知道量级。
- *   · **读数条（长显示 + 悬停/键盘切换）**——默认显示**峰值**那一根，所以图上永远
- *     有一个真数字；鼠标划过或键盘左右键移动时切到那一根。它是真 DOM 文本，读屏器
- *     在浏览模式下读得到，不像 `title` 那样只对鼠标存在。
- *   · **逐柱精确值**——仍在下方配套的表里（"上图下表"不变）。31 根柱子全标数会挤成
- *     一团，而表里本来就有。
- *
- * 键盘：图区是**一个** tab 停靠点（31 个停靠点是灾难），进去后 ← → 逐根移动、
- * Home/End 跳首尾，读数条跟着走。触屏没有悬停，读数条停在峰值——精确值看下方的表。
- *
- * 读屏器的两层角色是**有判据的**：外层 `role="group"` 承调用方传来的 `aria-label`
- * （给整块一个名字），内层图区才是 `role="img"`。外层**不能**是 `img`——那会让整棵
- * 子树变成一张不透明的图，读数条那段真文本反而读不到，正好抵消这次改动的意义。
- * 内层 `img` 的名字取当前读数（`标签: 值`，由调用方的数据生成，不是件里写死的语言），
- * 所以键盘左右移动时读屏器会把新的那一根念出来。
+ * Equal category slots align capped bars with responsive axis labels.
+ * Charts fill their container and share one plot height and readout alignment.
+ * The persistent readout defaults to the peak. Hover, touch and keyboard
+ * navigation reveal an exact-value tooltip and a vertical dashed guide.
+ * Zero values remain selectable baseline marks, including all-zero datasets.
+ * The plot has one tab stop; arrow keys and Home/End select a category.
+ * Callers supply localized labels, value formatting and optional context.
  */
 
 import * as React from "react";
 import { cn } from "../../../utils/cn";
 import { hairline } from "../../../styles/recipes";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../../base/overlay/Tooltip";
 
 export interface BarChartDatum {
   /** 行键（React key）。 */
@@ -52,6 +31,8 @@ export interface BarChartDatum {
   /** 横轴刻度文本（抽样显示）。 */
   readonly label: string;
   readonly value: number;
+  /** Additional context displayed with the exact value in the tooltip. */
+  readonly description?: string;
 }
 
 export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -84,14 +65,46 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
       labelEvery,
       peakLabel,
       hideAxis = false,
+      style,
       ...props
     },
     ref,
   ) {
+    const chartRef = React.useRef<HTMLDivElement | null>(null);
+    const [labelCapacity, setLabelCapacity] = React.useState<number | null>(
+      null,
+    );
+    React.useEffect(() => {
+      const chart = chartRef.current;
+      if (!chart || typeof ResizeObserver === "undefined") return;
+      const observer = new ResizeObserver(() => {
+        const plot = chart.querySelector<HTMLElement>('[role="img"]');
+        if (!plot) return;
+        const computed = getComputedStyle(plot);
+        const width =
+          plot.clientWidth -
+          parseFloat(computed.paddingLeft) -
+          parseFloat(computed.paddingRight);
+        const fontSize = parseFloat(
+          getComputedStyle(chart.querySelector("span") ?? chart).fontSize,
+        );
+        if (width > 0 && fontSize > 0) {
+          // Reserve six text cells per label; longer names wrap onto a second line.
+          setLabelCapacity(Math.max(1, Math.floor(width / (fontSize * 6))));
+        }
+      });
+      observer.observe(chart);
+      return () => observer.disconnect();
+    }, []);
     const fmt = formatValue ?? ((v: number) => v.toLocaleString("en-US"));
     const max = data.reduce((m, d) => Math.max(m, d.value), 0);
+    const dense = data.length > 12;
     const every =
-      labelEvery ?? (data.length <= 12 ? 1 : Math.ceil(data.length / 6));
+      labelEvery ??
+      Math.max(
+        data.length <= 12 ? 1 : Math.ceil(data.length / 6),
+        labelCapacity ? Math.ceil(data.length / labelCapacity) : 1,
+      );
 
     /* 读数条的当前项：鼠标优先，其次键盘位置，都没有就停在峰值——图上永远有一个
        真数字，而不是等人来悬停才出现。 */
@@ -111,6 +124,11 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     const atPeak = hoveredIndex < 0 && cursor === null;
 
     function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+      if (event.key === "Escape") {
+        setCursor(null);
+        setHoveredKey(null);
+        return;
+      }
       if (data.length === 0) return;
       const from = cursor ?? peakIndex;
       let next: number | null = null;
@@ -125,111 +143,174 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     }
 
     return (
-      <div
-        ref={ref}
-        role="group"
-        className={cn("flex w-full flex-col gap-xs", className)}
-        {...props}
-      >
-        {/* 读数条：长显示的那个数字。右对齐——它是图的注脚不是标题。 */}
-        {active ? (
-          <div className="flex items-baseline justify-end gap-xs text-body-sm">
-            <span className="min-w-0 truncate text-muted-foreground">
-              {atPeak && peakLabel ? peakLabel : active.label}
-            </span>
-            <span className="font-semibold tabular-nums text-foreground">
-              {fmt(active.value)}
-            </span>
-          </div>
-        ) : null}
+      <TooltipProvider delayDuration={0}>
+        <div
+          ref={(node) => {
+            chartRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
+          }}
+          role="group"
+          className={cn(
+            "mx-auto flex w-full flex-col gap-md px-md sm:px-lg",
+            className,
+          )}
+          style={{
+            ...style,
+          }}
+          {...props}
+        >
+          {/* 读数条：长显示的那个数字。右对齐——它是图的注脚不是标题。 */}
+          {active ? (
+            <div className="flex items-baseline justify-end gap-xs text-body-sm">
+              <span className="min-w-0 truncate text-muted-foreground">
+                {atPeak && peakLabel ? peakLabel : active.label}
+              </span>
+              <span className="font-semibold tabular-nums text-foreground">
+                {fmt(active.value)}
+              </span>
+            </div>
+          ) : null}
 
-        <div className="relative">
-          {/* 纵轴刻度 + 参考线。绝对定位铺满图区，不参与柱子的宽度分配；
+          <div className="relative">
+            {/* 纵轴刻度 + 参考线。绝对定位铺满图区，不参与柱子的宽度分配；
               `pointer-events-none` 让它不挡悬停。 */}
-          {hideAxis ? null : (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 flex flex-col justify-between"
-            >
-              {AXIS_STOPS.map((stop) => (
-                <span key={stop} className="flex items-center gap-xs">
-                  <span className="w-media-sm shrink-0 truncate text-right text-body-sm text-muted-foreground tabular-nums">
-                    {fmt(max * stop)}
-                  </span>
-                  {/* 底档那条线由柱区的 border-b 画，这里只画上面两条 */}
+            {hideAxis ? null : (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 flex flex-col justify-between"
+              >
+                {AXIS_STOPS.map((stop) => (
                   <span
+                    key={stop}
                     className={cn(
-                      "h-px flex-1",
-                      stop === 0 ? "bg-transparent" : "bg-accent",
+                      "flex items-center gap-md",
+                      max === 0 && stop !== 0 && "invisible",
                     )}
-                  />
-                </span>
+                  >
+                    <span className="w-media-sm shrink-0 truncate text-right text-body-sm text-muted-foreground tabular-nums">
+                      {fmt(max * stop)}
+                    </span>
+                    {/* 底档那条线由柱区的 border-b 画，这里只画上面两条 */}
+                    <span
+                      className={cn(
+                        "h-px flex-1",
+                        stop === 0 ? "bg-transparent" : "bg-accent",
+                      )}
+                    />
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* 柱区。左内距给刻度列让位（与刻度列同一档 media-sm，两者因此对齐）。 */}
+            <div
+              style={{
+                height:
+                  "calc(var(--spacing-media-3xl) + var(--spacing-media-xl))",
+              }}
+              role="img"
+              aria-label={
+                active ? `${active.label}: ${fmt(active.value)}` : undefined
+              }
+              tabIndex={0}
+              onKeyDown={onKeyDown}
+              onBlur={() => setCursor(null)}
+              onFocus={() => setCursor(peakIndex)}
+              onMouseLeave={() => setHoveredKey(null)}
+              className={cn(
+                "flex w-full items-end border-b outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                dense ? "gap-2xs" : "gap-md",
+                hairline.block,
+                hideAxis ? undefined : "px-media-sm",
+              )}
+            >
+              {data.map((d, i) => (
+                <Tooltip key={d.key} open={i === activeIndex && !atPeak}>
+                  <TooltipTrigger asChild>
+                    <div
+                      title={`${d.label}: ${fmt(d.value)}`}
+                      onMouseEnter={() => setHoveredKey(d.key)}
+                      onPointerDown={(event) => {
+                        if (event.pointerType !== "mouse") setCursor(i);
+                      }}
+                      className="relative flex h-full min-w-0 flex-1 flex-col items-center justify-end"
+                    >
+                      {d.value > 0 && max > 0 ? (
+                        <div
+                          className={cn(
+                            "w-full max-w-control-md rounded-t-sm bg-primary transition-all duration-base ease-standard",
+                            // 当前读数的那一根压暗一档,让"读的是哪根"看得见
+                            i === activeIndex && !atPeak && "bg-primary-hover",
+                          )}
+                          // 柱高是运行时数据，只能走内联 style（Progress 同款先例）。
+                          style={{
+                            height: `${Math.max(2, (d.value / max) * 100)}%`,
+                          }}
+                        />
+                      ) : (
+                        <div className="h-px w-full max-w-control-md bg-accent" />
+                      )}
+                      {i === activeIndex && !atPeak ? (
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-y-0 left-1/2 border-l border-dashed border-muted-foreground"
+                        />
+                      ) : null}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    variant="surface"
+                    className="pointer-events-none px-md py-sm"
+                  >
+                    <div className="flex flex-col gap-2xs">
+                      <span className="font-medium">{d.label}</span>
+                      <span className="font-semibold tabular-nums">
+                        {fmt(d.value)}
+                      </span>
+                      {d.description ? (
+                        <span className="text-muted-foreground">
+                          {d.description}
+                        </span>
+                      ) : null}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
               ))}
             </div>
-          )}
+          </div>
 
-          {/* 柱区。左内距给刻度列让位（与刻度列同一档 media-sm，两者因此对齐）。 */}
           <div
-            role="img"
-            aria-label={
-              active ? `${active.label}: ${fmt(active.value)}` : undefined
-            }
-            tabIndex={0}
-            onKeyDown={onKeyDown}
-            onBlur={() => setCursor(null)}
-            onMouseLeave={() => setHoveredKey(null)}
             className={cn(
-              "flex h-media-lg w-full items-end gap-xs border-b outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              hairline.block,
-              hideAxis ? undefined : "ps-media-sm",
+              "flex min-h-media-sm w-full",
+              dense ? "gap-2xs" : "gap-md",
+              hideAxis ? undefined : "px-media-sm",
             )}
           >
             {data.map((d, i) => (
-              <div
+              <span
                 key={d.key}
-                title={`${d.label}: ${fmt(d.value)}`}
-                onMouseEnter={() => setHoveredKey(d.key)}
-                className="flex h-full flex-1 flex-col justify-end"
-              >
-                {d.value > 0 && max > 0 ? (
-                  <div
-                    className={cn(
-                      "w-full rounded-t-sm bg-primary transition-all duration-base ease-standard",
-                      // 当前读数的那一根压暗一档,让"读的是哪根"看得见
-                      i === activeIndex && !atPeak && "bg-primary-hover",
-                    )}
-                    // 柱高是运行时数据，只能走内联 style（Progress 同款先例）。
-                    style={{
-                      height: `${Math.max(2, (d.value / max) * 100)}%`,
-                    }}
-                  />
-                ) : (
-                  <div className="h-px w-full bg-accent" />
+                className={cn(
+                  "relative min-w-0 flex-1 text-center text-body-sm text-muted-foreground tabular-nums",
+                  i % every !== 0 && "invisible",
                 )}
-              </div>
+              >
+                <span
+                  className="absolute top-0 line-clamp-2 break-words"
+                  style={{
+                    // Sampled labels can use neighboring unlabeled slots without clipping.
+                    width: `calc(${every * 100}% + var(${dense ? "--space-2xs" : "--space-md"}) * ${every - 1})`,
+                    left: `calc(${50 - every * 50}% - var(${dense ? "--space-2xs" : "--space-md"}) * ${(every - 1) / 2})`,
+                  }}
+                >
+                  {d.label}
+                </span>
+              </span>
             ))}
           </div>
         </div>
-
-        <div
-          className={cn(
-            "flex w-full gap-xs",
-            hideAxis ? undefined : "ps-media-sm",
-          )}
-        >
-          {data.map((d, i) => (
-            <span
-              key={d.key}
-              className={cn(
-                "flex-1 overflow-hidden text-center whitespace-nowrap text-body-sm text-muted-foreground tabular-nums",
-                i % every !== 0 && "invisible",
-              )}
-            >
-              {d.label}
-            </span>
-          ))}
-        </div>
-      </div>
+      </TooltipProvider>
     );
   },
 );
