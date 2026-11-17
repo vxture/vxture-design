@@ -18,6 +18,32 @@ import { ListCard } from "../src/components/composite/data/ListCard";
 import { TableTitleCell } from "../src/components/composite/data/TableTitleCell";
 
 describe("DetailList · 名与值必须是一对", () => {
+  it("keeps compact label widths scoped to their list", () => {
+    const { container } = render(
+      <>
+        <DetailList labelWidth="compact">
+          <DetailRow label="Compact">Account</DetailRow>
+        </DetailList>
+        <DetailList>
+          <DetailRow label="Default">Account</DetailRow>
+        </DetailList>
+      </>,
+    );
+    expect(screen.getByText("Compact")).toHaveClass("sm:w-media-md");
+    expect(screen.getByText("Default")).toHaveClass("sm:w-media-3xl");
+    expect(container.querySelector("dl")).not.toHaveAttribute("labelWidth");
+  });
+
+  it("keeps multi-column labels stacked when compact is requested", () => {
+    render(
+      <DetailList columns={2} labelWidth="compact">
+        <DetailRow label="Stacked">Account</DetailRow>
+      </DetailList>,
+    );
+    expect(screen.getByText("Stacked")).not.toHaveClass("sm:w-media-md");
+    expect(screen.getByText("Stacked")).not.toHaveClass("sm:w-media-3xl");
+  });
+
   /**
    * 文件头写死的一条：**语义元素用 `<dl>` / `<dt>` / `<dd>`**——这就是 HTML 给
    * 「名—值对列表」准备的元素，读屏会把两者**作为一对**播报。

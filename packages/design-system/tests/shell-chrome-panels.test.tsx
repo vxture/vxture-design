@@ -444,6 +444,25 @@ describe("ShellUserMenu · 触发器", () => {
 });
 
 describe("ShellUserMenu · 头部", () => {
+  it("renders structured phone data through the shared phone component", async () => {
+    const { panel } = await openMenu({
+      user: {
+        displayName: "Customer",
+        phone: { callingCode: "+86", number: "138 0013 8000" },
+        meta: "customer@example.com",
+      },
+    });
+    const phone = panel.querySelector('[data-slot="phone-number"]');
+    expect(phone).toHaveAttribute("dir", "ltr");
+    expect(within(phone as HTMLElement).getByText("+86")).toHaveClass(
+      "text-muted-foreground",
+    );
+    expect(within(phone as HTMLElement).getByText("138 0013 8000")).toHaveClass(
+      "text-foreground",
+    );
+    expect(within(panel).getByText("customer@example.com")).toBeInTheDocument();
+  });
+
   it("显示名与两条 meta 都在", async () => {
     const { panel } = await openMenu();
     expect(within(panel).getByText("某某")).toBeInTheDocument();

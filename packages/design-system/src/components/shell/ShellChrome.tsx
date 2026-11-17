@@ -27,6 +27,7 @@ import {
   AvatarSilhouette,
   Button,
   Icon,
+  PhoneNumber,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -35,7 +36,11 @@ import {
   cn,
   useFullscreen,
 } from "@vxture/design-ui";
-import type { FullscreenMode, IconName } from "@vxture/design-ui";
+import type {
+  FullscreenMode,
+  IconName,
+  PhoneNumberProps,
+} from "@vxture/design-ui";
 import { interactive } from "@vxture/design-ui/styles";
 import type { Density } from "../../density";
 import {
@@ -180,6 +185,8 @@ export interface ShellUserStatusTag {
 export interface ShellUserMenuUser {
   displayName: string;
   uniqueLine?: string | undefined;
+  /** Structured contact data uses the shared phone renderer without consumer styling. */
+  phone?: Pick<PhoneNumberProps, "callingCode" | "number"> | undefined;
   avatarSrc?: string | undefined;
   avatarAlt?: string | undefined;
   avatarFallback?: string | undefined;
@@ -915,6 +922,9 @@ function ShellUserPanelSections({
             }
           : {})}
         metaRows={[
+          ...(user.phone
+            ? [{ key: "phone", content: <PhoneNumber {...user.phone} /> }]
+            : []),
           ...(user.uniqueLine
             ? [{ key: "unique", content: user.uniqueLine }]
             : []),
