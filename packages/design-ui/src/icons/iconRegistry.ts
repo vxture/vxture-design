@@ -57,7 +57,7 @@ import {
   MagnifyingGlassIcon,
   DotsNineIcon,
   DotsThreeVerticalIcon,
-  GearIcon,
+  GearSixIcon,
   BellIcon,
   PencilIcon,
   KeyIcon,
@@ -325,7 +325,7 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   // ==========================================================================
   search: MagnifyingGlassIcon,
   "app-grid": DotsNineIcon,
-  settings: GearIcon,
+  settings: GearSixIcon,
   help: QuestionIcon,
   bell: BellIcon,
   "more-vertical": DotsThreeVerticalIcon,
