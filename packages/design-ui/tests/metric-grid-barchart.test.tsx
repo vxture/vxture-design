@@ -418,9 +418,12 @@ describe("BarChart · 图上要有数字", () => {
     );
     expect(plot).toHaveAccessibleName("Peak: 3");
     await user.click(screen.getByTitle("A long caption: 0"));
+    expect(plot).toHaveFocus();
     expect(await screen.findByRole("tooltip")).toHaveTextContent(
       "No credits used",
     );
+    await user.tab();
+    expect(document.body).toHaveFocus();
   });
 
   /** 键盘：图区一个 tab 停靠点，← → 逐根移动，内层 img 的名字跟着走。 */

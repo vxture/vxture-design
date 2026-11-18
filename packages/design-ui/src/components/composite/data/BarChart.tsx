@@ -54,7 +54,7 @@ function useLabelCapacity() {
     if (!plot || typeof ResizeObserver === "undefined") return;
 
     const measure = () => {
-      const fontSize = parseFloat(getComputedStyle(plot).fontSize);
+      const fontSize = Number.parseFloat(getComputedStyle(plot).fontSize);
       const width = plot.clientWidth;
       if (width > 0 && fontSize > 0) {
         // Allow roughly six text cells per tick; long names get a second line.
@@ -68,6 +68,95 @@ function useLabelCapacity() {
     return () => observer.disconnect();
   }, []);
   return { ref, capacity };
+}
+
+function labelInterval(
+  length: number,
+  requested: number | undefined,
+  capacity: number | undefined,
+) {
+  const automatic = length <= 12 ? 1 : Math.ceil(length / 6);
+  let interval = automatic;
+  if (requested !== undefined && Number.isFinite(requested)) {
+    interval = Math.max(1, Math.floor(requested));
+  }
+  return Math.min(
+    Math.max(1, length),
+    Math.max(interval, Math.ceil(length / (capacity ?? Infinity))),
+  );
+}
+
+function BarChartLabels({
+  data,
+  every,
+  className,
+}: {
+  data: readonly BarChartDatum[];
+  every: number;
+  className: string | undefined;
+}) {
+  const length = data.length;
+  return (
+    <div className={className}>
+      <div
+        className="grid text-body-small text-muted-foreground tabular-nums"
+        style={
+          length > 0
+            ? {
+                gridTemplateColumns: `repeat(${length * 2}, minmax(0, 1fr))`,
+              }
+            : undefined
+        }
+      >
+        {data.map((datum, index) => {
+          if (index % every !== 0) {
+            return <span key={datum.key} className="hidden invisible" />;
+          }
+          // Span the unused half-slots on both sides; clip the span at plot edges.
+          const center = index * 2 + 1;
+          const start = Math.max(0, center - every);
+          const end = Math.min(length * 2, center + every);
+          let alignment = "text-center";
+          if (center - start < every) alignment = "text-start";
+          if (end - center < every) alignment = "text-end";
+          return (
+            <span
+              key={datum.key}
+              style={{
+                gridColumn: `${start + 1} / ${end + 1}`,
+                gridRow: 1,
+              }}
+              className={cn("line-clamp-2 min-w-0 wrap-anywhere", alignment)}
+            >
+              {datum.label}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function BarChartReadout({
+  active,
+  peakLabel,
+  formatValue,
+}: {
+  active: BarChartDatum | undefined;
+  peakLabel: string | undefined;
+  formatValue: (value: number) => string;
+}) {
+  if (!active) return null;
+  return (
+    <div className="flex items-baseline justify-end gap-xs text-body-small">
+      <span className="min-w-0 truncate text-muted-foreground">
+        {peakLabel || active.label}
+      </span>
+      <span className="font-semibold tabular-nums text-foreground">
+        {formatValue(active.value)}
+      </span>
+    </div>
+  );
 }
 
 // ===== Chart rendering and interaction =====
@@ -91,19 +180,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
       formatValue ?? ((value: number) => value.toLocaleString("en-US"));
     const max = data.reduce((peak, datum) => Math.max(peak, datum.value), 0);
     const length = data.length;
-    const requestedInterval =
-      labelEvery !== undefined && Number.isFinite(labelEvery)
-        ? Math.max(1, Math.floor(labelEvery))
-        : length <= 12
-          ? 1
-          : Math.ceil(length / 6);
-    const every = Math.min(
-      Math.max(1, length),
-      Math.max(
-        requestedInterval,
-        Math.ceil(length / (plot.capacity ?? Infinity)),
-      ),
-    );
+    const every = labelInterval(length, labelEvery, plot.capacity);
     const peakIndex = data.findIndex((datum) => datum.value === max);
     const [hoveredKey, setHoveredKey] = React.useState<string | null>(null);
     const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
@@ -158,16 +235,11 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
         className={cn("flex min-w-0 w-full flex-col gap-xs", className)}
         {...props}
       >
-        {active ? (
-          <div className="flex items-baseline justify-end gap-xs text-body-small">
-            <span className="min-w-0 truncate text-muted-foreground">
-              {atPeak && peakLabel ? peakLabel : active.label}
-            </span>
-            <span className="font-semibold tabular-nums text-foreground">
-              {fmt(active.value)}
-            </span>
-          </div>
-        ) : null}
+        <BarChartReadout
+          active={active}
+          peakLabel={atPeak ? peakLabel : undefined}
+          formatValue={fmt}
+        />
 
         <div className={cn("relative", axisInset)}>
           {!hideAxis ? (
@@ -211,17 +283,22 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
             )}
           >
             {data.map((datum, index) => (
-              <div
+              <button
                 key={datum.key}
+                type="button"
+                tabIndex={-1}
                 title={`${datum.label}: ${fmt(datum.value)}`}
                 onPointerEnter={(event) => {
                   if (event.pointerType === "mouse") setHoveredKey(datum.key);
                 }}
-                onClick={() => setSelectedKey(datum.key)}
-                className="relative flex h-full min-w-0 flex-1 flex-col items-center justify-end"
+                onClick={() => {
+                  plot.ref.current?.focus({ preventScroll: true });
+                  setSelectedKey(datum.key);
+                }}
+                className="relative flex h-full min-w-0 flex-1 cursor-pointer flex-col items-center justify-end border-0 bg-transparent p-0"
               >
                 {datum.value > 0 && max > 0 ? (
-                  <div
+                  <span
                     className={cn(
                       "w-4/5 max-w-control-md rounded-t-sm bg-primary",
                       index === activeIndex && "bg-primary-hover",
@@ -231,7 +308,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                     }}
                   />
                 ) : (
-                  <div className="h-px w-4/5 max-w-control-md bg-accent" />
+                  <span className="h-px w-4/5 max-w-control-md bg-accent" />
                 )}
                 {index === activeIndex ? (
                   <span
@@ -239,7 +316,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                     className="pointer-events-none absolute inset-y-0 start-1/2 border-s border-dashed border-muted-foreground"
                   />
                 ) : null}
-              </div>
+              </button>
             ))}
 
             {/* A single anchor follows the active category without adding tab stops. */}
@@ -280,49 +357,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           </div>
         </div>
 
-        <div className={axisInset}>
-          <div
-            className="grid text-body-small text-muted-foreground tabular-nums"
-            style={
-              length > 0
-                ? {
-                    gridTemplateColumns: `repeat(${length * 2}, minmax(0, 1fr))`,
-                  }
-                : undefined
-            }
-          >
-            {data.map((datum, index) => {
-              if (index % every !== 0) {
-                return <span key={datum.key} className="hidden invisible" />;
-              }
-              // Span the unused half-slots on both sides; clip the span at plot edges.
-              const center = index * 2 + 1;
-              const start = Math.max(0, center - every);
-              const end = Math.min(length * 2, center + every);
-              const alignment =
-                center - start < every
-                  ? "text-start"
-                  : end - center < every
-                    ? "text-end"
-                    : "text-center";
-              return (
-                <span
-                  key={datum.key}
-                  style={{
-                    gridColumn: `${start + 1} / ${end + 1}`,
-                    gridRow: 1,
-                  }}
-                  className={cn(
-                    "line-clamp-2 min-w-0 wrap-anywhere",
-                    alignment,
-                  )}
-                >
-                  {datum.label}
-                </span>
-              );
-            })}
-          </div>
-        </div>
+        <BarChartLabels data={data} every={every} className={axisInset} />
       </div>
     );
   },
