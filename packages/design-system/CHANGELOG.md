@@ -5,6 +5,12 @@
 
 ---
 
+## 15.8.0 — 2026-11-18
+
+- Re-export the responsive `BarChart` from `@vxture/design-ui@12.7.0`.
+- Choose `plotHeight="compact"`, `"default"`, or `"tall"` per chart.
+  The default plot height and the content-driven Card layout are unchanged.
+
 ## 15.6.1 — 2026-11-14
 
 Make ViewModeSwitch a joined list/card control owned by DS: zero gap, one shared outline, outer corners, 32px square buttons and 20px icons. Preserve the controlled API, localized labels, keyboard navigation, disabled reasons and nonempty selection. Consumers no longer need wrapper components or control styling.

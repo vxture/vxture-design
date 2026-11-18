@@ -5,6 +5,15 @@
 
 ---
 
+## 12.7.0 — 2026-11-18
+
+- Add optional `BarChart.plotHeight` presets for compact, default, and tall
+  plots. The existing default height is preserved.
+- Limit bar widths and adapt tick density to the measured plot width. Preserve
+  each data point, including selectable zero markers.
+- Show the full label, exact value, and optional datum description on hover,
+  tap, or keyboard selection. The plot remains a single tab stop.
+
 ## 12.5.1 — 2026-11-14
 
 Make ViewModeSwitch a joined list/card control owned by DS: zero gap, one shared outline, outer corners, 32px square buttons and 20px icons. Preserve the controlled API, localized labels, keyboard navigation, disabled reasons and nonempty selection. Consumers no longer need wrapper components or control styling.
