@@ -7,7 +7,7 @@
  * 失效、两处键盘陷阱、Provider 清理时机）**全是分支缺陷**。
  */
 
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { MetricGrid } from "../src/components/composite/data/MetricGrid";
@@ -214,7 +214,9 @@ describe("BarChart · 横轴标签是刻度不是数据", () => {
     }));
 
   const labelSpans = (root: HTMLElement) =>
-    [...(root.lastElementChild?.children ?? [])] as HTMLElement[];
+    [
+      ...(root.lastElementChild?.firstElementChild?.children ?? []),
+    ] as HTMLElement[];
 
   it("不超过 12 根时标签全显", () => {
     const { container } = render(<BarChart data={many(12)} />);
@@ -234,6 +236,56 @@ describe("BarChart · 横轴标签是刻度不是数据", () => {
     expect(all).toHaveLength(30); // 槽位一个不少
     const visible = all.filter((s) => !s.className.includes("invisible"));
     expect(visible).toHaveLength(6); // ceil(30/6)=5 → 0,5,10,15,20,25
+  });
+
+  it("resamples labels when the actual plot gets narrower", () => {
+    let resize: (() => void) | undefined;
+    const original = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      "clientWidth",
+    );
+    let width = 960;
+    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+      configurable: true,
+      get: () => width,
+    });
+    class Observer {
+      constructor(callback: () => void) {
+        resize = callback;
+      }
+      observe() {}
+      disconnect() {}
+    }
+    vi.stubGlobal("ResizeObserver", Observer);
+    const styles = vi
+      .spyOn(window, "getComputedStyle")
+      .mockReturnValue({ fontSize: "16px" } as CSSStyleDeclaration);
+    try {
+      const { container, unmount } = render(
+        <BarChart data={many(10)} labelEvery={1} />,
+      );
+      const root = container.firstElementChild as HTMLElement;
+      const visible = () =>
+        labelSpans(root).filter(
+          (slot) => !slot.className.includes("invisible"),
+        );
+      expect(visible()).toHaveLength(10);
+      width = 300;
+      act(() => resize?.());
+      expect(visible().map((slot) => slot.textContent)).toEqual([
+        "1 日",
+        "5 日",
+        "9 日",
+      ]);
+      expect(bars(root)).toHaveLength(10);
+      unmount();
+    } finally {
+      styles.mockRestore();
+      vi.unstubAllGlobals();
+      if (original)
+        Object.defineProperty(HTMLElement.prototype, "clientWidth", original);
+      else Reflect.deleteProperty(HTMLElement.prototype, "clientWidth");
+    }
   });
 
   it("显式 labelEvery 压过自动抽样", () => {
@@ -335,6 +387,43 @@ describe("BarChart · 图上要有数字", () => {
     );
     // 前缀让位给峰值那根自己的标签
     expect(screen.getByRole("img", { name: "2 日: 9" })).toBeInTheDocument();
+  });
+
+  it("selects a zero-value slot and reveals the full description", async () => {
+    const user = userEvent.setup();
+    render(
+      <BarChart
+        data={[
+          { key: "a", label: "Peak", value: 3 },
+          {
+            key: "b",
+            label: "A long caption",
+            value: 0,
+            description: "No credits used",
+          },
+        ]}
+      />,
+    );
+    const plot = screen.getByRole("img");
+    await user.tab();
+    expect(plot).toHaveFocus();
+    await user.keyboard("{End}");
+    expect(plot).toHaveAccessibleName("A long caption: 0");
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "No credits used",
+    );
+    await user.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(screen.queryByRole("tooltip")).not.toBeInTheDocument(),
+    );
+    expect(plot).toHaveAccessibleName("Peak: 3");
+    await user.click(screen.getByTitle("A long caption: 0"));
+    expect(plot).toHaveFocus();
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "No credits used",
+    );
+    await user.tab();
+    expect(document.body).toHaveFocus();
   });
 
   /** 键盘：图区一个 tab 停靠点，← → 逐根移动，内层 img 的名字跟着走。 */
