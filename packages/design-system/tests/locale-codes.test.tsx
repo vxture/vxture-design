@@ -23,9 +23,7 @@ it("products supply only supported codes while DS supplies marks and names", asy
   expect(trigger).toHaveTextContent("\u7b80\u4f53\u4e2d\u6587");
   await userEvent.click(trigger);
   expect(screen.getAllByRole("menuitemradio")).toHaveLength(2);
-  await userEvent.click(
-    screen.getByRole("menuitemradio", { name: /English/ }),
-  );
+  await userEvent.click(screen.getByRole("menuitemradio", { name: /English/ }));
   expect(change).toHaveBeenCalledWith("en-US");
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 });
