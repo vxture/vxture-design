@@ -59,8 +59,8 @@ export type ShellThemePreference = ThemeMode;
 
 export interface LocaleSelectOption {
   /**
-   * 语言代码（BCP-47 风格字符串）。**设计包不拥有平台的语言目录**——支持哪些
-   * 语言是平台业务事实，由消费方通过 `options` 给出（2026-08-21 解耦）。
+   * Language code. Products own the supported-code list; DS supplies presentation metadata.
+   * Full option objects remain available for product display overrides.
    */
   locale: string;
   label?: string | undefined;
@@ -305,9 +305,8 @@ export interface ShellLegalFooterProps {
 }
 
 /**
- * 语言选项缺省为空：设计包不内置消费方的语言目录（见 LocaleSelectOption.locale）。
- * 需要语言切换的消费方必须显式传 `options` / `localeOptions`，默认值由各消费方
- * 自己构造。
+ * No implicit support list: products pass locales (preferred) or legacy option objects.
+ * Presentation metadata below never enables an unsupported product language.
  */
 const DEFAULT_LOCALE_OPTIONS: LocaleSelectOption[] = [];
 
