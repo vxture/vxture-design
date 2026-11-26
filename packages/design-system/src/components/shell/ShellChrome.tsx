@@ -20,6 +20,7 @@
 import { useState, type ReactNode } from "react";
 import * as React from "react";
 import type { ThemeMode } from "../../theme/theme.types";
+import { useOptionalContentWidth } from "../../theme/contentWidth";
 import {
   Avatar,
   AvatarFallback,
@@ -143,6 +144,10 @@ export interface ShellPreferenceLabels {
   theme?: ReactNode;
   density?: ReactNode;
   fontSize?: ReactNode;
+  contentWidth?: ReactNode;
+  contentWidthOptions?: Partial<
+    Record<"narrow" | "default" | "wide", ReactNode>
+  >;
   themeOptions?: Partial<Record<ShellThemePreference, ReactNode>>;
   densityOptions?: Partial<Record<Density, ReactNode>>;
   fontSizeOptions?: Partial<Record<ShellFontSizePreference, ReactNode>>;
@@ -158,6 +163,11 @@ export interface ShellPreferencePanelProps {
   showDensity?: boolean | undefined;
   showFontSize?: boolean | undefined;
   className?: string | undefined;
+  /** Controlled host preference. DS owns presentation, never pixel caps or persistence. */
+  contentWidth?: "narrow" | "default" | "wide" | undefined;
+  showContentWidth?: boolean | undefined;
+  onContentWidthChange?:
+    ((value: "narrow" | "default" | "wide") => void) | undefined;
   onLocaleChange: (locale: string) => void;
   onThemeChange: (theme: ShellThemePreference) => void;
   onDensityChange?: ((density: Density) => void) | undefined;
@@ -328,7 +338,13 @@ const FONT_SIZE_OPTIONS: readonly ShellFontSizePreference[] = [
 const HAIRLINE_FIELD = SHELL_PANEL_HAIRLINE;
 
 /** Shared option content keeps field values and menu rows visually identical. */
-function LocaleOptionContent({ option }: { option: LocaleSelectOption }) {
+function LocaleOptionContent({
+  option,
+  compact = false,
+}: {
+  option: LocaleSelectOption;
+  compact?: boolean;
+}) {
   return (
     <>
       {option.flag ? (
@@ -337,10 +353,11 @@ function LocaleOptionContent({ option }: { option: LocaleSelectOption }) {
         </span>
       ) : null}
       <span className="flex min-w-0 flex-1 flex-col items-start gap-0">
-        <span className="text-label">
+        <span className={compact ? "text-label-small" : "text-label"}>
           {option.nativeName ?? option.label ?? option.locale}
         </span>
-        {option.nativeName &&
+        {!compact &&
+        option.nativeName &&
         option.label &&
         option.label !== option.nativeName ? (
           <span className="text-body-small text-muted-foreground">
@@ -660,7 +677,7 @@ export function ShellLocaleSwitcher({
                 open && activeButtonClassName,
               )}
             >
-              <LocaleOptionContent option={currentOption} />
+              <LocaleOptionContent option={currentOption} compact />
               <Icon name="chevron-down" size="sm" />
             </Button>
           ) : (
@@ -784,7 +801,14 @@ export function ShellPreferencePanel({
   onThemeChange,
   onDensityChange,
   onFontSizeChange,
+  contentWidth,
+  onContentWidthChange,
+  showContentWidth = false,
 }: ShellPreferencePanelProps) {
+  const widthPreference = useOptionalContentWidth();
+  const widthValue =
+    contentWidth ?? (showContentWidth ? widthPreference?.value : undefined);
+  const changeWidth = onContentWidthChange ?? widthPreference?.setValue;
   return (
     // Match the action section: 32px controls with 8px row gaps.
     <div className={cn("flex w-full flex-col gap-xs", className)}>
@@ -810,9 +834,11 @@ export function ShellPreferencePanel({
 
       <ShellPanelControlRow icon="sun" label={labels?.theme}>
         <SegmentedControl
-          size="md"
-          className="h-control-xl"
+          variant="preference"
           fill
+          ariaLabel={
+            typeof labels?.theme === "string" ? labels.theme : "Appearance"
+          }
           value={theme}
           onChange={onThemeChange}
           items={THEME_OPTIONS.map((option) => ({
@@ -829,9 +855,11 @@ export function ShellPreferencePanel({
       {showDensity ? (
         <ShellPanelControlRow icon="rows" label={labels?.density}>
           <SegmentedControl
-            size="md"
-            className="h-control-xl"
+            variant="preference"
             fill
+            ariaLabel={
+              typeof labels?.density === "string" ? labels.density : "Density"
+            }
             value={density}
             onChange={(value) => onDensityChange?.(value)}
             items={DENSITY_OPTIONS.map((option) => ({
@@ -851,9 +879,13 @@ export function ShellPreferencePanel({
       {showFontSize ? (
         <ShellPanelControlRow icon="text-t" label={labels?.fontSize}>
           <SegmentedControl
-            size="md"
-            className="h-control-xl"
+            variant="preference"
             fill
+            ariaLabel={
+              typeof labels?.fontSize === "string"
+                ? labels.fontSize
+                : "Font size"
+            }
             value={fontSize}
             onChange={(value) => onFontSizeChange?.(value)}
             items={FONT_SIZE_OPTIONS.map((option) => ({
@@ -861,6 +893,27 @@ export function ShellPreferencePanel({
               label:
                 labels?.fontSizeOptions?.[option] ??
                 { small: "Small", default: "Default", large: "Large" }[option],
+            }))}
+          />
+        </ShellPanelControlRow>
+      ) : null}
+      {widthValue !== undefined && changeWidth ? (
+        <ShellPanelControlRow icon="sidebar" label={labels?.contentWidth}>
+          <SegmentedControl
+            variant="preference"
+            fill
+            value={widthValue}
+            onChange={changeWidth}
+            ariaLabel={
+              typeof labels?.contentWidth === "string"
+                ? labels.contentWidth
+                : "Content width"
+            }
+            items={(["narrow", "default", "wide"] as const).map((value) => ({
+              value,
+              label:
+                labels?.contentWidthOptions?.[value] ??
+                { narrow: "Narrow", default: "Default", wide: "Wide" }[value],
             }))}
           />
         </ShellPanelControlRow>

@@ -3463,6 +3463,9 @@ function useFigmaUserPanel() {
    * `ShellUserPanel`（平铺）吃**同一份**——前者弹层里装的就是后者，两处渲染的
    * 是同一份代码。
    */
+  const [contentWidth, setContentWidth] = React.useState<
+    "narrow" | "default" | "wide"
+  >("default");
   const userPanel = {
     user: {
       displayName: "User Name",
@@ -3492,8 +3495,20 @@ function useFigmaUserPanel() {
         theme={theme}
         density={density}
         fontSize={fontSize}
+        contentWidth={contentWidth}
+        onContentWidthChange={setContentWidth}
         labels={{
           title: "偏好设置",
+          locale: "语言",
+          theme: "外观",
+          density: "界面密度",
+          fontSize: "字体大小",
+          contentWidth: "内容宽度",
+          contentWidthOptions: {
+            narrow: "窄屏",
+            default: "默认",
+            wide: "宽屏",
+          },
           themeOptions: { system: "系统", light: "亮色", dark: "暗色" },
           densityOptions: {
             compact: "紧凑",
