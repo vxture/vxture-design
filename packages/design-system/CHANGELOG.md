@@ -1,5 +1,10 @@
 # @vxture/design-system — 更新日志
 
+## 15.11.0
+
+- Ship AgentAvatar with bundled static PNG / animated GIF, explicit running state, reduced-motion recovery, offline-safe defaults and 16/20/24/32px sizes.
+- ShellAgentButton defaults to the shared identity; legacy iconSrc remains supported. Default art stays within native 32px resolution.
+
 ## 15.10.0
 
 Locale code arrays now resolve DS-owned presentation metadata. Existing option objects remain compatible and can override display fields; supported codes remain product-owned.

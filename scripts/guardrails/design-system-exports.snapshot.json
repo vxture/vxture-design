@@ -29,7 +29,13 @@
         "types": "./dist/types.d.ts"
       }
     },
-    "files": ["CHANGELOG.md", "assets", "dist", "docs", "src/styles"],
+    "files": [
+      "CHANGELOG.md",
+      "assets",
+      "dist",
+      "docs",
+      "src/styles"
+    ],
     "name": "@vxture/design-system",
     "peerDependencies": {
       "@phosphor-icons/react": "^2.1.10",
@@ -48,6 +54,7 @@
       "AccordionTrigger",
       "ActionButton",
       "ActionMenu",
+      "AgentAvatar",
       "AlertDialog",
       "AlertDialogAction",
       "AlertDialogCancel",

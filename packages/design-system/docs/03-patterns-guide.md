@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.10.0** ｜ 更新：2026-11-10
+适用版本：**DS 15.11.0** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -242,3 +242,21 @@ Products normally need no width state. Optional provider `limits`, `defaultValue
 ### Supported language codes
 
 Products should pass `locales={["zh-CN", "en-US"]}`, the current locale and the change callback. DS resolves native names and short marks consistently in ShellPreferencePanel, ShellLocaleSwitcher and LocaleSelectPanel. This is presentation metadata, not a claim that a product supports every language. Unknown codes display verbatim without an invented mark. Optional options/localeOptions override display metadata only for included codes. With no locales prop, the existing full-options API remains compatible. Explicit empty arrays stay empty; duplicate codes are removed in input order.
+
+## Agent identity
+
+Use `AgentAvatar` for inline AI identity and `ShellAgentButton` for the header
+entry. Both bundle the DS robot and need no host asset path. Sizes sm/md/lg/xl
+are 16/20/24/32px; the bundled 32px artwork must not be enlarged. A 2xl legacy
+button retains its 48px hit area but the default image stays 32px. Products may
+override `staticSrc` and `animatedSrc` as a matching pair.
+
+`running` means actual background execution, never a selected workflow stage.
+Idle, waiting, paused and terminal states use the static image. The component
+starts static during SSR and honors live prefers-reduced-motion changes. A
+legacy explicit `iconSrc` keeps its original behavior, including animation;
+new integrations should use the paired source API for motion accessibility.
+
+PNG and GIF sources also ship under `@vxture/design-system/assets/agent/`.
+Keep the assistant accessible name on its parent control; avatar images are
+decorative by default. This generic identity is not a product logo.
