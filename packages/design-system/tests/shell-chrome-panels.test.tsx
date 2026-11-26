@@ -120,7 +120,7 @@ describe("ShellLocaleSwitcher · 选完就关", () => {
     const trigger = screen.getByRole("button", { name: "Select language" });
     expect(trigger).toHaveTextContent("简体中文");
     expect(trigger).toHaveTextContent("CN");
-    expect(trigger).toHaveTextContent("Chinese");
+    expect(trigger).not.toHaveTextContent("Chinese");
     await user.click(trigger);
     expect(screen.getByRole("menuitemradio", { checked: true })).toHaveFocus();
     await user.keyboard("{ArrowDown}{Enter}");
@@ -137,9 +137,7 @@ describe("ShellLocaleSwitcher · 选完就关", () => {
       await user.click(trigger);
       const selected = screen.getByRole("menuitemradio", { checked: true });
       const option = LOCALES.find((item) => item.locale === currentLocale)!;
-      for (const value of [option.flag, option.nativeName, option.label].filter(
-        Boolean,
-      )) {
+      for (const value of [option.flag, option.nativeName].filter(Boolean)) {
         expect(trigger).toHaveTextContent(value!);
         expect(selected).toHaveTextContent(value!);
       }

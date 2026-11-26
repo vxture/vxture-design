@@ -32,6 +32,14 @@ export * from "./components";
 // Theme
 // ============================================================================
 export * from "./theme";
+export {
+  CONTENT_WIDTH_LIMITS,
+  CONTENT_WIDTH_STORAGE_KEY,
+  ContentWidthProvider,
+  ContentWidthContainer,
+  useContentWidth,
+} from "./theme/contentWidth";
+export type { ContentWidth } from "./theme/contentWidth";
 
 // ============================================================================
 // Density

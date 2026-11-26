@@ -54,6 +54,8 @@ export interface SegmentedControlProps<TValue extends string | number> {
   readonly value: TValue;
   readonly onChange: (value: TValue) => void;
   readonly size?: SegmentedControlSize;
+  /** Shell preference recipe: stable 32px controls with inset selection and compact labels. */
+  readonly variant?: "default" | "preference";
   /**
    * 撑满可用宽度，各分段等宽。默认 false（宽度随内容），适合工具条里跟别的
    * 控件并排；表单里独占一行时置 true，否则控件缩在左边、右侧留一大片空白，
@@ -69,6 +71,7 @@ function SegmentedControl<TValue extends string | number>({
   value,
   onChange,
   size = "md",
+  variant = "default",
   fill = false,
   ariaLabel,
   className,
@@ -132,7 +135,9 @@ function SegmentedControl<TValue extends string | number>({
         // 亮一级，凹陷感在两个模式下都成立。
         "flex items-stretch overflow-hidden rounded-lg border border-control-border bg-surface-3",
         fill ? "w-full" : "inline-flex",
-        BY_SIZE[size].root,
+        variant === "preference"
+          ? "h-control-xl gap-(--border-width-thin) p-(--border-width-medium)"
+          : BY_SIZE[size].root,
         className,
       )}
     >
@@ -153,15 +158,20 @@ function SegmentedControl<TValue extends string | number>({
               itemRefs.current[index] = node;
             }}
             className={cn(
-              "inline-flex h-full items-center justify-center gap-2xs rounded-sm",
+              "inline-flex items-center justify-center gap-2xs rounded-sm",
+              variant !== "preference" && "h-full",
               fill && "flex-1",
               interactive,
-              BY_SIZE[size].item,
+              variant === "preference"
+                ? `min-w-0 px-xs ${controlContent.md}`
+                : BY_SIZE[size].item,
               // 选中态是"浮起的面片"而不是实心品牌块（vxh-seg 收敛）：卡面底
               // + 主色文字 + 一线投影表达"托起"，品牌色只用在文字这一小面积。
-              active
-                ? "bg-card font-semibold text-primary shadow-xs"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground",
+              variant === "preference" && active
+                ? "bg-primary-muted font-medium text-primary-muted-foreground shadow-xs"
+                : active
+                  ? "bg-card font-semibold text-primary shadow-xs"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
             )}
           >
             {item.icon ? (

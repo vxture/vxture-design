@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.8.0** ｜ 更新：2026-11-10
+适用版本：**DS 15.9.0** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -221,6 +221,20 @@ Header brand words are fixed at 24px, secondary labels at 16px. Header tool glyp
 
 Administration header inset parity follows Console: desktop compact/default/comfortable = 12/24/24px; narrow-screen = 8/16/16px. The newer token line has a wider comfortable content inset, so full headers normalize that mode without changing content density.
 
+### Product preference panel contract
+
+Use `ShellPreferencePanel` inside `ShellUserMenu.settings`; do not reconstruct its rows in applications. DS owns 32px field/segment geometry, compact semantic text, 16px icons, row spacing, inset selection, hover and keyboard focus. Theme and density must not resize these targets. Font preferences may change semantic text; applications must not override control fonts or selected backgrounds.
+
+Language uses the existing `ShellLocaleSwitcher variant="field"` and `LocaleSelectPanel`: the field shows the native name at compact size; the popup retains language marks, translated names and selection checks. Supply supported locales only. Do not replace this pattern with native or generic selects.
+
+Pass controlled `locale`, `theme`, `density`, `fontSize` and their callbacks. Localize every row and option through `labels`. Optional `contentWidth` plus `onContentWidthChange` adds the final narrow/default/wide row. Alternatively enable `showContentWidth` inside `ContentWidthProvider` to use DS-owned defaults and persistence. Explicit controlled row props have higher priority. Product adapters may supply data and callbacks, but must not apply per-row height/font/color CSS or pass a custom `SegmentedControl` recipe.
+
 ### Joined list and card view control
 
 Use `ViewModeSwitch` from `@vxture/design-system` for list/card presentation. DS owns the joined outline, outer corners, zero gap, 32px targets and 20px icons. Pass `value`, `onChange`, localized `ariaLabel` and `labels`; use `cardsDisabledReason` to explain an unavailable card view. Clicking the selected view does not clear it. Keep data loading and layout rendering in the application; do not reconstruct the control from separate buttons or override its geometry.
+
+### DS-owned content width
+
+Wrap the application in `ContentWidthProvider`. Enable `ShellPreferencePanel showContentWidth` and put `ContentWidthContainer` inside each center region, leaving sidebars outside. Defaults are narrow 1200px, default 1536px, wide 1920px; containers shrink to available space. The provider persists `vx-content-width`, restores after hydration, synchronizes same-origin providers/tabs, and retains session state when storage is blocked.
+
+Products normally need no width state. Optional provider `limits`, `defaultValue` and `storageKey` customize the defaults. Controlled provider `value` wins over saved state and reports through `onValueChange` without writing storage. Explicit preference-panel `contentWidth`/`onContentWidthChange` override provider wiring. Container `style` is the final product override. Do not copy persistence or container geometry into applications.

@@ -1,5 +1,7 @@
 # @vxture/design-system — 更新日志
 
+## 15.9.0: standard preference recipe and provider-owned content widths, compact language field using the existing locale panel; product override contract documented.
+
 发布走 `publish-design-system.yml`（GitHub Packages `npm.pkg.github.com`）。版本规则见
 `docs/050-design-system-release.md` §2。
 
