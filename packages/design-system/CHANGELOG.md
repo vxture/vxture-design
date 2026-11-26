@@ -1,5 +1,9 @@
 # @vxture/design-system — 更新日志
 
+## 15.10.0
+
+Locale code arrays now resolve DS-owned presentation metadata. Existing option objects remain compatible and can override display fields; supported codes remain product-owned.
+
 ## 15.9.0: standard preference recipe and provider-owned content widths, compact language field using the existing locale panel; product override contract documented.
 
 发布走 `publish-design-system.yml`（GitHub Packages `npm.pkg.github.com`）。版本规则见

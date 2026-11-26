@@ -1,6 +1,6 @@
 # 03 模式选用判据
 
-适用版本：**DS 15.9.0** ｜ 更新：2026-11-10
+适用版本：**DS 15.10.0** ｜ 更新：2026-11-10
 
 同一件事只有一种画法。选错件不是审美问题，是语义错误。
 
@@ -238,3 +238,7 @@ Use `ViewModeSwitch` from `@vxture/design-system` for list/card presentation. DS
 Wrap the application in `ContentWidthProvider`. Enable `ShellPreferencePanel showContentWidth` and put `ContentWidthContainer` inside each center region, leaving sidebars outside. Defaults are narrow 1200px, default 1536px, wide 1920px; containers shrink to available space. The provider persists `vx-content-width`, restores after hydration, synchronizes same-origin providers/tabs, and retains session state when storage is blocked.
 
 Products normally need no width state. Optional provider `limits`, `defaultValue` and `storageKey` customize the defaults. Controlled provider `value` wins over saved state and reports through `onValueChange` without writing storage. Explicit preference-panel `contentWidth`/`onContentWidthChange` override provider wiring. Container `style` is the final product override. Do not copy persistence or container geometry into applications.
+
+### Supported language codes
+
+Products should pass `locales={["zh-CN", "en-US"]}`, the current locale and the change callback. DS resolves native names and short marks consistently in ShellPreferencePanel, ShellLocaleSwitcher and LocaleSelectPanel. This is presentation metadata, not a claim that a product supports every language. Unknown codes display verbatim without an invented mark. Optional options/localeOptions override display metadata only for included codes. With no locales prop, the existing full-options API remains compatible. Explicit empty arrays stay empty; duplicate codes are removed in input order.

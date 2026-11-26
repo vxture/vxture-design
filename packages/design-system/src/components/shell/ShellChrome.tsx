@@ -71,6 +71,7 @@ export interface LocaleSelectOption {
 export interface LocaleSelectPanelProps {
   activeLocale: string;
   options?: LocaleSelectOption[];
+  locales?: readonly string[] | undefined;
   onSelect: (locale: string) => void;
 }
 
@@ -107,6 +108,7 @@ export interface ShellLocaleSwitcherProps {
   disabled?: boolean | undefined;
   currentLocale: string;
   options?: LocaleSelectOption[] | undefined;
+  locales?: readonly string[] | undefined;
   buttonLabel?: string | undefined;
   panelLabel?: string | undefined;
   align?: "start" | "end" | undefined;
@@ -156,6 +158,7 @@ export interface ShellPreferenceLabels {
 export interface ShellPreferencePanelProps {
   locale: string;
   localeOptions?: LocaleSelectOption[] | undefined;
+  locales?: readonly string[] | undefined;
   theme: ShellThemePreference;
   density?: Density | undefined;
   fontSize?: ShellFontSizePreference | undefined;
@@ -308,6 +311,38 @@ export interface ShellLegalFooterProps {
  */
 const DEFAULT_LOCALE_OPTIONS: LocaleSelectOption[] = [];
 
+// Presentation metadata only. Products retain control over supported languages.
+const LOCALE_PRESENTATION: Record<string, LocaleSelectOption> = {
+  "zh-CN": {
+    locale: "zh-CN",
+    nativeName: "\u7b80\u4f53\u4e2d\u6587",
+    flag: "CN",
+  },
+  "zh-TW": {
+    locale: "zh-TW",
+    nativeName: "\u7e41\u9ad4\u4e2d\u6587",
+    flag: "TW",
+  },
+  "en-US": { locale: "en-US", nativeName: "English", flag: "US" },
+  "en-GB": { locale: "en-GB", nativeName: "English", flag: "GB" },
+  "ja-JP": { locale: "ja-JP", nativeName: "\u65e5\u672c\u8a9e", flag: "JP" },
+  "ko-KR": { locale: "ko-KR", nativeName: "\ud55c\uad6d\uc5b4", flag: "KR" },
+  "fr-FR": { locale: "fr-FR", nativeName: "Fran\u00e7ais", flag: "FR" },
+  "de-DE": { locale: "de-DE", nativeName: "Deutsch", flag: "DE" },
+  "es-ES": { locale: "es-ES", nativeName: "Espa\u00f1ol", flag: "ES" },
+};
+function localeOptionsFor(
+  locales: readonly string[] | undefined,
+  options: LocaleSelectOption[] | undefined,
+): LocaleSelectOption[] {
+  if (locales === undefined) return options ?? DEFAULT_LOCALE_OPTIONS;
+  return [...new Set(locales)].map((locale) => ({
+    ...(LOCALE_PRESENTATION[locale] ?? { locale, nativeName: locale }),
+    ...options?.find((option) => option.locale === locale),
+    locale,
+  }));
+}
+
 const DEFAULT_LEGAL_LINKS: ShellLegalFooterLink[] = [
   { href: "/legal/terms", label: "Terms of Service" },
   { href: "/legal/privacy", label: "Privacy Policy" },
@@ -371,9 +406,11 @@ function LocaleOptionContent({
 
 export function LocaleSelectPanel({
   activeLocale,
-  options = DEFAULT_LOCALE_OPTIONS,
+  options: suppliedOptions,
+  locales,
   onSelect,
 }: LocaleSelectPanelProps) {
+  const options = localeOptionsFor(locales, suppliedOptions);
   const menuRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     const menu = menuRef.current;
@@ -638,7 +675,8 @@ export function ShellLocaleSwitcher({
   variant = "icon",
   disabled = false,
   currentLocale,
-  options = DEFAULT_LOCALE_OPTIONS,
+  options: suppliedOptions,
+  locales,
   buttonLabel = "Select language",
   panelLabel = "Language",
   align = "end",
@@ -648,6 +686,7 @@ export function ShellLocaleSwitcher({
   popoverClassName,
   onLocaleChange,
 }: ShellLocaleSwitcherProps) {
+  const options = localeOptionsFor(locales, suppliedOptions);
   const [open, setOpen] = useState(false);
   const currentOption = options.find(
     (option) => option.locale === currentLocale,
@@ -789,7 +828,8 @@ export function ShellFullscreenToggle({
 
 export function ShellPreferencePanel({
   locale,
-  localeOptions = DEFAULT_LOCALE_OPTIONS,
+  localeOptions,
+  locales,
   theme,
   density = "default",
   fontSize = "default",
@@ -820,6 +860,7 @@ export function ShellPreferencePanel({
           variant="field"
           currentLocale={locale}
           options={localeOptions}
+          locales={locales}
           buttonLabel={
             typeof labels?.locale === "string"
               ? labels.locale
