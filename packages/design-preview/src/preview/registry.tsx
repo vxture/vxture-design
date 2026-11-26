@@ -20,10 +20,8 @@
 import * as React from "react";
 import brandMark from "@vxture/design-system/assets/brands/vx-brand/vxture-logo-icon.svg";
 import productLogo from "@vxture/design-system/assets/examples/product-logo.png";
-// 智能体图标：Varda 的动图身份标（原件在 vxture-platform 各门户 public/assets/ai/，
-// 2026-08-18 已从 DS 迁出归产品）。这里只复制一份给预览用。
-import aiAgentIcon from "./assets/ai-agent-icon-32.gif";
 import {
+  AgentAvatar,
   PhoneNumber,
   Accordion,
   AccordionContent,
@@ -2250,6 +2248,19 @@ export const ENTRIES: readonly Entry[] = [
      的件——那五件说的是模型部署 / AI 会话 / token 用量）。预览面只陈列 DS 自己的东西。 */
   /* ── 外壳与登录（伞包自持的两个组合族）───────────────────── */
   {
+    name: "AgentAvatar",
+    layer: "pattern",
+    group: "外壳与登录",
+    tags: ["vxture", "patterns"],
+    render: () => (
+      <div className="flex items-center gap-md">
+        <AgentAvatar size="sm" />
+        <AgentAvatar size="lg" />
+        <AgentAvatar size="xl" running />
+      </div>
+    ),
+  },
+  {
     name: "ShellChrome",
     layer: "pattern",
     group: "外壳与登录",
@@ -3247,8 +3258,8 @@ function ConsoleHeaderTrailing({
           shortcutKey={null}
         />
       </div>
-      {/* 智能体图标由产品侧提供（Varda 的 32px 动图）。 */}
-      <ShellAgentButton iconSrc={aiAgentIcon.src} label="智能助手" />
+      {/* DS default artwork and explicit execution state. */}
+      <ShellAgentButton label="智能助手" running />
       <ShellHeaderTools label="工具" {...tools} />
       <ShellUserMenu {...userPanel} />
     </>

@@ -48,6 +48,7 @@
       "AccordionTrigger",
       "ActionButton",
       "ActionMenu",
+      "AgentAvatar",
       "AlertDialog",
       "AlertDialogAction",
       "AlertDialogCancel",

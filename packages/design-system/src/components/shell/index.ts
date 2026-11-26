@@ -8,3 +8,4 @@ export * from "./ShellSearchBox";
 export * from "./ShellSidebarNav";
 export * from "./ShellToolbox";
 export * from "./IdentityInfo";
+export * from "./AgentAvatar";

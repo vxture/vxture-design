@@ -19,6 +19,7 @@
 
 import { useState, type ReactNode } from "react";
 import * as React from "react";
+import { AgentAvatar } from "./AgentAvatar";
 import type { ThemeMode } from "../../theme/theme.types";
 import { useOptionalContentWidth } from "../../theme/contentWidth";
 import {
@@ -614,7 +615,10 @@ const AGENT_BUTTON_SIZE_CLASS: Record<ShellAgentButtonSize, string> = {
 };
 
 export interface ShellAgentButtonProps {
-  iconSrc: string;
+  iconSrc?: string;
+  staticSrc?: string;
+  animatedSrc?: string;
+  running?: boolean;
   label: string;
   active?: boolean;
   disabled?: boolean;
@@ -626,13 +630,15 @@ export interface ShellAgentButtonProps {
 
 /**
  * header 里的 AI 助手入口——跟 `ShellIconButton` 分开建是因为素材不同：这里
- * 装的是产品侧提供的动图头像（`iconSrc`，比如 Varda 的 gif），不是 Phosphor
- * 线性图标。组件本身不认识"Varda"或任何具体助手，`iconSrc`/`label` 全由
- * 调用方传入；`size` 决定用哪一档 `size-icon-*`，调用方按素材原始分辨率选
- * 对应档位，避免缩放糊图（比如 32px 显示配 32px 素材）。
+ * Uses the bundled generic AgentAvatar unless legacy iconSrc is supplied.
+ * running opts into animation, honoring reduced motion; custom paired sources
+ * override artwork. The default image never exceeds its native 32px resolution.
  */
 export function ShellAgentButton({
   iconSrc,
+  staticSrc,
+  animatedSrc,
+  running = false,
   label,
   active = false,
   disabled = false,
@@ -657,15 +663,24 @@ export function ShellAgentButton({
         className,
       )}
     >
-      <img
-        src={iconSrc}
-        alt=""
-        aria-hidden="true"
-        width={px}
-        height={px}
-        className="size-full object-contain"
-        draggable={false}
-      />
+      {iconSrc ? (
+        <img
+          src={iconSrc}
+          alt=""
+          aria-hidden="true"
+          width={px}
+          height={px}
+          className="size-full object-contain"
+          draggable={false}
+        />
+      ) : (
+        <AgentAvatar
+          size={size === "2xl" ? "xl" : size}
+          running={running}
+          staticSrc={staticSrc}
+          animatedSrc={animatedSrc}
+        />
+      )}
     </button>
   );
 }
