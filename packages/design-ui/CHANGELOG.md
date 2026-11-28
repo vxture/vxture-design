@@ -1,5 +1,9 @@
 # @vxture/design-ui — 更新日志
 
+## 12.9.0 — 2026-11-28
+
+- Add opt-in comparable BarChart series, line paths, exact-value tooltips, toggleable legends, target references and local selection/reset. Unknown values stay unknown; reference lines reserve 8% headroom. Existing single-series behavior remains compatible.
+
 ## 12.8.0: opt-in preference SegmentedControl recipe with stable 32px target, compact semantic text and inset semantic selection. Default variant unchanged.
 
 发布走 `publish-design-system.yml`（GitHub Packages `npm.pkg.github.com`）。版本规则见

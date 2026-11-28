@@ -1,6 +1,6 @@
 # Design System 对外规范
 
-适用版本：**DS 15.11.0** ｜ 更新：2026-11-10
+适用版本：**DS 15.12.0** ｜ 更新：2026-11-10
 
 本目录随 `@vxture/design-system` 发包，是 DS 三包（design-tokens / design-ui / design-system）消费方的使用契约。工程过程（token 管线、守卫机制、偏离登记）留在本仓内部文档，消费方无需关心。
 
@@ -13,3 +13,5 @@
 | [`05-content-standard.md`](./05-content-standard.md)         | 内容规范：术语表、文案语气、格式、句式模板                                                                       |
 | [`06-a11y-standard.md`](./06-a11y-standard.md)               | 无障碍达标线：对比度、焦点环、点击目标、键盘可达等七条可验清单                                                   |
 | [`07-consumption-pitfalls.md`](./07-consumption-pitfalls.md) | 接入陷阱：四条「接上去不报错、构建全绿、但结果是错的」——T2 token 撞名、暗色走 `.dark`、`/server` 子集、`@source` |
+
+BarChart opt-in series (15.12): pass `series` with nullable keyed values; `variant="line"` breaks at unknown values. `references` and `referenceValue` use data units with 8% headroom. `onSelectKey` only selects data and resets with null; navigation remains the consumer's responsibility. Legends toggle visibility locally.

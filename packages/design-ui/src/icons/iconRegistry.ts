@@ -18,6 +18,8 @@
  */
 
 import {
+  SmileyIcon,
+  SmileySadIcon,
   // ==========================================================================
   // 通用交互 - 导航
   // ==========================================================================
@@ -355,6 +357,8 @@ export const iconRegistry: Record<IconName, PhosphorIcon> = {
   prohibit: ProhibitIcon,
   pause: PauseIcon,
   "dots-three": DotsThreeIcon,
+  smiley: SmileyIcon,
+  "smiley-sad": SmileySadIcon,
   drag: DotsSixVerticalIcon,
   printer: PrinterIcon,
   power: PowerIcon,

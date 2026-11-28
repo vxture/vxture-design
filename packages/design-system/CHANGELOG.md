@@ -1,5 +1,9 @@
 # @vxture/design-system — 更新日志
 
+## 15.12.0 — 2026-11-28
+
+- Add opt-in comparable BarChart series, line paths, exact-value tooltips, toggleable legends, target references and local selection/reset. Unknown values stay unknown; reference lines reserve 8% headroom. Existing single-series behavior remains compatible.
+
 ## 15.11.0
 
 - Ship AgentAvatar with bundled static PNG / animated GIF, explicit running state, reduced-motion recovery, offline-safe defaults and 16/20/24/32px sizes.
