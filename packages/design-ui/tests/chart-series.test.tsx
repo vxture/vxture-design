@@ -21,9 +21,11 @@ describe("category series", () => {
     const { container } = render(
       <BarChart data={data} series={series} plotHeight="large" />,
     );
-    expect(container.querySelector('[role="group"][tabindex="0"]')).toHaveStyle({
-      height: "var(--spacing-media-3xl)",
-    });
+    expect(container.querySelector('[role="group"][tabindex="0"]')).toHaveStyle(
+      {
+        height: "var(--spacing-media-3xl)",
+      },
+    );
   });
   it("distinguishes missing values, exposes every exact series and toggles a legend", async () => {
     const user = userEvent.setup();
