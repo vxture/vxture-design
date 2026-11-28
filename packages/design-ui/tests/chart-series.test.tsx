@@ -17,6 +17,16 @@ const series = [
   { key: "target", label: "Target", values: { a: 50, b: 70 } },
 ];
 describe("category series", () => {
+  it("uses the shared large height tier for a readable dashboard plot", () => {
+    const { container } = render(
+      <BarChart data={data} series={series} plotHeight="large" />,
+    );
+    expect(container.querySelector('[role="group"][tabindex="0"]')).toHaveStyle(
+      {
+        height: "var(--spacing-media-3xl)",
+      },
+    );
+  });
   it("distinguishes missing values, exposes every exact series and toggles a legend", async () => {
     const user = userEvent.setup();
     render(<BarChart data={data} series={series} />);

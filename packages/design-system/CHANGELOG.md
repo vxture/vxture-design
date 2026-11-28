@@ -1,5 +1,9 @@
 # @vxture/design-system — 更新日志
 
+## 15.13.0 — 2026-11-28
+
+- Add `BarChart.plotHeight="large"` using the existing `media-3xl` token. This fills the gap between small plots and tall charts in two-row dashboards; existing defaults are unchanged.
+
 ## 15.12.0 — 2026-11-28
 
 - Add opt-in comparable BarChart series, line paths, exact-value tooltips, toggleable legends, target references and local selection/reset. Unknown values stay unknown; reference lines reserve 8% headroom. Existing single-series behavior remains compatible.

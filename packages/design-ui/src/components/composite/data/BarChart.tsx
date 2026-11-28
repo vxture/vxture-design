@@ -32,6 +32,7 @@ export interface BarChartDatum {
 const PLOT_HEIGHT = {
   compact: "var(--spacing-media-md)",
   default: "var(--spacing-media-lg)",
+  large: "var(--spacing-media-3xl)",
   tall: "calc(var(--spacing-media-3xl) + var(--spacing-media-xl))",
 } as const;
 
