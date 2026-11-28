@@ -10,6 +10,8 @@
 import * as React from "react";
 import { hairline } from "../../../styles/recipes";
 import { cn } from "../../../utils/cn";
+import { CategorySeriesPlot, type CategorySeries } from "./CategorySeriesPlot";
+export type { CategorySeries } from "./CategorySeriesPlot";
 import {
   Tooltip,
   TooltipContent,
@@ -42,6 +44,14 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly hideAxis?: boolean;
   /** Height of the plot alone. The enclosing card follows its content. */
   readonly plotHeight?: keyof typeof PLOT_HEIGHT;
+  /** Optional comparable series; null is unknown and never plotted as zero. */
+  readonly series?: readonly CategorySeries[];
+  readonly variant?: "bar" | "line";
+  /** Reference ratio in the same unit as values (e.g. 1 for a ratio). */
+  readonly referenceValue?: number;
+  readonly selectedKey?: string | null;
+  /** Selection only; this callback must not imply navigation. Blank resets. */
+  readonly onSelectKey?: (key: string | null) => void;
 }
 
 const AXIS_STOPS = [1, 0.5, 0] as const;
@@ -171,6 +181,11 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
       peakLabel,
       hideAxis = false,
       plotHeight = "default",
+      series,
+      variant,
+      referenceValue,
+      selectedKey: controlledKey,
+      onSelectKey,
       ...props
     },
     ref,
@@ -189,6 +204,23 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     const activeIndex = hoveredIndex >= 0 ? hoveredIndex : selectedIndex;
     const atPeak = activeIndex < 0;
     const active = data[atPeak ? Math.max(0, peakIndex) : activeIndex];
+
+    if (series)
+      return (
+        <CategorySeriesPlot
+          ref={ref}
+          data={data}
+          series={series}
+          variant={variant}
+          referenceValue={referenceValue}
+          selectedKey={controlledKey}
+          onSelectKey={onSelectKey}
+          formatValue={fmt}
+          plotHeight={PLOT_HEIGHT[plotHeight]}
+          className={className}
+          {...props}
+        />
+      );
 
     function clearSelection() {
       setHoveredKey(null);

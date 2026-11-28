@@ -94,6 +94,8 @@ export const ICON_GROUPS = [
       "save",
       "text-t", // 文本/排版
       "list-checks", // 核对清单
+      "smiley",
+      "smiley-sad",
       "target", // 目标/OKR
       "timer", // 时限/超时
       "percent", // 折扣/费率

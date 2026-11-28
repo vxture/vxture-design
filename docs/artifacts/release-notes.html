@@ -215,7 +215,7 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
   <div class="page-head">
     <div class="eyebrow">Vxture Design System · vxture-design</div>
     <h1>发版说明</h1>
-    <p class="lede">本次 <strong>design-system 15.11.0</strong> 恢复柱状图的响应式布局与完整读数，新增三档绘图区高度。默认高度不变，调用方可以按页面需要选择档位。</p>
+    <p class="lede">本次 <strong>design-system 15.12.0</strong> 恢复柱状图的响应式布局与完整读数，新增三档绘图区高度。默认高度不变，调用方可以按页面需要选择档位。</p>
   </div>
 
 <section id="install"><h2><span class="num">01</span>现在该装什么<span class="h2-meta">2026-11-18 · minor</span></h2><div class="rule"></div>
@@ -223,11 +223,11 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <div class="tw"><table>
 <thead><tr><th>包</th><th>版本</th><th>这次动了吗</th></tr></thead>
 <tbody>
-<tr><td class="mono">@vxture/design-system</td><td class="mono">15.11.0</td><td><span class="tag t-good">minor</span> 转发新版 BarChart，无需更改现有调用</td></tr>
-<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.8.0</td><td><span class="tag t-good">minor</span> BarChart 新增绘图区高度档位，横轴标签随实际可用宽度调整</td></tr>
+<tr><td class="mono">@vxture/design-system</td><td class="mono">15.12.0</td><td><span class="tag t-good">minor</span> 转发新版 BarChart，无需更改现有调用</td></tr>
+<tr><td class="mono">@vxture/design-ui</td><td class="mono">12.9.0</td><td><span class="tag t-good">minor</span> BarChart 新增绘图区高度档位，横轴标签随实际可用宽度调整</td></tr>
 <tr><td class="mono">@vxture/design-tokens</td><td class="mono">4.1.0</td><td><span class="tag">不变</span> 沿用既有 token；本次不发布新版本</td></tr>
 </tbody></table></div>
-<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.11.0 会解析到 design-ui 12.7.0 与 design-tokens 4.1.0；无需直接添加下层包。此次相对 15.7.0 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
+<div class="note"><strong>应用只安装伞包。</strong>安装 design-system 15.12.0 会解析到 design-ui 12.7.0 与 design-tokens 4.1.0；无需直接添加下层包。此次相对 15.7.0 为兼容扩展；从 12.x 升级仍会跨越既有 major，需先完成排版 token、结构件和分页 API 等迁移，再做页面回归。</div></section>
 
 <section id="breaking14"><h2><span class="num">02a</span>必须改的：标题阶梯重排——level 即 h，页头改用页头文本<span class="h2-meta">design-ui 11.0.0 / 伞包 14.1.0 · major</span></h2><div class="rule"></div>
 <div class="note danger" style="font-size:1rem">原四档里 level 4 用的 <span class="mono">label-md</span> 与 level 3 的 <span class="mono">title-sm</span> 取值完全相同，三、四级看上去一样；level 与 h 也错位（owner 2026-09-26）。现在 <strong>level 的数字就是 h 的数字</strong>：level 1 是页头 <span class="mono">ViewHeader</span>（改用 <span class="mono">heading-3</span>），<span class="mono">SectionHeader</span> 只有 level 2 / 3 / 4。<strong>每一级都带虚线下边框，可关。</strong></div>
@@ -393,9 +393,9 @@ td.mono, td .mono { font-family: var(--vx-font-mono); }
 <p><strong>每次选完清空 <span class="mono">value</span></strong>：同一个文件连选两次时 <span class="mono">change</span> 不会再触发（值没变），用户看到的是"第二次点了没反应"——而这恰恰发生在"上传失败了再试一次"的时候。</p>
 <div class="note"><strong>变体刻意不收 destructive 两档。</strong>选一个文件永远不是破坏性动作，而那两档在 <span class="mono">ButtonProps</span> 的判别联合里要求同时给出确认或豁免理由。从类型上排掉，本件就不可能成为绕开那条契约的入口——<span class="mono">ActionButton</span> 当年是靠换 <span class="mono">DistributiveOmit</span> 才堵上同一个洞。</div></section>
 
-<section id="fixedcol"><h2><span class="num">05f</span>表格三根固定列统一 64px<span class="h2-meta">12.8.0 · 不用改，观感变了</span></h2><div class="rule"></div>
+<section id="fixedcol"><h2><span class="num">05f</span>表格三根固定列统一 64px<span class="h2-meta">12.9.0 · 不用改，观感变了</span></h2><div class="rule"></div>
 <p><span class="mono">DataTable</span> 的选择列、序号列、操作列此前借的是控件高度族 <span class="mono">w-control-3xl</span>，它随密度平移（紧凑 48 / 默认 56 / 宽松 64）。<strong>默认密度下实测选择列与序号列是 56px，操作列被按钮撑到 64px</strong>——文件头写着三根同宽 64px，只在宽松密度成立。</p>
-<div class="note"><strong>12.8.0 起三根列改用新档 <span class="mono">w-table-col-fixed</span>：固定 64px，不随密度变化</strong>（owner 2026-09-15）。列宽是版面结构，与 sidebar / header 同类，不是控件尺寸。</div>
+<div class="note"><strong>12.9.0 起三根列改用新档 <span class="mono">w-table-col-fixed</span>：固定 64px，不随密度变化</strong>（owner 2026-09-15）。列宽是版面结构，与 sidebar / header 同类，不是控件尺寸。</div>
 <div class="note warn"><strong>调用方一行不用改</strong>，这三根列由 <span class="mono">selectedKeys</span> / <span class="mono">indexStart</span> / <span class="mono">rowActions</span> 给出、宽度由件决定。可见差异：默认密度下选择列、序号列各宽 8px；紧凑密度下三根列各宽 16px。</div>
 <div class="note warn"><strong>12.8.1 补下限：<span class="mono">w-table-col-fixed</span> 之外再给 <span class="mono">min-w-table-col-fixed</span>。</strong>自动表格布局里宽度只是建议值，列多的表放不下时浏览器先回收只有一个复选框或一个序号的列——opera 线上实测 9 列的表序号列 40px、选择列 48px。下限钉住 64px，放不下交给表格横向滚动。调用方同样不用改。</div></section>
 
@@ -541,7 +541,7 @@ It was passed a child from AccountDetailPage.
 
 
 
-  <div class="foot">Vxture Design System · 发版说明 · DS 15.11.0 · design-tokens 4.1.0 / design-ui 12.7.0 / design-system 15.11.0 · 2026-11-10</div>
+  <div class="foot">Vxture Design System · 发版说明 · DS 15.12.0 · design-tokens 4.1.0 / design-ui 12.7.0 / design-system 15.12.0 · 2026-11-10</div>
 </main>
 </div>
 <button class="theme-btn" id="themeBtn" type="button">主题</button>

@@ -1850,6 +1850,7 @@ export const ENTRIES: readonly Entry[] = [
   },
   {
     name: "BarChart",
+    covers: ["CategorySeriesPlot"],
     layer: "pattern",
     group: "图案",
     tags: ["vxture", "patterns"],
@@ -4491,7 +4492,55 @@ function BarChartDemo() {
     };
   });
   // peakLabel 由调用方给（DS 零语言假设，件里不烧死中文）
-  return <BarChart aria-label="近 30 天用量" data={data} peakLabel="Peak" />;
+  return (
+    <div className="flex flex-col gap-xl">
+      <BarChart aria-label="近 30 天用量" data={data} peakLabel="Peak" />
+      <BarChart
+        aria-label="Comparable series"
+        data={data.slice(0, 5)}
+        series={[
+          {
+            key: "actual",
+            label: "Actual",
+            values: Object.fromEntries(
+              data.slice(0, 5).map((d, i) => [d.key, i === 2 ? null : d.value]),
+            ),
+            references: Object.fromEntries(
+              data.slice(0, 5).map((d) => [d.key, d.value * 1.2]),
+            ),
+          },
+          {
+            key: "target",
+            label: "Target",
+            values: Object.fromEntries(
+              data.slice(0, 5).map((d) => [d.key, d.value * 1.2]),
+            ),
+          },
+        ]}
+      />
+      <BarChart
+        aria-label="Series trend"
+        data={data.slice(0, 5)}
+        variant="line"
+        series={[
+          {
+            key: "a",
+            label: "A",
+            values: Object.fromEntries(
+              data.slice(0, 5).map((d, i) => [d.key, i === 2 ? null : d.value]),
+            ),
+          },
+          {
+            key: "b",
+            label: "B",
+            values: Object.fromEntries(
+              data.slice(0, 5).map((d) => [d.key, d.value * 0.8]),
+            ),
+          },
+        ]}
+      />
+    </div>
+  );
 }
 
 function MetricGridDemo() {
