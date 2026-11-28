@@ -22,6 +22,8 @@ export interface CategorySeries {
   readonly label: string;
   readonly values: Readonly<Record<string, number | null>>;
   readonly references?: Readonly<Record<string, number | null>>;
+  /** Optional reference values in the exact readout, localized by the consumer. */
+  readonly referenceLabel?: string;
 }
 const INKS = [
   "var(--primary)",
@@ -288,10 +290,27 @@ export const CategorySeriesPlot = React.forwardRef<HTMLDivElement, Props>(
                   );
                 })
               ) : (
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-y-0 start-1/2 border-s border-dashed border-border"
-                />
+                <>
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-0 start-1/2 border-s border-dashed border-border"
+                  />
+                  {visible.map((s, i) => {
+                    const r = s.references?.[d.key];
+                    return r != null && Number.isFinite(r) ? (
+                      <span
+                        key={s.key}
+                        aria-hidden
+                        className="pointer-events-none absolute border-t border-dashed border-muted-foreground/30"
+                        style={{
+                          top: `${position(r)}%`,
+                          left: `${((i + 0.2) / Math.max(1, visible.length)) * 100}%`,
+                          width: `${(0.6 / Math.max(1, visible.length)) * 100}%`,
+                        }}
+                      />
+                    ) : null;
+                  })}
+                </>
               )}
             </button>
           ))}
@@ -315,17 +334,31 @@ export const CategorySeriesPlot = React.forwardRef<HTMLDivElement, Props>(
                   <div className="flex flex-col gap-xs">
                     <strong>{point.label}</strong>
                     {visible.map((s) => (
-                      <div
-                        key={s.key}
-                        className="flex items-baseline justify-between gap-lg"
-                      >
-                        <span>{s.label}</span>
-                        <span className="tabular-nums">
-                          {s.values[point.key] == null
-                            ? "\u2014"
-                            : fmt(s.values[point.key]!)}
-                        </span>
-                      </div>
+                      <React.Fragment key={s.key}>
+                        <div
+                          key={s.key}
+                          className="flex items-baseline justify-between gap-lg"
+                        >
+                          <span>{s.label}</span>
+                          <span className="tabular-nums">
+                            {s.values[point.key] == null
+                              ? "\u2014"
+                              : fmt(s.values[point.key]!)}
+                          </span>
+                        </div>
+                        {s.referenceLabel && s.references ? (
+                          <div className="flex items-baseline justify-between gap-lg text-muted-foreground">
+                            <span>
+                              {s.label} {s.referenceLabel}
+                            </span>
+                            <span className="tabular-nums">
+                              {s.references[point.key] == null
+                                ? "\u2014"
+                                : fmt(s.references[point.key]!)}
+                            </span>
+                          </div>
+                        ) : null}
+                      </React.Fragment>
                     ))}
                   </div>
                 </TooltipContent>

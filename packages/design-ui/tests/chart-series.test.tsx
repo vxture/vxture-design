@@ -64,6 +64,23 @@ describe("category series", () => {
     fireEvent.click(point);
     expect(onSelect).toHaveBeenLastCalledWith(null);
   });
+  it("exposes paired references in trend tooltips while keeping one legend per category", () => {
+    render(
+      <BarChart
+        data={data}
+        series={[{ ...series[0]!, referenceLabel: "Goal" }]}
+        variant="line"
+      />,
+    );
+    fireEvent.pointerEnter(
+      screen.getByRole("button", { name: "Alpha: Actual 40" }),
+    );
+    expect(screen.getAllByText("Actual Goal").length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "Actual" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
   it("breaks line paths at unknown observations and leaves headroom above targets", () => {
     const points = [...data, { key: "c", label: "Gamma", value: 0 }];
     const { container } = render(
